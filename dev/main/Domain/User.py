@@ -1,4 +1,3 @@
-
 class User(object):
     def __init__(self, groceryCarts, tradingSystem):
         self._groceryCarts = groceryCarts
