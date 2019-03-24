@@ -1,0 +1,11 @@
+from main.Service.Facade import Facade
+
+<<<<<<< HEAD
+def test_setup():
+    assert False
+=======
+>>>>>>> b0f9f2ebc3f831247c176e3bb86bc2454e2eb1ec
+
+def test_login():
+    facade_instance = Facade()
+    assert True == facade_instance.login("rotem", "123456")
