@@ -3,7 +3,7 @@ from main.Domain.TradingSystem import TradingSystem
 
 class Facade(object):
     def __init__(self):
-        self._tradain_system = TradingSystem(users=[], managers=[], stores=[])
+        pass
 
     def login(self, username, password):
         return False

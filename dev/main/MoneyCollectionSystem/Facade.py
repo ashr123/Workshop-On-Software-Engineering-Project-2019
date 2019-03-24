@@ -1,6 +1,6 @@
 class Facade(object):
-   def __init__(self):
-       pass
+    def __init__(self):
+        pass
 
-   def collect(self):
-       return False
+    def collect(self):
+        return False

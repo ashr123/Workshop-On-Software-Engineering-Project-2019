@@ -1,4 +1,3 @@
-
 class GroceryCart(object):
     def __init__(self, items):
         self._items = items
@@ -11,4 +10,3 @@ class GroceryCart(object):
 
     def editItem(self, itemId):
         return False
-
