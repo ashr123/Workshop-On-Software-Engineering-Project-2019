@@ -2,20 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="28a88465-b6cb-487b-b13a-294f9c8c14cf" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/AcceptanceTests/tests_hey.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dev.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dev.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AcceptanceTests/Test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/hello.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/TradingSystem.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/TradingSystem.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Service/Facade.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Service/ServiceFacade.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/manage.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/urls.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/wsgi.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -24,6 +13,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/dev$unit_test.coverage" NAME="unit test Coverage Results" MODIFIED="1553554821524" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$pytest_in_test.coverage" NAME="unit tests Coverage Results" MODIFIED="1553549423275" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$test.coverage" NAME="test Coverage Results" MODIFIED="1553260388191" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$Acceptance_Tests.coverage" NAME="Acceptance Tests Coverage Results" MODIFIED="1553549477881" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
@@ -39,7 +29,7 @@
       <file pinned="true" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main/Service/ServiceFacade.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-769">
+            <state relative-caret-position="272">
               <caret line="16" selection-start-line="16" selection-end-line="16" />
             </state>
           </provider>
@@ -169,7 +159,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-11" />
+    <option name="x" value="-12" />
     <option name="width" value="1920" />
     <option name="height" value="1080" />
   </component>
@@ -238,23 +228,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python tests.Acceptance Tests">
-    <configuration name="Acceptance Tests" type="tests" factoryName="py.test">
-      <module name="dev" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="C:\Code\School\SADNA\Workshop-On-Software-Engineering-Project-2019\dev\venv\Scripts\python.exe" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="_new_keywords" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/AcceptanceTests&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager">
     <configuration default="true" type="tests" factoryName="py.test">
       <module name="dev" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -271,13 +245,13 @@
       <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="unit tests" type="tests" factoryName="py.test">
+    <configuration name="unit test" type="tests" factoryName="py.test">
       <module name="dev" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="C:\Code\School\SADNA\Workshop-On-Software-Engineering-Project-2019\dev\venv\Scripts\python.exe" />
+      <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
@@ -287,10 +261,6 @@
       <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
-    <list>
-      <item itemvalue="Python tests.unit tests" />
-      <item itemvalue="Python tests.Acceptance Tests" />
-    </list>
   </component>
   <component name="StructureViewFactory">
     <option name="AUTOSCROLL_FROM_SOURCE" value="true" />
@@ -316,18 +286,6 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="unit_tests - 2019.03.25 at 23h 21m 37s.xml">
-      <configuration name="unit tests" configurationId="tests" />
-    </history-entry>
-    <history-entry file="unit_tests - 2019.03.25 at 23h 23m 00s.xml">
-      <configuration name="unit tests" configurationId="tests" />
-    </history-entry>
-    <history-entry file="unit_tests - 2019.03.25 at 23h 26m 12s.xml">
-      <configuration name="unit tests" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Acceptance_Tests - 2019.03.25 at 23h 27m 49s.xml">
-      <configuration name="Acceptance Tests" configurationId="tests" />
-    </history-entry>
     <history-entry file="Acceptance_Tests - 2019.03.25 at 23h 28m 53s.xml">
       <configuration name="Acceptance Tests" configurationId="tests" />
     </history-entry>
@@ -346,20 +304,31 @@
     <history-entry file="Acceptance_Tests - 2019.03.25 at 23h 31m 18s.xml">
       <configuration name="Acceptance Tests" configurationId="tests" />
     </history-entry>
+    <history-entry file="unit_test - 2019.03.26 at 00h 51m 31s.xml">
+      <configuration name="unit test" configurationId="tests" />
+    </history-entry>
+    <history-entry file="unit_test - 2019.03.26 at 00h 56m 32s.xml">
+      <configuration name="unit test" configurationId="tests" />
+    </history-entry>
+    <history-entry file="unit_test - 2019.03.26 at 00h 56m 36s.xml">
+      <configuration name="unit test" configurationId="tests" />
+    </history-entry>
+    <history-entry file="unit_test - 2019.03.26 at 01h 00m 22s.xml">
+      <configuration name="unit test" configurationId="tests" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="20205000" />
+    <option name="totallyTimeSpent" value="21049000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.7309091" visible="true" weight="0.1659919" />
-      <window_info id="Structure" order="1" sideWeight="0.26909092" side_tool="true" visible="true" weight="0.1659919" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.72824156" visible="true" weight="0.16842106" />
+      <window_info id="Structure" order="1" sideWeight="0.27175844" side_tool="true" visible="true" weight="0.16842106" />
       <window_info id="Favorites" order="2" sideWeight="0.5005066" side_tool="true" weight="0.16347177" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.5115453" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.5115453" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3997773" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -389,7 +358,7 @@
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/Anaconda2/Lib/site-packages/AIDnD_mvnpy-1.0.0-py2.7.egg/mvnpy/pom_file.py" />
-    <entry file="file://$PROJECT_DIR$/../../../../Tmp/setup_with_remote_module_1/main.py" />
+    <entry file="file://C:/Tmp/setup_with_remote_module_1/main.py" />
     <entry file="file://$PROJECT_DIR$/test/hery.py" />
     <entry file="file://$PROJECT_DIR$/main/Domain/Rule.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -472,9 +441,7 @@
     <entry file="file://$PROJECT_DIR$/main/Domain/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/settings.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/settings.py" />
     <entry file="file://$PROJECT_DIR$/main/Domain/User.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
@@ -512,7 +479,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main/Service/ServiceFacade.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-769">
+        <state relative-caret-position="272">
           <caret line="16" selection-start-line="16" selection-end-line="16" />
         </state>
       </provider>
@@ -524,9 +491,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/AcceptanceTests/.pytest_cache/.gitignore">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/AcceptanceTests/.pytest_cache/.gitignore" />
     <entry file="file://$PROJECT_DIR$/main/hello_world.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
