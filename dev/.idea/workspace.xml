@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="28a88465-b6cb-487b-b13a-294f9c8c14cf" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/AcceptanceTests/tests_hey.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dev.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dev.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AcceptanceTests/Test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/hello.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/TradingSystem.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/TradingSystem.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Service/Facade.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Service/ServiceFacade.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/manage.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/urls.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/wsgi.py" beforeDir="false" />
-    </list>
+    <list default="true" id="28a88465-b6cb-487b-b13a-294f9c8c14cf" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -238,7 +223,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python tests.Acceptance Tests">
+  <component name="RunManager" selected="Python tests.unit tests">
     <configuration name="Acceptance Tests" type="tests" factoryName="py.test">
       <module name="dev" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -348,7 +333,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="20205000" />
+    <option name="totallyTimeSpent" value="20220000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
