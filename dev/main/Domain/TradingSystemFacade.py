@@ -30,19 +30,19 @@ class TradingSystemFacade(object):
 	def changeItemQuantityInCart(self, id):
 		return False
 
-	def buySingleItem(self, id, paymentMethod):
+	def buySingleItem(self, id):
 		return False
 
-	def buyManyItems(self, ids, paymentMethod):
+	def buyItemFromCart(self, ids):
 		return False
 
 	def pay(self, payemnt_details, address):
 		return False
 
-	def addStore(self, name):
+	def addStore(self, name, desc):
 		return False
 
-	def addItemToStore(self, storeId):
+	def addItemToStore(self, storeId, itemName, desc, price, amount):
 		return False
 
 	def removeItemFromStore(self, id, storeId):
