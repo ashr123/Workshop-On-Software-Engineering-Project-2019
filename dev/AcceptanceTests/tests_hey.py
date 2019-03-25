@@ -1,4 +1,4 @@
 
 
-def test_login():
+def test_hello():
 	assert False

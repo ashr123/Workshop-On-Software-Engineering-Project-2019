@@ -2,28 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="28a88465-b6cb-487b-b13a-294f9c8c14cf" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AcceptanceTests/Test.py" beforeDir="false" afterPath="$PROJECT_DIR$/AcceptanceTests/Test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/ConsistencySystem/Facade.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/ConsistencySystem/Facade.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/Discount.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/Discount.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/GroceryCart.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/GroceryCart.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/Guset.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/Guset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/Item.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/Item.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/ManagementState.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/ManagementState.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/Member.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/Member.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/Purchase.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/Purchase.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/Rule.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/Rule.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/Store.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/Store.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AcceptanceTests/tests_hey.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dev.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dev.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AcceptanceTests/Test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/hello.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main/Domain/TradingSystem.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/TradingSystem.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/User.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/User.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/MoneyCollectionSystem/Facade.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/MoneyCollectionSystem/Facade.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/ProductSupplySystem/Facade.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/ProductSupplySystem/Facade.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Service/Facade.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Service/Facade.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/hello_world.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/hello_world.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/manage.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_hello_world.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_hello_world.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/Service/Facade.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Service/ServiceFacade.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/manage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/urls.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/wsgi.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -32,8 +24,9 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/dev$pytest_in_test.coverage" NAME="unit tests Coverage Results" MODIFIED="1553549423275" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$test.coverage" NAME="test Coverage Results" MODIFIED="1553260388191" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/dev$Acceptance_Tests.coverage" NAME="Acceptance Tests Coverage Results" MODIFIED="1553260562320" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/dev$Acceptance_Tests.coverage" NAME="Acceptance Tests Coverage Results" MODIFIED="1553549477881" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
   <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
     <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
@@ -43,20 +36,83 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/main/Service/Facade.py">
+      <file pinned="true" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main/Service/ServiceFacade.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1096">
-              <caret line="4" column="11" selection-start-line="4" selection-start-column="11" selection-end-line="4" selection-end-column="11" />
+            <state relative-caret-position="-769">
+              <caret line="16" selection-start-line="16" selection-end-line="16" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="true" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/main/Domain/ManagementState.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/Domain/test_user.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="320">
-              <caret line="10" column="9" selection-start-line="10" selection-start-column="9" selection-end-line="10" selection-end-column="9" />
+            <state relative-caret-position="51">
+              <caret line="3" column="10" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="10" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/test_hello_world.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="51">
+              <caret line="3" selection-start-line="3" selection-end-line="4" selection-end-column="46" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/AcceptanceTests/tests_hey.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="51">
+              <caret line="3" column="16" selection-start-line="3" selection-start-column="16" selection-end-line="3" selection-end-column="16" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main/hello_world.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="14" selection-start-column="14" selection-end-column="14" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main/Domain/User.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="68">
+              <caret line="4" selection-start-line="4" selection-end-line="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main/Domain/TradingSystemFacade.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="5" column="27" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="27" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main/Domain/Guset.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="8" column="20" selection-start-line="8" selection-start-column="20" selection-end-line="8" selection-end-column="20" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main/Domain/Store.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="5" column="4" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -101,13 +157,19 @@
         <option value="$PROJECT_DIR$/AccepetanceTests.py" />
         <option value="$PROJECT_DIR$/AcceptanceTests/Tests.py" />
         <option value="$PROJECT_DIR$/main/hello_world.py" />
-        <option value="$PROJECT_DIR$/AcceptanceTests/Test.py" />
+        <option value="$PROJECT_DIR$/main/Domain/TradingSystem.py" />
+        <option value="$PROJECT_DIR$/main/Domain/__init__.py" />
         <option value="$PROJECT_DIR$/main/Service/Facade.py" />
+        <option value="$PROJECT_DIR$/main/Domain/TradingSystemFacade.py" />
+        <option value="$PROJECT_DIR$/main/Service/ServiceFacade.py" />
+        <option value="$PROJECT_DIR$/test/Domain/test_user.py" />
+        <option value="$PROJECT_DIR$/AcceptanceTests/Test.py" />
+        <option value="$PROJECT_DIR$/AcceptanceTests/tests_hey.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="x" value="1680" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-11" />
     <option name="width" value="1920" />
     <option name="height" value="1080" />
   </component>
@@ -117,6 +179,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -137,36 +200,29 @@
             <path>
               <item name="dev" type="b2602c69:ProjectViewProjectNode" />
               <item name="dev" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="Domain" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dev" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="Service" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/AcceptanceTests" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Python" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Code\School\SADNA\Workshop-On-Software-Engineering-Project-2019\dev\main\Domain" />
-      <recent name="C:\Code\School\SADNA\Workshop-On-Software-Engineering-Project-2019\dev\main\Domain\TradingSystem" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Code\School\SADNA\Workshop-On-Software-Engineering-Project-2019\dev\main" />
+      <recent name="C:\Code\School\SADNA\Workshop-On-Software-Engineering-Project-2019\dev\main\Domain\TradingSystem" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Code\School\SADNA\Workshop-On-Software-Engineering-Project-2019\dev\test" />
+      <recent name="C:\Code\School\SADNA\Workshop-On-Software-Engineering-Project-2019\dev\main\Domain" />
       <recent name="C:\Code\School\SADNA\Workshop-On-Software-Engineering-Project-2019\dev\main\Domain\TradingSystem" />
     </key>
   </component>
@@ -187,15 +243,15 @@
       <module name="dev" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
+      <option name="SDK_HOME" value="C:\Code\School\SADNA\Workshop-On-Software-Engineering-Project-2019\dev\venv\Scripts\python.exe" />
       <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="_new_keywords" value="&quot;&quot;" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/AcceptanceTests/Test.py&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/AcceptanceTests&quot;" />
       <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
@@ -215,13 +271,13 @@
       <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="test" type="tests" factoryName="py.test">
+    <configuration name="unit tests" type="tests" factoryName="py.test">
       <module name="dev" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
+      <option name="SDK_HOME" value="C:\Code\School\SADNA\Workshop-On-Software-Engineering-Project-2019\dev\venv\Scripts\python.exe" />
       <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
@@ -232,7 +288,7 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.test" />
+      <item itemvalue="Python tests.unit tests" />
       <item itemvalue="Python tests.Acceptance Tests" />
     </list>
   </component>
@@ -255,54 +311,55 @@
       <workItem from="1553263682462" duration="44000" />
       <workItem from="1553430675344" duration="4836000" />
       <workItem from="1553534621760" duration="909000" />
+      <workItem from="1553543973248" duration="5470000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="test - 2019.03.21 at 20h 04m 14s.xml">
-      <configuration name="test" configurationId="tests" />
+    <history-entry file="unit_tests - 2019.03.25 at 23h 21m 37s.xml">
+      <configuration name="unit tests" configurationId="tests" />
     </history-entry>
-    <history-entry file="test - 2019.03.21 at 20h 04m 26s.xml">
-      <configuration name="test" configurationId="tests" />
+    <history-entry file="unit_tests - 2019.03.25 at 23h 23m 00s.xml">
+      <configuration name="unit tests" configurationId="tests" />
     </history-entry>
-    <history-entry file="test - 2019.03.21 at 20h 04m 33s.xml">
-      <configuration name="test" configurationId="tests" />
+    <history-entry file="unit_tests - 2019.03.25 at 23h 26m 12s.xml">
+      <configuration name="unit tests" configurationId="tests" />
     </history-entry>
-    <history-entry file="test - 2019.03.21 at 20h 08m 01s.xml">
-      <configuration name="test" configurationId="tests" />
-    </history-entry>
-    <history-entry file="test - 2019.03.21 at 20h 08m 10s.xml">
-      <configuration name="test" configurationId="tests" />
-    </history-entry>
-    <history-entry file="test - 2019.03.21 at 20h 08m 16s.xml">
-      <configuration name="test" configurationId="tests" />
-    </history-entry>
-    <history-entry file="test - 2019.03.22 at 11h 36m 37s.xml">
-      <configuration name="test" configurationId="tests" />
-    </history-entry>
-    <history-entry file="test - 2019.03.22 at 15h 13m 10s.xml">
-      <configuration name="test" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Acceptance_Tests - 2019.03.22 at 15h 14m 12s.xml">
+    <history-entry file="Acceptance_Tests - 2019.03.25 at 23h 27m 49s.xml">
       <configuration name="Acceptance Tests" configurationId="tests" />
     </history-entry>
-    <history-entry file="Acceptance_Tests - 2019.03.22 at 15h 16m 02s.xml">
+    <history-entry file="Acceptance_Tests - 2019.03.25 at 23h 28m 53s.xml">
+      <configuration name="Acceptance Tests" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Acceptance_Tests - 2019.03.25 at 23h 29m 33s.xml">
+      <configuration name="Acceptance Tests" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Acceptance_Tests - 2019.03.25 at 23h 29m 57s.xml">
+      <configuration name="Acceptance Tests" configurationId="tests" />
+    </history-entry>
+    <history-entry file="unit_tests - 2019.03.25 at 23h 30m 23s.xml">
+      <configuration name="unit tests" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Acceptance_Tests - 2019.03.25 at 23h 30m 32s.xml">
+      <configuration name="Acceptance Tests" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Acceptance_Tests - 2019.03.25 at 23h 31m 18s.xml">
       <configuration name="Acceptance Tests" configurationId="tests" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="14735000" />
+    <option name="totallyTimeSpent" value="20205000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1680" y="0" width="1920" height="1080" extended-state="6" />
+    <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49949342" visible="true" weight="0.16347177" />
-      <window_info id="Structure" order="1" sideWeight="0.5005066" side_tool="true" visible="true" weight="0.16347177" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.7309091" visible="true" weight="0.1659919" />
+      <window_info id="Structure" order="1" sideWeight="0.26909092" side_tool="true" visible="true" weight="0.1659919" />
       <window_info id="Favorites" order="2" sideWeight="0.5005066" side_tool="true" weight="0.16347177" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.4866785" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.5115453" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3997773" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -372,10 +429,29 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main/Domain/Store.py">
+    <entry file="file://$PROJECT_DIR$/AccepetanceTests.py" />
+    <entry file="file://$PROJECT_DIR$/main/hello_world_1.py" />
+    <entry file="file://$PROJECT_DIR$/AcceptanceTests/Test.py.orig">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main/Domain/Discount.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
-          <caret line="5" column="6" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="6" />
+          <caret line="5" column="23" selection-start-line="5" selection-start-column="23" selection-end-line="5" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main/Domain/GroceryCart.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="20" selection-start-line="11" selection-start-column="20" selection-end-line="11" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main/Domain/Item.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
         </state>
       </provider>
     </entry>
@@ -386,15 +462,71 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main/Domain/User.py">
+    <entry file="file://$PROJECT_DIR$/main/Domain/TradingSystem.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="30" selection-start-line="4" selection-start-column="30" selection-end-line="4" selection-end-column="30" />
+        <state relative-caret-position="289">
+          <caret line="17" column="20" lean-forward="true" selection-start-line="17" selection-start-column="20" selection-end-line="17" selection-end-column="20" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/AccepetanceTests.py" />
-    <entry file="file://$PROJECT_DIR$/main/hello_world_1.py" />
+    <entry file="file://$PROJECT_DIR$/main/Domain/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/settings.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main/Domain/User.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main/Domain/Guset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="20" selection-start-line="8" selection-start-column="20" selection-end-line="8" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main/Domain/Store.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="4" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main/Domain/TradingSystemFacade.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="27" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main/Domain/ManagementState.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="21" selection-start-line="3" selection-start-column="13" selection-end-line="3" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main/Service/ServiceFacade.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-769">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/Domain/test_user.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="10" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/AcceptanceTests/.pytest_cache/.gitignore">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/main/hello_world.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -402,72 +534,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main/Domain/TradingSystem.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="44">
-          <caret line="2" column="46" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/test_hello_world.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret selection-end-line="3" selection-end-column="17" />
+        <state relative-caret-position="51">
+          <caret line="3" selection-start-line="3" selection-end-line="4" selection-end-column="46" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/AcceptanceTests/Test.py.orig">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/settings.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main/Domain/Discount.py">
+    <entry file="file://$PROJECT_DIR$/AcceptanceTests/tests_hey.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="5" column="23" selection-start-line="5" selection-start-column="23" selection-end-line="5" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main/Domain/GroceryCart.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="363">
-          <caret line="11" column="20" selection-start-line="11" selection-start-column="20" selection-end-line="11" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main/Domain/Guset.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="8" column="20" selection-start-line="8" selection-start-column="20" selection-end-line="8" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main/Domain/Item.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/AcceptanceTests/Test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="9" column="30" selection-start-line="9" selection-start-column="30" selection-end-line="9" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main/Domain/ManagementState.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="10" column="9" selection-start-line="10" selection-start-column="9" selection-end-line="10" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main/Service/Facade.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1096">
-          <caret line="4" column="11" selection-start-line="4" selection-start-column="11" selection-end-line="4" selection-end-column="11" />
+        <state relative-caret-position="51">
+          <caret line="3" column="16" selection-start-line="3" selection-start-column="16" selection-end-line="3" selection-end-column="16" />
         </state>
       </provider>
     </entry>
