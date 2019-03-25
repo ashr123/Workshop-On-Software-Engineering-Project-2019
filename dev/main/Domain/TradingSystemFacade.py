@@ -1,9 +1,9 @@
-import TradingSystem
+from main.Domain.TradingSystem import TradingSystem
+
 
 class TradingSystemFacade(object):
-
 	def __init__(self):
-		self._tradingSystem = TradingSystem()
+		self._tradingSystem = TradingSystem()  # TODO
 
 	def login(self, username, password):
 		return False
@@ -14,8 +14,7 @@ class TradingSystemFacade(object):
 	def register(self, username, password):
 		return False
 
-	def searchItem(self, name=None, category=None, hashtag=None, fil_range=None, fil_rankItem=None, fil_category=None,
-	               fil_rankStore=None):
+	def searchItem(self, name=None, category=None, hashtag=None, fil_range=None, fil_rankItem=None, fil_category=None, fil_rankStore=None):
 		return False
 
 	def saveItem(self, id):
