@@ -2,28 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="28a88465-b6cb-487b-b13a-294f9c8c14cf" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AcceptanceTests/Test.py" beforeDir="false" afterPath="$PROJECT_DIR$/AcceptanceTests/Test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/ConsistencySystem/Facade.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/ConsistencySystem/Facade.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/Discount.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/Discount.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/GroceryCart.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/GroceryCart.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/Guset.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/Guset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/Item.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/Item.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/ManagementState.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/ManagementState.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/Member.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/Member.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/Purchase.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/Purchase.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/Rule.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/Rule.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/Store.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/Store.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/TradingSystem.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/TradingSystem.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/Domain/User.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Domain/User.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/MoneyCollectionSystem/Facade.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/MoneyCollectionSystem/Facade.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/ProductSupplySystem/Facade.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/ProductSupplySystem/Facade.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/Service/Facade.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/Service/Facade.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/hello_world.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/hello_world.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/manage.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_hello_world.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_hello_world.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/urls.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -46,8 +26,8 @@
       <file pinned="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main/Service/Facade.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1096">
-              <caret line="4" column="11" selection-start-line="4" selection-start-column="11" selection-end-line="4" selection-end-column="11" />
+            <state relative-caret-position="223">
+              <caret line="34" selection-start-line="34" selection-end-line="34" />
             </state>
           </provider>
         </entry>
@@ -107,9 +87,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="x" value="1680" />
-    <option name="width" value="1920" />
-    <option name="height" value="1080" />
+    <option name="width" value="1680" />
+    <option name="height" value="1050" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -128,23 +107,6 @@
               <item name="dev" type="b2602c69:ProjectViewProjectNode" />
               <item name="dev" type="462c0819:PsiDirectoryNode" />
               <item name="AcceptanceTests" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dev" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dev" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="Domain" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dev" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="Service" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -254,7 +216,7 @@
       <workItem from="1553247745777" duration="7945000" />
       <workItem from="1553263682462" duration="44000" />
       <workItem from="1553430675344" duration="4836000" />
-      <workItem from="1553534621760" duration="909000" />
+      <workItem from="1553534621760" duration="3626000" />
     </task>
     <servers />
   </component>
@@ -291,14 +253,14 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="14735000" />
+    <option name="totallyTimeSpent" value="17452000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1680" y="0" width="1920" height="1080" extended-state="6" />
+    <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49949342" visible="true" weight="0.16347177" />
-      <window_info id="Structure" order="1" sideWeight="0.5005066" side_tool="true" visible="true" weight="0.16347177" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49947754" visible="true" weight="0.18742369" />
+      <window_info id="Structure" order="1" sideWeight="0.5005225" side_tool="true" visible="true" weight="0.18742369" />
       <window_info id="Favorites" order="2" sideWeight="0.5005066" side_tool="true" weight="0.16347177" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -466,8 +428,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main/Service/Facade.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1096">
-          <caret line="4" column="11" selection-start-line="4" selection-start-column="11" selection-end-line="4" selection-end-column="11" />
+        <state relative-caret-position="223">
+          <caret line="34" selection-start-line="34" selection-end-line="34" />
         </state>
       </provider>
     </entry>
