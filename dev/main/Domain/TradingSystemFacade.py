@@ -2,6 +2,8 @@ from main.Domain.TradingSystem import TradingSystem
 from main.Domain import Member
 from main.Domain.TradingSystemException import *
 
+from dev.main.Domain.TradingSystemException import UserAlreadyExistException
+
 
 class TradingSystemFacade(object):
 	def __init__(self):
