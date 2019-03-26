@@ -1,4 +1,5 @@
 class TradingSystem(object):
+
 	def __init__(self, users, managers, stores):
 		self._users = users
 		self._stores = stores
