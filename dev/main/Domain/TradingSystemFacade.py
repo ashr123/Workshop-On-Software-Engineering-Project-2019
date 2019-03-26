@@ -1,12 +1,17 @@
+from .TradingSystem import TradingSystem
 
 class TradingSystemFacade(object):
 	def __init__(self):
+		self._tradingSystem =TradingSystem()
 		pass
 
 	def login(self, username, password):
 		return False
 
 	def logout(self):
+		return False
+
+	def initiateSession(self):
 		return False
 
 	def register(self, username, password):
