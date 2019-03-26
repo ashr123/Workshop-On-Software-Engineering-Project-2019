@@ -1,8 +1,4 @@
 class TradingSystem(object):
-
-
-
-
 	def __init__(self, users, managers, stores):
 		self._users = users
 		self._stores = stores
@@ -12,7 +8,7 @@ class TradingSystem(object):
 		return _users.get(session_id)
 
 	def genarate_id(self):
-		return len(_users)+1
+		return len(_users) + 1
 
 	def search(self, keyword):
 		return False

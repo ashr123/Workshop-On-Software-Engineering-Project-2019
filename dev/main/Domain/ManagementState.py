@@ -1,5 +1,4 @@
 class StoreManager(object):
-
 	def __init__(self, isOwner, permissions):
 		self._isOwner = isOwner
 		self._permissions = permissions
