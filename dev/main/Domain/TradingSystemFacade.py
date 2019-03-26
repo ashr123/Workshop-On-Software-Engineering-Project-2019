@@ -1,9 +1,7 @@
-from main.Domain.TradingSystem import TradingSystem
-
 
 class TradingSystemFacade(object):
 	def __init__(self):
-		self._tradingSystem = TradingSystem()  # TODO
+		pass
 
 	def login(self, username, password):
 		return False
