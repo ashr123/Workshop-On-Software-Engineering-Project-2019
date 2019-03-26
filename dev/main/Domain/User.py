@@ -10,4 +10,4 @@ class User(object):
 		return False
 
 	def watchGC(self):
-		return False
+		return str(self._groceryCarts)

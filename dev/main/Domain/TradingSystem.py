@@ -5,10 +5,10 @@ class TradingSystem(object):
 		self._managers = managers
 
 	def get_user(self, session_id):
-		return _users.get(session_id)
+		return "h"
 
 	def genarate_id(self):
-		return len(_users) + 1
+		return  "l"
 
 	def search(self, keyword):
 		return False

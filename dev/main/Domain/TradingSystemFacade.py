@@ -1,9 +1,13 @@
 from main.Domain.TradingSystem import TradingSystem
 
-
 class TradingSystemFacade(object):
 	def __init__(self):
+		#self._tradingSystem = None
 		self._tradingSystem = TradingSystem()  # TODO
+
+
+	def initateSession(self):
+		return  self._tradingSystem.genarate_id()
 
 	def login(self, username, password):
 		return False
@@ -20,8 +24,9 @@ class TradingSystemFacade(object):
 	def saveItem(self, id):
 		return False
 
-	def watchCart(self):
-		return False
+	def watchCart(self, sessionId):
+		user = self._tradingSystem.get_user(sessionId)
+		return  user.watchGC()
 
 	def removeItemFromCart(self, id):
 		return False
