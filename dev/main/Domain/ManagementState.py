@@ -1,4 +1,11 @@
+from enum import Enum, auto
+
+
 class ManagementState(object):
+	class Premitions(Enum):
+		PRE1 = auto()
+		PRE2 = auto()
+
 	def __init__(self, isOwner, permissions,store_name):
 		self._isOwner = isOwner
 		self._permissions = permissions
