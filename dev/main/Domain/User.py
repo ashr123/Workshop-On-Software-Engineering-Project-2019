@@ -1,6 +1,5 @@
 class User(object):
-	def __init__(self, groceryCarts, tradingSystem):
-		self._groceryCarts = groceryCarts
+	def __init__(self, tradingSystem):
 		self._tradingSystem = tradingSystem
 
 	def buyItem(self, item):
