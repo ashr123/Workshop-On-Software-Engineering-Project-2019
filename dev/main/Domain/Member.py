@@ -18,7 +18,8 @@ class Member(User):
 		return False
 
 	def openStore(self, name):
-		state = ManagementState(isOwner=)
+		pass
+		#state = ManagementState(isOwner=)
 
 	def add_manager(self, store_name, member_name):
 		storeInd = filter(lambda s_m: s_m.store_name == store_name, self._storesManaged_states)
