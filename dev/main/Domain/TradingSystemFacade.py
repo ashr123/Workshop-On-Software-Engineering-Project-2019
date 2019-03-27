@@ -20,8 +20,12 @@ class TradingSystemFacade(object):
 		except PermissionException as e:
 			return False
 
-	def logout(self):
-		return False
+	def logout(self,sessionId):
+		try:
+			self._tradingSystem.logout(sessionId)
+			return True
+		except PermissionException as e:
+			return False
 
 	def register(self, sessionId, username, password):
 		try:

@@ -41,14 +41,22 @@ class TradingSystem(object):
 			raise UserAlreadyExistException(message="the user {} is already registered".format(username))
 		if
 		self._members[session_id] = Member(username)  # TODO - handle security
-		Secutity.add_user_password(username,password)
 
 	def login(self, session_id: int, username: str, password: str) -> bool:
 		if not username in map(lambda m: m.name, self._members):
 			raise PermissionException(message="the user {} is not a member !".format(username))
-
-		if not Secutity.verify(username, password):
+		if not Security.verify(username, password):
 			raise PermissionException(message="the user {} can not login !".format(username))
-		new_logged_in_member = Member(self.get_user(session_id))
+		try_to_log_in = self.get_user(session_id)
+		if not isinstance(try_to_log_in,Guest):
+			raise PermissionException(message="the user {} already login !".format(username))
+		new_logged_in_member =Member(try_to_log_in)
 		self._users[username] = new_logged_in_member
+		return True
+
+	def logout(self, session_id: int) -> bool:
+		try_to_logout = self.get_user(session_id)
+		if not isinstance(try_to_logout,Member):
+			raise PermissionException(message="this user is not login !")
+		self._users.pop(try_to_logout.name)
 		return True
