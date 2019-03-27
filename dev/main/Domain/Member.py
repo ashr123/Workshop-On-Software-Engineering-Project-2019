@@ -21,6 +21,10 @@ class Member(User):
 	def stores_managed_states(self):
 		return self._storesManaged_states
 
+	@property
+	def get_guest(self):
+		return self._guest
+
 	def logout(self):
 		return False
 

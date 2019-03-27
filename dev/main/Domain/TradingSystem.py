@@ -1,6 +1,5 @@
 from main.security.Security import Security
-from .TradingSystemException import UserAlreadyExistException
-from .TradingSystemException import PermissionException
+from .TradingSystemException import UserAlreadyExistException, PermissionException, RegistrationExeption
 from main.security.Security import Security
 from .Guset import Guest
 from .Member import Member
@@ -14,10 +13,14 @@ class TradingSystem(object):
 	_members: List[Member] = []
 	_stores: List[Store] = []
 
+	@property
+	def get_members(self):
+		return TradingSystem._members
+
 	@staticmethod
 	def get_user(session_id: int) -> Union[Guest, Member]:
 		return TradingSystem._users[session_id]
-	
+
 	@staticmethod
 	def get_user_if_member(session_id: int) -> Optional[Member]:
 		user: Union[Guest, Member] = TradingSystem.get_user(session_id)
@@ -46,15 +49,17 @@ class TradingSystem(object):
 		return False
 
 	@staticmethod
-	def register_member(session_id: int, username: str, password: str) -> bool:
+	def register_member(session_id: int, username: str, password: str) -> True:
 		if username in map(lambda m: m.name, TradingSystem._members):
-			raise UserAlreadyExistException(message="the user {} is already registered".format(username))
-		if Security.contains(username):
-			return False
-		Security.add_user_password(username=username, password=password)
+			raise RegistrationExeption(message="the user {} is already registered".format(username))
+		if not TradingSystem._users[session_id].register(username=username, password=password):
+			raise RegistrationExeption(message="the username or password wrong")
 		if TradingSystem._users[session_id] is not Guest:
-			return False
-		TradingSystem._users[session_id] = TradingSystem._members[session_id] = Member(name=username, guest=TradingSystem._users[session_id])
+			raise RegistrationExeption(message="user {} already logged in".format(username))
+		TradingSystem._users[session_id] = TradingSystem._members[session_id] = Member(name=username,
+		                                                                               guest=TradingSystem._users[
+			                                                                               session_id])
+		return True
 
 	@staticmethod
 	def open_store(creator: Member, name: str, desc: str):
@@ -64,19 +69,19 @@ class TradingSystem(object):
 	def login(session_id: int, username: str, password: str) -> bool:
 		if username not in map(lambda m: m.name, TradingSystem._members):
 			raise PermissionException(message="the user {} is not a member !".format(username))
-		if not Security.verify(username, password):
-			raise PermissionException(message="the user {} can not login !".format(username))
 		try_to_log_in = TradingSystem.get_user(session_id)
-		if not isinstance(try_to_log_in,Guest):
+		if not isinstance(try_to_log_in, Guest):
 			raise PermissionException(message="the user {} already login !".format(username))
-		new_logged_in_member = TradingSystem.get_member(member_name=username)
+		new_logged_in_member: Optional[Member] = TradingSystem.get_member(member_name=username)
+		if not new_logged_in_member.login(username=username, password=password):
+			raise PermissionException(message="wrong password !".format(username))
 		TradingSystem._users[session_id] = new_logged_in_member
 		return True
 
 	@staticmethod
 	def logout(session_id: int) -> bool:
-		try_to_logout = TradingSystem.get_user_if_member(session_id)
+		try_to_logout: Optional[Member] = TradingSystem.get_user_if_member(session_id)
 		if try_to_logout is None:
 			raise PermissionException(message="this user is not logged in!")
-		TradingSystem._users.pop(try_to_logout.name)
+		TradingSystem._users[session_id] = try_to_logout.get_guest()
 		return True
