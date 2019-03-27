@@ -263,3 +263,5 @@ $RECYCLE.BIN/
 
 dev/SADNA.egg-info
 dev/venv
+/dev/.idea/dev.iml
+/dev/.idea/misc.xml
