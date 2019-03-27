@@ -37,4 +37,5 @@ class TradingSystem(object):
 	def register_member(self, session_id: int, username: str, password: str) -> bool:
 		if username in map(lambda m: m.name, self._members):
 			raise UserAlreadyExistException(message="the user {} is already registered".format(username))
+		if
 		self._members[session_id] = Member(username)  # TODO - handle security
