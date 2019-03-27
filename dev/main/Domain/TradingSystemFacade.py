@@ -1,17 +1,13 @@
-from main.Domain.TradingSystem import TradingSystem
-from main.Domain import Member
-from main.Domain.TradingSystemException import *
+from .TradingSystem import TradingSystem
+from .Member import Member
+from .TradingSystemException import *
 
 from dev.main.Domain.TradingSystemException import UserAlreadyExistException
 
 
 class TradingSystemFacade(object):
-	def __init__(self):
-		# self._tradingSystem = None
-		self._tradingSystem = TradingSystem()  # TODO
-
 	def initateSession(self):
-		return self._tradingSystem.generate_id()
+		return TradingSystem.generate_id()
 
 	def login(self,sessionId, username, password):
 		try:
@@ -29,21 +25,20 @@ class TradingSystemFacade(object):
 
 	def register(self, sessionId, username, password):
 		try:
-			self._tradingSystem.register_member(sessionId, username, password)
+			TradingSystem.register_member(sessionId, username, password)
 			return True
 		except UserAlreadyExistException as e:
 			return False
 
-	def searchItem(self, name=None, category=None, hashtag=None, fil_range=None, fil_rankItem=None, fil_category=None,
-	               fil_rankStore=None):
+	def searchItem(self, name=None, category=None, hashtag=None, fil_range=None, fil_rankItem=None, fil_category=None, fil_rankStore=None):
 		return False
 
 	def saveItem(self, id):
 		return False
 
 	def watchCart(self, sessionId):
-		user = self._tradingSystem.get_user(sessionId)
-		return user.watchGC()
+		user = TradingSystem.get_user(sessionId)
+		return user.watch_gc()
 
 	def removeItemFromCart(self, id):
 		return False
@@ -60,15 +55,15 @@ class TradingSystemFacade(object):
 	def pay(self, payemnt_details, address):
 		return False
 
-	def addStore(self, sessionId, name, desc):
+	def add_store(self, session_id: int, name: str, desc: str) -> bool:
 		try:
-			member = self._tradingSystem.getUser(sessionId)
-			if not isinstance(member, Member):
-				raise GusetCannotOpenStoreException()
-			member.openStore()
+			member: Member = TradingSystem.get_user_if_member(session_id)
+			if member is None:
+				raise GuestCannotOpenStoreException("User {} has no permission to open a store".format(name))
+			member.open_store(name=name, desc=desc)
 		except UserAlreadyHasStoreException as e:
 			return False
-		except GusetCannotOpenStoreException as e:
+		except GuestCannotOpenStoreException as e:
 			return False
 
 	def addItemToStore(self, storeId, itemName, desc, price, amount):

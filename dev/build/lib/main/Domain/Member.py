@@ -28,7 +28,7 @@ class Member(User):
 		if len(storeInd) == 0:
 			raise PermissionException("{} doesn't have permissions to add manager to {}".format(self.name, store_name))
 		state = storeInd[0]
-		if not state.isOwner:
+		if not state.is_owner:
 			raise PermissionException("member name {} is not owner of the store:  !".format(self._name))
 		new_owner =  self._tradingSystem.get_member(member_name)
 		if not new_owner == None:

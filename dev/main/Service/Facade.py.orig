@@ -40,7 +40,7 @@ class Facade(object):
     def pay(self, payemnt_details, address):
         return False
 
-    def addStore(self, name):
+    def add_store(self, name):
         return False
 
     def addItemToStore(self, storeId):
@@ -52,16 +52,16 @@ class Facade(object):
     def changeItemInStore(self, id, storeId, field, value):
         return False
 
-    def addOwner(self, ownerId, storeId):
+    def add_owner(self, ownerId, storeId):
         return False
 
-    def removeOwner(self, ownerId, storeId):
+    def remove_owner(self, ownerId, storeId):
         return False
 
-    def addManager(self, ownerId, storeId, permissions):
+    def add_manager(self, ownerId, storeId, permissions):
         return False
 
-    def removeManager(self, ownerId, storeId):
+    def remove_manager(self, ownerId, storeId):
         return False
 
     def removeUser(self, id):

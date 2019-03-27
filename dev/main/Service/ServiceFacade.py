@@ -45,7 +45,7 @@ class Sercive(object):
 		return self._domainFacade.pay(sessionId, payemnt_details, address)
 
 	def addStore(self, sessionId, name):
-		return self._domainFacade.addStore(sessionId, name)
+		return self._domainFacade.add_store(sessionId, name)
 
 	def addItemToStore(self, sessionId, storeId):
 		return self._domainFacade.addItemToStore(sessionId, storeId)

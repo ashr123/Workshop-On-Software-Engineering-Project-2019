@@ -1,3 +1,4 @@
+from main.security.Security import Security
 from .TradingSystemException import UserAlreadyExistException
 from .TradingSystemException import PermissionException
 from main.security.Security import Security
@@ -5,58 +6,77 @@ from .Guset import Guest
 from .Member import Member
 from .Store import Store
 from .User import User
-from typing import *
+from typing import Union, Dict, List, Optional
 
 
 class TradingSystem(object):
+	_users: Dict[int, Union[Member, Guest]] = {}
+	_members: List[Member] = []
+	_stores: List[Store] = []
 
-	def __init__(self):
-		self._users: Dict[int, User] = {}
-		self._members: List[Member] = []
-		self._stores: List[Store] = []
+	@staticmethod
+	def get_user(session_id: int) -> Union[Guest, Member]:
+		return TradingSystem._users[session_id]
+	
+	@staticmethod
+	def get_user_if_member(session_id: int) -> Optional[Member]:
+		user: Union[Guest, Member] = TradingSystem.get_user(session_id)
+		if user is Member:
+			return user
 
-	def get_user(self, session_id: int) -> User:
-		return self._users[session_id]
-
-	def get_member(self, member_name: str) -> Optional[Member]:
-		if member_name in map(lambda member: member.name, self._members):
-			return list(filter(lambda member: member.name == member_name, self._members))[0]
+	@staticmethod
+	def get_member(member_name: str) -> Optional[Member]:
+		if member_name in map(lambda member: member.name, TradingSystem._members):
+			return list(filter(lambda member: member.name == member_name, TradingSystem._members))[0]
 		return None
 
-	def generate_id(self) -> int:
+	@staticmethod
+	def generate_id() -> int:
 		"""
 		Generates new session ID
 		:rtype: int
 		:return: The new ID
 		"""
-		new_session_id: int = len(self._users)
-		self._users[new_session_id] = Guest(tradingSystem=self)
+		new_session_id: int = len(TradingSystem._users)
+		TradingSystem._users[new_session_id] = Guest()
 		return new_session_id
 
-	def search(self, keyword):
+	@staticmethod
+	def search(keyword):
 		return False
 
-	def register_member(self, session_id: int, username: str, password: str) -> bool:
-		if username in map(lambda m: m.name, self._members):
+	@staticmethod
+	def register_member(session_id: int, username: str, password: str) -> bool:
+		if username in map(lambda m: m.name, TradingSystem._members):
 			raise UserAlreadyExistException(message="the user {} is already registered".format(username))
-		if
-		self._members[session_id] = Member(username)  # TODO - handle security
+		if Security.contains(username):
+			return False
+		Security.add_user_password(username=username, password=password)
+		if TradingSystem._users[session_id] is not Guest:
+			return False
+		TradingSystem._users[session_id] = TradingSystem._members[session_id] = Member(name=username, guest=TradingSystem._users[session_id])
 
-	def login(self, session_id: int, username: str, password: str) -> bool:
-		if not username in map(lambda m: m.name, self._members):
+	@staticmethod
+	def open_store(creator: Member, name: str, desc: str):
+		pass
+
+	@staticmethod
+	def login(session_id: int, username: str, password: str) -> bool:
+		if username not in map(lambda m: m.name, TradingSystem._members):
 			raise PermissionException(message="the user {} is not a member !".format(username))
 		if not Security.verify(username, password):
 			raise PermissionException(message="the user {} can not login !".format(username))
-		try_to_log_in = self.get_user(session_id)
+		try_to_log_in = TradingSystem.get_user(session_id)
 		if not isinstance(try_to_log_in,Guest):
 			raise PermissionException(message="the user {} already login !".format(username))
-		new_logged_in_member =Member(try_to_log_in)
-		self._users[username] = new_logged_in_member
+		new_logged_in_member = TradingSystem.get_member(member_name=username)
+		TradingSystem._users[session_id] = new_logged_in_member
 		return True
 
-	def logout(self, session_id: int) -> bool:
-		try_to_logout = self.get_user(session_id)
-		if not isinstance(try_to_logout,Member):
-			raise PermissionException(message="this user is not login !")
-		self._users.pop(try_to_logout.name)
+	@staticmethod
+	def logout(session_id: int) -> bool:
+		try_to_logout = TradingSystem.get_user_if_member(session_id)
+		if try_to_logout is None:
+			raise PermissionException(message="this user is not logged in!")
+		TradingSystem._users.pop(try_to_logout.name)
 		return True

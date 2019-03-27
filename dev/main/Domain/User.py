@@ -1,12 +1,9 @@
 class User(object):
-	def __init__(self, tradingSystem):
-		self._tradingSystem = tradingSystem
-
-	def buyItem(self, item):
+	def buy_item(self, item):
 		return False
 
-	def saveItemInGC(self, item):
+	def save_item_in_gc(self, item):
 		return False
 
-	def watchGC(self):
-		return str(self._groceryCarts)
+	def watch_gc(self):
+		return False

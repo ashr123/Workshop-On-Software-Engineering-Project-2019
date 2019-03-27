@@ -5,7 +5,7 @@
 # 	facade = TradingSystemFacade()
 # 	ownerSession = facade.initateSession()
 # 	facade.register(ownerSession, "roy", "123456")
-# 	facade.addStore(ownerSession, "RoysStore", "niceStore")
+# 	facade.add_store(ownerSession, "RoysStore", "niceStore")
 # 	facade.addItemToStore(ownerSession, storeId="RoysStore", itemName="bamba", desc="bamba is a food", price=12,
 # 	                      amount=2)
 # 	sessionId = facade.initiateSession()
