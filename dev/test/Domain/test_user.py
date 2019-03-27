@@ -1,4 +1,4 @@
-from main.Domain.TradingSystemFacade import TradingSystemFacade
+from main.Domain.DomainFacade import DomainFacade
 
 
 def test_login():

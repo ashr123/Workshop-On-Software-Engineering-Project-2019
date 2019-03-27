@@ -2,10 +2,8 @@ from .TradingSystem import TradingSystem
 from .Member import Member
 from .TradingSystemException import *
 
-from dev.main.Domain.TradingSystemException import UserAlreadyExistException
 
-
-class TradingSystemFacade(object):
+class DomainFacade(object):
 	def initateSession(self):
 		return TradingSystem.generate_id()
 
@@ -18,7 +16,7 @@ class TradingSystemFacade(object):
 
 	def logout(self,sessionId):
 		try:
-			self._tradingSystem.logout(sessionId)
+			TradingSystem.logout(sessionId)
 			return True
 		except PermissionException as e:
 			return False

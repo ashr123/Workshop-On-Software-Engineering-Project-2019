@@ -1,5 +1,6 @@
 from typing import List
 
+from main.Domain.Store import Store
 from .Guset import Guest
 from .TradingSystem import TradingSystem
 from .User import User
@@ -34,8 +35,10 @@ class Member(User):
 	def watch_gc(self):  # TODO
 		return False
 
-	def open_store(self, name: str, desc: str) -> bool:
-		TradingSystem.open_store()
+	def add_managment_state(self, is_owner: bool, permissions_list: List[ManagementState.Permissions],
+	                        store: Store) -> None:
+		self._storesManaged_states.append(
+			ManagementState(is_owner=is_owner, permissions_list=permissions_list, store=store))
 
 	def add_manager(self, store_name: str, member_name: str, permission_list: List[ManagementState.Permissions]):
 		store_ind = list(filter(lambda s_m: s_m.store_name == store_name, self._storesManaged_states))

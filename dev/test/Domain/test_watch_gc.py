@@ -1,8 +1,8 @@
-# from main.Domain.TradingSystemFacade import TradingSystemFacade
+# from main.Domain.DomainFacade import DomainFacade
 #
 #
 # def test_watch_gc():
-# 	facade = TradingSystemFacade()
+# 	facade = DomainFacade()
 # 	ownerSession = facade.initateSession()
 # 	facade.register(ownerSession, "roy", "123456")
 # 	facade.add_store(ownerSession, "RoysStore", "niceStore")

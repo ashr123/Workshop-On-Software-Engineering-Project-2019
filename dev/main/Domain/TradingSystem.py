@@ -1,5 +1,7 @@
+from main.Domain.ManagementState import ManagementState
 from main.security.Security import Security
-from .TradingSystemException import UserAlreadyExistException, PermissionException, RegistrationExeption
+from .TradingSystemException import UserAlreadyExistException, PermissionException, RegistrationExeption, \
+	OpenStoreExeption
 from main.security.Security import Security
 from .Guset import Guest
 from .Member import Member
@@ -49,7 +51,7 @@ class TradingSystem(object):
 		return False
 
 	@staticmethod
-	def register_member(session_id: int, username: str, password: str) -> True:
+	def register_member(session_id: int, username: str, password: str) -> None:
 		if username in map(lambda m: m.name, TradingSystem._members):
 			raise RegistrationExeption(message="the user {} is already registered".format(username))
 		if not TradingSystem._users[session_id].register(username=username, password=password):
@@ -59,18 +61,25 @@ class TradingSystem(object):
 		TradingSystem._users[session_id] = TradingSystem._members[session_id] = Member(name=username,
 		                                                                               guest=TradingSystem._users[
 			                                                                               session_id])
-		return True
 
 	@staticmethod
-	def open_store(creator: Member, name: str, desc: str):
-		pass
+	def open_store(session_id: int, store_name: str, desc: str,
+	               permissions_list: List[ManagementState.Permissions]) -> None:  # TODO take care of permissions_list
+		if store_name in map(lambda s: s.get_name(), TradingSystem._stores):
+			raise OpenStoreExeption("store {} already exists".format(store_name))
+		user: Optional[Member] = TradingSystem.get_user_if_member(session_id)
+		if user is not Member:
+			raise OpenStoreExeption(message="you are not a member!")
+		store: Store = Store(name=store_name, creator=user, description=desc)
+		TradingSystem._stores.append(store)
+		user.add_managment_state(is_owner=True, permissions_list=permissions_list, store=store)
 
 	@staticmethod
 	def login(session_id: int, username: str, password: str) -> bool:
 		if username not in map(lambda m: m.name, TradingSystem._members):
 			raise PermissionException(message="the user {} is not a member !".format(username))
 		try_to_log_in = TradingSystem.get_user(session_id)
-		if not isinstance(try_to_log_in, Guest):
+		if try_to_log_in is not Guest:
 			raise PermissionException(message="the user {} already login !".format(username))
 		new_logged_in_member: Optional[Member] = TradingSystem.get_member(member_name=username)
 		if not new_logged_in_member.login(username=username, password=password):
