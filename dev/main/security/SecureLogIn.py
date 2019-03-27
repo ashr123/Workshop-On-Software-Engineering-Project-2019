@@ -12,7 +12,7 @@ class SecureLogIn(object):
 		return pbkdf2_sha512.verify(password, self.passwords[user_name])
 
 
-# Example
+#
 # sec = SecureLogIn()
 # sec.add_user_password("Roy", "BabaYaga")
 # print(sec.passwords)

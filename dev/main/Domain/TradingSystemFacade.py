@@ -13,11 +13,11 @@ class TradingSystemFacade(object):
 	def initateSession(self):
 		return self._tradingSystem.generate_id()
 
-	def login(self, username, password):
+	def login(self,sessionId, username, password):
 		try:
-			self._tradingSystem.l(sessionId, username, password)
+			self._tradingSystem.login(sessionId, username, password)
 			return True
-		except UserAlreadyExistException as e:
+		except PermissionException as e:
 			return False
 
 	def logout(self):
