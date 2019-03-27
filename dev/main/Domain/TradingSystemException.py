@@ -26,3 +26,8 @@ class AnomalyException(TradingSystemException):
 class PermissionException(TradingSystemException):
 	def __init__(self, message, errors=None):
 		super().__init__(message, errors)
+
+
+class RegistrationExeption(TradingSystemException):
+	def __init__(self, message, errors=None):
+		super().__init__(message, errors)

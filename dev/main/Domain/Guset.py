@@ -1,5 +1,9 @@
 from main.Domain.GroceryCart import GroceryCart
 from main.Domain.User import User
+from main.security.Security import Security
+from .TradingSystemException import UserAlreadyExistException
+from .TradingSystemException import PermissionException
+from .TradingSystem import TradingSystem
 
 
 class Guest(User):
@@ -7,12 +11,13 @@ class Guest(User):
 		super().__init__()
 		self._groceryCarts = GroceryCart()
 
-	@property
-	def get_trading_system(self):
-		return
-
 	def login(self, username, password):
-		return False
+		return Security.verify(username, password)
+
+	def register(self, username, password) -> bool:
+		if Security.contains(username):
+			return False
+		return Security.add_user_password(username=username, password=password)
 
 	def watch_gc(self):
 		return str(self._groceryCarts)

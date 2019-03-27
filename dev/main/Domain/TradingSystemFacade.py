@@ -11,7 +11,7 @@ class TradingSystemFacade(object):
 
 	def login(self,sessionId, username, password):
 		try:
-			self._tradingSystem.login(sessionId, username, password)
+			TradingSystem.login(sessionId, username, password)
 			return True
 		except PermissionException as e:
 			return False
@@ -27,7 +27,7 @@ class TradingSystemFacade(object):
 		try:
 			TradingSystem.register_member(sessionId, username, password)
 			return True
-		except UserAlreadyExistException as e:
+		except RegistrationExeption as e:
 			return False
 
 	def searchItem(self, name=None, category=None, hashtag=None, fil_range=None, fil_rankItem=None, fil_category=None, fil_rankStore=None):
