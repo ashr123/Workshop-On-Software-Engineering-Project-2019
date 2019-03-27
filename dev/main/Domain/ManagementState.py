@@ -1,7 +1,15 @@
-class StoreManager(object):
-	def __init__(self, isOwner, permissions):
+from enum import Enum, auto
+
+
+class ManagementState(object):
+	class Premitions(Enum):
+		PRE1 = auto()
+		PRE2 = auto()
+
+	def __init__(self, isOwner, permissions,store_name):
 		self._isOwner = isOwner
 		self._permissions = permissions
+		self._store_name = store_name
 
 	@property
 	def isOwner(self):
@@ -10,6 +18,10 @@ class StoreManager(object):
 	@property
 	def permissions(self):
 		return self._permissions
+
+	@property
+	def store_name(self):
+		return self._store_name
 
 	def addItem(self):
 		return False

@@ -3,10 +3,10 @@ class GroceryCart(object):
 		self._items = items
 
 	def addItem(self, itemId):
-		return False
+		self._items.add(itemId)
 
 	def removeItem(self, itemId):
-		return False
+		self._items.remove(itemId)
 
 	def editItem(self, itemId):
 		return False

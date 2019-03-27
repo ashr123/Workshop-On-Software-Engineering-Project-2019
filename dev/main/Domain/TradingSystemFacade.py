@@ -1,9 +1,17 @@
 from main.Domain.TradingSystem import TradingSystem
+from main.Domain import Member
+from main.Domain.TradingSystemException import *
+
+from dev.main.Domain.TradingSystemException import UserAlreadyExistException
 
 
 class TradingSystemFacade(object):
 	def __init__(self):
+		# self._tradingSystem = None
 		self._tradingSystem = TradingSystem()  # TODO
+
+	def initateSession(self):
+		return self._tradingSystem.genarate_id()
 
 	def login(self, username, password):
 		return False
@@ -11,17 +19,23 @@ class TradingSystemFacade(object):
 	def logout(self):
 		return False
 
-	def register(self, username, password):
-		return False
+	def register(self, sessionId, username, password):
+		try:
+			self._tradingSystem.registerMember(sessionId, username, password)
+			return True
+		except UserAlreadyExistException as e:
+			return False
 
-	def searchItem(self, name=None, category=None, hashtag=None, fil_range=None, fil_rankItem=None, fil_category=None, fil_rankStore=None):
+	def searchItem(self, name=None, category=None, hashtag=None, fil_range=None, fil_rankItem=None, fil_category=None,
+	               fil_rankStore=None):
 		return False
 
 	def saveItem(self, id):
 		return False
 
-	def watchCart(self):
-		return False
+	def watchCart(self, sessionId):
+		user = self._tradingSystem.get_user(sessionId)
+		return user.watchGC()
 
 	def removeItemFromCart(self, id):
 		return False
@@ -38,8 +52,16 @@ class TradingSystemFacade(object):
 	def pay(self, payemnt_details, address):
 		return False
 
-	def addStore(self, name, desc):
-		return False
+	def addStore(self, sessionId, name, desc):
+		try:
+			member = self._tradingSystem.getUser(sessionId)
+			if not isinstance(member, Member):
+				raise GusetCannotOpenStoreException()
+			member.openStore()
+		except UserAlreadyHasStoreException as e:
+			return False
+		except GusetCannotOpenStoreException as e:
+			return False
 
 	def addItemToStore(self, storeId, itemName, desc, price, amount):
 		return False
@@ -67,3 +89,9 @@ class TradingSystemFacade(object):
 
 	def setup(self, masteruser, password):
 		return False
+
+	def addItemToCart(self, sessionId, itemId):
+		pass
+
+	def openStore(self, ownerSession, param):
+		pass
