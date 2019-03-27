@@ -14,7 +14,11 @@ class TradingSystemFacade(object):
 		return self._tradingSystem.genarate_id()
 
 	def login(self, username, password):
-		return False
+		try:
+			self._tradingSystem.l(sessionId, username, password)
+			return True
+		except UserAlreadyExistException as e:
+			return False
 
 	def logout(self):
 		return False
