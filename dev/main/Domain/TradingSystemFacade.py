@@ -9,11 +9,19 @@ class TradingSystemFacade(object):
 	def initateSession(self):
 		return TradingSystem.generate_id()
 
-	def login(self, username, password):
-		return False
+	def login(self,sessionId, username, password):
+		try:
+			self._tradingSystem.login(sessionId, username, password)
+			return True
+		except PermissionException as e:
+			return False
 
-	def logout(self):
-		return False
+	def logout(self,sessionId):
+		try:
+			self._tradingSystem.logout(sessionId)
+			return True
+		except PermissionException as e:
+			return False
 
 	def register(self, sessionId, username, password):
 		try:
