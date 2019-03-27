@@ -5,5 +5,5 @@
 #     print("hey")
 #     ts =  TradingSystemFacade.TradingSystemFacade()
 #     sessionID = ts.initateSession()
-#     ts.addItem(sessionID, "123")
+#     ts.add_item(sessionID, "123")
 #     assert "123, bamba" in ts.watchCart()

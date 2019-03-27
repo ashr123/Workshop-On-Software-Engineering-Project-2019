@@ -35,7 +35,7 @@ class TradingSystemFacade(object):
 
 	def watchCart(self, sessionId):
 		user = self._tradingSystem.get_user(sessionId)
-		return user.watchGC()
+		return user.watch_gc()
 
 	def removeItemFromCart(self, id):
 		return False
@@ -56,11 +56,11 @@ class TradingSystemFacade(object):
 		try:
 			member = self._tradingSystem.getUser(sessionId)
 			if not isinstance(member, Member):
-				raise GusetCannotOpenStoreException()
+				raise GuestCannotOpenStoreException()
 			member.openStore()
 		except UserAlreadyHasStoreException as e:
 			return False
-		except GusetCannotOpenStoreException as e:
+		except GuestCannotOpenStoreException as e:
 			return False
 
 	def addItemToStore(self, storeId, itemName, desc, price, amount):

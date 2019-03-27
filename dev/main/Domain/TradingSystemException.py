@@ -13,7 +13,7 @@ class UserAlreadyHasStoreException(TradingSystemException):
 		super().__init__(message, errors)
 
 
-class GusetCannotOpenStoreException(TradingSystemException):
+class GuestCannotOpenStoreException(TradingSystemException):
 	def __init__(self, message, errors=None):
 		super().__init__(message, errors)
 
