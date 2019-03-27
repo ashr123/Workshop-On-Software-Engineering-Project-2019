@@ -1,40 +1,40 @@
 from .TradingSystemException import UserAlreadyExistException
-from .TradingSystemException import PermissionException
 from .Guset import Guest
 from .Member import Member
-from main.security import  SecureLogIn
+from .Store import Store
+from .User import User
+from typing import *
 
 
 class TradingSystem(object):
 
-    def __init__(self):
-        self._users = {}
-        self._members = []
-        self._stores = []
+	def __init__(self):
+		self._users: Dict[int, User] = {}
+		self._members: List[Member] = []
+		self._stores: List[Store] = []
 
-    def get_user(self, session_id):
-        return "h"
+	def get_user(self, session_id: int) -> User:
+		return self._users[session_id]
 
-    def get_member(self, member_name):
-        if member_name in map(lambda member: member.name, self._members):
-            return filter(lambda member: member.name == member_name, self._members)[0]
-        return None
+	def get_member(self, member_name: str) -> Optional[Member]:
+		if member_name in map(lambda member: member.name, self._members):
+			return list(filter(lambda member: member.name == member_name, self._members))[0]
+		return None
 
-    def genarate_id(self):
-        newSessionId = len(self._users)
-        self._users[newSessionId] = Guest(tradingSystem=self)
-        return newSessionId
+	def generate_id(self) -> int:
+		"""
+		Generates new session ID
+		:rtype: int
+		:return: The new ID
+		"""
+		new_session_id: int = len(self._users)
+		self._users[new_session_id] = Guest(tradingSystem=self)
+		return new_session_id
 
-    def search(self, keyword):
-        return False
+	def search(self, keyword):
+		return False
 
-    def registerMember(self, sessionId, username, password):
-        if username in map(lambda m: m.name, self._members):
-            raise UserAlreadyExistException(message="the user {} is already registered".format(username))
-        self._members[sessionId] = Member(username)  # TODO - handle security
-
-    def login(self, sessionId, username, password):
-        if not username in map(lambda m: m.name, self._members):
-            raise PermissionException(message="the user {} is not a member !".format(username))
-
-        self._members[sessionId] = Member(username)  # TODO - handle security
+	def register_member(self, session_id: int, username: str, password: str) -> bool:
+		if username in map(lambda m: m.name, self._members):
+			raise UserAlreadyExistException(message="the user {} is already registered".format(username))
+		self._members[session_id] = Member(username)  # TODO - handle security

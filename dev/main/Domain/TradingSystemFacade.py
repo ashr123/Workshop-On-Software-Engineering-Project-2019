@@ -11,7 +11,7 @@ class TradingSystemFacade(object):
 		self._tradingSystem = TradingSystem()  # TODO
 
 	def initateSession(self):
-		return self._tradingSystem.genarate_id()
+		return self._tradingSystem.generate_id()
 
 	def login(self, username, password):
 		try:
@@ -25,7 +25,7 @@ class TradingSystemFacade(object):
 
 	def register(self, sessionId, username, password):
 		try:
-			self._tradingSystem.registerMember(sessionId, username, password)
+			self._tradingSystem.register_member(sessionId, username, password)
 			return True
 		except UserAlreadyExistException as e:
 			return False
