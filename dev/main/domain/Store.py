@@ -2,7 +2,7 @@ from typing import List
 
 from .Item import Item
 from .Rule import Rule
-from .Member import Member
+from main.domain import Member
 
 
 class Store(object):
