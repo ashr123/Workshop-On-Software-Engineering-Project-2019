@@ -52,7 +52,7 @@ class ManagementState(object):
 		owner: Member.Member = TradingSystem.TradingSystem.get_member(member_name=member_name)
 		if len(list(filter(lambda state: state.store.name == self.store.name and state.is_owner, owner.stores_managed_states))) > 0:
 			raise PermissionException(message="you're already an owner of this store!")
-		owner.add_managment_state(is_owner=True, [])
+		# owner.add_managment_state(is_owner=True, [])
 		self.store.add_owner(owner=owner)
 		return False
 
