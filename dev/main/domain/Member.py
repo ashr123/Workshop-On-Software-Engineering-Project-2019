@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from main.domain import Store
 from main.domain.Permission import Permissions
@@ -20,15 +20,12 @@ class Member(User):
 		return self._name
 
 	@property
-	def stores_managed_states(self):
+	def stores_managed_states(self) -> List[ManagementState]:
 		return self._storesManaged_states
 
 	@property
 	def get_guest(self):
 		return self._guest
-
-	def get_state_of_store(self, store: Store) -> ManagementState:  # TODO implement
-		return list(filter(function))
 
 	def logout(self):  # TODO implement
 		return False
@@ -64,8 +61,8 @@ class Member(User):
 		return TradingSystem.TradingSystem.open_store(session_id=session_id, store_name=store_name, desc=desc,
 		                                              permissions_list=[])
 
-	def get_store_management_state(self, store_name: str) -> ManagementState:
-		management_states = list(filter(lambda ms: ms.store.name == store_name, self.stores_managed_states))
+	def get_store_management_state(self, store_name: str) -> Optional[ManagementState]:
+		management_states: List[ManagementState] = list(filter(lambda ms: ms.store.name == store_name, self.stores_managed_states))
 		if len(management_states) == 0:
 			return None
 		return management_states[0]
