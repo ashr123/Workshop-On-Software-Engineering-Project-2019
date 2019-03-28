@@ -1,7 +1,7 @@
 from main.Service.ServiceFacade import ServiceFacade
 
 
-class acceptanceTests(object):
+class test_acc(object):
 
 	def __init__(self):
 		self._serviceFacade = ServiceFacade()
