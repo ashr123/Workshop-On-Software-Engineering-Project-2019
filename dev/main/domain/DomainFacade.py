@@ -12,7 +12,7 @@ class DomainFacade(object):
 		return TradingSystem.generate_id()
 
 	@staticmethod
-	def login(session_id, username, password):
+	def login(session_id: int, username: str, password: str):
 		try:
 			TradingSystem.login(session_id, username, password)
 			return True
@@ -20,7 +20,7 @@ class DomainFacade(object):
 			return False
 
 	@staticmethod
-	def logout(session_id):
+	def logout(session_id: int):
 		try:
 			TradingSystem.logout(session_id)
 			return True
@@ -28,7 +28,7 @@ class DomainFacade(object):
 			return False
 
 	@staticmethod
-	def register(session_id, username, password):
+	def register(session_id: int, username: str, password: str):
 		try:
 			TradingSystem.register_member(session_id, username, password)
 			return True
@@ -36,37 +36,37 @@ class DomainFacade(object):
 			return False
 
 	@staticmethod
-	def search_item(name=None, category=None, hashtag=None, range_filter=None, item_rank_filter=None,
+	def search_item(name: str = None, category=None, hashtag=None, range_filter=None, item_rank_filter=None,
 	                category_filter=None, store_rank_filter=None):
 		return False
 
 	@staticmethod
-	def save_item(id):
+	def save_item(item_name: str):
 		return False
 
 	@staticmethod
-	def watch_cart(session_id):
+	def watch_cart(session_id: int):
 		user = TradingSystem.get_user(session_id)
 		return user.watch_gc()
 
 	@staticmethod
-	def removeItemFromCart(id):
+	def remove_item_from_cart(item_name: str):
 		return False
 
 	@staticmethod
-	def changeItemQuantityInCart(id):
+	def change_item_quantity_in_cart(item_name: str):
 		return False
 
 	@staticmethod
-	def buySingleItem(id):
+	def buy_single_item(item_name: str):
 		return False
 
 	@staticmethod
-	def buy_item_from_cart(ids):
+	def buy_item_from_cart(item_names: List[str]):
 		return False
 
 	@staticmethod
-	def pay(payment_details, address):
+	def pay(payment_details, address: str):
 		return False
 
 	@staticmethod
@@ -88,11 +88,11 @@ class DomainFacade(object):
 		return False
 
 	@staticmethod
-	def remove_item_from_store(id: int, store_name: str):
+	def remove_item_from_store(item_name: str, store_name: str):
 		return False
 
 	@staticmethod
-	def change_item_in_store(id: int, store_name: str, field: str, value: float):
+	def change_item_in_store(item_name: str, store_name: str, value: float):
 		return False
 
 	@staticmethod
@@ -112,7 +112,7 @@ class DomainFacade(object):
 		return False
 
 	@staticmethod
-	def remove_user(id: int):
+	def remove_user(session_id: int, user_to_remove: str):
 		return False
 
 	@staticmethod
@@ -134,7 +134,7 @@ class DomainFacade(object):
 	@staticmethod
 	def get_store(session_id: int, store_name: str) -> Store:
 		member = TradingSystem.get_user_if_member(session_id)
-		if member == None:
+		if member is None:
 			return None
 		store_indicator = list(filter(lambda ms: ms.store.name == store_name, member.stores_managed_states))
 		if len(store_indicator) == 0:

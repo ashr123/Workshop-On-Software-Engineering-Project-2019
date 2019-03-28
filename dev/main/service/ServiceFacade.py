@@ -30,13 +30,13 @@ class Sercive(object):
 		return self._domainFacade.watch_cart(sessionId)
 
 	def removeItemFromCart(self, sessionId, id):
-		return self._domainFacade.removeItemFromCart(sessionId, id)
+		return self._domainFacade.remove_item_from_cart(sessionId, id)
 
 	def changeItemQuantityInCart(self, sessionId, id, quantity):
-		return self._domainFacade.changeItemQuantityInCart(sessionId, id, quantity)
+		return self._domainFacade.change_item_quantity_in_cart(sessionId, id, quantity)
 
 	def buySingleItem(self, sessionId, id, paymentMethod):
-		return self._domainFacade.buySingleItem(sessionId, id, paymentMethod)
+		return self._domainFacade.buy_single_item(sessionId, id, paymentMethod)
 
 	def buyManyItems(self, sessionId, ids, paymentMethod):
 		return self._domainFacade.buyManyItems(sessionId, ids, paymentMethod)
