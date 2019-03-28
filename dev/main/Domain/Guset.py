@@ -3,7 +3,7 @@ from main.Domain.User import User
 from main.security.Security import Security
 from .TradingSystemException import UserAlreadyExistException
 from .TradingSystemException import PermissionException
-from .TradingSystem import TradingSystem
+from main.Domain import TradingSystem
 
 
 class Guest(User):
