@@ -1,10 +1,10 @@
-from main.Domain.ManagementState import ManagementState
-from main.Domain.Permission import Permissions
+from main.domain.ManagementState import ManagementState
+from main.domain.Permission import Permissions
 from main.security.Security import Security
 from .TradingSystemException import UserAlreadyExistException, PermissionException, RegistrationExeption, \
 	OpenStoreExeption
 from main.security.Security import Security
-from .Guset import Guest
+from .Guest import Guest
 from .Member import Member
 from .Store import Store
 from .User import User

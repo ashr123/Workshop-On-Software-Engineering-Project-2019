@@ -1,61 +1,75 @@
+from typing import List
+
 from .TradingSystem import TradingSystem
 from .Member import Member
 from .TradingSystemException import *
-from main.Domain import Store
+from main.domain import Store
 
 
 class DomainFacade(object):
-	def initateSession(self):
+	@staticmethod
+	def initiate_session():
 		return TradingSystem.generate_id()
 
-	def login(self, sessionId, username, password):
+	@staticmethod
+	def login(session_id, username, password):
 		try:
-			TradingSystem.login(sessionId, username, password)
+			TradingSystem.login(session_id, username, password)
 			return True
 		except PermissionException as e:
 			return False
 
-	def logout(self, sessionId):
+	@staticmethod
+	def logout(session_id):
 		try:
-			TradingSystem.logout(sessionId)
+			TradingSystem.logout(session_id)
 			return True
 		except PermissionException as e:
 			return False
 
-	def register(self, sessionId, username, password):
+	@staticmethod
+	def register(session_id, username, password):
 		try:
-			TradingSystem.register_member(sessionId, username, password)
+			TradingSystem.register_member(session_id, username, password)
 			return True
 		except RegistrationExeption as e:
 			return False
 
-	def searchItem(self, name=None, category=None, hashtag=None, fil_range=None, fil_rankItem=None, fil_category=None,
-	               fil_rankStore=None):
+	@staticmethod
+	def search_item(name=None, category=None, hashtag=None, range_filter=None, item_rank_filter=None, category_filter=None, store_rank_filter=None):
 		return False
 
-	def saveItem(self, id):
+	@staticmethod
+	def save_item(id):
 		return False
 
-	def watchCart(self, sessionId):
-		user = TradingSystem.get_user(sessionId)
+	@staticmethod
+	def watch_cart(session_id):
+		user = TradingSystem.get_user(session_id)
 		return user.watch_gc()
 
-	def removeItemFromCart(self, id):
+	@staticmethod
+	def removeItemFromCart(id):
 		return False
 
-	def changeItemQuantityInCart(self, id):
+	@staticmethod
+	def changeItemQuantityInCart(id):
 		return False
 
-	def buySingleItem(self, id):
+	@staticmethod
+	def buySingleItem(id):
 		return False
 
-	def buyItemFromCart(self, ids):
+	@staticmethod
+	def buy_item_from_cart(ids):
 		return False
 
-	def pay(self, payemnt_details, address):
+	@staticmethod
+	def pay(payment_details, address):
 		return False
 
-	def add_store(self, session_id: int, name: str, desc: str) -> bool:
+	@staticmethod
+	def add_store(session_id: int, name: str, desc: str) -> bool:
 		try:
 			member: Member = TradingSystem.get_user_if_member(session_id)
 			if member is None:
@@ -67,43 +81,56 @@ class DomainFacade(object):
 		except GuestCannotOpenStoreException as e:
 			return False
 
-	def addItemToStore(self, sessionId: int, store_name: str, itemName: str, desc: str, price: float, amount: int) -> bool:
+	@staticmethod
+	def add_item_to_store(session_id: int, store_name: str, itemName: str, desc: str, price: float, amount: int) -> bool:
 		return False
 
-	def removeItemFromStore(self, id, storeId):
+	@staticmethod
+	def remove_item_from_store(id: int, store_name: str):
 		return False
 
-	def changeItemInStore(self, id, storeId, field, value):
+	@staticmethod
+	def change_item_in_store(id: int, store_name: str, field: str, value: float):
 		return False
 
-	def addOwner(self, ownerId, storeId):
+	@staticmethod
+	def add_owner(owner_id: int, store_name: str):
 		return False
 
-	def removeOwner(self, ownerId, storeId):
+	@staticmethod
+	def remove_owner(owner_id: int, store_name: str):
 		return False
 
-	def addManager(self, ownerId, storeId, permissions):
+	@staticmethod
+	def add_manager(owner_id: int, store_name: str, permissions: List[str]):
 		return False
 
-	def removeManager(self, ownerId, storeId):
+	@staticmethod
+	def remove_manager(owner_id: int, store_name: str):
 		return False
 
-	def removeUser(self, id):
+	@staticmethod
+	def remove_user(id: int):
 		return False
 
-	def setup(self, masteruser, password):
+	@staticmethod
+	def setup(master_user, password):
 		return False
 
-	def addItemToCart(self, sessionId: int, itemName: str, storeId: str):
+	@staticmethod
+	def add_item_to_cart(session_id: int, item_name: str, store_id: str):
 		pass
 
-	def openStore(self, ownerSession, param):
+	@staticmethod
+	def open_store(owner_session: int, param):
 		pass
 
-	def get_member(self, session_id: int) -> Member:
+	@staticmethod
+	def get_member(session_id: int) -> Member:
 		return TradingSystem.get_user(session_id)
 
-	def get_store(self, session_id: int, store_name: str) -> Store:
+	@staticmethod
+	def get_store(session_id: int, store_name: str) -> Store:
 		member = TradingSystem.get_user_if_member(session_id)
 		if member == None:
 			return None

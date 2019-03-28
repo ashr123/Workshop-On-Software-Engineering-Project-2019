@@ -1,11 +1,11 @@
 from typing import List
 
-from main.Domain import Store
-from main.Domain.Permission import Permissions
-from .Guset import Guest
-from main.Domain import TradingSystem
+from main.domain import Store
+from main.domain.Permission import Permissions
+from .Guest import Guest
+from main.domain import TradingSystem
 from .User import User
-from main.Domain import ManagementState
+from main.domain import ManagementState
 from .TradingSystemException import *
 
 

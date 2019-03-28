@@ -1,8 +1,8 @@
-from main.Domain.TradingSystem import TradingSystem
-from main.Domain import Member
-from main.Domain.TradingSystemException import *
+from main.domain.TradingSystem import TradingSystem
+from main.domain import Member
+from main.domain.TradingSystemException import *
 
-from dev.main.Domain.TradingSystemException import UserAlreadyExistException
+from dev.main.domain.TradingSystemException import UserAlreadyExistException
 
 
 class TradingSystemFacade(object):

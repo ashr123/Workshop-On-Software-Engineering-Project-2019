@@ -1,6 +1,6 @@
-from main.Domain.User import User
-from main.Domain.ManagementState import ManagementState
-from main.Domain.TradingSystemException import *
+from main.domain.User import User
+from main.domain.ManagementState import ManagementState
+from main.domain.TradingSystemException import *
 
 
 class Member(User):

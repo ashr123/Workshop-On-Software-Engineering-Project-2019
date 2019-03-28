@@ -1,4 +1,4 @@
-from main.Domain.User import User
+from main.domain.User import User
 
 
 class Guest(User):

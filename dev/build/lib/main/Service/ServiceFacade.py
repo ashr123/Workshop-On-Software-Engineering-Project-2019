@@ -1,4 +1,4 @@
-from main.Domain.DomainFacade import DomainFacade
+from main.domain.DomainFacade import DomainFacade
 
 
 class Sercive(object):
@@ -24,10 +24,10 @@ class Sercive(object):
 		                                 fil_rankItem=fil_rankItem)
 
 	def saveItem(self, sessionId, id):
-		return self._domainFacade.saveItem(sessionId, id)
+		return self._domainFacade.save_item(sessionId, id)
 
 	def watchCart(self, sessionId):
-		return self._domainFacade.watchCart(sessionId)
+		return self._domainFacade.watch_cart(sessionId)
 
 	def removeItemFromCart(self, sessionId, id):
 		return self._domainFacade.removeItemFromCart(sessionId, id)
@@ -48,28 +48,28 @@ class Sercive(object):
 		return self._domainFacade.add_store(sessionId, name)
 
 	def addItemToStore(self, sessionId, storeId):
-		return self._domainFacade.addItemToStore(sessionId, storeId)
+		return self._domainFacade.add_item_to_store(sessionId, storeId)
 
 	def removeItemFromStore(self, sessionIs, id, storeId):
-		return self._domainFacade.removeItemFromStore(sessionIs,id, storeId)
+		return self._domainFacade.remove_item_from_store(sessionIs, id, storeId)
 
 	def changeItemInStore(self, sessionId, id, storeId, field, value):
-		return self._domainFacade.changeItemInStore(sessionId, id, storeId, field, value)
+		return self._domainFacade.change_item_in_store(sessionId, id, storeId, field, value)
 
 	def addOwner(self, sessionId,ownerId, storeId):
-		return self._domainFacade.addOwner(sessionId,ownerId, storeId)
+		return self._domainFacade.add_owner(sessionId, ownerId, storeId)
 
 	def removeOwner(self, sessionId,ownerId, storeId):
-		return self._domainFacade.removeOwner(sessionId,ownerId, storeId)
+		return self._domainFacade.remove_owner(sessionId, ownerId, storeId)
 
 	def addManager(self, sessionId,ownerId, storeId, permissions):
-		return self._domainFacade.addManager(self, sessionId,ownerId, storeId, permissions)
+		return self._domainFacade.add_manager(self, sessionId, ownerId, storeId, permissions)
 
 	def removeManager(self, sessionId,ownerId, storeId):
-		return self._domainFacade.removeManager(sessionId,ownerId, storeId)
+		return self._domainFacade.remove_manager(sessionId, ownerId, storeId)
 
 	def removeUser(self, sesesionId,id):
-		return self._domainFacade.removeUser(sesesionId,id)
+		return self._domainFacade.remove_user(sesesionId, id)
 
 	def setup(self, masteruser, password):
 		return self._domainFacade.setup(masteruser, password)

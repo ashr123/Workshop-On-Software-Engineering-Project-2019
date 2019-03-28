@@ -1,4 +1,4 @@
-from main.Domain.Rule import Rule
+from main.domain.Rule import Rule
 
 
 class Discount(Rule):

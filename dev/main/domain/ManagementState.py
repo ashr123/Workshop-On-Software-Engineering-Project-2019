@@ -1,7 +1,7 @@
 from enum import Enum, auto
 from typing import List
 
-from main.Domain.Permission import Permissions
+from main.domain.Permission import Permissions
 from .Item import Item
 
 from .TradingSystemException import PermissionException
