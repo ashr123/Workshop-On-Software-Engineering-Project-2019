@@ -9,7 +9,6 @@ from .Store import Store
 
 
 class ManagementState(object):
-
 	def __init__(self, is_owner: bool, permissions_list: List[Permissions], store: Store) -> None:
 		self._isOwner: bool = is_owner
 		self._permissions: List[Permissions] = permissions_list
@@ -27,30 +26,30 @@ class ManagementState(object):
 	def store(self) -> Store:
 		return self._store
 
-	def add_item(self, _id: int, name: str, price: int) -> bool:  # 1
+	def add_item(self, item_id: int, name: str, price: int) -> bool:  # 1
 		if Permissions.ADD_ITEM not in self._permissions:
 			raise PermissionException(message="you don't have the permission to do this auction!")
-		new_item = Item(_id, name, price)
-		if self.store.add_item(new_item):
+		if self.store.add_item(Item(item_id, name, price)):
 			return True
 		return False
 
-	def remove_item(self, item_id: int) -> bool:  # 2
+	def remove_item(self, item_name: str) -> bool:  # 2
 		if Permissions.REMOVE_ITEM not in self._permissions:
 			raise PermissionException(message="you don't have the permission to do this auction!")
-		if self.store.remove_item(item_id):
+		if self.store.remove_item(item_name):
 			return True
 		return False
 
-	def edit_item(self, itemId, new_id, new_name, new_price) -> bool:  # 3
+	def edit_item(self, item_name: str, new_name: str, new_price: float) -> bool:  # 3
 		if Permissions.EDIT_ITEM not in self._permissions:
 			raise PermissionException(message="you don't have the permission to do this auction!")
 		# todo
 		return False
 
 	def add_owner(self, oarator_name: str, member_name: str) -> bool:  # 4
-		# if not self.store._creator_name == oarator_name:
-		# 	raise PermissionException(message="you d'ont have the permission to add owner ,you ar not the creator !")
+		if not self.is_owner:
+			raise PermissionException(message="you d'ont have the permission to add owner ,you ar not the creator !")
+		
 		return False
 
 	def remove_owner(self, oarator_name: str, memberId) -> bool:  # 5
