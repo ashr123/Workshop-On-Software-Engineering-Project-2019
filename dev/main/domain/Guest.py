@@ -1,9 +1,6 @@
 from main.domain.GroceryCart import GroceryCart
 from main.domain.User import User
 from main.security.Security import Security
-from .TradingSystemException import UserAlreadyExistException
-from .TradingSystemException import PermissionException
-from main.domain import TradingSystem
 
 
 class Guest(User):
