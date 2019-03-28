@@ -1,6 +1,7 @@
 from enum import Enum, auto
 from typing import List
 
+from main.Domain.Permission import Permissions
 from .Item import Item
 
 from .TradingSystemException import PermissionException
@@ -8,25 +9,6 @@ from .Store import Store
 
 
 class ManagementState(object):
-	class Permissions(Enum):
-		"""
-		class Color(Enum):
-			RED = auto()
-			GREEN = auto()
-
-		if you want to access enum members by name, use item access:
-		Color['RED']
-		> Color.RED: 1
-		Color['GREEN']
-		> Color.GREEN: 2
-		"""
-		# for controlling auto() method to generate names:
-		# def _generate_next_value_(name, start, count, last_values):
-		# 	return name
-
-		REMOVE_ITEM = auto()
-		ADD_ITEM = auto()
-		EDIT_ITEM = auto()
 
 	def __init__(self, is_owner: bool, permissions_list: List[Permissions], store: Store) -> None:
 		self._isOwner = is_owner

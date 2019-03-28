@@ -1,4 +1,5 @@
 from main.Domain.ManagementState import ManagementState
+from main.Domain.Permission import Permissions
 from main.security.Security import Security
 from .TradingSystemException import UserAlreadyExistException, PermissionException, RegistrationExeption, \
 	OpenStoreExeption
@@ -64,7 +65,7 @@ class TradingSystem(object):
 
 	@staticmethod
 	def open_store(session_id: int, store_name: str, desc: str,
-	               permissions_list: List[ManagementState.Permissions]) -> None:  # TODO take care of permissions_list
+	               permissions_list: List[Permissions]) -> None:  # TODO take care of permissions_list
 		if store_name in map(lambda s: s.get_name(), TradingSystem._stores):
 			raise OpenStoreExeption("store {} already exists".format(store_name))
 		user: Optional[Member] = TradingSystem.get_user_if_member(session_id)

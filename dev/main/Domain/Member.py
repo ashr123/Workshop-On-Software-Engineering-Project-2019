@@ -1,10 +1,11 @@
 from typing import List
 
-from main.Domain.Store import Store
+from .Store import Store
+from main.Domain.Permission import Permissions
 from .Guset import Guest
-from .TradingSystem import TradingSystem
+from main.Domain import TradingSystem
 from .User import User
-from .ManagementState import ManagementState
+from main.Domain import ManagementState
 from .TradingSystemException import *
 
 
@@ -35,7 +36,7 @@ class Member(User):
 	def watch_gc(self):  # TODO
 		return False
 
-	def add_managment_state(self, is_owner: bool, permissions_list: List[ManagementState.Permissions],
+	def add_managment_state(self, is_owner: bool, permissions_list: List[Permissions],
 	                        store: Store) -> None:
 		self._storesManaged_states.append(
 			ManagementState(is_owner=is_owner, permissions_list=permissions_list, store=store))
