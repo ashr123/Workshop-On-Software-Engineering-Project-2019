@@ -10,6 +10,7 @@ from typing import Union, Dict, List, Optional
 class TradingSystem(object):
 	_users: Dict[int, Union[Member, Guest]] = {}
 	_members: List[Member] = []
+	_managers: List[Member] = []
 	_stores: List[Store] = []
 
 	@property
@@ -98,3 +99,27 @@ class TradingSystem(object):
 	@staticmethod
 	def add_member(new_member)->type(None):
 		TradingSystem._members.append(new_member)
+
+	@staticmethod
+	def add_manager(new_manager) -> type(None):
+		TradingSystem._managers.append(new_manager)
+
+	@classmethod
+	def connect_to_money_collection_system(cls):
+		return True
+
+	@classmethod
+	def connect_to_product_supply_system(cls):
+		return True
+
+	@classmethod
+	def connect_to_consistency_system(cls):
+		return True
+
+	@classmethod
+	def register_master_member(cls, master_user, password):
+		if master_user in map(lambda m: m.name, TradingSystem._members):
+			raise RegistrationExeption(message="the user {} is already registered".format(username))
+		new_manager = Member(name=master_user, guest=Guest())
+		TradingSystem.add_manager(new_manager)
+		TradingSystem._users[0] = new_manager

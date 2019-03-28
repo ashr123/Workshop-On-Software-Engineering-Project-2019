@@ -4,7 +4,6 @@ from main.service.ServiceFacade import ServiceFacade
 class TestClass(object):
 	def set_up(self):
 		self._serviceFacade = ServiceFacade()
-		self._serviceFacade = ServiceFacade()
 		self._serviceFacade.setup("rotem", "123456")
 
 	def set_up0(self):
@@ -38,6 +37,7 @@ class TestClass(object):
 
 	# 1.1 setup 1
 	def test_setup1(self):
+		self.set_up()
 		username = "rotem"
 		password = "123456"
 		assert "OK" == self._serviceFacade.setup(username, password)

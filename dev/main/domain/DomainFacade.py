@@ -117,7 +117,11 @@ class DomainFacade(object):
 
 	@staticmethod
 	def setup(master_user, password):
-		return False
+		TradingSystem.register_master_member(master_user, password)
+		TradingSystem.connect_to_money_collection_system()
+		TradingSystem.connect_to_product_supply_system()
+		TradingSystem.connect_to_consistency_system()
+		return True
 
 	@staticmethod
 	def add_item_to_cart(session_id: int, item_name: str, store_id: str):
