@@ -1,12 +1,9 @@
 from main.Service.ServiceFacade import ServiceFacade
 
 
-class acceptanceTests(object):
-
-	def __init__(self):
-		self._serviceFacade = ServiceFacade()
-
+class TestClass(object):
 	def set_up(self):
+		self._serviceFacade = ServiceFacade()
 		self._serviceFacade = ServiceFacade()
 		self._serviceFacade.setup("rotem", "123456")
 
