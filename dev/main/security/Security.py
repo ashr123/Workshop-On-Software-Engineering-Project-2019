@@ -24,8 +24,7 @@ class Security(object):
 		Security._passwords.clear()
 
 # Example
-# sec = Security()
-# sec.add_user_password("Roy", "BabaYaga")
-# print(sec._passwords)
-# print(sec.verify("Roy", "Babayaga"))
-# print(sec.verify("Roy", "BabaYaga"))
+Security.add_user_password("Roy", "BabaYaga")
+print(Security._passwords)
+print(Security.verify("Roy", "Babayaga"))
+print(Security.verify("Roy", "BabaYaga"))

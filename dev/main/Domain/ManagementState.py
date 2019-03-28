@@ -20,7 +20,7 @@ class ManagementState(object):
 		Color['GREEN']
 		> Color.GREEN: 2
 		"""
-		# for controlling auto() method to generate names:
+		# for controlling auto() method to generate the members's names:
 		# def _generate_next_value_(name, start, count, last_values):
 		# 	return name
 
