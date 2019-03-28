@@ -67,7 +67,7 @@ class DomainFacade(object):
 		except GuestCannotOpenStoreException as e:
 			return False
 
-	def addItemToStore(self, sessionId: int, storeId: str, itemName: str, desc: str, price: float, amount: int) -> bool:
+	def addItemToStore(self, sessionId: int, store_name: str, itemName: str, desc: str, price: float, amount: int) -> bool:
 		return False
 
 	def removeItemFromStore(self, id, storeId):
