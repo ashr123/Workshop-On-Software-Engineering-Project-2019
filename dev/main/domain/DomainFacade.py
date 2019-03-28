@@ -1,20 +1,21 @@
 from .TradingSystem import TradingSystem
 from .Member import Member
 from .TradingSystemException import *
+from main.Domain import Store
 
 
 class DomainFacade(object):
 	def initateSession(self):
 		return TradingSystem.generate_id()
 
-	def login(self,sessionId, username, password):
+	def login(self, sessionId, username, password):
 		try:
 			TradingSystem.login(sessionId, username, password)
 			return True
 		except PermissionException as e:
 			return False
 
-	def logout(self,sessionId):
+	def logout(self, sessionId):
 		try:
 			TradingSystem.logout(sessionId)
 			return True
@@ -28,7 +29,8 @@ class DomainFacade(object):
 		except RegistrationExeption as e:
 			return False
 
-	def searchItem(self, name=None, category=None, hashtag=None, fil_range=None, fil_rankItem=None, fil_category=None, fil_rankStore=None):
+	def searchItem(self, name=None, category=None, hashtag=None, fil_range=None, fil_rankItem=None, fil_category=None,
+	               fil_rankStore=None):
 		return False
 
 	def saveItem(self, id):
@@ -58,13 +60,14 @@ class DomainFacade(object):
 			member: Member = TradingSystem.get_user_if_member(session_id)
 			if member is None:
 				raise GuestCannotOpenStoreException("User {} has no permission to open a store".format(name))
-			member.open_store(name=name, desc=desc)
+			if member.open_store(session_id=session_id,store_name=name, desc=desc):
+				return True
 		except UserAlreadyHasStoreException as e:
 			return False
 		except GuestCannotOpenStoreException as e:
 			return False
 
-	def addItemToStore(self, storeId, itemName, desc, price, amount):
+	def addItemToStore(self, sessionId: int, store_name: str, itemName: str, desc: str, price: float, amount: int) -> bool:
 		return False
 
 	def removeItemFromStore(self, id, storeId):
@@ -91,8 +94,20 @@ class DomainFacade(object):
 	def setup(self, masteruser, password):
 		return False
 
-	def addItemToCart(self, sessionId, itemId):
+	def addItemToCart(self, sessionId: int, itemName: str, storeId: str):
 		pass
 
 	def openStore(self, ownerSession, param):
 		pass
+
+	def get_member(self, session_id: int) -> Member:
+		return TradingSystem.get_user(session_id)
+
+	def get_store(self, session_id: int, store_name: str) -> Store:
+		member = TradingSystem.get_user_if_member(session_id)
+		if member == None:
+			return None
+		store_indicator = list(filter(lambda ms: ms.store.name == store_name, member.stores_managed_states))
+		if len(store_indicator) == 0:
+			return None
+		return store_indicator[0].store

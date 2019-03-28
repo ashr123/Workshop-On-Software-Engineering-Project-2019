@@ -5,6 +5,7 @@
       <option name="ignoredIdentifiers">
         <list>
           <option value="main.Domain.TradingSystemFacade.UserArea" />
+          <option value="main.Domain.DomainFacade.Store" />
         </list>
       </option>
     </inspection_tool>
