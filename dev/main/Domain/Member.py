@@ -1,6 +1,6 @@
 from typing import List
 
-from .Store import Store
+from main.Domain import Store
 from main.Domain.Permission import Permissions
 from .Guset import Guest
 from main.Domain import TradingSystem
@@ -39,7 +39,7 @@ class Member(User):
 	def add_managment_state(self, is_owner: bool, permissions_list: List[Permissions],
 	                        store: Store) -> None:
 		self._storesManaged_states.append(
-			ManagementState(is_owner=is_owner, permissions_list=permissions_list, store=store))
+			ManagementState.ManagementState(is_owner=is_owner, permissions_list=permissions_list, store=store))
 
 	def add_manager(self, store_name: str, member_name: str, permission_list: List[ManagementState.Permissions]):
 		store_ind = list(filter(lambda s_m: s_m.store_name == store_name, self._storesManaged_states))
@@ -56,3 +56,13 @@ class Member(User):
 		new_manager.stores_managed_states.append(
 			ManagementState(isOwner=False, permissions=permission_list, store_name=store_name))
 		return True
+
+	def open_store(self, session_id: int, store_name: str, desc: str) -> bool:
+		return TradingSystem.TradingSystem.open_store(session_id=session_id, store_name=store_name, desc=desc,
+		                                              permissions_list=None)
+
+	def get_store_management_state(self, store_name: str) -> ManagementState:
+		management_states = list(filter(lambda ms: ms.store.name == store_name, self.stores_managed_states))
+		if len(management_states) == 0:
+			return None
+		return management_states[0]

@@ -15,7 +15,7 @@ class Store(object):
 		self._desc = description
 
 	@property
-	def get_name(self) -> str:
+	def name(self) -> str:
 		return self._name
 
 	def add_item(self, new_item: Item):
