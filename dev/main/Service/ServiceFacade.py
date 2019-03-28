@@ -1,10 +1,10 @@
-from main.Domain.TradingSystemFacade import TradingSystemFacade
+from main.domain.DomainFacade import DomainFacade
 
 
 class ServiceFacade(object):
 
 	def __init__(self):
-		self._domainFacade = TradingSystemFacade()
+		self._domainFacade = DomainFacade()
 
 	def initiateSession(self):
 		return self._domainFacade.intiateSession()
