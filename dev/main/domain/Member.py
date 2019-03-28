@@ -27,6 +27,9 @@ class Member(User):
 	def get_guest(self):
 		return self._guest
 
+	def get_state_of_store(self, store: Store) -> ManagementState:
+
+
 	def logout(self):
 		return False
 

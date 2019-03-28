@@ -31,5 +31,9 @@ class Store(object):
 				return True
 		return False
 
-	def edit_item(self, itemId: str):
+	def edit_item(self, item_name: str, new_price: float = None, new_name: str = None):  # TODO implement
 		return False
+
+	def add_owner(self, owner: Member):
+		self._managers.append(owner)
+
