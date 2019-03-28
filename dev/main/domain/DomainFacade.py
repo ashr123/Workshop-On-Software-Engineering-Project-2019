@@ -36,7 +36,8 @@ class DomainFacade(object):
 			return False
 
 	@staticmethod
-	def search_item(name=None, category=None, hashtag=None, range_filter=None, item_rank_filter=None, category_filter=None, store_rank_filter=None):
+	def search_item(name=None, category=None, hashtag=None, range_filter=None, item_rank_filter=None,
+	                category_filter=None, store_rank_filter=None):
 		return False
 
 	@staticmethod
@@ -74,7 +75,7 @@ class DomainFacade(object):
 			member: Member = TradingSystem.get_user_if_member(session_id)
 			if member is None:
 				raise GuestCannotOpenStoreException("User {} has no permission to open a store".format(name))
-			if member.open_store(session_id=session_id,store_name=name, desc=desc):
+			if member.open_store(session_id=session_id, store_name=name, desc=desc):
 				return True
 		except UserAlreadyHasStoreException as e:
 			return False
@@ -82,7 +83,8 @@ class DomainFacade(object):
 			return False
 
 	@staticmethod
-	def add_item_to_store(session_id: int, store_name: str, itemName: str, desc: str, price: float, amount: int) -> bool:
+	def add_item_to_store(session_id: int, store_name: str, itemName: str, desc: str, price: float,
+	                      amount: int) -> bool:
 		return False
 
 	@staticmethod
