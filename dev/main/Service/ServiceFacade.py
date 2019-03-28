@@ -10,9 +10,10 @@ class ServiceFacade(object):
 		return self._domainFacade.intiateSession()
 
 	def setup(self, username, password):
-		if self._domainFacade.setup(username, password):
+		ans = self._domainFacade.setup(username, password)
+		if ans == True:
 			return "OK"
-		return "Problem"
+		return ans
 
 	def register(self, sessionId, username, password):
 		return self._domainFacade.register(sessionId, username, password)

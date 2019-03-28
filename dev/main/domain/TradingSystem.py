@@ -1,6 +1,5 @@
 from main.domain import Permission
-from .TradingSystemException import PermissionException, RegistrationExeption, \
-	OpenStoreExeption
+from .TradingSystemException import *
 from .Guest import Guest
 from .Member import Member
 from .Store import Store
@@ -54,7 +53,7 @@ class TradingSystem(object):
 			raise RegistrationExeption(message="the user {} is already registered".format(username))
 		if not isinstance(TradingSystem._users[session_id], Guest):
 			raise RegistrationExeption(message="user {} already logged in".format(username))
-		new_member = Member(name=username,guest=TradingSystem._users[session_id])
+		new_member = Member(name=username, guest=TradingSystem._users[session_id])
 		TradingSystem.add_member(new_member)
 		TradingSystem._users[session_id] = new_member
 
@@ -72,7 +71,7 @@ class TradingSystem(object):
 		return True
 
 	@staticmethod
-	def is_member(user)->bool:
+	def is_member(user) -> bool:
 		return isinstance(user, Member)
 
 	@staticmethod
@@ -97,7 +96,7 @@ class TradingSystem(object):
 		return True
 
 	@staticmethod
-	def add_member(new_member)->type(None):
+	def add_member(new_member) -> type(None):
 		TradingSystem._members.append(new_member)
 
 	@staticmethod
@@ -118,8 +117,13 @@ class TradingSystem(object):
 
 	@classmethod
 	def register_master_member(cls, master_user, password):
+		if TradingSystem.pass_word_short(password):
+			raise PasswordToShortException()
 		if master_user in map(lambda m: m.name, TradingSystem._members):
-			raise RegistrationExeption(message="the user {} is already registered".format(username))
+			raise RegistrationExeption(message="the user {} is already registered".format(master_user))
 		new_manager = Member(name=master_user, guest=Guest())
 		TradingSystem.add_manager(new_manager)
 		TradingSystem._users[0] = new_manager
+
+	def pass_word_short(password):
+		return len(password) < 6

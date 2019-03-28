@@ -44,6 +44,7 @@ class TestClass(object):
 
 	# 1.1 setup 2
 	def test_setup2(self):
+		self.set_up()
 		username = "rotem"
 		password = "12"
 		assert "password must have 6 alpha-numeric characters" == self._serviceFacade.setup(username, password)

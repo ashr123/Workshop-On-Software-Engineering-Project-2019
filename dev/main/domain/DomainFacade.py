@@ -117,10 +117,13 @@ class DomainFacade(object):
 
 	@staticmethod
 	def setup(master_user, password):
-		TradingSystem.register_master_member(master_user, password)
-		TradingSystem.connect_to_money_collection_system()
-		TradingSystem.connect_to_product_supply_system()
-		TradingSystem.connect_to_consistency_system()
+		try:
+			TradingSystem.register_master_member(master_user, password)
+			TradingSystem.connect_to_money_collection_system()
+			TradingSystem.connect_to_product_supply_system()
+			TradingSystem.connect_to_consistency_system()
+		except TradingSystemException as e:
+			return e.msg
 		return True
 
 	@staticmethod
