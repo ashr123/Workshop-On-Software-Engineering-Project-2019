@@ -15,6 +15,14 @@ class TradingSystem(object):
 	_managers: List[Member] = []
 	_stores: List[Store] = []
 
+	@staticmethod
+	def clear():
+		TradingSystem._members.clear()
+		TradingSystem._managers.clear()
+		TradingSystem._stores.clear()
+		TradingSystem._users.clear()
+		Security.Security.clear_pass_dict()
+
 	@property
 	def get_members(self):
 		return TradingSystem._members
@@ -64,14 +72,14 @@ class TradingSystem(object):
 	@staticmethod
 	def open_store(session_id: int, store_name: str, desc: str,
 	               permissions_list: List[Permission.Permissions]) -> bool:  # TODO take care of permissions_list
-		if store_name in map(lambda s: s.get_name(), TradingSystem._stores):
+		if store_name in map(lambda s: s.name, TradingSystem._stores):
 			raise OpenStoreExeption("store {} already exists".format(store_name))
 		user: Optional[Member] = TradingSystem.get_user_if_member(session_id)
 		if not TradingSystem.is_member(user=user):
 			raise OpenStoreExeption(message="you are not a member!")
 		store: Store = Store(name=store_name, creator=user, description=desc)
 		TradingSystem._stores.append(store)
-		user.add_managment_state(is_owner=True, permissions_list=permissions_list, store=store)
+		user.add_managment_state(is_owner=True, permissions_list=permissions_list, store=store, nominator=user)
 		return True
 
 	@staticmethod

@@ -2,87 +2,86 @@ from main.domain.DomainFacade import DomainFacade
 
 
 class ServiceFacade(object):
-
-	def __init__(self):
-		self._domainFacade = DomainFacade()
-
 	def initiateSession(self):
-		return self._domainFacade.initiate_session()
+		return DomainFacade.initiate_session()
+
+	def clear(self):
+		DomainFacade.clear()
 
 	def setup(self, username, password):
-		ans = self._domainFacade.setup(username, password)
+		ans = DomainFacade.setup(username, password)
 		if ans == True:
 			return "OK"
 		return ans
 
 	def register(self, sessionId, username, password):
-		ans = self._domainFacade.register(sessionId, username, password)
+		ans = DomainFacade.register(sessionId, username, password)
 		if ans == True:
 			return "OK"
 		return ans
 
 	def login(self, sessionId, username, password):
-		ans = self._domainFacade.login(sessionId, username, password)
+		ans = DomainFacade.login(sessionId, username, password)
 		if ans == True:
 			return "OK"
 		return ans
 
 	def logout(self, sessionId):
-		return self._domainFacade.logout(sessionId)
+		return DomainFacade.logout(sessionId)
 
 	def searchItem(self, name=None, category=None, hashtag=None, fil_price=None, fil_rankItem=None, fil_category=None,
 	               fil_rankStore=None):
-		return self._domainFacade.search_item(name=name, category=category, hashtag=hashtag, fil_category=fil_category,
+		return DomainFacade.search_item(name=name, category=category, hashtag=hashtag, fil_category=fil_category,
 		                                     fil_rankItem=fil_rankItem, fil_rankStore=fil_rankStore,
 		                                     fil_price=fil_price)
 
 	def saveItemInCart(self, sessionId, id):
-		return self._domainFacade.saveItem(sessionId, id)
+		return DomainFacade.saveItem(sessionId, id)
 
 	def watchCart(self, sessionId):
-		return self._domainFacade.watchCart(sessionId)
+		return DomainFacade.watchCart(sessionId)
 
 	def removeItemFromCart(self, sessionId, id):
-		return self._domainFacade.removeItemFromCart(sessionId, id)
+		return DomainFacade.removeItemFromCart(sessionId, id)
 
 	def changeItemQuantityInCart(self, sessionId, id, quantity):
-		return self._domainFacade.changeItemQuantityInCart(sessionId, id, quantity)
+		return DomainFacade.changeItemQuantityInCart(sessionId, id, quantity)
 
 	def buySingleItem(self, sessionId, id):
-		return self._domainFacade.buySingleItem(sessionId, id)
+		return DomainFacade.buySingleItem(sessionId, id)
 
 	def buyManyItems(self, sessionId, ids):
-		return self._domainFacade.buyManyItems(sessionId, ids)
+		return DomainFacade.buyManyItems(sessionId, ids)
 
 	def pay(self, sessionId, creditcard, date, snum, address):
-		return self._domainFacade.pay(sessionId, creditcard, date, snum, address)
+		return DomainFacade.pay(sessionId, creditcard, date, snum, address)
 
 	def addStore(self, sessionId, name, description):
-		return self._domainFacade.add_store(sessionId, name, description)
+		return DomainFacade.add_store(sessionId, name, description)
 
 	def addItemToStore(self, sessionId, storeName, itemName, category, desc, price, amount):
-		return self._domainFacade.add_item_to_store(sessionId, storeName, itemName, category, desc, price, amount)
+		return DomainFacade.add_item_to_store(sessionId, storeName, itemName, category, desc, price, amount)
 
 	def removeItemFromStore(self, sessionIs, id, storeName):
-		return self._domainFacade.removeItemFromStore(sessionIs, id, storeName)
+		return DomainFacade.removeItemFromStore(sessionIs, id, storeName)
 
 	def changeItemInStore(self, sessionId, id, storeName, field, value):
-		return self._domainFacade.changeItemInStore(sessionId, id, storeName, field, value)
+		return DomainFacade.changeItemInStore(sessionId, id, storeName, field, value)
 
 	def addOwner(self, sessionId, ownerId, storeName):
-		return self._domainFacade.add_owner(sessionId, ownerId, storeName)
+		return DomainFacade.add_owner(sessionId, ownerId, storeName)
 
-	def removeOwner(self, sessionId, ownerId, storeName):
-		return self._domainFacade.removeOwner(sessionId, ownerId, storeName)
+	def removeOwner(self, session_id: int, owner_name: str, store_name: str):
+		return DomainFacade.remove_owner(session_id, owner_name, store_name)
 
 	def addManager(self, sessionId, managerId, storeName, permissions):
-		return self._domainFacade.addManager(self, sessionId, managerId, storeName, permissions)
+		return DomainFacade.addManager(self, sessionId, managerId, storeName, permissions)
 
 	def removeManager(self, sessionId, managerId, storeName):
-		return self._domainFacade.removeManager(sessionId, managerId, storeName)
+		return DomainFacade.removeManager(sessionId, managerId, storeName)
 
 	def removeUser(self, sessionId, id):
-		return self._domainFacade.removeUser(sessionId, id)
+		return DomainFacade.removeUser(sessionId, id)
 
 	def exit(self, sessionId):
-		return self._domainFacade.exit(sessionId)
+		return DomainFacade.exit(sessionId)

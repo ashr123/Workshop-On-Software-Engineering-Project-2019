@@ -3,15 +3,16 @@ from typing import List, Optional
 from main.domain.Permission import Permissions
 from .Item import Item
 
-from .TradingSystemException import PermissionException
+from .TradingSystemException import PermissionException, AnomalyException
 from .Store import Store
 from main.domain import TradingSystem, Member
 
 
 class ManagementState(object):
-	def __init__(self, is_owner: bool, permissions_list: List[Permissions], store: Store):
+	def __init__(self, is_owner: bool, permissions_list: List[Permissions], store: Store, nominator: Member):
 		self._isOwner: bool = is_owner
 		self._permissions: List[Permissions] = permissions_list
+		self._nominator: Member = nominator
 		self._store: Store = store
 
 	@property
@@ -50,22 +51,23 @@ class ManagementState(object):
 		self.store.edit_item(item_name=item_name, new_price=new_price, new_name=new_name)
 		return False
 
-	def add_owner(self, member_name: str) -> bool:
+	def add_owner(self, member_name: str) -> None:
 		if not self.is_owner:
-			raise PermissionException(message="you don't have the permission to add owner, you ar not the creator!")
-		owner: Member.Member = TradingSystem.TradingSystem.get_member(member_name=member_name)
-		if len(list(filter(lambda state: state.store.name == self.store.name and state.is_owner, owner.stores_managed_states))) > 0:
-			raise PermissionException(message="you're already an owner of this store!")
-		existing_management_state: Optional[ManagementState] = owner.get_store_management_state(self.store.name)
+			raise PermissionException(message="you don't have the permission to add owner!")
+		new_owner: Optional[Member.Member] = TradingSystem.TradingSystem.get_member(member_name=member_name)
+		if new_owner is None:
+			raise AnomalyException("member to be ownered doesn't exists")
+		if len(list(filter(lambda state: state.store.name == self.store.name and state.is_owner, new_owner.stores_managed_states))) > 0:
+			raise PermissionException(message="you're already an owner of this store! (circular nomination)")
+		existing_management_state: Optional[ManagementState] = new_owner.get_store_management_state(self.store.name)
 		if existing_management_state is not None:
 			existing_management_state.is_owner = True
 		else:
-			owner.add_managment_state(is_owner=True, permissions_list=[], store=Store)
-			self.store.add_owner(owner=owner)
-		return False
+			new_owner.add_managment_state(is_owner=True, permissions_list=[], store=self._store, nominator=self)
+			self.store.add_owner(owner=new_owner)
 
 	def remove_owner(self, owner_name: str) -> bool:  # see: section 4.4
-
+		# if not self.
 		return False
 
 	def add_manager(self, manager_name) -> bool:
