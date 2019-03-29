@@ -73,7 +73,7 @@ class Member(User):
 		# # new_manager.add_owner(store_name=store_name, member_name=member_name)
 		# new_manager.stores_managed_states.append(
 		# 	ManagementState.ManagementState(is_owner=True, permissions_list=[], store=store))
-		state.add_owner(member_name=member_name)
+		state.add_owner(member_name=member_name, nominator=self)
 
 	def open_store(self, session_id: int, store_name: str, desc: str) -> bool:
 		return TradingSystem.TradingSystem.open_store(session_id=session_id, store_name=store_name, desc=desc,
@@ -92,4 +92,4 @@ class Member(User):
 		if len(store_ind) == 0 or (not store_ind[0].is_owner):
 			raise PermissionException("member name {} is not owner of the store!".format(self._name))
 		state: ManagementState.ManagementState = store_ind[0]
-		state.remove_owner(member_name)
+		state.remove_owner(owner_name=member_name, remover=self)

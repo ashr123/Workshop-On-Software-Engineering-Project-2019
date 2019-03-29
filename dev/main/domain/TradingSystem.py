@@ -79,7 +79,7 @@ class TradingSystem(object):
 			raise OpenStoreExeption(message="you are not a member!")
 		store: Store = Store(name=store_name, creator=user, description=desc)
 		TradingSystem._stores.append(store)
-		user.add_managment_state(is_owner=True, permissions_list=permissions_list, store=store, nominator=user)
+		user.add_managment_state(is_owner=True, permissions_list=permissions_list, store=store, nominator=None)
 		return True
 
 	@staticmethod
@@ -128,9 +128,9 @@ class TradingSystem(object):
 		return True
 
 	@staticmethod
-	def register_master_member(master_user, password):  #TODO fix
+	def register_master_member(master_user, password):
 		if TradingSystem.pass_word_short(password):
-			raise PasswordException()
+			raise PasswordException("Password must be of length 6")
 		if master_user in map(lambda m: m.name, TradingSystem._members):
 			raise RegistrationExeption(message="the user {} is already registered".format(master_user))
 		new_manager = Member(name=master_user, guest=Guest())
