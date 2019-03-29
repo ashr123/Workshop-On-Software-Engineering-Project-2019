@@ -34,27 +34,30 @@ class Store(object):
 
 	def edit_item(self, item_id: int, new_price: float = None, new_name: str = None):  # TODO implement
 		item = self.get_item(item_id)
-		if item ==None:
+		if item == None:
 			return False
 		if not new_name == None:
-			item.name =new_name
+			item.name = new_name
 		if not new_price == None:
-			item.price =new_price
+			item.price = new_price
 		self.remove_item(item_id=item_id)
 		self.add_item(new_item=item)
 		return True
-
-
 
 	def add_owner(self, owner: Member):
 		self._managers.append(owner)
 
 	def has_item(self, item_id: int) -> bool:
-		return item_id in list(map(lambda i: i.id,self._items))
+		return item_id in list(map(lambda i: i.id, self._items))
 
 	def get_item(self, item_id: int) -> Item:
 		if not self.has_item(item_id):
 			return None
-		item = list(filter(lambda i: i.id == item_id,self._items))[0]
+		item = list(filter(lambda i: i.id == item_id, self._items))[0]
 		return copy.deepcopy(item)
 
+	def get_item_by_name(self, item_name) -> Item:
+		item_list = list(filter(lambda i: i.name == item_name, self._items))
+		if len(item_list) != 1:
+			return None
+		return item_list[0]

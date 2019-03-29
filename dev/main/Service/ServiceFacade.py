@@ -36,7 +36,7 @@ class ServiceFacade(object):
 		                                     fil_price=fil_price)
 
 	def saveItemInCart(self, sessionId, id):
-		return DomainFacade.saveItem(sessionId, id)
+		return DomainFacade.save_item(sessionId, id)
 
 	def watchCart(self, sessionId):
 		return DomainFacade.watchCart(sessionId)

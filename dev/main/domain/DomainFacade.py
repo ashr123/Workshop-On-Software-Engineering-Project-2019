@@ -4,6 +4,8 @@ from .TradingSystem import TradingSystem
 from .Member import Member
 from .TradingSystemException import *
 from main.domain import Store
+from main.domain import Item
+
 
 
 class DomainFacade(object):
@@ -89,7 +91,8 @@ class DomainFacade(object):
 	@staticmethod
 	def add_item_to_store(session_id: int, store_name: str, itemName: str, category: str, desc: str, price: float,
 	                      amount: int) -> bool:
-		return False
+		store = TradingSystem.get_store(store_name)
+		store.add_item(Item.Item(TradingSystem.generate_item_id(),itemName,price))
 
 	@staticmethod
 	def remove_item_from_store(item_name: str, store_name: str):
@@ -147,10 +150,6 @@ class DomainFacade(object):
 
 	@staticmethod
 	def add_item_to_cart(session_id: int, item_name: str, store_id: str):
-		pass
-
-	@staticmethod
-	def open_store(owner_session: int, param):
 		pass
 
 	@staticmethod
