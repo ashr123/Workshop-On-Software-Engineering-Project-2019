@@ -12,7 +12,7 @@ class Store(object):
 		self._creator: Member = creator
 		self._rules: List[Rule] = []
 		# self._owners: List[Member] = []
-		self._managers: List[Member] = []
+		self._managers: List[Member] = [creator]
 		self._desc: str = description
 
 	@property

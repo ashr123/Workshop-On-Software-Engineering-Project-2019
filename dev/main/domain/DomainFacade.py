@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from .TradingSystem import TradingSystem
 from .Member import Member
@@ -17,7 +17,7 @@ class DomainFacade(object):
 			TradingSystem.login(session_id, username, password)
 			return True
 		except PermissionException as e:
-			return False
+			return e.msg
 
 	@staticmethod
 	def logout(session_id: int):
@@ -33,11 +33,11 @@ class DomainFacade(object):
 			TradingSystem.register_member(session_id, username, password)
 			return True
 		except RegistrationExeption as e:
-			return False
+			return e.msg
 
 	@staticmethod
-	def search_item(name: str = None, category=None, hashtag=None, range_filter=None, item_rank_filter=None,
-	                category_filter=None, store_rank_filter=None):
+	def search_item(name: str = None, category=None, hashtag=None, fil_price=None, fil_rankStore=None,
+	                fil_category=None, fil_rankItem=None):
 		return False
 
 	@staticmethod
@@ -83,7 +83,7 @@ class DomainFacade(object):
 			return False
 
 	@staticmethod
-	def add_item_to_store(session_id: int, store_name: str, itemName: str, desc: str, price: float,
+	def add_item_to_store(session_id: int, store_name: str, itemName: str, category: str, desc: str, price: float,
 	                      amount: int) -> bool:
 		return False
 
@@ -96,8 +96,14 @@ class DomainFacade(object):
 		return False
 
 	@staticmethod
-	def add_owner(owner_id: int, store_name: str):
-		return False
+	def add_owner(session_id: int, ownered_name: str, store_name: str):
+		member: Optional[Member] = TradingSystem.get_user_if_member(session_id=session_id)
+		try:
+			member.add_owner(store_name=store_name, member_name=ownered_name)
+		except TradingSystemException as e:
+			return e.msg
+		return "OK"
+
 
 	@staticmethod
 	def remove_owner(owner_id: int, store_name: str):

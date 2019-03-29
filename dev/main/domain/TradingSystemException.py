@@ -42,6 +42,6 @@ class OpenStoreExeption(TradingSystemException):
 	def __init__(self, message, errors=None):
 		super().__init__(message, errors)
 
-class PasswordToShortException(TradingSystemException):
-	def __init__(self, errors=None):
-		super().__init__("password must have 6 alpha-numeric characters", errors)
+class PasswordException(RegistrationExeption):
+	def __init__(self, message,errors=None):
+		super().__init__(message, errors)

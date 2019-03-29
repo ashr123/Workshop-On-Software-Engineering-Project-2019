@@ -1,13 +1,16 @@
 from main.domain import Permission
+from main.security import Security
 from .TradingSystemException import *
-from main.domain import Guest
-from main.domain import Member
-from main.domain import Store
+from .Guest import Guest
+from .Member import Member
+from .Store import Store
 from typing import Union, Dict, List, Optional
 
 
 class TradingSystem(object):
-	_users: Dict[int, Union[Member, Guest]] = {}
+	RIGHT_PASSWORD_LENGTH = 6
+	#_users: Dict[int, Union[Member, Guest]] = {}
+	_users = {}
 	_members: List[Member] = []
 	_managers: List[Member] = []
 	_stores: List[Store] = []
@@ -44,18 +47,19 @@ class TradingSystem(object):
 		return new_session_id
 
 	@staticmethod
-	def search(keyword):
+	def search(keyword):  # TODO implement
 		return False
 
 	@staticmethod
-	def register_member(session_id: int, username: str, password: str) -> None:
+	def register_member(session_id: int, username: str, password: str) -> None: #TODO ללהאשאש את הססמא של המשתשמש
+		TradingSystem.validate_password(password)
 		if username in map(lambda m: m.name, TradingSystem._members):
 			raise RegistrationExeption(message="the user {} is already registered".format(username))
 		if not isinstance(TradingSystem._users[session_id], Guest):
 			raise RegistrationExeption(message="user {} already logged in".format(username))
 		new_member = Member(name=username, guest=TradingSystem._users[session_id])
 		TradingSystem.add_member(new_member)
-		TradingSystem._users[session_id] = new_member
+		Security.Security.add_user_password(username=username, password=password)
 
 	@staticmethod
 	def open_store(session_id: int, store_name: str, desc: str,
@@ -77,13 +81,13 @@ class TradingSystem(object):
 	@staticmethod
 	def login(session_id: int, username: str, password: str) -> bool:
 		if username not in map(lambda m: m.name, TradingSystem._members):
-			raise PermissionException(message="the user {} is not a member !".format(username))
+			raise PermissionException(message="the user {} is not a member!".format(username))
 		try_to_log_in = TradingSystem.get_user(session_id)
-		if try_to_log_in is not Guest:
-			raise PermissionException(message="the user {} already login !".format(username))
+		if not isinstance(try_to_log_in, Guest):
+			raise PermissionException(message="the user {} already login!".format(username))
 		new_logged_in_member: Optional[Member] = TradingSystem.get_member(member_name=username)
-		if not new_logged_in_member.login(username=username, password=password):
-			raise PermissionException(message="wrong password !".format(username))
+		if not try_to_log_in.login(username=username, password=password):
+			raise PermissionException(message="wrong password!".format(username))
 		TradingSystem._users[session_id] = new_logged_in_member
 		return True
 
@@ -103,27 +107,42 @@ class TradingSystem(object):
 	def add_manager(new_manager) -> type(None):
 		TradingSystem._managers.append(new_manager)
 
-	@classmethod
-	def connect_to_money_collection_system(cls):
+	@staticmethod
+	def connect_to_money_collection_system():  # TODO implement
 		return True
 
-	@classmethod
-	def connect_to_product_supply_system(cls):
+	@staticmethod
+	def connect_to_product_supply_system():  # TODO implement
 		return True
 
-	@classmethod
-	def connect_to_consistency_system(cls):
+	@staticmethod
+	def connect_to_consistency_system():  # TODO implement
 		return True
 
-	@classmethod
-	def register_master_member(cls, master_user, password):
+	@staticmethod
+	def register_master_member(master_user, password):  #TODO fix
 		if TradingSystem.pass_word_short(password):
-			raise PasswordToShortException()
+			raise PasswordException()
 		if master_user in map(lambda m: m.name, TradingSystem._members):
 			raise RegistrationExeption(message="the user {} is already registered".format(master_user))
 		new_manager = Member(name=master_user, guest=Guest())
 		TradingSystem.add_manager(new_manager)
 		TradingSystem._users[0] = new_manager
 
+	@staticmethod
 	def pass_word_short(password):
 		return len(password) < 6
+
+	@classmethod
+	def validate_password(cls, password):
+		if not len(password) == TradingSystem.RIGHT_PASSWORD_LENGTH:
+			raise PasswordException("Password must be of length {}".format(TradingSystem.RIGHT_PASSWORD_LENGTH))
+		if not password.isalnum():
+			raise PasswordException("Password must be an alphnumeric string")
+
+	@staticmethod
+	def get_store(store_name: str) -> Optional[Store]:
+		store_lst: List[Store] = list(filter(lambda store: store.name == store_name, TradingSystem._stores))
+		if len(store_lst) is not 1:
+			return None
+		return store_lst[0]
