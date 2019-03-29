@@ -1,3 +1,5 @@
+import pytest
+
 from main.service.ServiceFacade import ServiceFacade
 
 
@@ -43,6 +45,7 @@ class TestClass(object):
 		username = "rotem"
 		password = "123456"
 		assert "OK" == self._serviceFacade.setup(username, password)
+		self._serviceFacade.clear()
 
 	# 1.1 setup 2
 	def test_setup2(self):
@@ -50,6 +53,7 @@ class TestClass(object):
 		username = "rotem"
 		password = "12"
 		assert "password must have 6 alpha-numeric characters" == self._serviceFacade.setup(username, password)
+		self._serviceFacade.clear()
 
 	# 2.2 register 1
 	def test_register1(self):
@@ -58,6 +62,7 @@ class TestClass(object):
 		username = "noa"
 		password = "098765"
 		assert "OK" == self._serviceFacade.register(sessionId, username, password)
+		self._serviceFacade.clear()
 
 	# 2.2 register 2
 	def test_register2(self):
@@ -66,6 +71,7 @@ class TestClass(object):
 		username = "noa"
 		password = "444444"
 		assert 'the user noa is already registered' == self._serviceFacade.register(sessionId, username, password)
+		self._serviceFacade.clear()
 
 	# 2.2 register 3
 	def test_register3(self):
@@ -74,21 +80,25 @@ class TestClass(object):
 		username = "noa"
 		password = "33"
 		assert "Password must be of length 6" == self._serviceFacade.register(sessionId, username, password)
+		self._serviceFacade.clear()
 
 	# 2.3 login 1
 	def test_login1(self):
 		sessionId = self.set_up0()
 		assert "OK" == self._serviceFacade.login(sessionId, "noa", "098765")
+		self._serviceFacade.clear()
 
 	# 2.3 login 2
 	def test_login2(self):
 		sessionId = self.set_up0()
 		assert 'the user roi is not a member!' == self._serviceFacade.login(sessionId, "roi", "777777")
+		self._serviceFacade.clear()
 
 	# 2.3 login 3
 	def test_login3(self):
 		sessionId = self.set_up0()
 		assert "wrong password!" == self._serviceFacade.login(sessionId, "noa", "098769")
+		self._serviceFacade.clear()
 
 	# 2.5 search 1
 	def test_searchItem1(self):
@@ -104,6 +114,7 @@ class TestClass(object):
 		                                       fil_rankItem=fil_rankItem, fil_rankStore=fil_rankStore,
 		                                       fil_price=fil_price)
 		assert [["fur shampoo", "makes dogs fur shiny and soft", 13.5]] == items
+		self._serviceFacade.clear()
 
 	# 2.5 search 2
 	def test_searchItem2(self):
@@ -122,6 +133,7 @@ class TestClass(object):
 		                                                                 "makes dogs fur shiny and soft", 12],
 		        ["fur mask",
 		         "makes dogs fur shiny and soft", 40]] == items
+		self._serviceFacade.clear()
 
 	# 2.5 search 3
 	def test_searchItem3(self):
@@ -344,18 +356,22 @@ class TestClass(object):
 		password = "666666"
 		self._serviceFacade.register(ownerId, username, password)
 		assert "OK" == self._serviceFacade.addOwner(sessionId, username, "Dogs World")
+		self._serviceFacade.clear()
 
 	# 4.3 add owner 2
 	def test_addOwner2(self):
 		self.set_up()
 		sessionId = self._serviceFacade.initiateSession()
 		assert "guest can't nominate owners" == self._serviceFacade.addOwner(sessionId, "rotem", "Dogs World")
+		self._serviceFacade.clear()
 
 	# 4.3 add owner 3
+	@pytest.mark.skip(reason="no way of currently testing this")
 	def test_addOwner3(self):
 		sessionId = self.set_up1()
 		ownerId = self._serviceFacade.initiateSession()
 		assert "guest can't be nominate as an owner" == self._serviceFacade.addOwner(sessionId, ownerId, "Dogs World")
+		self._serviceFacade.clear()
 
 	# 4.3 add owner 4
 	def test_addOwner4(self):
@@ -365,10 +381,11 @@ class TestClass(object):
 		password = "666666"
 		self._serviceFacade.register(ownerId, username, password)
 		self._serviceFacade.login(ownerId, username, password)
-		self._serviceFacade.addOwner(sessionId, ownerId, "Dogs World")
-		assert "circular nomination" == self._serviceFacade.addOwner(ownerId, sessionId, "Dogs World")
+		self._serviceFacade.addOwner(sessionId, username, "Dogs World")
+		assert "circular nomination" in self._serviceFacade.addOwner(ownerId, "noa", "Dogs World")
+		self._serviceFacade.clear()
 
-	# 4.4 add owner 1
+	# 4.4 remove owner 1
 	def test_removeOwner1(self):
 		sessionId = self.set_up1()
 		ownerId = self._serviceFacade.initiateSession()
@@ -377,9 +394,9 @@ class TestClass(object):
 		self._serviceFacade.register(ownerId, username, password)
 		self._serviceFacade.login(ownerId, username, password)
 		self._serviceFacade.addOwner(sessionId, ownerId, "Dogs world")
-		assert "OK" == self._serviceFacade.removeOwner(sessionId, ownerId, "Dogs World")
+		assert "OK" == self._serviceFacade.removeOwner(sessionId, username, "Dogs World")
 
-	# 4.4 add owner 2
+	# 4.4 remove owner 2
 	def test_removeOwner2(self):
 		sessionId = self.set_up1()
 		ownerId = self._serviceFacade.initiateSession()
@@ -395,7 +412,7 @@ class TestClass(object):
 		self._serviceFacade.login(ownerId1, username1, password1)
 		self._serviceFacade.addOwner(sessionId, ownerId1, "Dogs World")
 		assert "owner can't remove another owner that he didn't nominate" == self._serviceFacade.removeOwner(ownerId,
-		                                                                                                     ownerId1,
+		                                                                                                     username1,
 		                                                                                                     "Dogs World")
 
 	# 4.5 add manager 1

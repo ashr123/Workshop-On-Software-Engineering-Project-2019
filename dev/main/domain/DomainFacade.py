@@ -8,6 +8,10 @@ from main.domain import Store
 
 class DomainFacade(object):
 	@staticmethod
+	def clear():
+		TradingSystem.clear()
+
+	@staticmethod
 	def initiate_session():
 		return TradingSystem.generate_id()
 
@@ -98,6 +102,8 @@ class DomainFacade(object):
 	@staticmethod
 	def add_owner(session_id: int, ownered_name: str, store_name: str):
 		member: Optional[Member] = TradingSystem.get_user_if_member(session_id=session_id)
+		if member is None:
+			return "guest can't nominate owners"
 		try:
 			member.add_owner(store_name=store_name, member_name=ownered_name)
 		except TradingSystemException as e:
@@ -106,8 +112,15 @@ class DomainFacade(object):
 
 
 	@staticmethod
-	def remove_owner(owner_id: int, store_name: str):
-		return False
+	def remove_owner(session_id: int, owner_name: str, store_name: str):
+		member: Optional[Member] = TradingSystem.get_user_if_member(session_id=session_id)
+		if member is None:
+			return "guest can't remove owners"
+		try:
+			member.remove_owner(store_name=store_name, member_name=ownered_name)
+		except TradingSystemException as e:
+			return e.msg
+		return "OK"
 
 	@staticmethod
 	def add_manager(owner_id: int, store_name: str, permissions: List[str]):
