@@ -34,6 +34,11 @@ class Store(object):
 	def edit_item(self, item_name: str, new_price: float = None, new_name: str = None):  # TODO implement
 		return False
 
+<<<<<<< HEAD
+	def has_item(self, item: Item) -> bool:
+		return item in self._items
+=======
 	def add_owner(self, owner: Member):
 		self._managers.append(owner)
 
+>>>>>>> origin/master
