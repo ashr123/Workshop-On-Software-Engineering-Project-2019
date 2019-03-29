@@ -9,6 +9,7 @@ from typing import Union, Dict, List, Optional
 
 class TradingSystem(object):
 	RIGHT_PASSWORD_LENGTH = 6
+	curr_item_id_temporary_bad_solution = 0
 	#_users: Dict[int, Union[Member, Guest]] = {}
 	_users = {}
 	_members: List[Member] = []
@@ -154,3 +155,8 @@ class TradingSystem(object):
 		if len(store_lst) is not 1:
 			return None
 		return store_lst[0]
+
+	@staticmethod
+	def generate_item_id():
+		ans = TradingSystem.curr_item_id_temporary_bad_solution
+		TradingSystem.curr_item_id_temporary_bad_solution+=1

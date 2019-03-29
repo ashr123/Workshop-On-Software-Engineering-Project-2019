@@ -38,17 +38,29 @@ class Store(object):
 
 	def edit_item(self, item_id: int, new_price: float = None, new_name: str = None):
 		item = self.get_item(item_id)
+<<<<<<< HEAD
 		if item == None:
+			return False
+		if not new_name == None:
+			item.name = new_name
+		if not new_price == None:
+=======
+		if item is None:
 			return False
 		if not new_name is None:
 			item.name = new_name
 		if not new_price is None:
+>>>>>>> origin/Rotem_&_Roy_are_having_fun
 			item.price = new_price
 		self.remove_item(item_id=item_id)
 		self.add_item(new_item=item)
 		return True
 
+<<<<<<< HEAD
+	def add_owner(self, owner: Member):
+=======
 	def add_owner(self, owner):
+>>>>>>> origin/Rotem_&_Roy_are_having_fun
 		self._managers.append(owner)
 
 	def has_item(self, item_id: int) -> bool:
@@ -60,14 +72,17 @@ class Store(object):
 		item = list(filter(lambda i: i.id == item_id, self._items))[0]
 		return copy.deepcopy(item)
 
+<<<<<<< HEAD
 	def get_item_by_name(self, item_name) -> Item:
 		item_list = list(filter(lambda i: i.name == item_name, self._items))
 		if len(item_list) != 1:
 			return None
 		return item_list[0]
+=======
 	def remove_manager(self, manager):
 		for member in self.managers:
 			if manager.name == member.name:
 				self.managers.remove(member)
 				return
 		raise AnomalyException("store: manager not found!!")
+>>>>>>> origin/Rotem_&_Roy_are_having_fun
