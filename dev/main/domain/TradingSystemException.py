@@ -1,6 +1,11 @@
 class TradingSystemException(Exception):
 	def __init__(self, message, errors=None):
 		super().__init__(message, errors)
+		self._message = message
+
+	@property
+	def msg(self):
+		return self._message
 
 
 class UserAlreadyExistException(TradingSystemException):
@@ -35,4 +40,8 @@ class RegistrationExeption(TradingSystemException):
 
 class OpenStoreExeption(TradingSystemException):
 	def __init__(self, message, errors=None):
+		super().__init__(message, errors)
+
+class PasswordException(RegistrationExeption):
+	def __init__(self, message,errors=None):
 		super().__init__(message, errors)

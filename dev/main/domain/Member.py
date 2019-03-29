@@ -20,7 +20,7 @@ class Member(User):
 		return self._name
 
 	@property
-	def stores_managed_states(self) -> List[ManagementState]:
+	def stores_managed_states(self):
 		return self._storesManaged_states
 
 	@property
@@ -57,11 +57,27 @@ class Member(User):
 			ManagementState(isOwner=False, permissions=permission_list, store_name=store_name))
 		return True
 
+	def add_owner(self, store_name: str, member_name: str) -> None:
+		store_ind = list(filter(lambda s_m: s_m.store.name == store_name, self._storesManaged_states))
+		if len(store_ind) > 1:
+			raise AnomalyException("Unexpected number of stores: {}!".format(len(store_ind)))
+		if len(store_ind) == 0 or (not store_ind[0].is_owner):
+			raise PermissionException("member name {} is not owner of the store!".format(self._name))
+		state: ManagementState.ManagementState = store_ind[0]
+		new_manager: Member = TradingSystem.TradingSystem.get_member(member_name=member_name)
+		if new_manager is None:
+			raise PermissionException("member_name {} is not a member at all!".format(member_name))
+		store: Store.Store = TradingSystem.TradingSystem.get_store(store_name)
+		if store is None:
+			raise AnomalyException("store {} doesn't exist!".format(len(store_ind)))
+		new_manager.stores_managed_states.append(
+			ManagementState.ManagementState(is_owner=True, permissions_list=[], store=store))
+
 	def open_store(self, session_id: int, store_name: str, desc: str) -> bool:
 		return TradingSystem.TradingSystem.open_store(session_id=session_id, store_name=store_name, desc=desc,
 		                                              permissions_list=[])
 
-	def get_store_management_state(self, store_name: str) -> Optional[ManagementState]:
+	def get_store_management_state(self, store_name: str):
 		management_states: List[ManagementState] = list(filter(lambda ms: ms.store.name == store_name, self.stores_managed_states))
 		if len(management_states) == 0:
 			return None
