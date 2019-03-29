@@ -12,6 +12,14 @@ class Item(object):
 	def name(self) -> str:
 		return self._name
 
+	@name.setter
+	def name(self, new_name):
+		self._name = new_name
+
 	@property
 	def price(self) -> int:
 		return self._price
+
+	@price.setter
+	def price(self, new_price: int):
+		self._price = new_price
