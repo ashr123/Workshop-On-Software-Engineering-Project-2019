@@ -74,8 +74,8 @@ class ServiceFacade(object):
 	def removeOwner(self, session_id: int, owner_name: str, store_name: str):
 		return DomainFacade.remove_owner(session_id, owner_name, store_name)
 
-	def addManager(self, sessionId, managerId, storeName, permissions):
-		return DomainFacade.addManager(self, sessionId, managerId, storeName, permissions)
+	def addManager(self, sessionId: int, manager_name: str, storeName, permissions):
+		return DomainFacade.add_manager(sessionId, manager_name, storeName, permissions)
 
 	def removeManager(self, sessionId, managerId, storeName):
 		return DomainFacade.removeManager(sessionId, managerId, storeName)

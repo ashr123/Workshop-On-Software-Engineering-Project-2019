@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from main.domain.Permission import Permissions
 from .TradingSystem import TradingSystem
 from .Member import Member
 from .TradingSystemException import *
@@ -120,14 +121,22 @@ class DomainFacade(object):
 		if member is None:
 			return "guest can't remove owners"
 		try:
-			member.remove_owner(store_name=store_name, member_name=ownered_name)
+			member.remove_owner(store_name=store_name, member_name=owner_name)
 		except TradingSystemException as e:
 			return e.msg
 		return "OK"
 
 	@staticmethod
-	def add_manager(owner_id: int, store_name: str, permissions: List[str]):
-		return False
+	def add_manager(owner_id: int, manager_name: str, store_name: str, permissions: List[str]):
+		member: Optional[Member] = TradingSystem.get_user_if_member(session_id=owner_id)
+		if member is None:
+			return "guest can't nominate managers"
+		try:
+			member.add_manager(store_name=store_name, member_name=manager_name,
+			                   permission_list=list(map(lambda permission: Permissions[permission], permissions)))
+		except TradingSystemException as e:
+			return e.msg
+		return "OK"
 
 	@staticmethod
 	def remove_manager(owner_id: int, store_name: str):
