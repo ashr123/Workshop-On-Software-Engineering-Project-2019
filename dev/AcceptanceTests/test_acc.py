@@ -182,12 +182,14 @@ class TestClass(object):
 		                                                                 "makes dogs fur shiny and soft", 12],
 		        ["fur mask",
 		         "makes dogs fur shiny and soft", 40]] == items
+		self._serviceFacade.clear()
 
 	# 2.6 save item 1
 	def test_saveItem1(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
 		assert "OK" == self._serviceFacade.saveItemInCart(sessionId, self._item1)
+		self._serviceFacade.clear()
 
 	# 2.6 save item 2
 	def test_saveItem2(self):
@@ -196,12 +198,14 @@ class TestClass(object):
 		self._serviceFacade.saveItemInCart(sessionId, self._item1)
 		self._serviceFacade.saveItemInCart(sessionId, self._item1)
 		assert [[["fur shampoo", 2, 27]]] == self._serviceFacade.watchCart(sessionId)
+		self._serviceFacade.clear()
 
 	# 2.6 save item 3
 	def test_saveItem3(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
 		assert "Item doesn't exist" == self._serviceFacade.saveItemInCart(sessionId, -8)
+		self._serviceFacade.clear()
 
 	# 2.7 edit cart 1 part 1
 	def test_watchCart(self):
@@ -424,7 +428,7 @@ class TestClass(object):
 		username = "dana"
 		password = "666666"
 		self._serviceFacade.register(managerId, username, password)
-		assert "OK" == self._serviceFacade.addManager(sessionId, managerId, "Dogs World", ["REMOVE_ITEM"])
+		assert "OK" == self._serviceFacade.addManager(sessionId, username, "Dogs World", ["REMOVE_ITEM"])
 		self._serviceFacade.clear()
 
 	# 4.5 add manager 2
@@ -432,7 +436,8 @@ class TestClass(object):
 		self.set_up()
 		sessionId = self._serviceFacade.initiateSession()
 		managerId = self._serviceFacade.initiateSession()
-		assert "guest can't nominate manager" == self._serviceFacade.addManager(sessionId, managerId, "Dogs World", ["ADD_ITEM"])
+		assert "guest can't nominate managers" == self._serviceFacade.addManager(sessionId, managerId, "Dogs World",
+		                                                                         ["ADD_ITEM"])
 		self._serviceFacade.clear()
 
 	# 4.6 remove manager 1
@@ -443,8 +448,8 @@ class TestClass(object):
 		password = "666666"
 		self._serviceFacade.register(managerId, username, password)
 		self._serviceFacade.login(managerId, username, password)
-		self._serviceFacade.addManager(sessionId, managerId, "Dogs World", ["REMOVE_ITEM", "ADD_ITEM"])
-		assert "OK" == self._serviceFacade.removeManager(sessionId, managerId, "Dogs World")
+		self._serviceFacade.addManager(sessionId, username, "Dogs World", ["REMOVE_ITEM", "ADD_ITEM"])
+		assert "OK" == self._serviceFacade.removeManager(sessionId, username, "Dogs World")
 		self._serviceFacade.clear()
 
 	# 4.6 remove manager 2
@@ -455,16 +460,17 @@ class TestClass(object):
 		password = "666666"
 		self._serviceFacade.register(ownerId, username, password)
 		self._serviceFacade.login(ownerId, username, password)
-		self._serviceFacade.addOwner(sessionId, ownerId, "Dogs World")
+		self._serviceFacade.addOwner(sessionId, username, "Dogs World")
 		managerId = self._serviceFacade.initiateSession()
 		username1 = "ofer"
 		password1 = "777777"
 		self._serviceFacade.register(managerId, username1, password1)
 		self._serviceFacade.login(managerId, username1, password1)
-		self._serviceFacade.addManager(sessionId, managerId, "Dogs World", [])
-		assert "owner can't remove manager that he didn't nominate" == self._serviceFacade.removeManager(ownerId,
-		                                                                                                 managerId,
-		                                                                                                 "Dogs World")
+		self._serviceFacade.addManager(sessionId, username1, "Dogs World", [])
+		assert "manager can't remove another manager that he didn't nominate" == self._serviceFacade.removeManager(
+			ownerId,
+			username1,
+			"Dogs World")
 		self._serviceFacade.clear()
 
 	# 5.1 manager tries to remove item 1
@@ -474,8 +480,10 @@ class TestClass(object):
 		username = "dana"
 		password = "666666"
 		self._serviceFacade.register(managerId, username, password)
-		self._serviceFacade.addManager(sessionId, managerId, "Dogs World", ["ADD_ITEM", "REMOVE_ITEM", "EDIT_ITEM"])
-		assert "OK" == self._serviceFacade.removeItemFromStore(sessionId, self._item1, "Dogs World")
+		self._serviceFacade.login(managerId, username, password)
+		self._serviceFacade.addManager(sessionId, username, "Dogs World", ["ADD_ITEM", "REMOVE_ITEM", "EDIT_ITEM"])
+		assert "OK" == self._serviceFacade.removeItemFromStore(managerId, self._item1, "Dogs World")
+		self._serviceFacade.clear()
 
 	# 5.1 manager tries to remove item 2
 	def test_managerDoingThings2(self):
@@ -484,9 +492,12 @@ class TestClass(object):
 		username = "dana"
 		password = "666666"
 		self._serviceFacade.register(managerId, username, password)
-		self._serviceFacade.addManager(sessionId, managerId, "Dogs World", [1, 2])
-		assert "manager doesn't have the permissions" == self._serviceFacade.removeItemFromStore(sessionId, self._item1,
-		                                                                                         "Dogs World")
+		self._serviceFacade.login(managerId, username, password)
+		self._serviceFacade.addManager(sessionId, username, "Dogs World", ["EDIT_ITEM", "ADD_ITEM"])
+		assert "you don't have the permission to do this action!" == self._serviceFacade.removeItemFromStore(managerId,
+		                                                                                                     self._item1,
+		                                                                                                     "Dogs World")
+		self._serviceFacade.clear()
 
 	# 5.1 manager tries to remove item 3
 	def test_managerDoingThings3(self):
@@ -497,6 +508,7 @@ class TestClass(object):
 		self._serviceFacade.register(guestId, username, password)
 		assert "guest can't remove item from store" == self._serviceFacade.removeItemFromStore(guestId, self._item1,
 		                                                                                       "Dogs World")
+		self._serviceFacade.clear()
 
 	# 6.3 remove user 1
 	def test_removeUser1(self):
@@ -504,6 +516,7 @@ class TestClass(object):
 		sysmanager = self._serviceFacade.initiateSession()
 		self._serviceFacade.login(sysmanager, "rotem", "123456")
 		assert "OK" == self._serviceFacade.removeUser(sysmanager, sessionid)
+		self._serviceFacade.clear()
 
 	# 6.3 remove user 2
 	def test_removeUser2(self):
@@ -511,6 +524,7 @@ class TestClass(object):
 		sysmanager = self._serviceFacade.initiateSession()
 		self._serviceFacade.login(sysmanager, "rotem", "123456")
 		assert "OK" == self._serviceFacade.removeUser(sysmanager, sessionid)
+		self._serviceFacade.clear()
 
 	# 6.3 remove user 3
 	def test_removeUser3(self):
@@ -519,3 +533,4 @@ class TestClass(object):
 		self._serviceFacade.login(sysmanager, "rotem", "123456")
 		assert "Fail: you are trying to remove a non member user" == self._serviceFacade.removeUser(sysmanager,
 		                                                                                            sessionid)
+		self._serviceFacade.clear()

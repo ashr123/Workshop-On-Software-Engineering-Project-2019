@@ -23,7 +23,7 @@ class Guest(User):
 		self._groceryCarts[store_name].add_item(item)
 		return True
 
-	def watch_gc(self):
+	def watch_gc(self):  # TODO IMPORTANT fix
 		return str(self._groceryCarts)
 
 	def has_item_in_cart(self, item_name, store_name):

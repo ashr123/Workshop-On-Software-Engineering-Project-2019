@@ -29,8 +29,10 @@ class TradingSystem(object):
 		return TradingSystem._members
 
 	@staticmethod
-	def get_user(session_id: int) -> Union[Guest, Member]:
-		return TradingSystem._users[session_id]
+	def get_user(session_id: int) -> Union[Guest, Member, None]:
+		if session_id in TradingSystem._users.keys():
+			return TradingSystem._users[session_id]
+		return None
 
 	@staticmethod
 	def get_user_if_member(session_id: int) -> Optional[Member]:
@@ -158,5 +160,13 @@ class TradingSystem(object):
 
 	@staticmethod
 	def generate_item_id():
-		ans = TradingSystem.curr_item_id_temporary_bad_solution
 		TradingSystem.curr_item_id_temporary_bad_solution+=1
+		return TradingSystem.curr_item_id_temporary_bad_solution
+
+	@staticmethod
+	def get_item(item_id: int):
+		for store in TradingSystem._stores:
+			for item in store._items:
+				if item.id == item_id:
+					return item, store.name
+		raise AnomalyException("item number {} doesn't exist".format(item_id))

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from main.domain.Permission import Permissions
 from .Item import Item
@@ -35,25 +35,23 @@ class ManagementState(object):
 	def nominator(self):
 		return self._nominator
 
-	def add_item(self, item_id: int, name: str, price: int) -> bool:
+	def add_item(self, item_name: str, desc: str, category: str, price: float, amount: int) -> int:
 		if not self.is_owner and Permissions.ADD_ITEM not in self._permissions:
-			raise PermissionException(message="you don't have the permission to do this auction!")
-		if self.store.add_item(Item(item_id, name, price)):
-			return True
-		return False
+			raise PermissionException(message="you don't have the permission to do this action!")
+		item_id: int = TradingSystem.TradingSystem.generate_item_id()
+		self.store.add_item(Item(item_id, item_name, desc, category, price, amount))
+		return item_id
 
-	def remove_item(self, item_name: str) -> bool:
+	def remove_item(self, item_id: int):
 		if not self.is_owner and Permissions.REMOVE_ITEM not in self._permissions:
-			raise PermissionException(message="you don't have the permission to do this auction!")
-		if self.store.remove_item(item_name):
-			return True
-		return False
+			raise PermissionException(message="you don't have the permission to do this action!")
+		if not self.store.remove_item(item_id):
+			raise AnomalyException("no item with id {}".format(item_id))
 
 	def edit_item(self, item_name: str, new_price: float = None, new_name: str = None) -> bool:
 		if not self.is_owner and Permissions.EDIT_ITEM not in self._permissions:
 			raise PermissionException(message="you don't have the permission to do this auction!")
 		self.store.edit_item(item_name=item_name, new_price=new_price, new_name=new_name)
-		return False
 
 	def add_owner(self, member_name: str, nominator) -> None:
 		if not self.is_owner:
@@ -71,7 +69,6 @@ class ManagementState(object):
 			new_owner.add_managment_state(is_owner=True, permissions_list=[], store=self._store, nominator=nominator)
 			self.store.add_owner(owner=new_owner)
 
-
 	def remove_owner(self, owner_name: str, remover) -> None:  # see: section 4.4
 		owner = TradingSystem.TradingSystem.get_member(member_name=owner_name)
 		existing_management_state: Optional[ManagementState] = owner.get_store_management_state(self.store.name)
@@ -86,15 +83,32 @@ class ManagementState(object):
 					existing_management_state.remove_owner(manager.name, owner)
 			owner.stores_managed_states.remove(existing_management_state)
 
-	def add_manager(self, manager_name) -> bool:
-		# if not self.permissions[6] == True:
-		# 	raise PermissionException(message="you d'ont have the permission to do this auction !")
-		return False
+	def add_manager(self, manager_name, permissions_list: List[Permissions], nominator) -> None:
+		if Permissions.ADD_MANAGER not in self.permissions and not self.is_owner:
+			raise PermissionException(message="you don't have the permission to add manager!")
+		new_manager = TradingSystem.TradingSystem.get_member(member_name=manager_name)
+		if new_manager is None:
+			raise AnomalyException("member to be promoted doesn't exists")
+		if len(list(filter(lambda state: state.store.name == self.store.name and state.is_owner,
+		                   new_manager.stores_managed_states))) > 0:
+			raise PermissionException(message="you're already a manager of this store! (circular nomination)")
+		new_manager.add_managment_state(is_owner=False, permissions_list=permissions_list, store=self._store,
+		                                nominator=nominator)
+		self.store.add_owner(owner=new_manager)
 
-	def remove_manager(self, manager_id) -> bool:
-		# if not self.permissions[7] == True:
-		# 	raise PermissionException(message="you d'ont have the permission to do this auction !")
-		return False
+	def remove_manager(self, manager_name, remover) -> None:  # TODO ask
+		manager = TradingSystem.TradingSystem.get_member(member_name=manager_name)
+		existing_management_state: Optional[ManagementState] = manager.get_store_management_state(self.store.name)
+		if remover.name != existing_management_state._nominator.name:
+			raise PermissionException(message="manager can't remove another manager that he didn't nominate")
+		else:
+			self.store.remove_manager(manager=manager)
+			for child_of_manager in self.store.managers:
+				manager_state: ManagementState = child_of_manager.get_store_management_state(self.store.name)
+				manager_nominator = manager_state.nominator
+				if manager_nominator is not None and manager_nominator.name == manager_name:
+					existing_management_state.remove_owner(child_of_manager.name, manager)
+			manager.stores_managed_states.remove(existing_management_state)
 
 	def set_manager_permissions(self, manager_id) -> bool:
 		# if not self.permissions[8] == True:

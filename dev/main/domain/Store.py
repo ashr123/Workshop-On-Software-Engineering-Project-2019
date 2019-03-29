@@ -27,9 +27,7 @@ class Store(object):
 	def add_item(self, new_item: Item):
 		self._items.append(new_item)
 
-	def remove_item(self, item_id: int) -> bool:  # TODO fix
-		# if not item_name in map(lambda m: m.id, self._items):
-		# 	raise PermissionException(message="this item id {} is not in store stock !".format(item_name))
+	def remove_item(self, item_id: int) -> bool:
 		for item in self._items:
 			if item.id == item_id:
 				self._items.remove(item)

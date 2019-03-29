@@ -1,12 +1,12 @@
 from typing import List, Optional
 
+from main.domain.ManagementState import ManagementState
 from main.domain.Permission import Permissions
 from .TradingSystem import TradingSystem
 from .Member import Member
 from .TradingSystemException import *
 from main.domain import Store
 from main.domain import Item
-
 
 
 class DomainFacade(object):
@@ -54,6 +54,8 @@ class DomainFacade(object):
 	@staticmethod
 	def watch_cart(session_id: int):
 		user = TradingSystem.get_user(session_id)
+		if user is None:
+			return "session id isn't valid"
 		return user.watch_gc()
 
 	@staticmethod
@@ -77,27 +79,46 @@ class DomainFacade(object):
 		return False
 
 	@staticmethod
-	def add_store(session_id: int, name: str, desc: str) -> bool:
+	def add_store(session_id: int, name: str, desc: str) -> str:
 		try:
 			member: Member = TradingSystem.get_user_if_member(session_id)
 			if member is None:
 				raise GuestCannotOpenStoreException("User {} has no permission to open a store".format(name))
 			if member.open_store(session_id=session_id, store_name=name, desc=desc):
-				return True
+				return "OK"
 		except UserAlreadyHasStoreException as e:
-			return False
+			return e.msg
 		except GuestCannotOpenStoreException as e:
-			return False
+			return e.msg
+		return "OK"
 
 	@staticmethod
 	def add_item_to_store(session_id: int, store_name: str, itemName: str, category: str, desc: str, price: float,
-	                      amount: int) -> bool:
-		store = TradingSystem.get_store(store_name)
-		store.add_item(Item.Item(TradingSystem.generate_item_id(),itemName,price))
+	                      amount: int):
+		manager: Optional[Member] = TradingSystem.get_user_if_member(session_id=session_id)
+		if manager is None:
+			return "guest can't remove item from store"
+		state: ManagementState = manager.get_store_management_state(store_name)
+		if state is None:
+			return "member {} is not a manager of this store".format(manager.name)
+		try:
+			return state.add_item(itemName, desc, category, price, amount)
+		except TradingSystemException as e:
+			return e.msg
 
 	@staticmethod
-	def remove_item_from_store(item_name: str, store_name: str):
-		return False
+	def remove_item_from_store(session_id: int, item_id: int, store_name: str):
+		manager: Optional[Member] = TradingSystem.get_user_if_member(session_id=session_id)
+		if manager is None:
+			return "guest can't remove item from store"
+		state: ManagementState = manager.get_store_management_state(store_name)
+		if state is None:
+			return "member {} is not a manager of this store".format(manager.name)
+		try:
+			state.remove_item(item_id)
+		except TradingSystemException as e:
+			return e.msg
+		return "OK"
 
 	@staticmethod
 	def change_item_in_store(item_name: str, store_name: str, value: float):
@@ -113,7 +134,6 @@ class DomainFacade(object):
 		except TradingSystemException as e:
 			return e.msg
 		return "OK"
-
 
 	@staticmethod
 	def remove_owner(session_id: int, owner_name: str, store_name: str):
@@ -139,8 +159,15 @@ class DomainFacade(object):
 		return "OK"
 
 	@staticmethod
-	def remove_manager(owner_id: int, store_name: str):
-		return False
+	def remove_manager(nominator: int, manager: str, store_name: str):
+		member: Optional[Member] = TradingSystem.get_user_if_member(session_id=nominator)
+		if member is None:
+			return "guest can't remove managers"
+		try:
+			member.remove_manager(store_name=store_name, member_name=manager)
+		except TradingSystemException as e:
+			return e.msg
+		return "OK"
 
 	@staticmethod
 	def remove_user(session_id: int, user_to_remove: str):
@@ -158,8 +185,14 @@ class DomainFacade(object):
 		return True
 
 	@staticmethod
-	def add_item_to_cart(session_id: int, item_name: str, store_id: str):
-		pass
+	def add_item_to_cart(session_id: int, item_id: int):
+		user = TradingSystem.get_user(session_id)
+		try:
+			item, store = TradingSystem.get_item(item_id)
+		except TradingSystemException as e:
+			return e.msg
+		user.add_item_to_cart(item, store)
+		return "OK"
 
 	@staticmethod
 	def get_member(session_id: int) -> Member:

@@ -42,20 +42,13 @@ class Member(User):
 			ManagementState.ManagementState(is_owner=is_owner, permissions_list=permissions_list, store=store, nominator=nominator))
 
 	def add_manager(self, store_name: str, member_name: str, permission_list: List[ManagementState.Permissions]):
-		store_ind = list(filter(lambda s_m: s_m.store_name == store_name, self._storesManaged_states))
+		store_ind = list(filter(lambda s_m: s_m.store.name == store_name, self._storesManaged_states))
 		if len(store_ind) > 1:
 			raise AnomalyException("Unexpected number of stores: {}!".format(len(store_ind)))
 		if len(store_ind) == 0:
 			raise PermissionException("{} doesn't have permissions to add manager to {}".format(self.name, store_name))
-		state = store_ind[0]
-		if not state.is_owner:
-			raise PermissionException("member name {} is not owner of the store!".format(self._name))
-		new_manager = TradingSystem.get_member()
-		if new_manager is None:
-			raise PermissionException("member_name {} is not a member at all!".format(member_name))
-		new_manager.stores_managed_states.append(
-			ManagementState(isOwner=False, permissions=permission_list, store_name=store_name))
-		return True
+		state: ManagementState.ManagementState = store_ind[0]
+		state.add_manager(manager_name=member_name, permissions_list=permission_list, nominator=self)
 
 	def add_owner(self, store_name: str, member_name: str) -> None:
 		store_ind = list(filter(lambda s_m: s_m.store.name == store_name, self._storesManaged_states))
@@ -64,15 +57,6 @@ class Member(User):
 		if len(store_ind) == 0 or (not store_ind[0].is_owner):
 			raise PermissionException("member name {} is not owner of the store!".format(self._name))
 		state: ManagementState.ManagementState = store_ind[0]
-		# new_manager: Member = TradingSystem.TradingSystem.get_member(member_name=member_name)
-		# if new_manager is None:
-		# 	raise PermissionException("member_name {} is not a member at all!".format(member_name))
-		# store: Store.Store = TradingSystem.TradingSystem.get_store(store_name)
-		# if store is None:
-		# 	raise AnomalyException("store {} doesn't exist!".format(len(store_ind)))
-		# # new_manager.add_owner(store_name=store_name, member_name=member_name)
-		# new_manager.stores_managed_states.append(
-		# 	ManagementState.ManagementState(is_owner=True, permissions_list=[], store=store))
 		state.add_owner(member_name=member_name, nominator=self)
 
 	def open_store(self, session_id: int, store_name: str, desc: str) -> bool:
@@ -93,3 +77,15 @@ class Member(User):
 			raise PermissionException("member name {} is not owner of the store!".format(self._name))
 		state: ManagementState.ManagementState = store_ind[0]
 		state.remove_owner(owner_name=member_name, remover=self)
+
+	def remove_manager(self, store_name, member_name):
+		store_ind = list(filter(lambda s_m: s_m.store.name == store_name, self._storesManaged_states))
+		if len(store_ind) > 1:
+			raise AnomalyException("Unexpected number of stores: {}!".format(len(store_ind)))
+		if len(store_ind) == 0:
+			raise PermissionException("member {} is not manager of the store!".format(self._name))
+		state: ManagementState.ManagementState = store_ind[0]
+		if state.is_owner or Permissions.REMOVE_MANAGER in state.permissions:
+			state.remove_manager(manager_name=member_name, remover=self)
+		else:
+			raise PermissionException("member {} is not allowed to remove other managers!".format(self._name))

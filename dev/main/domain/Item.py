@@ -1,8 +1,11 @@
 class Item(object):
-	def __init__(self, id: int, name: str, price: int):
+	def __init__(self, id: int, name: str, description: str, category: str, price: float, quantity: int):
 		self._id = id
 		self._name = name
 		self._price = price
+		self._description = description
+		self._category = category
+		self._quantity = quantity
 
 	@property
 	def id(self) -> int:
