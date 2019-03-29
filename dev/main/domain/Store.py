@@ -33,3 +33,6 @@ class Store(object):
 
 	def edit_item(self, itemId: str):
 		return False
+
+	def has_item(self, item: Item) -> bool:
+		return item in self._items

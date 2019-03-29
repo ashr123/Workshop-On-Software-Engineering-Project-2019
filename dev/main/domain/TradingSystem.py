@@ -1,8 +1,8 @@
 from main.domain import Permission
 from .TradingSystemException import *
-from .Guest import Guest
-from .Member import Member
-from .Store import Store
+from main.domain import Guest
+from main.domain import Member
+from main.domain import Store
 from typing import Union, Dict, List, Optional
 
 
