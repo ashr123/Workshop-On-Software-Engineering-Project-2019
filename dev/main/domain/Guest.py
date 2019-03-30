@@ -19,12 +19,12 @@ class Guest(User):
 
 	def add_item_to_cart(self, item: Item, store_name: str) -> bool:
 		if not store_name in self._groceryCarts.keys():
-			self._groceryCarts[store_name] = GroceryCart()
+			self._groceryCarts[store_name] = GroceryCart(store_name)
 		self._groceryCarts[store_name].add_item(item)
 		return True
 
 	def watch_gc(self):
-		return str(self._groceryCarts)
+		return self._groceryCarts
 
 	def has_item_in_cart(self, item_name, store_name):
 		if not store_name in self._groceryCarts.keys():

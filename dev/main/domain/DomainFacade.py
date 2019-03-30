@@ -55,15 +55,19 @@ class DomainFacade(object):
 		             stores_filtered_by_rank, [])
 
 	@staticmethod
-	def save_item(item_name: str):
-		return False
-
-	@staticmethod
 	def watch_cart(session_id: int):
 		user = TradingSystem.get_user(session_id)
 		if user is None:
 			return "session id isn't valid"
-		return user.watch_gc()
+		basket = user.watch_gc()
+		to_return = ''
+		for cart in basket.values():
+			to_return += cart.store_name + ': '
+			for item in cart.items:
+				to_return += item.name + ' ' + str(cart.items[item]) + ' ' + str(cart.items[item]*item.price) + ', '
+			to_return = to_return[0: -2]
+			to_return += '\n'
+		return to_return
 
 	@staticmethod
 	def remove_item_from_cart(item_name: str):
