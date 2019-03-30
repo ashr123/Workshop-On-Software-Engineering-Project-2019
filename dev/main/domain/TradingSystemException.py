@@ -42,6 +42,23 @@ class OpenStoreExeption(TradingSystemException):
 	def __init__(self, message, errors=None):
 		super().__init__(message, errors)
 
+class StoreExeption(TradingSystemException):
+	def __init__(self, message, errors=None):
+		super().__init__(message, errors)
+
 class PasswordException(RegistrationExeption):
 	def __init__(self, message,errors=None):
 		super().__init__(message, errors)
+
+class NoEnoughItemsException(StoreExeption):
+	def __init__(self, message, errors=None):
+		super().__init__(message, errors)
+
+class StoreNotExistException(TradingSystemException):
+	def __init__(self, message, errors=None):
+		super().__init__(message, errors)
+
+class ItemNotAvailableInStoreException(StoreExeption):
+	def __init__(self, message, errors=None):
+		super().__init__(message, errors)
+
