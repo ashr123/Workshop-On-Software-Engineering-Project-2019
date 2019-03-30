@@ -69,7 +69,7 @@ class ManagementState(object):
 			new_owner.add_managment_state(is_owner=True, permissions_list=[], store=self._store, nominator=nominator)
 			self.store.add_owner(owner=new_owner)
 
-	def remove_manager(self, manager_name, remover, is_master: bool) -> None:
+	def remove_manager(self, manager_name: str, remover, is_master: bool) -> None:
 		manager = TradingSystem.TradingSystem.get_member(member_name=manager_name)
 		existing_management_state: Optional[ManagementState] = manager.get_store_management_state(self.store.name)
 		if not is_master and remover.name != existing_management_state._nominator.name:
