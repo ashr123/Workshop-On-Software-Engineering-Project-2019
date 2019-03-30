@@ -113,7 +113,7 @@ class TestClass(object):
 		items = self._serviceFacade.searchItem(name=name, category=category, hashtag=hashtag, fil_category=fil_category,
 		                                       fil_rankItem=fil_rankItem, fil_rankStore=fil_rankStore,
 		                                       fil_price=fil_price)
-		assert [["fur shampoo", "makes dogs fur shiny and soft", 13.5]] == items
+		assert items == ["fur shampoo, makes dogs fur shiny and soft, 13.5"]
 		self._serviceFacade.clear()
 
 	# 2.5 search 2

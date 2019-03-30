@@ -1,3 +1,4 @@
+from functools import reduce
 from typing import List, Optional
 
 from main.domain.ManagementState import ManagementState
@@ -45,7 +46,13 @@ class DomainFacade(object):
 	@staticmethod
 	def search_item(name: str = None, category=None, hashtag=None, fil_price=None, fil_rankStore=None,
 	                fil_category=None, fil_rankItem=None):
-		return False
+		stores_to_relevant_item = dict(
+			(store.name, store.search_item(name, category, hashtag, fil_price, fil_category, fil_rankItem))
+			for store in TradingSystem._stores)
+		stores_filtered_by_rank = dict((k, v) for k, v in stores_to_relevant_item.items() if
+		                               fil_rankStore == None or TradingSystem.get_store(k).rank >= fil_rankStore)
+		return reduce(lambda acc ,curr: acc + list(map(lambda i: str(i), stores_filtered_by_rank[curr])),
+		             stores_filtered_by_rank, [])
 
 	@staticmethod
 	def save_item(item_name: str):

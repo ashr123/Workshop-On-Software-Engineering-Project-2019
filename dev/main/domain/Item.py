@@ -1,3 +1,6 @@
+from functools import reduce
+
+
 class Item(object):
 	def __init__(self, id: int, name: str, description: str, category: str, price: float, quantity: int):
 		self._id = id
@@ -26,3 +29,11 @@ class Item(object):
 	@price.setter
 	def price(self, new_price: int):
 		self._price = new_price
+
+	def __str__(self):
+		return "{}, {}, {}".format(self.name,self._description, self.price )
+
+	def is_hashtaged(self, hashtag: str) -> bool:
+		potential_tag_sources = [self._name, self._description, self._description]
+		return reduce(lambda acc,curr:acc or hashtag in curr,potential_tag_sources,False)
+
