@@ -48,10 +48,10 @@ class ManagementState(object):
 		if not self.store.remove_item(item_id):
 			raise AnomalyException("no item with id {}".format(item_id))
 
-	def edit_item(self, item_name: str, new_price: float = None, new_name: str = None) -> None:
+	def edit_item(self, item, field, value):
 		if not self.is_owner and Permissions.EDIT_ITEM not in self._permissions:
 			raise PermissionException(message="you don't have the permission to do this auction!")
-		self.store.edit_item(item_name=item_name, new_price=new_price, new_name=new_name)
+		return self.store.edit_item(item, field, value)
 
 	def add_owner(self, member_name: str, nominator) -> None:
 		if not self.is_owner:

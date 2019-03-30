@@ -55,3 +55,18 @@ class Item(object):
 	def is_hashtaged(self, hashtag: str) -> bool:
 		potential_tag_sources = [self._name, self._description, self._description]
 		return reduce(lambda acc, curr: acc or hashtag in curr, potential_tag_sources, False)
+
+	def edit_price(self, value):
+		self._price = value
+
+	def edit_name(self, value):
+		self._name = value
+
+	def edit_des(self, value):
+		self._description = value
+
+	def edit_category(self, value):
+		self._category = value
+
+	def edit_quantity(self, value):
+		self._quantity = value
