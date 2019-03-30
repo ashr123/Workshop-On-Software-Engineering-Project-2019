@@ -3,6 +3,7 @@ from typing import List, Optional
 from .Item import Item
 from .Rule import Rule
 from .TradingSystemException import AnomalyException
+from .TradingSystemException import ItemNotAvailableInStoreException
 
 
 class Store(object):
@@ -113,6 +114,9 @@ class Store(object):
 		return set(ans)
 
 	def reserve_item(self, session_id: int, item_name: str):
+		item = self.get_item_by_name(item_name=item_name)
+		if item == None:
+			raise ItemNotAvailableInStoreException("{} not exist in {}".format(item_name, self.name))
 		self.get_item_by_name(item_name=item_name).dec_quantity(1)
 		if not session_id in self._resereved_items:
 			self._resereved_items[session_id] = {}
