@@ -35,8 +35,8 @@ class ServiceFacade(object):
 		                                fil_rankItem=fil_rankItem, fil_rankStore=fil_rankStore,
 		                                fil_price=fil_price)
 
-	def saveItemInCart(self, sessionId, id):
-		return DomainFacade.add_item_to_cart(sessionId, id)
+	def saveItemInCart(self, sessionId, item_name, store_name):
+		return DomainFacade.add_item_to_cart(sessionId, item_name, store_name)
 
 	def watchCart(self, sessionId):
 		return DomainFacade.watch_cart(sessionId)

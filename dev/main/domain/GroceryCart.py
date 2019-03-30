@@ -1,4 +1,5 @@
 from main.domain.Item import Item
+from main.domain.TradingSystemException import AnomalyException
 
 
 class GroceryCart(object):
@@ -20,8 +21,19 @@ class GroceryCart(object):
 		else:
 			self._items[item] = 1
 
-	def remove_item(self, item_id):
-		self._items.remove(item_id)
+	def remove_item(self, item: Item):
+		try:
+			self._items.pop(item)
+		except KeyError:
+			raise AnomalyException("item {} doesn't exist i your cart".format(item.id))
+
+	def change_item_quantity_in_cart(self, item: Item, quantity: int):
+		if item not in self._items.keys():
+			raise AnomalyException("item {} doesn't exist in your cart".format(item.id))
+		curr_quantity = self._items[item]
+		if quantity <0 and curr_quantity< abs(quantity):
+			raise AnomalyException("give")
+
 
 	def edit_item(self, item_id):
 		return False

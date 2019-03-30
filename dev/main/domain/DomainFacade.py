@@ -70,12 +70,47 @@ class DomainFacade(object):
 		return to_return
 
 	@staticmethod
-	def remove_item_from_cart(item_name: str):
-		return False
+	def add_item_to_cart(session_id: int, item_name: str, store_name: str):
+		user = TradingSystem.get_user(session_id)
+		if user is None:
+			return "unrecognized user"
+		try:
+			item = TradingSystem.get_item(item_name, store_name)
+		except TradingSystemException as e:
+			return e.msg
+		user.add_item_to_cart(item, store_name)
+		return "OK"
 
 	@staticmethod
-	def change_item_quantity_in_cart(item_name: str):
-		return False
+	def remove_item_from_cart(session_id, item_id):
+		user = TradingSystem.get_user(session_id)
+		if user is None:
+			return "unrecognized user"
+		try:
+			item, store = TradingSystem.get_item_and_store(item_id)
+		except TradingSystemException as e:
+			return e.msg
+		try:
+			user.remove_item_from_cart(item, store)
+		except TradingSystemException as e:
+			return e.msg
+		return "OK"
+
+
+	@staticmethod
+	def change_item_quantity_in_cart(session_id: int, item_id: int, quantity: int):
+		user = TradingSystem.get_user(session_id)
+		if user is None:
+			return "unrecognized user"
+		try:
+			item, store = TradingSystem.get_item_and_store(item_id)
+		except TradingSystemException as e:
+			return e.msg
+		try:
+			user.change_item_quantity_in_cart(item, store)
+		except TradingSystemException as e:
+			return e.msg
+		return "OK"
 
 	@staticmethod
 	def buy_single_item(self, sessionId:int, store_name:str, item_name:str):
@@ -197,15 +232,7 @@ class DomainFacade(object):
 			return e.msg
 		return True
 
-	@staticmethod
-	def add_item_to_cart(session_id: int, item_id: int):
-		user = TradingSystem.get_user(session_id)
-		try:
-			item, store = TradingSystem.get_item(item_id)
-		except TradingSystemException as e:
-			return e.msg
-		user.add_item_to_cart(item, store)
-		return "OK"
+
 
 	@staticmethod
 	def get_member(session_id: int) -> Member:

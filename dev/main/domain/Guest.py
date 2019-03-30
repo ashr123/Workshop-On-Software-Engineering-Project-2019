@@ -1,5 +1,6 @@
 from main.domain.GroceryCart import GroceryCart
 from main.domain.Item import Item
+from main.domain.TradingSystemException import AnomalyException
 from main.domain.User import User
 from main.security.Security import Security
 
@@ -18,9 +19,21 @@ class Guest(User):
 		return Security.add_user_password(username=username, password=password)
 
 	def add_item_to_cart(self, item: Item, store_name: str) -> bool:
-		if not store_name in self._groceryCarts.keys():
+		if store_name not in self._groceryCarts.keys():
 			self._groceryCarts[store_name] = GroceryCart(store_name)
 		self._groceryCarts[store_name].add_item(item)
+		return True
+
+	def remove_item_from_cart(self, item: Item, store_name: str) -> bool:
+		if store_name not in self._groceryCarts.keys():
+			raise AnomalyException("store {} doesn't exist in your cart".format(store_name))
+		self._groceryCarts[store_name].remove_item(item)
+		return True
+
+	def change_item_quantity_in_cart(self, item: Item, store_name: str) -> bool:
+		if store_name not in self._groceryCarts.keys():
+			raise AnomalyException("store {} doesn't exist in your cart".format(store_name))
+		self._groceryCarts[store_name].change_item_quantity_in_cart(item)
 		return True
 
 	def watch_gc(self):

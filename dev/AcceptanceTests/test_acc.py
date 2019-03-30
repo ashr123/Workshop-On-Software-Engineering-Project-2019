@@ -159,7 +159,7 @@ class TestClass(object):
 		self._serviceFacade.clear()
 
 	# 2.5 search 6
-	def test_searchItem6(self):
+	def test_searchItem4(self):
 		self.set_up1()
 		name = "Panten Shampoo"
 		category = None
@@ -175,7 +175,7 @@ class TestClass(object):
 		self._serviceFacade.clear()
 
 	# 2.5 search 6
-	def test_searchItem6(self):
+	def test_searchItem5(self):
 		self.set_up1()
 		name = None
 		category = None
@@ -197,15 +197,15 @@ class TestClass(object):
 	def test_saveItem1(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
-		assert "OK" == self._serviceFacade.saveItemInCart(sessionId, self._item1)
+		assert "OK" == self._serviceFacade.saveItemInCart(sessionId, "fur shampoo", "Dogs World")
 		self._serviceFacade.clear()
 
 	# 2.6 save item 2
 	def test_saveItem2(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
-		self._serviceFacade.saveItemInCart(sessionId, self._item1)
-		self._serviceFacade.saveItemInCart(sessionId, self._item1)
+		self._serviceFacade.saveItemInCart(sessionId, "fur shampoo", "Dogs World")
+		self._serviceFacade.saveItemInCart(sessionId, "fur shampoo", "Dogs World")
 		assert "Dogs World: fur shampoo 2 27.0\n" == self._serviceFacade.watchCart(sessionId)
 		self._serviceFacade.clear()
 
@@ -213,28 +213,27 @@ class TestClass(object):
 	def test_saveItem3(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
-		assert "item number -8 doesn't exist" == self._serviceFacade.saveItemInCart(sessionId, -8)
+		assert "item fur comb in store Dogs World doesn't exist" == self._serviceFacade.saveItemInCart(sessionId, "fur comb", "Dogs World")
 		self._serviceFacade.clear()
 
 	# 2.7 edit cart 1 part 1
 	def test_watchCart(self):
 		sessionId = self.set_up2()
-		assert [[["fur shampoo", 1, 13.5], ["fur conditioner", 1, 12],
-		         ["fur mask", 1, 40]]] == self._serviceFacade.watchCart(sessionId)
+		assert "Dogs World: fur shampoo 1 13.5, fur conditioner 1 12, fur mask 1 40\n" == self._serviceFacade.watchCart(sessionId)
 		self._serviceFacade.clear()
 
 	# 2.7 edit cart 1 part 2
 	def test_removeItemFromCart(self):
 		sessionId = self.set_up2()
-		assert [["fur shampoo", 1, 13.5], ["fur mask", 1, 40]] == self._serviceFacade.removeItemFromCart(sessionId,
-		                                                                                                 self._item2)
+		assert "OK" == self._serviceFacade.removeItemFromCart(sessionId, self._item2)
+		assert "Dogs World: fur shampoo 1 13.5, fur mask 1 40\n" == self._serviceFacade.watchCart(sessionId)
 		self._serviceFacade.clear()
 
 	# 2.7 edit cart 2
 	def test_changeItemQuantityInCart(self):
 		sessionId = self.set_up2()
-		assert [["fur shampoo", 3, 13.5], ["fur conditioner", 1, 12],
-		        ["fur mask", 1, 40]] == self._serviceFacade.changeItemQuantityInCart(sessionId, self._item1, 2)
+		assert "OK" == self._serviceFacade.changeItemQuantityInCart(sessionId, self._item1, 2)
+		assert  "Dogs World: fur shampoo 1 13.5, fur conditioner 1 12, fur mask 1 40\n" == self._serviceFacade.watchCart(sessionId)
 		self._serviceFacade.clear()
 
 	# 2.8.1 buy singel item 1
