@@ -118,9 +118,22 @@ class DomainFacade(object):
 
 	@staticmethod
 	def buy_single_item(sessionId: int, store_name: str, item_name: str):
-		store: Store.Store = TradingSystem.get_store(store_name=store_name)
-		store.reserve_item(session_id=sessionId, item_name=item_name)
-		return TradingSystem.createTransaction(session_id=sessionId, store_name=store.name, item_name=item_name)
+		if TradingSystem.reserve_item_from_store(sessionId, store_name, item_name):
+			trans_id = TradingSystem.createTransaction(sessionId, store_name)
+			TradingSystem.add_item_to_trans(trans_id, item_name)
+			return trans_id
+		else:
+			return None
+
+	@staticmethod
+	def buy_many_items(sessionId, store_name,items):
+		trans_id = TradingSystem.createTransaction(sessionId, store_name)
+		for item in items:
+			if TradingSystem.reserve_item_from_store(sessionId, store_name, item):
+				TradingSystem.add_item_to_trans(trans_id, item)
+			return trans_id
+		return None
+
 
 	@staticmethod
 	def buy_item_from_cart(item_names: List[str]):
@@ -271,3 +284,5 @@ class DomainFacade(object):
 		price = TradingSystem.calculate_price(TradingSystem.get_trans(trans_id))
 		if DomainFacade._money_collection_handler.pay(creditcard, date, snum, price):
 			return "OK"
+
+

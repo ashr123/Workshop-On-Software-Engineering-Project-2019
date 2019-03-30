@@ -3,11 +3,11 @@ from functools import reduce
 
 class Transaction(object):
 
-	def __init__(self, id, session_id,store_name, items):
+	def __init__(self, id, session_id,store_name):
 		self._id = id
 		self._session_id = session_id
 		self._store_name = store_name
-		self._items = items
+		self._items = []
 
 	@property
 	def id(self):
@@ -20,4 +20,7 @@ class Transaction(object):
 	@property
 	def items(self):
 		return self._items
+
+	def add_item(self, item_name):
+		return self._items.append(item_name)
 

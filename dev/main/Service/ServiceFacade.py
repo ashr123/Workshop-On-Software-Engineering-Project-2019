@@ -50,8 +50,8 @@ class ServiceFacade(object):
 	def buySingleItem(self, sessionId:int, store_name:str, item_name:str) -> int:
 		return DomainFacade.buy_single_item(sessionId=sessionId, store_name=store_name, item_name=item_name)
 
-	def buyManyItems(self, sessionId, ids):
-		return DomainFacade.buy_many_items(sessionId, ids)
+	def buyManyItems(self, sessionId, store_name, items):
+		return DomainFacade.buy_many_items(sessionId, store_name, items)
 
 	def pay(self, sessionId,trans_id, creditcard, date, snum):
 		return DomainFacade.pay(trans_id, creditcard, date, snum)
