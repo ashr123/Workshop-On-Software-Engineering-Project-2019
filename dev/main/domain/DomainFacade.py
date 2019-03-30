@@ -118,21 +118,24 @@ class DomainFacade(object):
 
 	@staticmethod
 	def buy_single_item(sessionId: int, store_name: str, item_name: str):
-		if TradingSystem.reserve_item_from_store(sessionId, store_name, item_name):
-			trans_id = TradingSystem.createTransaction(sessionId, store_name)
-			TradingSystem.add_item_to_trans(trans_id, item_name)
-			return trans_id
-		else:
-			return None
+		try:
+			if TradingSystem.reserve_item_from_store(sessionId, store_name, item_name):
+				trans_id = TradingSystem.createTransaction(sessionId, store_name)
+				TradingSystem.add_item_to_trans(trans_id, item_name)
+				return trans_id
+		except StoreExeption as e:
+			return e.msg
 
 	@staticmethod
 	def buy_many_items(sessionId, store_name,items):
-		trans_id = TradingSystem.createTransaction(sessionId, store_name)
-		for item in items:
-			if TradingSystem.reserve_item_from_store(sessionId, store_name, item):
-				TradingSystem.add_item_to_trans(trans_id, item)
-			return trans_id
-		return None
+		try:
+			trans_id = TradingSystem.createTransaction(sessionId, store_name)
+			for item in items:
+				if TradingSystem.reserve_item_from_store(sessionId, store_name, item):
+					TradingSystem.add_item_to_trans(trans_id, item)
+				return trans_id
+		except StoreExeption as e:
+			return e.msg
 
 
 	@staticmethod
