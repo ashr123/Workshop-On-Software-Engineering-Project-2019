@@ -14,6 +14,7 @@ class Security(object):
 		if username in Security._passwords.keys():
 			return False
 		Security._passwords[username] = pbkdf2_sha512.hash(password)
+		return True
 
 	@staticmethod
 	def verify(user_name: str, password: str) -> bool:

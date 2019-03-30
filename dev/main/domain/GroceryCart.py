@@ -39,3 +39,5 @@ class GroceryCart(object):
 
 	def has_item(self, item_id):
 		return item_id in list(map(lambda i: i.name, self._items))
+
+

@@ -39,7 +39,10 @@ class Guest(User):
 	def watch_gc(self):
 		return self._groceryCarts
 
+	def check_quantity(self, item, store_name):
+		return self._groceryCarts[store_name].items[item]
+
 	def has_item_in_cart(self, item_name, store_name):
-		if not store_name in self._groceryCarts.keys():
+		if store_name not in self._groceryCarts.keys():
 			return False
 		return self._groceryCarts[store_name].has_item(item_name)
