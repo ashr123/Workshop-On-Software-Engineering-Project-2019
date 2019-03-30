@@ -23,5 +23,19 @@ def test_add_manager():
 	                           Store.Store("Second store", member, "bla bla bla"), member2)
 	TradingSystem.TradingSystem.add_member(member2)
 	member.add_manager("Second store", "Rotem", [Permission.Permissions.ADD_MANAGER])
+	TradingSystem.TradingSystem.clear()
 	assert True
 
+def test_remove_owner():
+	member: Member.Member = Member.Member("Roy", Guest.Guest())
+	member2: Member.Member = Member.Member("Rotem", Guest.Guest())
+	store: Store.Store = Store.Store("Second store", member2, "bla bla bla")
+	member.add_managment_state(True, [Permission.Permissions.ADD_MANAGER],
+	                           store, member2)
+	member2.add_managment_state(True, [Permission.Permissions.ADD_MANAGER],
+	                           store, member)
+	store.add_owner(member)
+	TradingSystem.TradingSystem.add_member(member)
+	TradingSystem.TradingSystem.add_member(member2)
+	member2.remove_owner("Second store", "Roy")
+	TradingSystem.TradingSystem.clear()
