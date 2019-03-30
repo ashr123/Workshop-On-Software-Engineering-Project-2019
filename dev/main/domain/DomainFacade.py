@@ -31,9 +31,9 @@ class DomainFacade(object):
 	def logout(session_id: int):
 		try:
 			TradingSystem.logout(session_id)
-			return True
+			return "OK"
 		except PermissionException as e:
-			return False
+			return e.msg
 
 	@staticmethod
 	def register(session_id: int, username: str, password: str):
@@ -141,16 +141,16 @@ class DomainFacade(object):
 		return "OK"
 
 	@staticmethod
-	def add_item_to_store(session_id: int, store_name: str, itemName: str, category: str, desc: str, price: float,
+	def add_item_to_store(session_id: int, store_name: str, item_name: str, category: str, desc: str, price: float,
 	                      amount: int):
 		manager: Optional[Member] = TradingSystem.get_user_if_member(session_id=session_id)
 		if manager is None:
-			return "guest can't remove item from store"
+			return "guest can't add items from store"
 		state: ManagementState = manager.get_store_management_state(store_name)
 		if state is None:
 			return "member {} is not a manager of this store".format(manager.name)
 		try:
-			return state.add_item(itemName, desc, category, price, amount)
+			return state.add_item(item_name, desc, category, price, amount)
 		except TradingSystemException as e:
 			return e.msg
 

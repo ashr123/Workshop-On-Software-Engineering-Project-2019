@@ -27,13 +27,13 @@ class TestClass(object):
 		self._item_1['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'],
 		                                                                   self._item_1['name'],
 		                                                                   "Pets",
-		                                                                   "makes dogs fur shiny and soft", 13.5, 120)
+		                                                                   "makes dogs fur shiny and soft", 13.5, 120)[1]
 		self._item_2['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'],
 		                                                                   self._item_2['name'], "Pets",
-		                                                                   "makes dogs fur shiny and soft", 12, 40)
+		                                                                   "makes dogs fur shiny and soft", 12, 40)[1]
 		self._item_3['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'],
 		                                                                   self._item_3['name'], "Pets",
-		                                                                   "makes dogs fur shiny and soft", 40, 300)
+		                                                                   "makes dogs fur shiny and soft", 40, 300)[1]
 		return id1
 
 	def set_up2(self):
@@ -341,7 +341,7 @@ class TestClass(object):
 	# 3.1 logout 2
 	def test_logout2(self):
 		sessionId = self.set_up0()
-		assert "unable to logout guest" == self._serviceFacade.logout(sessionId)
+		assert "this user is not logged in!" == self._serviceFacade.logout(sessionId)
 		self._serviceFacade.clear()
 
 	# 3.2 add store 1
@@ -368,14 +368,14 @@ class TestClass(object):
 	# 4.1.1 add item to store 1
 	def test_addItemToStore1(self):
 		ownerid = self.set_up1()
-		assert "OK" == self._serviceFacade.addItemToStore(ownerid, "Dogs World", "fur comb", "Pets",
-		                                                  "for all kinds of fur", 4, 321)
+		assert self._serviceFacade.addItemToStore(ownerid, "Dogs World", "fur comb", "Pets",
+		                                                  "for all kinds of fur", 4, 321)[0] == "OK"
 		self._serviceFacade.clear()
 
 	# 4.1.1 add item to store 2
 	def test_addItemToStore2(self):
 		ownerid = self.set_up1()
-		assert "you don't have permissions to add item to store" == self._serviceFacade.addItemToStore(ownerid + 1,
+		assert "guest can't add items from store" == self._serviceFacade.addItemToStore(ownerid + 1,
 		                                                                                               "Dogs World",
 		                                                                                               "fur comb",
 		                                                                                               "Pets",
@@ -386,13 +386,13 @@ class TestClass(object):
 	# 4.1.2 remove item from store 1 ok
 	def test_removeItemFromStore1(self):
 		ownerid = self.set_up1()
-		assert self._serviceFacade.removeItemFromStore(ownerid, self._item1, "Dogs World") == "OK"
+		assert self._serviceFacade.removeItemFromStore(ownerid, self._item_1['id_DEPRECATED'], "Dogs World") == "OK"
 		self._serviceFacade.clear()
 
 	# 4.1.2 remove item from store 2 not good
 	def test_removeItemFromStore2(self):
 		ownerid = self.set_up1()
-		assert self._serviceFacade.removeItemFromStore(ownerid, -9, "Dogs World") == "Item not exist in store"
+		assert self._serviceFacade.removeItemFromStore(ownerid, -9, "Dogs World") == "no item with id -9"
 		self._serviceFacade.clear()
 
 	# 4.1.3 edit item in store 1 ok

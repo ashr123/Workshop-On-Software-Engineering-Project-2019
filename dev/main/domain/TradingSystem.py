@@ -111,7 +111,7 @@ class TradingSystem(object):
 		try_to_logout: Optional[Member] = TradingSystem.get_user_if_member(session_id)
 		if try_to_logout is None:
 			raise PermissionException(message="this user is not logged in!")
-		TradingSystem._users[session_id] = try_to_logout.get_guest()
+		TradingSystem._users[session_id] = try_to_logout.get_guest
 		return True
 
 	@staticmethod
