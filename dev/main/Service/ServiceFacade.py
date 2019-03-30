@@ -47,8 +47,8 @@ class ServiceFacade(object):
 	def changeItemQuantityInCart(self, sessionId, id, quantity):
 		return DomainFacade.change_item_quantity_in_cart(sessionId, id, quantity)
 
-	def buySingleItem(self, sessionId, id):
-		return DomainFacade.buy_single_item(sessionId, id)
+	def buySingleItem(self, sessionId:int, store_name:str, item_name:str) -> str:
+		return DomainFacade.buy_single_item(sessionId, store_name=store_name, item_name=item_name)
 
 	def buyManyItems(self, sessionId, ids):
 		return DomainFacade.buy_many_items(sessionId, ids)
