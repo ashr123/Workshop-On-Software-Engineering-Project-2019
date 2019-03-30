@@ -47,14 +47,14 @@ class ServiceFacade(object):
 	def changeItemQuantityInCart(self, session_id: int, item_name: str, store_name: str, quantity: int):
 		return DomainFacade.change_item_quantity_in_cart(session_id, item_name, store_name, quantity)
 
-	def buySingleItem(self, sessionId:int, store_name:str, item_name:str) -> str:
-		return DomainFacade.buy_single_item(sessionId, store_name=store_name, item_name=item_name)
+	def buySingleItem(self, sessionId:int, store_name:str, item_name:str) -> int:
+		return DomainFacade.buy_single_item(sessionId=sessionId, store_name=store_name, item_name=item_name)
 
 	def buyManyItems(self, sessionId, ids):
 		return DomainFacade.buy_many_items(sessionId, ids)
 
-	def pay(self, sessionId, creditcard, date, snum, address):
-		return DomainFacade.pay(sessionId, creditcard, date, snum, address)
+	def pay(self, sessionId,trans_id, creditcard, date, snum):
+		return DomainFacade.pay(trans_id, creditcard, date, snum)
 
 	def addStore(self, sessionId, name, description):
 		return DomainFacade.add_store(sessionId, name, description)
@@ -85,3 +85,9 @@ class ServiceFacade(object):
 
 	def exit(self, sessionId):
 		return DomainFacade.exit(sessionId)
+
+	def watch_trans(self, trans_id):
+		return DomainFacade.watch_trans(trans_id)
+
+	def supply(self, sessionId, trans_id, address):
+		return DomainFacade.supply(sessionId, trans_id, address)

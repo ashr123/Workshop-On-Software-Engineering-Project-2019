@@ -1,4 +1,5 @@
 from functools import reduce
+from .TradingSystemException import NoEnoughItemsException
 
 
 class Item(object):
@@ -34,10 +35,23 @@ class Item(object):
 	def category(self) -> int:
 		return self._category
 
+	@property
+	def desc(self) -> int:
+		return self._description
+
+	def inc_quantity(self, amount: int):
+		self._quantity += amount
+
+	def dec_quantity(self, amount: int):
+		if amount > self._quantity:
+			raise NoEnoughItemsException(
+				message="Cannot decrease the amount of {} in {}, there are only {}".format(self.name, amount,
+				                                                                           self._quantity))
+		self._quantity-=amount
+
 	def __str__(self):
-		return "{}, {}, {}".format(self.name,self._description, self.price )
+		return "{}, {}, {}".format(self.name, self._description, self.price)
 
 	def is_hashtaged(self, hashtag: str) -> bool:
 		potential_tag_sources = [self._name, self._description, self._description]
-		return reduce(lambda acc,curr:acc or hashtag in curr,potential_tag_sources,False)
-
+		return reduce(lambda acc, curr: acc or hashtag in curr, potential_tag_sources, False)
