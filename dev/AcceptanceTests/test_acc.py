@@ -180,7 +180,6 @@ class TestClass(object):
 		items = self._serviceFacade.searchItem(name=name, category=category, hashtag=hashtag, fil_category=fil_category,
 		                                       fil_rankItem=fil_rankItem, fil_rankStore=fil_rankStore,
 		                                       fil_price=fil_price)
-		
 		assert "fur shampoo, makes dogs fur shiny and soft, 13.5" in items
 		assert "fur conditioner, makes dogs fur shiny and soft, 12" in items
 		assert "fur mask, makes dogs fur shiny and soft, 40" in items
@@ -215,18 +214,21 @@ class TestClass(object):
 		sessionId = self.set_up2()
 		assert [[["fur shampoo", 1, 13.5], ["fur conditioner", 1, 12],
 		         ["fur mask", 1, 40]]] == self._serviceFacade.watchCart(sessionId)
+		self._serviceFacade.clear()
 
 	# 2.7 edit cart 1 part 2
 	def test_removeItemFromCart(self):
 		sessionId = self.set_up2()
 		assert [["fur shampoo", 1, 13.5], ["fur mask", 1, 40]] == self._serviceFacade.removeItemFromCart(sessionId,
 		                                                                                                 self._item2)
+		self._serviceFacade.clear()
 
 	# 2.7 edit cart 2
 	def test_changeItemQuantityInCart(self):
 		sessionId = self.set_up2()
 		assert [["fur shampoo", 3, 13.5], ["fur conditioner", 1, 12],
 		        ["fur mask", 1, 40]] == self._serviceFacade.changeItemQuantityInCart(sessionId, self._item1, 2)
+		self._serviceFacade.clear()
 
 	# 2.8.1 buy singel item 1
 	def test_buySingleItem1(self):
@@ -238,6 +240,7 @@ class TestClass(object):
 			exist = True
 		assert True == exist
 		assert "OK" == self._serviceFacade.pay(sessionId, "1234123412341234", "09/20", "777", "Hakishon 12, Tel Aviv")
+		self._serviceFacade.clear()
 
 	# 2.8.1 buy singel item 2
 	def test_buySingleItem2(self):
@@ -248,6 +251,7 @@ class TestClass(object):
 		if price > 0:
 			exist = True
 		assert False == exist
+		self._serviceFacade.clear()
 
 	# 2.8.1 buy singel item 3
 	def test_buySingleItem3(self):
@@ -260,6 +264,7 @@ class TestClass(object):
 		assert True == exist
 		assert "Payment failed" == self._serviceFacade.pay(sessionId, "1234123412341234", "09/18", "777",
 		                                                   "Hakishon 12, Tel Aviv")
+		self._serviceFacade.clear()
 
 	# 2.8.2 buy many items 1
 	def test_buyManyItems1(self):
@@ -270,6 +275,7 @@ class TestClass(object):
 			exist = True
 		assert True == exist
 		assert "OK" == self._serviceFacade.pay(sessionId, "1234123412341234", "09/20", "777", "Hakishon 12, Tel Aviv")
+		self._serviceFacade.clear()
 
 	# 2.8.2 buy many items 2
 	def test_buyManyItems2(self):
@@ -279,6 +285,7 @@ class TestClass(object):
 		if price > 0:
 			exist = True
 		assert False == exist
+		self._serviceFacade.clear()
 
 	# 2.8.2 buy many items 3
 	def test_buyManyItems3(self):
@@ -290,40 +297,47 @@ class TestClass(object):
 		assert True == exist
 		assert "Payment failed" == self._serviceFacade.pay(sessionId, "1234123412341234", "09/18", "777",
 		                                                   "Hakishon 12, Tel Aviv")
+		self._serviceFacade.clear()
 
 	# 3.1 logout 1
 	def test_logout1(self):
 		sessionId = self.set_up1()
 		assert "OK" == self._serviceFacade.logout(sessionId)
+		self._serviceFacade.clear()
 
 	# 3.1 logout 2
 	def test_logout2(self):
 		sessionId = self.set_up0()
 		assert "unable to logout guest" == self._serviceFacade.logout(sessionId)
+		self._serviceFacade.clear()
 
 	# 3.2 add store 1
 	def test_addStore1(self):
 		sessionId = self.set_up1()
 		assert "OK" == self._serviceFacade.addStore(sessionId, "Cats World", "Everything you need for your cat")
+		self._serviceFacade.clear()
 
 	# 3.2 add store 2
 	def test_addStore2(self):
 		self.set_up()
 		sessionId = self._serviceFacade.initiateSession()
-		assert "guest can't open a store" == self._serviceFacade.addStore(sessionId, "Cats World",
+		assert "Guset has no permission to open a store" == self._serviceFacade.addStore(sessionId, "Cats World",
 		                                                                  "Everything you need for your cat")
+		self._serviceFacade.clear()
 
 	# 3.2 add store 3
 	def test_addStore3(self):
 		sessionId = self.set_up1()
-		assert "the store name is already taken" == self._serviceFacade.addStore(sessionId, "Dogs World",
+		assert 'store Dogs World already exists' == self._serviceFacade.addStore(sessionId, "Dogs World",
 		                                                                         "Everything you need for your cat")
+		self._serviceFacade.clear()
 
 	# 4.1.1 add item to store 1
 	def test_addItemToStore1(self):
 		ownerid = self.set_up1()
 		assert "OK" == self._serviceFacade.addItemToStore(ownerid, "Dogs World", "fur comb", "Pets",
 		                                                  "for all kinds of fur", 4, 321)
+		self._serviceFacade.clear()
 
 	# 4.1.1 add item to store 2
 	def test_addItemToStore2(self):
@@ -334,26 +348,31 @@ class TestClass(object):
 		                                                                                               "Pets",
 		                                                                                               "for all kinds of fur",
 		                                                                                               4, 321)
+		self._serviceFacade.clear()
 
-	# 4.1.2 remove item from store 1
+	# 4.1.2 remove item from store 1 ok
 	def test_removeItemFromStore1(self):
 		ownerid = self.set_up1()
-		return self._serviceFacade.removeItemFromStore(ownerid, self._item1, "Dogs World")
+		assert self._serviceFacade.removeItemFromStore(ownerid, self._item1, "Dogs World") == "OK"
+		self._serviceFacade.clear()
 
-	# 4.1.2 remove item from store 2
+	# 4.1.2 remove item from store 2 not good
 	def test_removeItemFromStore2(self):
 		ownerid = self.set_up1()
-		return self._serviceFacade.removeItemFromStore(ownerid, -9, "Dogs World")
+		assert self._serviceFacade.removeItemFromStore(ownerid, -9, "Dogs World") == "Item not exist in store"
+		self._serviceFacade.clear()
 
-	# 4.1.3 edit item in store 1
+	# 4.1.3 edit item in store 1 ok
 	def test_changeItemInStore1(self):
 		ownerid = self.set_up1()
-		return self._serviceFacade.removeItemFromStore(ownerid, self._item1, "Dogs World", "price", 17)
+		assert self._serviceFacade.removeItemFromStore(ownerid, self._item1, "Dogs World", "price", 17) == "OK"
+		self._serviceFacade.clear()
 
 	# 4.1.3 edit item in store 2
 	def test_changeItemInStore2(self):
 		ownerid = self.set_up1()
-		return self._serviceFacade.changeItemInStore(ownerid + 1, self._item1, "Dogs World", "price", 17)
+		assert self._serviceFacade.changeItemInStore(ownerid + 1, self._item1, "Dogs World", "price", 17) == "OK"
+		self._serviceFacade.clear()
 
 	# 4.3 add owner 1
 	def test_addOwner1(self):
