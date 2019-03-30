@@ -1,4 +1,4 @@
-from main.Domain.Item import Item
+from main.domain.Item import Item
 
 
 class GroceryCart(object):
