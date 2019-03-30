@@ -35,17 +35,17 @@ class ServiceFacade(object):
 		                                fil_rankItem=fil_rankItem, fil_rankStore=fil_rankStore,
 		                                fil_price=fil_price)
 
-	def saveItemInCart(self, sessionId, item_name, store_name):
-		return DomainFacade.add_item_to_cart(sessionId, item_name, store_name)
+	def saveItemInCart(self, session_id: int, item_name: str, store_name: str):
+		return DomainFacade.add_item_to_cart(session_id, item_name, store_name)
 
 	def watchCart(self, sessionId):
 		return DomainFacade.watch_cart(sessionId)
 
-	def removeItemFromCart(self, sessionId, id):
-		return DomainFacade.remove_item_from_cart(sessionId, id)
+	def removeItemFromCart(self, session_id, item_name: str, store_name: str):
+		return DomainFacade.remove_item_from_cart(session_id, item_name, store_name)
 
-	def changeItemQuantityInCart(self, sessionId, id, quantity):
-		return DomainFacade.change_item_quantity_in_cart(sessionId, id, quantity)
+	def changeItemQuantityInCart(self, session_id: int, item_name: str, store_name: str, quantity: int):
+		return DomainFacade.change_item_quantity_in_cart(session_id, item_name, store_name, quantity)
 
 	def buySingleItem(self, sessionId:int, store_name:str, item_name:str) -> str:
 		return DomainFacade.buy_single_item(sessionId, store_name=store_name, item_name=item_name)
@@ -80,8 +80,8 @@ class ServiceFacade(object):
 	def removeManager(self, sessionId, managerId, storeName):
 		return DomainFacade.remove_manager(sessionId, managerId, storeName)
 
-	def removeUser(self, sessionId, id):
-		return DomainFacade.remove_user(sessionId, id)
+	def removeMember(self, session_id: int, username: str):
+		return DomainFacade.remove_member(session_id, username)
 
 	def exit(self, sessionId):
 		return DomainFacade.exit(sessionId)

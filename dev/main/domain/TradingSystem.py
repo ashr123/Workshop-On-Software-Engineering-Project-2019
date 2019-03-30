@@ -1,17 +1,17 @@
+from typing import Union, Dict, List, Optional
+
 from main.domain import Permission
 from main.security import Security
-from .TradingSystemException import *
 from .Guest import Guest
 from .Member import Member
 from .Store import Store
-from typing import Union, Dict, List, Optional
+from .TradingSystemException import *
 
 
 class TradingSystem(object):
 	RIGHT_PASSWORD_LENGTH = 6
 	curr_item_id_temporary_bad_solution = 0
-	#_users: Dict[int, Union[Member, Guest]] = {}
-	_users = {}
+	_users: Dict[int, Union[Member, Guest]] = {}
 	_members: List[Member] = []
 	_managers: List[Member] = []
 	_stores: List[Store] = []
@@ -27,6 +27,10 @@ class TradingSystem(object):
 	@property
 	def get_members(self):
 		return TradingSystem._members
+
+	@staticmethod
+	def is_manager(member: Member) -> bool:
+		return member in TradingSystem._managers
 
 	@staticmethod
 	def get_user(session_id: int) -> Union[Guest, Member, None]:
@@ -62,7 +66,7 @@ class TradingSystem(object):
 		return False
 
 	@staticmethod
-	def register_member(session_id: int, username: str, password: str) -> None: #TODO ללהאשאש את הססמא של המשתשמש
+	def register_member(session_id: int, username: str, password: str) -> None:  # TODO ללהאשאש את הססמא של המשתשמש
 		TradingSystem.validate_password(password)
 		if username in map(lambda m: m.name, TradingSystem._members):
 			raise RegistrationExeption(message="the user {} is already registered".format(username))
@@ -93,7 +97,7 @@ class TradingSystem(object):
 	def login(session_id: int, username: str, password: str) -> bool:
 		if username not in map(lambda m: m.name, TradingSystem._members):
 			raise PermissionException(message="the user {} is not a member!".format(username))
-		try_to_log_in = TradingSystem.get_user(session_id)
+		try_to_log_in = TradingSystem.get_user(session_id)  # TODO fix: change to get_user_if_member
 		if not isinstance(try_to_log_in, Guest):
 			raise PermissionException(message="the user {} already login!".format(username))
 		new_logged_in_member: Optional[Member] = TradingSystem.get_member(member_name=username)
@@ -117,6 +121,7 @@ class TradingSystem(object):
 	@staticmethod
 	def add_manager(new_manager) -> type(None):
 		TradingSystem._managers.append(new_manager)
+		TradingSystem.add_member(new_manager)
 
 	@staticmethod
 	def connect_to_money_collection_system():  # TODO implement
@@ -131,7 +136,7 @@ class TradingSystem(object):
 		return True
 
 	@staticmethod
-	def register_master_member(master_user, password):
+	def register_master_member(master_user: str, password: str):
 		if TradingSystem.pass_word_short(password):
 			raise PasswordException("Password must be of length 6")
 		if master_user in map(lambda m: m.name, TradingSystem._members):
@@ -139,6 +144,7 @@ class TradingSystem(object):
 		new_manager = Member(name=master_user, guest=Guest())
 		TradingSystem.add_manager(new_manager)
 		TradingSystem._users[0] = new_manager
+		Security.Security.add_user_password(username=master_user, password=password)
 
 	@staticmethod
 	def pass_word_short(password):
@@ -160,7 +166,7 @@ class TradingSystem(object):
 
 	@staticmethod
 	def generate_item_id():
-		TradingSystem.curr_item_id_temporary_bad_solution+=1
+		TradingSystem.curr_item_id_temporary_bad_solution += 1
 		return TradingSystem.curr_item_id_temporary_bad_solution
 
 	@staticmethod
@@ -172,3 +178,15 @@ class TradingSystem(object):
 						return item
 
 		raise AnomalyException("item {} in store {} doesn't exist".format(item_name, store_name))
+
+	@staticmethod
+	def remove_member(member_to_remove: str):
+		member: Member = TradingSystem.get_member(member_to_remove)
+		if member is None:
+			raise AnomalyException("member to be removed doesn't exist")
+		member.prepare_for_removal()
+		TradingSystem._members.remove(member)
+
+	@staticmethod
+	def remove_store(store: Store):
+		TradingSystem._stores.remove(store)

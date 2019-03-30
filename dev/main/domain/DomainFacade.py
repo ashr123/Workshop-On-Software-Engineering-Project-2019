@@ -82,32 +82,32 @@ class DomainFacade(object):
 		return "OK"
 
 	@staticmethod
-	def remove_item_from_cart(session_id, item_id):
+	def remove_item_from_cart(session_id, item_name, store_name):
 		user = TradingSystem.get_user(session_id)
 		if user is None:
 			return "unrecognized user"
 		try:
-			item, store = TradingSystem.get_item_and_store(item_id)
+			item = TradingSystem.get_item(item_name, store_name)
 		except TradingSystemException as e:
 			return e.msg
 		try:
-			user.remove_item_from_cart(item, store)
+			user.remove_item_from_cart(item, store_name)
 		except TradingSystemException as e:
 			return e.msg
 		return "OK"
 
 
 	@staticmethod
-	def change_item_quantity_in_cart(session_id: int, item_id: int, quantity: int):
+	def change_item_quantity_in_cart(session_id: int, item_name: str, store_name: str, quantity: int):
 		user = TradingSystem.get_user(session_id)
 		if user is None:
 			return "unrecognized user"
 		try:
-			item, store = TradingSystem.get_item_and_store(item_id)
+			item = TradingSystem.get_item(item_name, store_name)
 		except TradingSystemException as e:
 			return e.msg
 		try:
-			user.change_item_quantity_in_cart(item, store)
+			user.change_item_quantity_in_cart(item, store_name, quantity)
 		except TradingSystemException as e:
 			return e.msg
 		return "OK"
@@ -218,8 +218,16 @@ class DomainFacade(object):
 		return "OK"
 
 	@staticmethod
-	def remove_user(session_id: int, user_to_remove: str):
-		return False
+	def remove_member(session_id: int, user_to_remove: str):
+		manager = TradingSystem.get_user_if_member(session_id)
+		if manager is None:
+			return "Not a member!!"
+		if TradingSystem.is_manager(manager):
+			try:
+				TradingSystem.remove_member(user_to_remove)
+			except TradingSystemException as e:
+				return e.msg
+		return "OK"
 
 	@staticmethod
 	def setup(master_user, password):

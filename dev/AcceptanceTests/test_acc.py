@@ -31,16 +31,17 @@ class TestClass(object):
 		self._item_2['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'],
 		                                                                   self._item_2['name'], "Pets",
 		                                                                   "makes dogs fur shiny and soft", 12, 40)
-		self._item_3['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'], self._item_3['name'], "Pets",
-		                                   "makes dogs fur shiny and soft", 40, 300)
+		self._item_3['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'],
+		                                                                   self._item_3['name'], "Pets",
+		                                                                   "makes dogs fur shiny and soft", 40, 300)
 		return id1
 
 	def set_up2(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
-		self._serviceFacade.saveItemInCart(sessionId, self._item1)
-		self._serviceFacade.saveItemInCart(sessionId, self._item2)
-		self._serviceFacade.saveItemInCart(sessionId, self._item3)
+		self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store"])
+		self._serviceFacade.saveItemInCart(sessionId, self._item_2["name"], self._item_2["store"])
+		self._serviceFacade.saveItemInCart(sessionId, self._item_3["name"], self._item_3["store"])
 		return sessionId
 
 	def initiateSession(self):
@@ -48,19 +49,19 @@ class TestClass(object):
 
 	# 1.1 setup 1
 	def test_setup1(self):
-		self.set_up()
+		# self.set_up()
 		username = "rotem"
 		password = "123456"
-		assert "OK" == self._serviceFacade.setup(username, password)
-		self._serviceFacade.clear()
+		assert "OK" == ServiceFacade().setup(username, password)
 
 	# 1.1 setup 2
 	def test_setup2(self):
-		self.set_up()
+		# self.set_up()
 		username = "rotem"
 		password = "12"
-		assert "Password must be of length 6" == self._serviceFacade.setup(username, password)
-		self._serviceFacade.clear()
+		assert "Password must be of length 6" == ServiceFacade().setup(username, password)
+
+	# self._serviceFacade.clear()
 
 	# 2.2 register 1
 	def test_register1(self):
@@ -197,15 +198,15 @@ class TestClass(object):
 	def test_saveItem1(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
-		assert "OK" == self._serviceFacade.saveItemInCart(sessionId, "fur shampoo", "Dogs World")
+		assert "OK" == self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store"])
 		self._serviceFacade.clear()
 
 	# 2.6 save item 2
 	def test_saveItem2(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
-		self._serviceFacade.saveItemInCart(sessionId, "fur shampoo", "Dogs World")
-		self._serviceFacade.saveItemInCart(sessionId, "fur shampoo", "Dogs World")
+		self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store"])
+		self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store"])
 		assert "Dogs World: fur shampoo 2 27.0\n" == self._serviceFacade.watchCart(sessionId)
 		self._serviceFacade.clear()
 
@@ -213,27 +214,32 @@ class TestClass(object):
 	def test_saveItem3(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
-		assert "item fur comb in store Dogs World doesn't exist" == self._serviceFacade.saveItemInCart(sessionId, "fur comb", "Dogs World")
+		assert "item fur comb in store Dogs World doesn't exist" == self._serviceFacade.saveItemInCart(sessionId,
+		                                                                                               "fur comb",
+		                                                                                               "Dogs World")
 		self._serviceFacade.clear()
 
 	# 2.7 edit cart 1 part 1
 	def test_watchCart(self):
 		sessionId = self.set_up2()
-		assert "Dogs World: fur shampoo 1 13.5, fur conditioner 1 12, fur mask 1 40\n" == self._serviceFacade.watchCart(sessionId)
+		assert "Dogs World: fur shampoo 1 13.5, fur conditioner 1 12, fur mask 1 40\n" == self._serviceFacade.watchCart(
+			sessionId)
 		self._serviceFacade.clear()
 
 	# 2.7 edit cart 1 part 2
 	def test_removeItemFromCart(self):
 		sessionId = self.set_up2()
-		assert "OK" == self._serviceFacade.removeItemFromCart(sessionId, self._item2)
+		assert "OK" == self._serviceFacade.removeItemFromCart(sessionId, self._item_2["name"], self._item_2["store"])
 		assert "Dogs World: fur shampoo 1 13.5, fur mask 1 40\n" == self._serviceFacade.watchCart(sessionId)
 		self._serviceFacade.clear()
 
 	# 2.7 edit cart 2
 	def test_changeItemQuantityInCart(self):
 		sessionId = self.set_up2()
-		assert "OK" == self._serviceFacade.changeItemQuantityInCart(sessionId, self._item1, 2)
-		assert  "Dogs World: fur shampoo 1 13.5, fur conditioner 1 12, fur mask 1 40\n" == self._serviceFacade.watchCart(sessionId)
+		assert "OK" == self._serviceFacade.changeItemQuantityInCart(sessionId, self._item_1["name"],
+		                                                            self._item_1["store"], 2)
+		assert "Dogs World: fur shampoo 3 40.5, fur conditioner 1 12, fur mask 1 40\n" == self._serviceFacade.watchCart(
+			sessionId)
 		self._serviceFacade.clear()
 
 	# 2.8.1 buy singel item 1
@@ -465,9 +471,10 @@ class TestClass(object):
 		self._serviceFacade.register(ownerId1, username1, password1)
 		self._serviceFacade.login(ownerId1, username1, password1)
 		self._serviceFacade.addOwner(sessionId, username1, "Dogs World")
-		assert "owner can't remove another owner that he didn't nominate" == self._serviceFacade.removeOwner(ownerId,
-		                                                                                                     username1,
-		                                                                                                     "Dogs World")
+		assert "manager/owner can't remove another manager/owner that he didn't nominate" == self._serviceFacade.removeOwner(
+			ownerId,
+			username1,
+			"Dogs World")
 		self._serviceFacade.clear()
 
 	# 4.5 add manager 1
@@ -516,7 +523,7 @@ class TestClass(object):
 		self._serviceFacade.register(managerId, username1, password1)
 		self._serviceFacade.login(managerId, username1, password1)
 		self._serviceFacade.addManager(sessionId, username1, "Dogs World", [])
-		assert "manager can't remove another manager that he didn't nominate" == self._serviceFacade.removeManager(
+		assert "manager/owner can't remove another manager/owner that he didn't nominate" == self._serviceFacade.removeManager(
 			ownerId,
 			username1,
 			"Dogs World")
@@ -566,7 +573,7 @@ class TestClass(object):
 		sessionid = self.set_up0()
 		sysmanager = self._serviceFacade.initiateSession()
 		self._serviceFacade.login(sysmanager, "rotem", "123456")
-		assert "OK" == self._serviceFacade.removeUser(sysmanager, sessionid)
+		assert "OK" == self._serviceFacade.removeMember(sysmanager, "noa")
 		self._serviceFacade.clear()
 
 	# 6.3 remove user 2
@@ -574,7 +581,7 @@ class TestClass(object):
 		sessionid = self.set_up1()
 		sysmanager = self._serviceFacade.initiateSession()
 		self._serviceFacade.login(sysmanager, "rotem", "123456")
-		assert "OK" == self._serviceFacade.removeUser(sysmanager, sessionid)
+		assert "OK" == self._serviceFacade.removeMember(sysmanager, sessionid)
 		self._serviceFacade.clear()
 
 	# 6.3 remove user 3
@@ -582,6 +589,6 @@ class TestClass(object):
 		sessionid = self._serviceFacade.initiateSession()
 		sysmanager = self._serviceFacade.initiateSession()
 		self._serviceFacade.login(sysmanager, "rotem", "123456")
-		assert "Fail: you are trying to remove a non member user" == self._serviceFacade.removeUser(sysmanager,
-		                                                                                            sessionid)
+		assert "Fail: you are trying to remove a non member user" == self._serviceFacade.removeMember(sysmanager,
+		                                                                                              sessionid)
 		self._serviceFacade.clear()
