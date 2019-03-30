@@ -18,14 +18,21 @@ class TestClass(object):
 
 	def set_up1(self):
 		id1 = self.set_up0()
+		self._store_1 = {'name': 'Dogs World'}
+		self._item_1 = {'name': "fur shampoo", 'store': self._store_1['name'], 'id_DEPRECATED': 0}
+		self._item_2 = {'name': "fur conditioner", 'store': self._store_1['name']}
+		self._item_3 = {'name': "fur mask", 'store': self._store_1['name']}
 		self._serviceFacade.login(id1, "noa", "098765")
-		self._serviceFacade.addStore(id1, "Dogs World", "Everything you need for your dog")
-		self._item1 = self._serviceFacade.addItemToStore(id1, "Dogs World", "fur shampoo", "Pets",
-		                                                 "makes dogs fur shiny and soft", 13.5, 120)
-		self._item2 = self._serviceFacade.addItemToStore(id1, "Dogs World", "fur conditioner", "Pets",
-		                                                 "makes dogs fur shiny and soft", 12, 40)
-		self._item3 = self._serviceFacade.addItemToStore(id1, "Dogs World", "fur mask", "Pets",
-		                                                 "makes dogs fur shiny and soft", 40, 300)
+		self._serviceFacade.addStore(id1, self._store_1['name'], "Everything you need for your dog")
+		self._item_1['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'],
+		                                                                   self._item_1['name'],
+		                                                                   "Pets",
+		                                                                   "makes dogs fur shiny and soft", 13.5, 120)
+		self._item_2['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'],
+		                                                                   self._item_2['name'], "Pets",
+		                                                                   "makes dogs fur shiny and soft", 12, 40)
+		self._item_3['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'], self._item_3['name'], "Pets",
+		                                   "makes dogs fur shiny and soft", 40, 300)
 		return id1
 
 	def set_up2(self):
@@ -230,15 +237,36 @@ class TestClass(object):
 		self._serviceFacade.clear()
 
 	# 2.8.1 buy singel item 1
-	def test_buySingleItem1(self):
+	def test_buySingleItem1_only_buy_step(self):
+		self.set_up1()
+		sessionId = self._serviceFacade.initiateSession()
+		assert self._serviceFacade.buySingleItem(sessionId, store_name=store_name, item_name=item_name) == "OK"
+		self._serviceFacade.clear()
+
+	# 2.8.1 buy singel item 1
+	def test_buySingleItem1_only_pay_step(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
 		price = self._serviceFacade.buySingleItem(sessionId, self._item3)
 		exist = False
 		if price > 0:
 			exist = True
-		assert True == exist
-		assert "OK" == self._serviceFacade.pay(sessionId, "1234123412341234", "09/20", "777", "Hakishon 12, Tel Aviv")
+		assert exist == True
+		assert self._serviceFacade.pay(sessionId, "1234123412341234", "09/20", "777",
+		                               "Hakishon 12, Tel Aviv") == "OK"
+		self._serviceFacade.clear()
+
+	# 2.8.1 buy singel item 1
+	def test_buySingleItem1_only_supply_step(self):
+		self.set_up1()
+		sessionId = self._serviceFacade.initiateSession()
+		price = self._serviceFacade.buySingleItem(sessionId, self._item3)
+		exist = False
+		if price > 0:
+			exist = True
+		assert exist == True
+		assert self._serviceFacade.pay(sessionId, "1234123412341234", "09/20", "777",
+		                               "Hakishon 12, Tel Aviv") == "OK"
 		self._serviceFacade.clear()
 
 	# 2.8.1 buy singel item 2
@@ -321,7 +349,7 @@ class TestClass(object):
 		self.set_up()
 		sessionId = self._serviceFacade.initiateSession()
 		assert "Guset has no permission to open a store" == self._serviceFacade.addStore(sessionId, "Cats World",
-		                                                                  "Everything you need for your cat")
+		                                                                                 "Everything you need for your cat")
 		self._serviceFacade.clear()
 
 	# 3.2 add store 3
@@ -503,7 +531,7 @@ class TestClass(object):
 		self._serviceFacade.register(managerId, username, password)
 		self._serviceFacade.login(managerId, username, password)
 		self._serviceFacade.addManager(sessionId, username, "Dogs World", ["ADD_ITEM", "REMOVE_ITEM", "EDIT_ITEM"])
-		assert "OK" == self._serviceFacade.removeItemFromStore(managerId, self._item1, "Dogs World")
+		assert "OK" == self._serviceFacade.removeItemFromStore(managerId, self._item_1['id_DEPRECATED'], "Dogs World")
 		self._serviceFacade.clear()
 
 	# 5.1 manager tries to remove item 2
@@ -516,7 +544,8 @@ class TestClass(object):
 		self._serviceFacade.login(managerId, username, password)
 		self._serviceFacade.addManager(sessionId, username, "Dogs World", ["EDIT_ITEM", "ADD_ITEM"])
 		assert "you don't have the permission to do this action!" == self._serviceFacade.removeItemFromStore(managerId,
-		                                                                                                     self._item1,
+		                                                                                                     self._item_1[
+			                                                                                                     'id_DEPRECATED'],
 		                                                                                                     "Dogs World")
 		self._serviceFacade.clear()
 
@@ -527,7 +556,8 @@ class TestClass(object):
 		username = "dana"
 		password = "666666"
 		self._serviceFacade.register(guestId, username, password)
-		assert "guest can't remove item from store" == self._serviceFacade.removeItemFromStore(guestId, self._item1,
+		assert "guest can't remove item from store" == self._serviceFacade.removeItemFromStore(guestId, self._item_1[
+			'id_DEPRECATED'],
 		                                                                                       "Dogs World")
 		self._serviceFacade.clear()
 

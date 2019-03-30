@@ -113,7 +113,7 @@ class DomainFacade(object):
 		return "OK"
 
 	@staticmethod
-	def buy_single_item(item_name: str):
+	def buy_single_item(self, sessionId:int, store_name:str, item_name:str):
 		return False
 
 	@staticmethod
