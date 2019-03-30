@@ -39,9 +39,9 @@ class TestClass(object):
 	def set_up2(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
-		self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store"])
-		self._serviceFacade.saveItemInCart(sessionId, self._item_2["name"], self._item_2["store"])
-		self._serviceFacade.saveItemInCart(sessionId, self._item_3["name"], self._item_3["store"])
+		self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store_name"])
+		self._serviceFacade.saveItemInCart(sessionId, self._item_2["name"], self._item_2["store_name"])
+		self._serviceFacade.saveItemInCart(sessionId, self._item_3["name"], self._item_3["store_name"])
 		return sessionId
 
 	def set_up3(self):
@@ -210,15 +210,15 @@ class TestClass(object):
 	def test_saveItem1(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
-		assert "OK" == self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store"])
+		assert "OK" == self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store_name"])
 		self._serviceFacade.clear()
 
 	# 2.6 save item 2
 	def test_saveItem2(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
-		self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store"])
-		self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store"])
+		self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store_name"])
+		self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store_name"])
 		assert "Dogs World: fur shampoo 2 27.0\n" == self._serviceFacade.watchCart(sessionId)
 		self._serviceFacade.clear()
 
@@ -241,7 +241,7 @@ class TestClass(object):
 	# 2.7 edit cart 1 part 2
 	def test_removeItemFromCart(self):
 		sessionId = self.set_up2()
-		assert "OK" == self._serviceFacade.removeItemFromCart(sessionId, self._item_2["name"], self._item_2["store"])
+		assert "OK" == self._serviceFacade.removeItemFromCart(sessionId, self._item_2["name"], self._item_2["store_name"])
 		assert "Dogs World: fur shampoo 1 13.5, fur mask 1 40\n" == self._serviceFacade.watchCart(sessionId)
 		self._serviceFacade.clear()
 
@@ -249,7 +249,7 @@ class TestClass(object):
 	def test_changeItemQuantityInCart(self):
 		sessionId = self.set_up2()
 		assert "OK" == self._serviceFacade.changeItemQuantityInCart(sessionId, self._item_1["name"],
-		                                                            self._item_1["store"], 2)
+		                                                            self._item_1["store_name"], 2)
 		assert "Dogs World: fur shampoo 3 40.5, fur conditioner 1 12, fur mask 1 40\n" == self._serviceFacade.watchCart(
 			sessionId)
 		self._serviceFacade.clear()
