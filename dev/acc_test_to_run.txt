@@ -1,1 +1,1 @@
--k "setup or register or search1 or login or Owner or Manager or manager or save addStore"
+-k "setup or register or search or login or Owner or Manager or manager or save or addStore"
