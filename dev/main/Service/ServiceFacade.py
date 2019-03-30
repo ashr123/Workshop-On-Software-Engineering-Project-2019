@@ -32,8 +32,8 @@ class ServiceFacade(object):
 	def searchItem(self, name=None, category=None, hashtag=None, fil_price=None, fil_rankItem=None, fil_category=None,
 	               fil_rankStore=None):
 		return DomainFacade.search_item(name=name, category=category, hashtag=hashtag, fil_category=fil_category,
-		                                     fil_rankItem=fil_rankItem, fil_rankStore=fil_rankStore,
-		                                     fil_price=fil_price)
+		                                fil_rankItem=fil_rankItem, fil_rankStore=fil_rankStore,
+		                                fil_price=fil_price)
 
 	def saveItemInCart(self, sessionId, id):
 		return DomainFacade.add_item_to_cart(sessionId, id)

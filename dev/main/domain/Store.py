@@ -79,7 +79,7 @@ class Store(object):
 	def search_item(self, name: str = None, category: str = None, hashtag: str = None, fil_price: int = None,
 	                fil_category: str = None, fil_rankItem: str = None):
 		ans = []
-		ans += list(filter(lambda i: name == None or name in i.name, self._items))
+		ans += list(filter(lambda i: name != None and name in i.name, self._items))
 		ans += list(filter(lambda i: hashtag != None and i.is_hashtaged(hashtag), self._items))
 		ans += list(filter(lambda i: fil_price != None and i.price <= fil_price, self._items))
 		ans += list(filter(lambda i: fil_category != None and fil_category in i.category, self._items))

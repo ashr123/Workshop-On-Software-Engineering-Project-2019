@@ -94,12 +94,14 @@ class DomainFacade(object):
 		try:
 			member: Member = TradingSystem.get_user_if_member(session_id)
 			if member is None:
-				raise GuestCannotOpenStoreException("User {} has no permission to open a store".format(name))
+				raise GuestCannotOpenStoreException("Guset has no permission to open a store")
 			if member.open_store(session_id=session_id, store_name=name, desc=desc):
 				return "OK"
 		except UserAlreadyHasStoreException as e:
 			return e.msg
 		except GuestCannotOpenStoreException as e:
+			return e.msg
+		except OpenStoreExeption as e:
 			return e.msg
 		return "OK"
 

@@ -1,1 +1,1 @@
- -k "test_searchItem1 or register or owner or login or setup manager searchItem1"
+-k "setup or register or search or login or Owner or Manager or manager or save or addStore"
