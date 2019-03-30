@@ -1,4 +1,7 @@
+from functools import reduce
+
 from main.domain import Permission
+from main.domain.Transaction import Transaction
 from main.security import Security
 from .TradingSystemException import *
 from .Guest import Guest
@@ -10,11 +13,13 @@ from typing import Union, Dict, List, Optional
 class TradingSystem(object):
 	RIGHT_PASSWORD_LENGTH = 6
 	curr_item_id_temporary_bad_solution = 0
-	#_users: Dict[int, Union[Member, Guest]] = {}
+	curr_trans_id_temporary_bad_solution = 0
+	# _users: Dict[int, Union[Member, Guest]] = {}
 	_users = {}
 	_members: List[Member] = []
 	_managers: List[Member] = []
 	_stores: List[Store] = []
+	_transactions: List[Transaction] = []
 
 	@staticmethod
 	def clear():
@@ -62,7 +67,7 @@ class TradingSystem(object):
 		return False
 
 	@staticmethod
-	def register_member(session_id: int, username: str, password: str) -> None: #TODO ללהאשאש את הססמא של המשתשמש
+	def register_member(session_id: int, username: str, password: str) -> None:  # TODO ללהאשאש את הססמא של המשתשמש
 		TradingSystem.validate_password(password)
 		if username in map(lambda m: m.name, TradingSystem._members):
 			raise RegistrationExeption(message="the user {} is already registered".format(username))
@@ -160,8 +165,13 @@ class TradingSystem(object):
 
 	@staticmethod
 	def generate_item_id():
-		TradingSystem.curr_item_id_temporary_bad_solution+=1
+		TradingSystem.curr_item_id_temporary_bad_solution += 1
 		return TradingSystem.curr_item_id_temporary_bad_solution
+
+	@staticmethod
+	def generate_trans_id():
+		TradingSystem.curr_trans_id_temporary_bad_solution += 1
+		return TradingSystem.curr_trans_id_temporary_bad_solution
 
 	@staticmethod
 	def get_item(item_name: str, store_name: str):
@@ -172,3 +182,29 @@ class TradingSystem(object):
 						return item
 
 		raise AnomalyException("item {} in store {} doesn't exist".format(item_name, store_name))
+
+	@staticmethod
+	def createTransaction(session_id, store_name, item_name) -> int:
+		trans = Transaction(TradingSystem.generate_trans_id(), session_id, store_name, [item_name])
+		TradingSystem._transactions.append(trans)
+		return trans.id
+
+	@staticmethod
+	def watch_trans(trans_id):
+		return "price: {}".format(TradingSystem.calculate_price(TradingSystem.get_trans(trans_id=trans_id)))
+
+	@staticmethod
+	def get_trans(trans_id):
+		trans_list = list(filter(lambda t: t.id == trans_id, TradingSystem._transactions))
+		return trans_list[0]
+
+	@staticmethod
+	def calculate_price(trans):
+		store = TradingSystem.get_store(trans.store_name)
+		return reduce(lambda acc, curr: acc + store.get_item_by_name(curr).price, trans.items, 0)
+
+	@staticmethod
+	def apply_trans(session_id, trans_id):
+		trans = TradingSystem.get_trans(trans_id)
+		store:Store = TradingSystem.get_store(trans.store_name)
+		store.apply_trans(session_id, trans.items)

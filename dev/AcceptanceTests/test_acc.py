@@ -19,9 +19,9 @@ class TestClass(object):
 	def set_up1(self):
 		id1 = self.set_up0()
 		self._store_1 = {'name': 'Dogs World'}
-		self._item_1 = {'name': "fur shampoo", 'store': self._store_1['name'], 'id_DEPRECATED': 0}
-		self._item_2 = {'name': "fur conditioner", 'store': self._store_1['name']}
-		self._item_3 = {'name': "fur mask", 'store': self._store_1['name']}
+		self._item_1 = {'name': "fur shampoo", 'price': 13.5, 'store_name': self._store_1['name'], 'id_DEPRECATED': 0}
+		self._item_2 = {'name': "fur conditioner", 'price': 12, 'store_name': self._store_1['name']}
+		self._item_3 = {'name': "fur mask", 'price': 40, 'store_name': self._store_1['name']}
 		self._serviceFacade.login(id1, "noa", "098765")
 		self._serviceFacade.addStore(id1, self._store_1['name'], "Everything you need for your dog")
 		self._item_1['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'],
@@ -31,8 +31,9 @@ class TestClass(object):
 		self._item_2['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'],
 		                                                                   self._item_2['name'], "Pets",
 		                                                                   "makes dogs fur shiny and soft", 12, 40)
-		self._item_3['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'], self._item_3['name'], "Pets",
-		                                   "makes dogs fur shiny and soft", 40, 300)
+		self._item_3['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'],
+		                                                                   self._item_3['name'], "Pets",
+		                                                                   "makes dogs fur shiny and soft", 40, 300)
 		return id1
 
 	def set_up2(self):
@@ -42,6 +43,18 @@ class TestClass(object):
 		self._serviceFacade.saveItemInCart(sessionId, self._item2)
 		self._serviceFacade.saveItemInCart(sessionId, self._item3)
 		return sessionId
+
+	def set_up3(self):
+		self.set_up1()
+		sessionId = self._serviceFacade.initiateSession()
+		trans_id = self._serviceFacade.buySingleItem(sessionId, store_name=self._item_1['store_name'],
+		                                             item_name=self._item_1['name'])
+		return sessionId, trans_id
+
+	def set_up4(self):
+		sessionId,trans_id = self.set_up3()
+		self._serviceFacade.pay(sessionId, trans_id, "1234123412341234", "09/20", "777")
+		return sessionId, trans_id
 
 	def initiateSession(self):
 		return self._serviceFacade.initiateSession()
@@ -197,7 +210,7 @@ class TestClass(object):
 	def test_saveItem1(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
-		assert "OK" == self._serviceFacade.saveItemInCart(sessionId, "fur shampoo", "Dogs World")
+		assert "OK" == self._serviceFacade.saveItemInCart(sessionId, self._item_1['name'], "Dogs World")
 		self._serviceFacade.clear()
 
 	# 2.6 save item 2
@@ -213,13 +226,16 @@ class TestClass(object):
 	def test_saveItem3(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
-		assert "item fur comb in store Dogs World doesn't exist" == self._serviceFacade.saveItemInCart(sessionId, "fur comb", "Dogs World")
+		assert "item fur comb in store Dogs World doesn't exist" == self._serviceFacade.saveItemInCart(sessionId,
+		                                                                                               "fur comb",
+		                                                                                               "Dogs World")
 		self._serviceFacade.clear()
 
 	# 2.7 edit cart 1 part 1
 	def test_watchCart(self):
 		sessionId = self.set_up2()
-		assert "Dogs World: fur shampoo 1 13.5, fur conditioner 1 12, fur mask 1 40\n" == self._serviceFacade.watchCart(sessionId)
+		assert "Dogs World: fur shampoo 1 13.5, fur conditioner 1 12, fur mask 1 40\n" == self._serviceFacade.watchCart(
+			sessionId)
 		self._serviceFacade.clear()
 
 	# 2.7 edit cart 1 part 2
@@ -233,44 +249,33 @@ class TestClass(object):
 	def test_changeItemQuantityInCart(self):
 		sessionId = self.set_up2()
 		assert "OK" == self._serviceFacade.changeItemQuantityInCart(sessionId, self._item1, 2)
-		assert  "Dogs World: fur shampoo 1 13.5, fur conditioner 1 12, fur mask 1 40\n" == self._serviceFacade.watchCart(sessionId)
+		assert "Dogs World: fur shampoo 1 13.5, fur conditioner 1 12, fur mask 1 40\n" == self._serviceFacade.watchCart(
+			sessionId)
 		self._serviceFacade.clear()
 
 	# 2.8.1 buy singel item 1
 	def test_buySingleItem1_only_buy_step(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
-		assert self._serviceFacade.buySingleItem(sessionId, store_name=store_name, item_name=item_name) == "OK"
+		trans_id = self._serviceFacade.buySingleItem(sessionId, store_name=self._item_1['store_name'],
+		                                             item_name=self._item_1['name'])
+		assert self._serviceFacade.watch_trans(trans_id) == "price: {}".format(self._item_1['price'])
 		self._serviceFacade.clear()
 
 	# 2.8.1 buy singel item 1
 	def test_buySingleItem1_only_pay_step(self):
-		self.set_up1()
-		sessionId = self._serviceFacade.initiateSession()
-		price = self._serviceFacade.buySingleItem(sessionId, self._item3)
-		exist = False
-		if price > 0:
-			exist = True
-		assert exist == True
-		assert self._serviceFacade.pay(sessionId, "1234123412341234", "09/20", "777",
-		                               "Hakishon 12, Tel Aviv") == "OK"
+		sessionId, trans_id = self.set_up3()
+		assert self._serviceFacade.pay(sessionId, trans_id, "1234123412341234", "09/20", "777") == "OK"
 		self._serviceFacade.clear()
 
 	# 2.8.1 buy singel item 1
 	def test_buySingleItem1_only_supply_step(self):
-		self.set_up1()
-		sessionId = self._serviceFacade.initiateSession()
-		price = self._serviceFacade.buySingleItem(sessionId, self._item3)
-		exist = False
-		if price > 0:
-			exist = True
-		assert exist == True
-		assert self._serviceFacade.pay(sessionId, "1234123412341234", "09/20", "777",
-		                               "Hakishon 12, Tel Aviv") == "OK"
+		sessionId, trans_id = self.set_up4()
+		assert self._serviceFacade.supply(sessionId,trans_id,"Hakishon 12, Tel Aviv") == "OK"
 		self._serviceFacade.clear()
 
 	# 2.8.1 buy singel item 2
-	def test_buySingleItem2(self):
+	def test_buySingleItem2_only_buy_step(self):
 		self.set_up()
 		sessionId = self._serviceFacade.initiateSession()
 		price = self._serviceFacade.buySingleItem(sessionId, -23333)

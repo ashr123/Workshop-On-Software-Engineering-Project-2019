@@ -9,6 +9,7 @@ from .TradingSystemException import AnomalyException
 class Store(object):
 	def __init__(self, name: str, creator, description: str):
 		self._items: List[Item] = []
+		self._resereved_items = {}
 		self._name: str = name
 		self._creator = creator
 		self._rules: List[Rule] = []
@@ -73,6 +74,12 @@ class Store(object):
 			return None
 		return item_list[0]
 
+	def get_reserved_item_by_name(self, item_name) -> Item:
+		item_list = list(filter(lambda i: i.name == item_name, self._resereved_items))
+		if len(item_list) != 1:
+			return None
+		return item_list[0]
+
 	def remove_manager(self, manager):
 		for member in self.managers:
 			if manager.name == member.name:
@@ -89,3 +96,23 @@ class Store(object):
 		ans += list(filter(lambda i: fil_category != None and fil_category in i.category, self._items))
 		ans += list(filter(lambda i: fil_rankItem != None and i.rank >= fil_rankItem, self._items))
 		return set(ans)
+
+	def reserve_item(self, session_id: int, item_name: str):
+		self.get_item_by_name(item_name=item_name).dec_quantity(1)
+		if not session_id in self._resereved_items:
+			self._resereved_items[session_id] = {}
+		if not item_name in self._resereved_items[session_id]:
+			self._resereved_items[session_id][item_name]=0
+		self._resereved_items[session_id][item_name]+=1
+
+
+
+	def add_reserved_item(self, item_name):
+		item = self.get_item_by_name(item_name=item_name)
+		self._resereved_items.append(Item(id=item.id, name=item.name, description=item.desc, ))
+
+	def apply_trans(self, session_id, items):
+		trans_items = self._resereved_items[session_id]
+		for item in trans_items:
+			if item in items:
+				self._resereved_items[session_id][item]-=1
