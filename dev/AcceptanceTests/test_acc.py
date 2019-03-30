@@ -1,6 +1,6 @@
 import pytest
 
-from main.Service.ServiceFacade import ServiceFacade
+from main.service.ServiceFacade import ServiceFacade
 
 
 class TestClass(object):
