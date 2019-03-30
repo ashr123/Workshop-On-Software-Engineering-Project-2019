@@ -92,11 +92,11 @@ class Member(User):
 	def prepare_for_removal(self):
 		for state in self._storesManaged_states:
 			store: Store = state.store
-			state.remove_manager(manager_name=self, remover=self, is_master=True)
+			state.remove_manager(manager_name=self.name, remover=self, is_master=True)
 			is_there_owner: bool = False
 			for manager in store.managers:
 				if manager.get_store_management_state(store.name).is_owner:
 					is_there_owner = True
 					break
 			if not is_there_owner:
-				TradingSystem.remove_store(store)
+				TradingSystem.TradingSystem.remove_store(store)

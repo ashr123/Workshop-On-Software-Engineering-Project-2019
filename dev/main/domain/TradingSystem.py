@@ -101,9 +101,12 @@ class TradingSystem(object):
 	def login(session_id: int, username: str, password: str) -> bool:
 		if username not in map(lambda m: m.name, TradingSystem._members):
 			raise PermissionException(message="the user {} is not a member!".format(username))
-		try_to_log_in = TradingSystem.get_user(session_id)  # TODO fix: change to get_user_if_member
-		if not isinstance(try_to_log_in, Guest):
+		try_to_log_in = TradingSystem.get_user(session_id)
+		if isinstance(try_to_log_in, Member):  # for hackers
 			raise PermissionException(message="the user {} already login!".format(username))
+		# for user in TradingSystem._users.values():
+		# 	if isinstance(user, Member) and user.name == username:
+		# 		raise PermissionException(message="the user {} already login!".format(username))
 		new_logged_in_member: Optional[Member] = TradingSystem.get_member(member_name=username)
 		if not try_to_log_in.login(username=username, password=password):
 			raise PermissionException(message="wrong password!".format(username))
