@@ -35,12 +35,12 @@ class ManagementState(object):
 	def nominator(self):
 		return self._nominator
 
-	def add_item(self, item_name: str, desc: str, category: str, price: float, amount: int) -> int:
+	def add_item(self, item_name: str, desc: str, category: str, price: float, amount: int) -> (str, int):
 		if not self.is_owner and Permissions.ADD_ITEM not in self._permissions:
 			raise PermissionException(message="you don't have the permission to do this action!")
 		item_id: int = TradingSystem.TradingSystem.generate_item_id()
 		self.store.add_item(Item(item_id, item_name, desc, category, price, amount))
-		return item_id
+		return "OK", item_id
 
 	def remove_item(self, item_id: int):
 		if not self.is_owner and Permissions.REMOVE_ITEM not in self._permissions:

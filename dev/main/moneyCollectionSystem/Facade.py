@@ -1,6 +1,6 @@
-class Facade(object):
+class MoneyCollectionFacade(object):
 	def __init__(self):
 		pass
 
-	def collect(self):
-		return False
+	def pay(self, creditcard, date, snum, price):
+		return True

@@ -30,18 +30,25 @@ class TestClass(object):
 		                                                                   "makes dogs fur shiny and soft", 13.5, 120)[1]
 		self._item_2['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'],
 		                                                                   self._item_2['name'], "Pets",
+<<<<<<< HEAD
+		                                                                   "makes dogs fur shiny and soft", 12, 40)
+		self._item_3['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'],
+		                                                                   self._item_3['name'], "Pets",
+		                                                                   "makes dogs fur shiny and soft", 40, 300)
+=======
 		                                                                   "makes dogs fur shiny and soft", 12, 40)[1]
 		self._item_3['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'],
 		                                                                   self._item_3['name'], "Pets",
 		                                                                   "makes dogs fur shiny and soft", 40, 300)[1]
+>>>>>>> origin/Rotem_&_Roy_are_having_fun
 		return id1
 
 	def set_up2(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
-		self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store_name"])
-		self._serviceFacade.saveItemInCart(sessionId, self._item_2["name"], self._item_2["store_name"])
-		self._serviceFacade.saveItemInCart(sessionId, self._item_3["name"], self._item_3["store_name"])
+		self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store"])
+		self._serviceFacade.saveItemInCart(sessionId, self._item_2["name"], self._item_2["store"])
+		self._serviceFacade.saveItemInCart(sessionId, self._item_3["name"], self._item_3["store"])
 		return sessionId
 
 	def set_up3(self):
@@ -210,15 +217,19 @@ class TestClass(object):
 	def test_saveItem1(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
-		assert "OK" == self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store_name"])
+<<<<<<< HEAD
+		assert "OK" == self._serviceFacade.saveItemInCart(sessionId, self._item_1['name'], "Dogs World")
+=======
+		assert "OK" == self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store"])
+>>>>>>> origin/Rotem_&_Roy_are_having_fun
 		self._serviceFacade.clear()
 
 	# 2.6 save item 2
 	def test_saveItem2(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
-		self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store_name"])
-		self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store_name"])
+		self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store"])
+		self._serviceFacade.saveItemInCart(sessionId, self._item_1["name"], self._item_1["store"])
 		assert "Dogs World: fur shampoo 2 27.0\n" == self._serviceFacade.watchCart(sessionId)
 		self._serviceFacade.clear()
 
@@ -241,16 +252,21 @@ class TestClass(object):
 	# 2.7 edit cart 1 part 2
 	def test_removeItemFromCart(self):
 		sessionId = self.set_up2()
-		assert "OK" == self._serviceFacade.removeItemFromCart(sessionId, self._item_2["name"], self._item_2["store_name"])
+		assert "OK" == self._serviceFacade.removeItemFromCart(sessionId, self._item_2["name"], self._item_2["store"])
 		assert "Dogs World: fur shampoo 1 13.5, fur mask 1 40\n" == self._serviceFacade.watchCart(sessionId)
 		self._serviceFacade.clear()
 
 	# 2.7 edit cart 2
 	def test_changeItemQuantityInCart(self):
 		sessionId = self.set_up2()
+<<<<<<< HEAD
+		assert "OK" == self._serviceFacade.changeItemQuantityInCart(sessionId, self._item1, 2)
+		assert "Dogs World: fur shampoo 1 13.5, fur conditioner 1 12, fur mask 1 40\n" == self._serviceFacade.watchCart(
+=======
 		assert "OK" == self._serviceFacade.changeItemQuantityInCart(sessionId, self._item_1["name"],
-		                                                            self._item_1["store_name"], 2)
+		                                                            self._item_1["store"], 2)
 		assert "Dogs World: fur shampoo 3 40.5, fur conditioner 1 12, fur mask 1 40\n" == self._serviceFacade.watchCart(
+>>>>>>> origin/Rotem_&_Roy_are_having_fun
 			sessionId)
 		self._serviceFacade.clear()
 
@@ -581,11 +597,10 @@ class TestClass(object):
 		sessionid = self.set_up1()
 		sysmanager = self._serviceFacade.initiateSession()
 		self._serviceFacade.login(sysmanager, "rotem", "123456")
-		assert "OK" == self._serviceFacade.removeMember(sysmanager, "noa")
+		assert "OK" == self._serviceFacade.removeMember(sysmanager, sessionid)
 		self._serviceFacade.clear()
 
 	# 6.3 remove user 3
-	@pytest.mark.skip(reason="no way of currently testing this")
 	def test_removeUser3(self):
 		sessionid = self._serviceFacade.initiateSession()
 		sysmanager = self._serviceFacade.initiateSession()

@@ -1,6 +1,8 @@
 from functools import reduce
 from typing import List, Optional
 
+from main.moneyCollectionSystem import Facade as MoneyCollectionFacade
+from main.productSupplySystem import Facade as ProductSupplyFacade
 from main.domain.ManagementState import ManagementState
 from main.domain.Permission import Permissions
 from .TradingSystem import TradingSystem
@@ -11,6 +13,9 @@ from main.domain import Item
 
 
 class DomainFacade(object):
+	_money_collection_handler = MoneyCollectionFacade.MoneyCollectionFacade()
+	_supply_handler = ProductSupplyFacade.SupplyFacade()
+
 	@staticmethod
 	def clear():
 		TradingSystem.clear()
@@ -31,9 +36,9 @@ class DomainFacade(object):
 	def logout(session_id: int):
 		try:
 			TradingSystem.logout(session_id)
-			return True
+			return "OK"
 		except PermissionException as e:
-			return False
+			return e.msg
 
 	@staticmethod
 	def register(session_id: int, username: str, password: str):
@@ -51,8 +56,8 @@ class DomainFacade(object):
 			for store in TradingSystem._stores)
 		stores_filtered_by_rank = dict((k, v) for k, v in stores_to_relevant_item.items() if
 		                               fil_rankStore == None or TradingSystem.get_store(k).rank >= fil_rankStore)
-		return reduce(lambda acc ,curr: acc + list(map(lambda i: str(i), stores_filtered_by_rank[curr])),
-		             stores_filtered_by_rank, [])
+		return reduce(lambda acc, curr: acc + list(map(lambda i: str(i), stores_filtered_by_rank[curr])),
+		              stores_filtered_by_rank, [])
 
 	@staticmethod
 	def watch_cart(session_id: int):
@@ -64,7 +69,7 @@ class DomainFacade(object):
 		for cart in basket.values():
 			to_return += cart.store_name + ': '
 			for item in cart.items:
-				to_return += item.name + ' ' + str(cart.items[item]) + ' ' + str(cart.items[item]*item.price) + ', '
+				to_return += item.name + ' ' + str(cart.items[item]) + ' ' + str(cart.items[item] * item.price) + ', '
 			to_return = to_return[0: -2]
 			to_return += '\n'
 		return to_return
@@ -96,7 +101,6 @@ class DomainFacade(object):
 			return e.msg
 		return "OK"
 
-
 	@staticmethod
 	def change_item_quantity_in_cart(session_id: int, item_name: str, store_name: str, quantity: int):
 		user = TradingSystem.get_user(session_id)
@@ -113,15 +117,13 @@ class DomainFacade(object):
 		return "OK"
 
 	@staticmethod
-	def buy_single_item(self, sessionId:int, store_name:str, item_name:str):
-		return False
+	def buy_single_item(sessionId: int, store_name: str, item_name: str):
+		store: Store.Store = TradingSystem.get_store(store_name=store_name)
+		store.reserve_item(session_id=sessionId, item_name=item_name)
+		return TradingSystem.createTransaction(session_id=sessionId, store_name=store.name, item_name=item_name)
 
 	@staticmethod
 	def buy_item_from_cart(item_names: List[str]):
-		return False
-
-	@staticmethod
-	def pay(payment_details, address: str):
 		return False
 
 	@staticmethod
@@ -141,16 +143,16 @@ class DomainFacade(object):
 		return "OK"
 
 	@staticmethod
-	def add_item_to_store(session_id: int, store_name: str, itemName: str, category: str, desc: str, price: float,
+	def add_item_to_store(session_id: int, store_name: str, item_name: str, category: str, desc: str, price: float,
 	                      amount: int):
 		manager: Optional[Member] = TradingSystem.get_user_if_member(session_id=session_id)
 		if manager is None:
-			return "guest can't remove item from store"
+			return "guest can't add items from store"
 		state: ManagementState = manager.get_store_management_state(store_name)
 		if state is None:
 			return "member {} is not a manager of this store".format(manager.name)
 		try:
-			return state.add_item(itemName, desc, category, price, amount)
+			return state.add_item(item_name, desc, category, price, amount)
 		except TradingSystemException as e:
 			return e.msg
 
@@ -240,8 +242,6 @@ class DomainFacade(object):
 			return e.msg
 		return True
 
-
-
 	@staticmethod
 	def get_member(session_id: int) -> Member:
 		return TradingSystem.get_user(session_id)
@@ -255,3 +255,19 @@ class DomainFacade(object):
 		if len(store_indicator) == 0:
 			return None
 		return store_indicator[0].store
+
+	@staticmethod
+	def watch_trans(trans_id):
+		return TradingSystem.watch_trans(trans_id)
+
+	@staticmethod
+	def supply(sessionId, trans_id, address):
+		if DomainFacade._supply_handler.supply(trans_id, address):
+			TradingSystem.apply_trans(sessionId, trans_id)
+			return "OK"
+
+	@staticmethod
+	def pay(trans_id, creditcard, date, snum):
+		price = TradingSystem.calculate_price(TradingSystem.get_trans(trans_id))
+		if DomainFacade._money_collection_handler.pay(creditcard, date, snum, price):
+			return "OK"

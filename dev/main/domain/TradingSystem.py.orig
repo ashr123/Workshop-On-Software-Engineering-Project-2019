@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 from functools import reduce
+=======
 from typing import Union, Dict, List, Optional
+>>>>>>> origin/Rotem_&_Roy_are_having_fun
 
 from main.domain import Permission
 from main.domain.Transaction import Transaction
@@ -13,8 +16,13 @@ from .TradingSystemException import *
 class TradingSystem(object):
 	RIGHT_PASSWORD_LENGTH = 6
 	curr_item_id_temporary_bad_solution = 0
+<<<<<<< HEAD
 	curr_trans_id_temporary_bad_solution = 0
+	# _users: Dict[int, Union[Member, Guest]] = {}
+	_users = {}
+=======
 	_users: Dict[int, Union[Member, Guest]] = {}
+>>>>>>> origin/Rotem_&_Roy_are_having_fun
 	_members: List[Member] = []
 	_managers: List[Member] = []
 	_stores: List[Store] = []
@@ -101,12 +109,9 @@ class TradingSystem(object):
 	def login(session_id: int, username: str, password: str) -> bool:
 		if username not in map(lambda m: m.name, TradingSystem._members):
 			raise PermissionException(message="the user {} is not a member!".format(username))
-		try_to_log_in = TradingSystem.get_user(session_id)
-		if isinstance(try_to_log_in, Member):  # for hackers
+		try_to_log_in = TradingSystem.get_user(session_id)  # TODO fix: change to get_user_if_member
+		if not isinstance(try_to_log_in, Guest):
 			raise PermissionException(message="the user {} already login!".format(username))
-		# for user in TradingSystem._users.values():
-		# 	if isinstance(user, Member) and user.name == username:
-		# 		raise PermissionException(message="the user {} already login!".format(username))
 		new_logged_in_member: Optional[Member] = TradingSystem.get_member(member_name=username)
 		if not try_to_log_in.login(username=username, password=password):
 			raise PermissionException(message="wrong password!".format(username))
@@ -192,16 +197,7 @@ class TradingSystem(object):
 		raise AnomalyException("item {} in store {} doesn't exist".format(item_name, store_name))
 
 	@staticmethod
-	def remove_member(member_to_remove: str):
-		member: Member = TradingSystem.get_member(member_to_remove)
-		if member is None:
-			raise AnomalyException("member to be removed doesn't exist")
-		member.prepare_for_removal()
-		TradingSystem._members.remove(member)
-
-	@staticmethod
-	def remove_store(store: Store):
-		TradingSystem._stores.remove(store)
+<<<<<<< HEAD
 	def createTransaction(session_id, store_name, item_name) -> int:
 		trans = Transaction(TradingSystem.generate_trans_id(), session_id, store_name, [item_name])
 		TradingSystem._transactions.append(trans)
@@ -226,3 +222,15 @@ class TradingSystem(object):
 		trans = TradingSystem.get_trans(trans_id)
 		store:Store = TradingSystem.get_store(trans.store_name)
 		store.apply_trans(session_id, trans.items)
+=======
+	def remove_member(member_to_remove: str):
+		member: Member = TradingSystem.get_member(member_to_remove)
+		if member is None:
+			raise AnomalyException("member to be removed doesn't exist")
+		member.prepare_for_removal()
+		TradingSystem._members.remove(member)
+
+	@staticmethod
+	def remove_store(store: Store):
+		TradingSystem._stores.remove(store)
+>>>>>>> origin/Rotem_&_Roy_are_having_fun
