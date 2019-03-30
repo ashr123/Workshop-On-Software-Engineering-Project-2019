@@ -197,14 +197,14 @@ class TestClass(object):
 		sessionId = self._serviceFacade.initiateSession()
 		self._serviceFacade.saveItemInCart(sessionId, self._item1)
 		self._serviceFacade.saveItemInCart(sessionId, self._item1)
-		assert [[["fur shampoo", 2, 27]]] == self._serviceFacade.watchCart(sessionId)
+		assert "Dogs World: fur shampoo 2 27.0\n" == self._serviceFacade.watchCart(sessionId)
 		self._serviceFacade.clear()
 
 	# 2.6 save item 3
 	def test_saveItem3(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
-		assert "Item doesn't exist" == self._serviceFacade.saveItemInCart(sessionId, -8)
+		assert "item number -8 doesn't exist" == self._serviceFacade.saveItemInCart(sessionId, -8)
 		self._serviceFacade.clear()
 
 	# 2.7 edit cart 1 part 1
