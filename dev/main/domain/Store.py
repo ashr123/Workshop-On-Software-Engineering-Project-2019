@@ -1,6 +1,5 @@
 import copy
 from typing import List, Optional
-
 from .Item import Item
 from .Rule import Rule
 from .TradingSystemException import AnomalyException
@@ -23,7 +22,7 @@ class Store(object):
 		return self._name
 
 	@property
-	def items(self) -> str:
+	def items(self) -> List[Item]:
 		return self._items
 
 	@property

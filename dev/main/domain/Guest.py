@@ -30,10 +30,10 @@ class Guest(User):
 		self._groceryCarts[store_name].remove_item(item)
 		return True
 
-	def change_item_quantity_in_cart(self, item: Item, store_name: str) -> bool:
+	def change_item_quantity_in_cart(self, item: Item, store_name: str, quantity: int) -> bool:
 		if store_name not in self._groceryCarts.keys():
 			raise AnomalyException("store {} doesn't exist in your cart".format(store_name))
-		self._groceryCarts[store_name].change_item_quantity_in_cart(item)
+		self._groceryCarts[store_name].change_item_quantity_in_cart(item, quantity)
 		return True
 
 	def watch_gc(self):

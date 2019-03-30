@@ -1,11 +1,13 @@
+from typing import Dict
+
 from main.domain.Item import Item
 from main.domain.TradingSystemException import AnomalyException
 
 
 class GroceryCart(object):
 	def __init__(self, s_name):
-		self._items = {}
-		self._store_name = s_name
+		self._items: Dict[Item, int] = {}
+		self._store_name: str = s_name
 
 	@property
 	def store_name(self):
@@ -31,9 +33,9 @@ class GroceryCart(object):
 		if item not in self._items.keys():
 			raise AnomalyException("item {} doesn't exist in your cart".format(item.id))
 		curr_quantity = self._items[item]
-		if quantity <0 and curr_quantity< abs(quantity):
-			raise AnomalyException("give")
-
+		if quantity < 0 and curr_quantity < abs(quantity):
+			raise AnomalyException("operation of decrease quantity failed, given: {}, existing: {}".format(quantity, curr_quantity))
+		self._items[item] += quantity
 
 	def edit_item(self, item_id):
 		return False
