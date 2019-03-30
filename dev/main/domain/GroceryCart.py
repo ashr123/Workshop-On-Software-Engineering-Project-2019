@@ -1,13 +1,14 @@
-from typing import List
-from main.domain.Item import Item
+from main.Domain.Item import Item
 
 
 class GroceryCart(object):
 	def __init__(self):
-		self._items: List[Item] = []
+		self._items = {}
 
-	def add_item(self, item_id):
-		self._items.append(item_id)
+	def add_item(self, item: Item):
+		# if self._items
+		# self._items.append(item_id)
+		pass
 
 	def remove_item(self, item_id):
 		self._items.remove(item_id)
