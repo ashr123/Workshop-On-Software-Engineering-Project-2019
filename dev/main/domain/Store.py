@@ -43,17 +43,33 @@ class Store(object):
 				return True
 		return False
 
-	def edit_item(self, item_id: int, new_price: float = None, new_name: str = None):
-		item = self.get_item(item_id)
-		if item == None:
-			return False
-		if not new_name is None:
-			item.name = new_name
-		if not new_price is None:
-			item.price = new_price
-		self.remove_item(item_id=item_id)
-		self.add_item(new_item=item)
-		return True
+	def edit_item(self, item, field, value):
+		if field == "name":
+			if self.get_item_by_name(value) is not None:
+				raise AnomalyException("there's already an item named {} in the store {}".format(value, self.name))
+			item.edit_name(value)
+		elif field == "price":
+			try:
+				new_price = float(value)
+			except ValueError:
+				raise AnomalyException("price must be a float")
+			if value < 0:
+				raise AnomalyException("price must be a positive number")
+			item.edit_price(new_price)
+		elif field == "description":
+			item.edit_des(value)
+		elif field == "category":
+			item.edit_category(value)
+		elif field == "quantity":
+			try:
+				new_amount = int(value)
+			except ValueError:
+				raise AnomalyException("price must be an int")
+			if value < 0:
+				raise AnomalyException("quantity must be a positive number")
+			item.edit_quantity(new_amount)
+		else:
+			raise AnomalyException("there is no such thing as {} in item".format(field))
 
 	def add_owner(self, owner):
 		self._managers.append(owner)

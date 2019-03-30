@@ -65,8 +65,8 @@ class ServiceFacade(object):
 	def removeItemFromStore(self, sessionId, item_id, storeName):
 		return DomainFacade.remove_item_from_store(sessionId, item_id, storeName)
 
-	def changeItemInStore(self, sessionId, id, storeName, field, value):
-		return DomainFacade.change_item_in_store(sessionId, id, storeName, field, value)
+	def changeItemInStore(self, sessionId, item_name, store_name, field, value):
+		return DomainFacade.change_item_in_store(sessionId, item_name, store_name, field, value)
 
 	def addOwner(self, sessionId, ownerId, storeName):
 		return DomainFacade.add_owner(sessionId, ownerId, storeName)

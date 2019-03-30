@@ -171,8 +171,19 @@ class DomainFacade(object):
 		return "OK"
 
 	@staticmethod
-	def change_item_in_store(item_name: str, store_name: str, value: float):
-		return False
+	def change_item_in_store(session_id, item_name, store_name, field, value):
+		manager: Optional[Member] = TradingSystem.get_user_if_member(session_id=session_id)
+		if manager is None:
+			return "guest can't edit items from store"
+		state: ManagementState = manager.get_store_management_state(store_name)
+		if state is None:
+			return "member {} is not a manager of this store".format(manager.name)
+		try:
+			item = TradingSystem.get_item(item_name, store_name)
+			state.edit_item(item, field, value)
+		except TradingSystemException as e:
+			return e.msg
+		return "OK"
 
 	@staticmethod
 	def add_owner(session_id: int, ownered_name: str, store_name: str):

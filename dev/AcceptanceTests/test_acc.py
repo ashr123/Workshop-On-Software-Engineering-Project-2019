@@ -398,13 +398,14 @@ class TestClass(object):
 	# 4.1.3 edit item in store 1 ok
 	def test_changeItemInStore1(self):
 		ownerid = self.set_up1()
-		assert self._serviceFacade.removeItemFromStore(ownerid, self._item1, "Dogs World", "price", 17) == "OK"
+		assert self._serviceFacade.changeItemInStore(ownerid, self._item_1['name'], self._item_1['store_name'], "price", 17) == "OK"
+		assert self._serviceFacade.searchItem(name="fur shampoo") == ['fur shampoo, makes dogs fur shiny and soft, 17.0']
 		self._serviceFacade.clear()
 
 	# 4.1.3 edit item in store 2
 	def test_changeItemInStore2(self):
 		ownerid = self.set_up1()
-		assert self._serviceFacade.changeItemInStore(ownerid + 1, self._item1, "Dogs World", "price", 17) == "OK"
+		assert self._serviceFacade.changeItemInStore(ownerid + 1, self._item_1['name'], self._item_1['store_name'], "price", 17) == "guest can't edit items from store"
 		self._serviceFacade.clear()
 
 	# 4.3 add owner 1
@@ -568,7 +569,7 @@ class TestClass(object):
 		                                                                                       "Dogs World")
 		self._serviceFacade.clear()
 
-	# 6.3 remove user 1
+	# 6.2 remove user 1
 	def test_removeUser1(self):
 		sessionid = self.set_up0()
 		sysmanager = self._serviceFacade.initiateSession()
@@ -576,7 +577,7 @@ class TestClass(object):
 		assert "OK" == self._serviceFacade.removeMember(sysmanager, "noa")
 		self._serviceFacade.clear()
 
-	# 6.3 remove user 2
+	# 6.2 remove user 2
 	def test_removeUser2(self):
 		sessionid = self.set_up1()
 		sysmanager = self._serviceFacade.initiateSession()
@@ -584,7 +585,7 @@ class TestClass(object):
 		assert "OK" == self._serviceFacade.removeMember(sysmanager, "noa")
 		self._serviceFacade.clear()
 
-	# 6.3 remove user 3
+	# 6.2 remove user 3
 	@pytest.mark.skip(reason="no way of currently testing this")
 	def test_removeUser3(self):
 		sessionid = self._serviceFacade.initiateSession()
