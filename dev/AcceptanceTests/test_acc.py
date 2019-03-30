@@ -1,5 +1,6 @@
 import pytest
 
+
 from main.service.ServiceFacade import ServiceFacade
 
 
@@ -27,7 +28,8 @@ class TestClass(object):
 		self._item_1['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'],
 		                                                                   self._item_1['name'],
 		                                                                   "Pets",
-		                                                                   "makes dogs fur shiny and soft", 13.5, 120)[1]
+		                                                                   "makes dogs fur shiny and soft", 13.5, 120)[
+			1]
 		self._item_2['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'],
 		                                                                   self._item_2['name'], "Pets",
 		                                                                   "makes dogs fur shiny and soft", 12, 40)[1]
@@ -52,7 +54,7 @@ class TestClass(object):
 		return sessionId, trans_id
 
 	def set_up4(self):
-		sessionId,trans_id = self.set_up3()
+		sessionId, trans_id = self.set_up3()
 		self._serviceFacade.pay(sessionId, trans_id, "1234123412341234", "09/20", "777")
 		return sessionId, trans_id
 
@@ -241,7 +243,8 @@ class TestClass(object):
 	# 2.7 edit cart 1 part 2
 	def test_removeItemFromCart(self):
 		sessionId = self.set_up2()
-		assert "OK" == self._serviceFacade.removeItemFromCart(sessionId, self._item_2["name"], self._item_2["store_name"])
+		assert "OK" == self._serviceFacade.removeItemFromCart(sessionId, self._item_2["name"],
+		                                                      self._item_2["store_name"])
 		assert "Dogs World: fur shampoo 1 13.5, fur mask 1 40\n" == self._serviceFacade.watchCart(sessionId)
 		self._serviceFacade.clear()
 
@@ -272,7 +275,7 @@ class TestClass(object):
 	# 2.8.1 buy singel item 1
 	def test_buySingleItem1_only_supply_step(self):
 		sessionId, trans_id = self.set_up4()
-		assert self._serviceFacade.supply(sessionId,trans_id,"Hakishon 12, Tel Aviv") == "OK"
+		assert self._serviceFacade.supply(sessionId, trans_id, "Hakishon 12, Tel Aviv") == "OK"
 		self._serviceFacade.clear()
 
 	# 2.8.1 buy singel item 2
@@ -369,18 +372,18 @@ class TestClass(object):
 	def test_addItemToStore1(self):
 		ownerid = self.set_up1()
 		assert self._serviceFacade.addItemToStore(ownerid, "Dogs World", "fur comb", "Pets",
-		                                                  "for all kinds of fur", 4, 321)[0] == "OK"
+		                                          "for all kinds of fur", 4, 321)[0] == "OK"
 		self._serviceFacade.clear()
 
 	# 4.1.1 add item to store 2
 	def test_addItemToStore2(self):
 		ownerid = self.set_up1()
 		assert "guest can't add items from store" == self._serviceFacade.addItemToStore(ownerid + 1,
-		                                                                                               "Dogs World",
-		                                                                                               "fur comb",
-		                                                                                               "Pets",
-		                                                                                               "for all kinds of fur",
-		                                                                                               4, 321)
+		                                                                                "Dogs World",
+		                                                                                "fur comb",
+		                                                                                "Pets",
+		                                                                                "for all kinds of fur",
+		                                                                                4, 321)
 		self._serviceFacade.clear()
 
 	# 4.1.2 remove item from store 1 ok
