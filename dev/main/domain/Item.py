@@ -30,6 +30,10 @@ class Item(object):
 	def price(self, new_price: int):
 		self._price = new_price
 
+	@property
+	def category(self) -> int:
+		return self._category
+
 	def __str__(self):
 		return "{}, {}, {}".format(self.name,self._description, self.price )
 

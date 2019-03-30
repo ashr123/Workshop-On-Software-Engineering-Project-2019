@@ -129,10 +129,10 @@ class TestClass(object):
 		items = self._serviceFacade.searchItem(name=name, category=category, hashtag=hashtag, fil_category=fil_category,
 		                                       fil_rankItem=fil_rankItem, fil_rankStore=fil_rankStore,
 		                                       fil_price=fil_price)
-		assert [["fur shampoo", "makes dogs fur shiny and soft", 13.5], ["fur conditioner",
-		                                                                 "makes dogs fur shiny and soft", 12],
-		        ["fur mask",
-		         "makes dogs fur shiny and soft", 40]] == items
+		assert "fur shampoo, makes dogs fur shiny and soft, 13.5" in items
+		assert "fur conditioner, makes dogs fur shiny and soft, 12" in items
+		assert "fur mask, makes dogs fur shiny and soft, 40" in items
+		assert len(items) == 3
 		self._serviceFacade.clear()
 
 	# 2.5 search 3
@@ -148,7 +148,8 @@ class TestClass(object):
 		items = self._serviceFacade.searchItem(name=name, category=category, hashtag=hashtag, fil_category=fil_category,
 		                                       fil_rankItem=fil_rankItem, fil_rankStore=fil_rankStore,
 		                                       fil_price=fil_price)
-		assert None == items
+		assert items == []
+		self._serviceFacade.clear()
 
 	# 2.5 search 6
 	def test_searchItem6(self):
@@ -164,6 +165,7 @@ class TestClass(object):
 		                                       fil_rankItem=fil_rankItem, fil_rankStore=fil_rankStore,
 		                                       fil_price=fil_price)
 		assert [] == items
+		self._serviceFacade.clear()
 
 	# 2.5 search 6
 	def test_searchItem6(self):
@@ -178,10 +180,11 @@ class TestClass(object):
 		items = self._serviceFacade.searchItem(name=name, category=category, hashtag=hashtag, fil_category=fil_category,
 		                                       fil_rankItem=fil_rankItem, fil_rankStore=fil_rankStore,
 		                                       fil_price=fil_price)
-		assert [["fur shampoo", "makes dogs fur shiny and soft", 13.5], ["fur conditioner",
-		                                                                 "makes dogs fur shiny and soft", 12],
-		        ["fur mask",
-		         "makes dogs fur shiny and soft", 40]] == items
+		
+		assert "fur shampoo, makes dogs fur shiny and soft, 13.5" in items
+		assert "fur conditioner, makes dogs fur shiny and soft, 12" in items
+		assert "fur mask, makes dogs fur shiny and soft, 40" in items
+		assert len(items) == 3
 		self._serviceFacade.clear()
 
 	# 2.6 save item 1
