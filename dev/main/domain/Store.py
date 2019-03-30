@@ -22,6 +22,10 @@ class Store(object):
 		return self._name
 
 	@property
+	def items(self) -> str:
+		return self._items
+
+	@property
 	def managers(self):
 		return self._managers
 

@@ -164,9 +164,11 @@ class TradingSystem(object):
 		return TradingSystem.curr_item_id_temporary_bad_solution
 
 	@staticmethod
-	def get_item(item_id: int):
+	def get_item(item_name: str, store_name: str):
 		for store in TradingSystem._stores:
-			for item in store._items:
-				if item.id == item_id:
-					return item, store.name
-		raise AnomalyException("item number {} doesn't exist".format(item_id))
+			if store.name == store_name:
+				for item in store.items:
+					if item.name == item_name:
+						return item
+
+		raise AnomalyException("item {} in store {} doesn't exist".format(item_name, store_name))
