@@ -58,7 +58,12 @@ class StoreNotExistException(TradingSystemException):
 	def __init__(self, message, errors=None):
 		super().__init__(message, errors)
 
-class ItemNotAvailableInStoreException(StoreExeption):
+
+class UnImplementedException(TradingSystemException):
 	def __init__(self, message, errors=None):
 		super().__init__(message, errors)
 
+
+class ItemNotAvailableInStoreException(StoreExeption):
+	def __init__(self, message, errors=None):
+		super().__init__(message, errors)

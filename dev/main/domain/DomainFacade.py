@@ -137,11 +137,6 @@ class DomainFacade(object):
 		except StoreExeption as e:
 			return e.msg
 
-
-	@staticmethod
-	def buy_item_from_cart(item_names: List[str]):
-		return False
-
 	@staticmethod
 	def add_store(session_id: int, name: str, desc: str) -> str:
 		try:

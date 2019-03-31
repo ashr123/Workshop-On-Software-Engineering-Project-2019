@@ -1,5 +1,6 @@
 import copy
 from typing import List, Optional
+
 from .Item import Item
 from .Rule import Rule
 from .TradingSystemException import AnomalyException
@@ -44,7 +45,7 @@ class Store(object):
 				return True
 		return False
 
-	def edit_item(self, item, field, value):
+	def edit_item(self, item: Item, field: str, value: float):
 		if field == "name":
 			if self.get_item_by_name(value) is not None:
 				raise AnomalyException("there's already an item named {} in the store {}".format(value, self.name))
@@ -121,10 +122,8 @@ class Store(object):
 		if not session_id in self._resereved_items:
 			self._resereved_items[session_id] = {}
 		if not item_name in self._resereved_items[session_id]:
-			self._resereved_items[session_id][item_name]=0
-		self._resereved_items[session_id][item_name]+=1
-
-
+			self._resereved_items[session_id][item_name] = 0
+		self._resereved_items[session_id][item_name] += 1
 
 	def add_reserved_item(self, item_name):
 		item = self.get_item_by_name(item_name=item_name)
@@ -134,4 +133,4 @@ class Store(object):
 		trans_items = self._resereved_items[session_id]
 		for item in trans_items:
 			if item in items:
-				self._resereved_items[session_id][item]-=1
+				self._resereved_items[session_id][item] -= 1

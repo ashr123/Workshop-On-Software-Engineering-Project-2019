@@ -1,11 +1,12 @@
-from typing import List, Optional
+from typing import List
 
+from main.domain import ManagementState
 from main.domain import Store, TradingSystem
+from main.domain.Item import Item
 from main.domain.Permission import Permissions
 from .Guest import Guest
-from .User import User
-from main.domain import ManagementState
 from .TradingSystemException import *
+from .User import User
 
 
 class Member(User):
@@ -26,19 +27,17 @@ class Member(User):
 	def get_guest(self):
 		return self._guest
 
-	def logout(self):  # TODO implement
-		return False
+	def add_item_to_cart(self, item: Item, store_name: str):
+		self.get_guest.add_item_to_cart(item, store_name)
 
-	def save_item_in_gc(self, item):  # TODO implement
-		return False
-
-	def watch_gc(self):  # TODO implement
-		return False
+	def watch_gc(self):
+		return self.get_guest.watch_gc()
 
 	def add_managment_state(self, is_owner: bool, permissions_list: List[Permissions],
 	                        store: Store, nominator) -> None:
 		self._storesManaged_states.append(
-			ManagementState.ManagementState(is_owner=is_owner, permissions_list=permissions_list, store=store, nominator=nominator))
+			ManagementState.ManagementState(is_owner=is_owner, permissions_list=permissions_list, store=store,
+			                                nominator=nominator))
 
 	def add_manager(self, store_name: str, member_name: str, permission_list: List[ManagementState.Permissions]):
 		store_ind = list(filter(lambda s_m: s_m.store.name == store_name, self._storesManaged_states))
@@ -63,7 +62,8 @@ class Member(User):
 		                                              permissions_list=[])
 
 	def get_store_management_state(self, store_name: str):
-		management_states: List[ManagementState] = list(filter(lambda ms: ms.store.name == store_name, self.stores_managed_states))
+		management_states: List[ManagementState] = list(
+			filter(lambda ms: ms.store.name == store_name, self.stores_managed_states))
 		if len(management_states) == 0:
 			return None
 		return management_states[0]
