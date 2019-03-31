@@ -317,7 +317,7 @@ class TestClass(object):
 	def test_buyManyItems1_only_buy_test(self):
 		sessionId = self.set_up2()
 		trans_id = self._serviceFacade.buyManyItems(sessionId, self._item_1['store_name'], [self._item_1['name'],
-		                                            self._item_2['name']])
+		                                                                                    self._item_2['name']])
 		assert self._serviceFacade.watch_trans(trans_id) == "price: {}".format(self._item_1['price'])
 		self._serviceFacade.clear()
 
@@ -333,14 +333,14 @@ class TestClass(object):
 		assert self._serviceFacade.supply(sessionId, trans_id, "Hakishon 12, Tel Aviv") == "OK"
 		self._serviceFacade.clear()
 
-
 	# 2.8.2 buy many items 2
 	def test_buyManyItems2(self):
 		self.set_up1()
 		sessionId = self._serviceFacade.initiateSession()
 		item_that_not_exist_name1 = "TEST_item_that_not_exist1"
 		item_that_not_exist_name1 = "TEST_item_that_not_exist2"
-		res = self._serviceFacade.buyManyItems(sessionId, self._item_1['store_name'],[item_that_not_exist_name1, item_that_not_exist_name1])
+		res = self._serviceFacade.buyManyItems(sessionId, self._item_1['store_name'],
+		                                       [item_that_not_exist_name1, item_that_not_exist_name1])
 		assert res == "{} not exist in {}".format(item_that_not_exist_name1, self._item_1['store_name'])
 		self._serviceFacade.clear()
 
@@ -423,14 +423,17 @@ class TestClass(object):
 	# 4.1.3 edit item in store 1 ok
 	def test_changeItemInStore1(self):
 		ownerid = self.set_up1()
-		assert self._serviceFacade.changeItemInStore(ownerid, self._item_1['name'], self._item_1['store_name'], "price", 17) == "OK"
-		assert self._serviceFacade.searchItem(name="fur shampoo") == ['fur shampoo, makes dogs fur shiny and soft, 17.0']
+		assert self._serviceFacade.changeItemInStore(ownerid, self._item_1['name'], self._item_1['store_name'], "price",
+		                                             17) == "OK"
+		assert self._serviceFacade.searchItem(name="fur shampoo") == [
+			'fur shampoo, makes dogs fur shiny and soft, 17.0']
 		self._serviceFacade.clear()
 
 	# 4.1.3 edit item in store 2
 	def test_changeItemInStore2(self):
 		ownerid = self.set_up1()
-		assert self._serviceFacade.changeItemInStore(ownerid + 1, self._item_1['name'], self._item_1['store_name'], "price", 17) == "guest can't edit items from store"
+		assert self._serviceFacade.changeItemInStore(ownerid + 1, self._item_1['name'], self._item_1['store_name'],
+		                                             "price", 17) == "guest can't edit items from store"
 		self._serviceFacade.clear()
 
 	# 4.3 add owner 1
