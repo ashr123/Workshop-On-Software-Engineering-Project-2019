@@ -19,6 +19,10 @@ class Item(object):
 	def name(self) -> str:
 		return self._name
 
+	@property
+	def quantity(self) -> str:
+		return self._quantity
+
 	@name.setter
 	def name(self, new_name):
 		self._name = new_name
