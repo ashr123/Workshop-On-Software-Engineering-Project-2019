@@ -1,6 +1,6 @@
 from main.domain import Store
 from main.domain import Item
-
+from main.domain.TradingSystemException import TradingSystemException
 
 def test_add_item():
 	store = create_store_instance()
@@ -18,16 +18,26 @@ def test_remove_item():
 	assert not store.has_item(new_item.id)
 
 
-def test_edit_item():
+def test_edit_item1():
 	store = create_store_instance()
 	new_item = create_item_instance()
 	store.add_item(new_item=new_item)
 	new_name = "NEW_ITEM_NAME_WIII"
-	new_price = 14
-	assert store.edit_item(item_id=new_item.id, new_name=new_name, new_price=new_price)
+	store.edit_item(item=new_item, field="name", value=new_name)
 	edited_item: Item = store.get_item(new_item.id)
 	assert edited_item.name == new_name
-	assert edited_item.price == new_price
+
+def test_edit_item2():
+	store = create_store_instance()
+	new_item = create_item_instance()
+	store.add_item(new_item=new_item)
+	new_quantity = -1
+	try:
+		store.edit_item(item=new_item, field="quantity", value=new_quantity)
+	except TradingSystemException:
+		assert True
+	edited_item: Item = store.get_item(new_item.id)
+	assert edited_item.quantity != new_quantity
 
 
 def create_store_instance() -> Store.Store:
