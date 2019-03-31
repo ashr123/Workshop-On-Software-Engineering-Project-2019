@@ -13,7 +13,7 @@ def setup_module(module):
 	facade.register(session_id, "TEST_store_owner", "123456")
 	facade.login(session_id, "TEST_store_owner", "123456")
 	facade.add_store(session_id=session_id,name=store_name,desc="nice_store")
-	facade.add_item_to_store(session_id=session_id,store_name=store_name,itemName=item_name,category="category",
+	facade.add_item_to_store(session_id=session_id,store_name=store_name,item_name=item_name,category="category",
 	                         desc="nice product", price=12,amount=1)
 
 
