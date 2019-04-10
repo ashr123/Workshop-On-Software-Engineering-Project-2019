@@ -9,7 +9,6 @@ from .TradingSystem import TradingSystem
 from .Member import Member
 from .TradingSystemException import *
 from dev.main.domain import Store
-from dev.main.domain import Item
 
 
 class DomainFacade(object):
