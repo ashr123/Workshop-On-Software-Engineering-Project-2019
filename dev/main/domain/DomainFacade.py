@@ -127,7 +127,7 @@ class DomainFacade(object):
 			return e.msg
 
 	@staticmethod
-	def buy_many_items(sessionId, store_name,items):
+	def buy_many_items(sessionId, store_name, items):
 		try:
 			trans_id = TradingSystem.createTransaction(sessionId, store_name)
 			for item in items:
@@ -293,5 +293,3 @@ class DomainFacade(object):
 		price = TradingSystem.calculate_price(TradingSystem.get_trans(trans_id))
 		if DomainFacade._money_collection_handler.pay(creditcard, date, snum, price):
 			return "OK"
-
-

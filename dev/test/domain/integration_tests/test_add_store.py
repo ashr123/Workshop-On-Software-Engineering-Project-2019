@@ -2,6 +2,7 @@ import pytest
 
 from main.domain.DomainFacade import DomainFacade
 
+
 def test_valid_store_addition():
 	facade = DomainFacade()
 	session_id = facade.initiate_session()
@@ -10,5 +11,3 @@ def test_valid_store_addition():
 	store = facade.get_store(session_id, "RoysStore")
 	assert not store == None
 	assert store.name == "RoysStore"
-
-

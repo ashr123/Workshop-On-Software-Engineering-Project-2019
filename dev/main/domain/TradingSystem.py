@@ -202,6 +202,7 @@ class TradingSystem(object):
 	@staticmethod
 	def remove_store(store: Store):
 		TradingSystem._stores.remove(store)
+
 	def createTransaction(session_id, store_name) -> int:
 		trans = Transaction(TradingSystem.generate_trans_id(), session_id, store_name)
 		TradingSystem._transactions.append(trans)
@@ -228,10 +229,11 @@ class TradingSystem(object):
 			raise StoreNotExistException('{} not exist'.format(store_name))
 		store.reserve_item(session_id=sessionId, item_name=item_name)
 		return True
+
 	@staticmethod
 	def apply_trans(session_id, trans_id):
 		trans = TradingSystem.get_trans(trans_id)
-		store:Store = TradingSystem.get_store(trans.store_name)
+		store: Store = TradingSystem.get_store(trans.store_name)
 		store.apply_trans(session_id, trans.items)
 
 	@staticmethod

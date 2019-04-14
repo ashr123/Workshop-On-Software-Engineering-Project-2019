@@ -2,6 +2,7 @@ from main.domain import Store
 from main.domain import Item
 from main.domain.TradingSystemException import TradingSystemException
 
+
 def test_add_item():
 	store = create_store_instance()
 	new_item = create_item_instance()
@@ -26,6 +27,7 @@ def test_edit_item1():
 	store.edit_item(item=new_item, field="name", value=new_name)
 	edited_item: Item = store.get_item(new_item.id)
 	assert edited_item.name == new_name
+
 
 def test_edit_item2():
 	store = create_store_instance()

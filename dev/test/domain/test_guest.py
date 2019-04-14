@@ -11,6 +11,7 @@ item_name1 = "TEST_bamba"
 store_name2 = "TEST_store_rotem"
 item_name2 = "TEST_bisli"
 
+
 def setup_function(function):
 	facade = DomainFacade.DomainFacade()
 	session_id = facade.initiate_session()
@@ -22,8 +23,11 @@ def setup_function(function):
 	facade.add_store(session_id=session_id, name=store_name2, desc="nice_store")
 	facade.add_item_to_store(session_id=session_id, store_name=store_name1, item_name=item_name2, category="category",
 	                         desc="nice product", price=16, amount=1)
+
+
 def teardown_function(function):
 	TradingSystem.TradingSystem.clear()
+
 
 def test_add_item_to_cart():
 	session_id = TradingSystem.TradingSystem.generate_id()
@@ -65,10 +69,12 @@ def test_change_item_quantity_in_cart():
 	guest.add_item_to_cart(item=item, store_name=store_name1)
 	assert guest.check_quantity(item, store_name1) == 2
 
+
 def test_register1():
 	session_id = TradingSystem.TradingSystem.generate_id()
 	guest: Guest.Guest = TradingSystem.TradingSystem.get_user(session_id)
 	assert guest.register("lala", "ererer") is True
+
 
 def test_register2():
 	session_id = TradingSystem.TradingSystem.generate_id()
@@ -78,20 +84,16 @@ def test_register2():
 	guest2: Guest.Guest = TradingSystem.TradingSystem.get_user(session_id2)
 	assert guest2.register("lala", "ererer") is False
 
+
 def test_login1():
 	session_id = TradingSystem.TradingSystem.generate_id()
 	guest: Guest.Guest = TradingSystem.TradingSystem.get_user(session_id)
 	guest.register("lala", "ererer")
 	assert guest.login("lala", "ererer") is True
 
+
 def test_login2():
 	session_id = TradingSystem.TradingSystem.generate_id()
 	guest: Guest.Guest = TradingSystem.TradingSystem.get_user(session_id)
 	guest.register("lala", "ererer")
 	assert guest.login("lala", "ereret") is False
-
-
-
-
-
-

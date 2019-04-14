@@ -51,7 +51,7 @@ class Item(object):
 			raise NoEnoughItemsException(
 				message="Cannot decrease the amount of {} in {}, there are only {}".format(self.name, amount,
 				                                                                           self._quantity))
-		self._quantity-=amount
+		self._quantity -= amount
 
 	def __str__(self):
 		return "{}, {}, {}".format(self.name, self._description, self.price)

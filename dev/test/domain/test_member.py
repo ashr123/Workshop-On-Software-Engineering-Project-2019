@@ -12,7 +12,8 @@ def test_add_managment_state():
 	member: Member.Member = Member.Member("Roy", Guest.Guest())
 	member2: Member.Member = Member.Member("Rotem", Guest.Guest())
 	assert not member.stores_managed_states
-	member.add_managment_state(True, [Permission.Permissions.ADD_MANAGER], Store.Store("Second store", member, "bla bla bla"), member2)
+	member.add_managment_state(True, [Permission.Permissions.ADD_MANAGER],
+	                           Store.Store("Second store", member, "bla bla bla"), member2)
 	assert member.stores_managed_states
 
 
@@ -26,6 +27,7 @@ def test_add_manager():
 	TradingSystem.TradingSystem.clear()
 	assert True
 
+
 def test_remove_owner():
 	member: Member.Member = Member.Member("Roy", Guest.Guest())
 	member2: Member.Member = Member.Member("Rotem", Guest.Guest())
@@ -33,7 +35,7 @@ def test_remove_owner():
 	member.add_managment_state(True, [Permission.Permissions.ADD_MANAGER],
 	                           store, member2)
 	member2.add_managment_state(True, [Permission.Permissions.ADD_MANAGER],
-	                           store, member)
+	                            store, member)
 	store.add_owner(member)
 	TradingSystem.TradingSystem.add_member(member)
 	TradingSystem.TradingSystem.add_member(member2)

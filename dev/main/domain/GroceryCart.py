@@ -34,10 +34,9 @@ class GroceryCart(object):
 			raise AnomalyException("item {} doesn't exist in your cart".format(item.id))
 		curr_quantity = self._items[item]
 		if quantity < 0 and curr_quantity < abs(quantity):
-			raise AnomalyException("operation of decrease quantity failed, given: {}, existing: {}".format(quantity, curr_quantity))
+			raise AnomalyException(
+				"operation of decrease quantity failed, given: {}, existing: {}".format(quantity, curr_quantity))
 		self._items[item] += quantity
 
 	def has_item(self, item_id):
 		return item_id in list(map(lambda i: i.name, self._items))
-
-

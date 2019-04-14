@@ -7,4 +7,3 @@ class Permissions(Enum):
 	EDIT_ITEM = auto()
 	REMOVE_MANAGER = auto()
 	ADD_MANAGER = auto()
-

@@ -73,7 +73,8 @@ class ManagementState(object):
 		manager = TradingSystem.TradingSystem.get_member(member_name=manager_name)
 		existing_management_state: Optional[ManagementState] = manager.get_store_management_state(self.store.name)
 		if not is_master and remover.name != existing_management_state._nominator.name:
-			raise PermissionException(message="manager/owner can't remove another manager/owner that he didn't nominate")
+			raise PermissionException(
+				message="manager/owner can't remove another manager/owner that he didn't nominate")
 		else:
 			self.store.remove_manager(manager=manager)
 			for child_of_manager in self.store.managers:
