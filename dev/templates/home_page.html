@@ -2,10 +2,12 @@
 <html>
 <body>
 
-<form action="initiate" method="post">
-    Name: <input type="text" name="name"><br>
-    Password: <input type="text" name="password"><br>
-    <input type="submit" value="Initiate">
+<form action="your-name/" method="post" >
+    <label for="your_name">Your name: </label>
+    <input id="your_name" type="text" name="your_name">
+    <input type="submit" value="OK">
+    {% block content %}
+    {% endblock content %}
 </form>
 
 
