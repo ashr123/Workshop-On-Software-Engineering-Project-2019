@@ -1,4 +1,4 @@
-from dev.main import DomainFacade
+from dev.main.domain.DomainFacade import DomainFacade
 
 
 class ServiceFacade(object):
