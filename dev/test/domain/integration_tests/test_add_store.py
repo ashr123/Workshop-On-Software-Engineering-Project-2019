@@ -1,6 +1,4 @@
-import pytest
-
-from main.domain.DomainFacade import DomainFacade
+from dev.main import DomainFacade
 
 
 def test_valid_store_addition():

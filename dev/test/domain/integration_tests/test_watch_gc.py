@@ -1,4 +1,4 @@
-from main.domain.DomainFacade import DomainFacade
+from dev.main import DomainFacade
 
 
 def test_watch_gc():

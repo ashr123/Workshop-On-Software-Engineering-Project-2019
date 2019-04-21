@@ -1,9 +1,8 @@
 from typing import List
 
-from main.domain import ManagementState
-from main.domain import Store, TradingSystem
-from main.domain.Item import Item
-from main.domain.Permission import Permissions
+from dev.main.domain import ManagementState, Store, TradingSystem
+from dev.main.domain.Item import Item
+from dev.main.domain.Permission import Permissions
 from .Guest import Guest
 from .TradingSystemException import *
 from .User import User

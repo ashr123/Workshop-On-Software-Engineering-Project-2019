@@ -1,10 +1,5 @@
 import pytest
-from main.domain import TradingSystem
-from main.domain import DomainFacade
-from main.domain import Guest
-from main.domain import Store
-from main.domain import GroceryCart
-from main.domain import Item
+from dev.main.domain import Store, TradingSystem, Guest, DomainFacade
 
 store_name1 = "TEST_store_roy"
 item_name1 = "TEST_bamba"

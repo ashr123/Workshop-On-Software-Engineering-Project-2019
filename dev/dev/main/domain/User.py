@@ -1,5 +1,5 @@
-from main.domain.Item import Item
-from main.domain.TradingSystemException import UnImplementedException
+from dev.main.domain.Item import Item
+from dev.main.domain.TradingSystemException import UnImplementedException
 
 
 class User(object):

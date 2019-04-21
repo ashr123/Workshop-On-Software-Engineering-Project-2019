@@ -1,4 +1,4 @@
-from main.domain.Rule import Rule
+from dev.main.domain.Rule import Rule
 
 
 class Purchase(Rule):

@@ -1,11 +1,11 @@
-from typing import List, Optional, Union
+from typing import List, Optional
 
-from main.domain.Permission import Permissions
+from dev.main.domain.Permission import Permissions
 from .Item import Item
 
 from .TradingSystemException import PermissionException, AnomalyException
 from .Store import Store
-from main.domain import TradingSystem
+from dev.main.domain import TradingSystem
 
 
 class ManagementState(object):

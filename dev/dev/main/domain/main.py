@@ -1,6 +1,4 @@
-import main.domain.DomainFacade
-
-print("hey")
+# print("hey")
 # ts =  DomainFacade.DomainFacade()
 # sessionID = ts.initiate_session()
 # ts.add_item(sessionID, "123")

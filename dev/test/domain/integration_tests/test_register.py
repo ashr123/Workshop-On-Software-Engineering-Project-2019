@@ -1,5 +1,4 @@
-from main.domain.DomainFacade import DomainFacade
-from main.domain import Member
+from dev.main import DomainFacade
 
 
 def setup_module(module):

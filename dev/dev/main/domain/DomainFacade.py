@@ -1,15 +1,14 @@
 from functools import reduce
 from typing import List, Optional
 
-from main.moneyCollectionSystem import Facade as MoneyCollectionFacade
-from main.productSupplySystem import Facade as ProductSupplyFacade
-from main.domain.ManagementState import ManagementState
-from main.domain.Permission import Permissions
+from dev.main.moneyCollectionSystem import Facade as MoneyCollectionFacade
+from dev.main.productSupplySystem import Facade as ProductSupplyFacade
+from dev.main.domain.ManagementState import ManagementState
+from dev.main.domain.Permission import Permissions
 from .TradingSystem import TradingSystem
 from .Member import Member
 from .TradingSystemException import *
-from main.domain import Store
-from main.domain import Item
+from dev.main.domain import Store
 
 
 class DomainFacade(object):

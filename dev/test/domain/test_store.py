@@ -1,6 +1,5 @@
-from main.domain import Store
-from main.domain import Item
-from main.domain.TradingSystemException import TradingSystemException
+from dev.main.domain import Store, Item
+from dev.main.domain.TradingSystemException import TradingSystemException
 
 
 def test_add_item():

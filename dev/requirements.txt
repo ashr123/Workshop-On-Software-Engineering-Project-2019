@@ -1,0 +1,5 @@
+Django==2.2
+setuptools==41.0.0
+more-itertools==7.0.0
+pytest==4.4.1
+pytz==2019.1

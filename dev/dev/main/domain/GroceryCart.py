@@ -1,7 +1,7 @@
 from typing import Dict
 
-from main.domain.Item import Item
-from main.domain.TradingSystemException import AnomalyException
+from dev.main.domain.Item import Item
+from dev.main.domain.TradingSystemException import AnomalyException
 
 
 class GroceryCart(object):

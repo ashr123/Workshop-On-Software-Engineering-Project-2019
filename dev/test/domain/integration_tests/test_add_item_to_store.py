@@ -1,5 +1,4 @@
-from main.domain.DomainFacade import DomainFacade
-from main.domain import Member
+from dev.main import DomainFacade
 
 
 def test_add_item_to_store():

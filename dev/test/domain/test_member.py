@@ -1,4 +1,4 @@
-from main.domain import Guest, Permission, Item, Member, Store, TradingSystem
+from dev.main.domain import Permission, Member, Store, TradingSystem, Item, Guest
 
 
 def test_save_item_in_gc():

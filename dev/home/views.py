@@ -1,7 +1,7 @@
 import datetime
 
 from django.shortcuts import render
-from main.service.ServiceFacade import ServiceFacade
+from dev.main import ServiceFacade
 from .forms import InitiateForm
 
 
