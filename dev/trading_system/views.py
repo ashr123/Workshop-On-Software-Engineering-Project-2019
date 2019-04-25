@@ -7,6 +7,11 @@ from django.http import HttpResponse
 
 def index(request):
     text = SearchForm()
+    return render(request, 'homepage_guest.html', {'text': text})
+
+
+def member(request):
+    text = SearchForm()
     return render(request, 'homepage_member.html', {'text': text})
 
 
@@ -19,5 +24,3 @@ def search(request):
     if text.is_valid():
         return HttpResponse("yes " + text.cleaned_data['text'])
     return HttpResponse("no " + text.cleaned_data['text'])
-
-
