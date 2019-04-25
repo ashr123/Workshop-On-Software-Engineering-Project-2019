@@ -15,10 +15,10 @@ def register(request):
 
 
 def get(request):
-    return HttpResponse("noo " )
     text = SearchForm(request.GET)
     if text.is_valid():
-        return HttpResponse("yesss " + text)
+        return HttpResponse("yesss " + text.cleaned_data['text'])
+    return HttpResponse("noooo " + text)
 
 
 
