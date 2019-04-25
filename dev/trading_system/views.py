@@ -22,5 +22,10 @@ def register(request):
 def search(request):
     text = SearchForm(request.GET)
     if text.is_valid():
-        return HttpResponse("yes " + text.cleaned_data['text'])
-    return HttpResponse("no " + text.cleaned_data['text'])
+        context = {'title': 'items', 'results': [{id: 1}, {id: 2}]}
+
+    return render(request, 'search_results.html', context)
+
+
+def item(request, id):
+    return render(request, 'item_de.html')
