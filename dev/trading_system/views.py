@@ -14,12 +14,13 @@ def register(request):
     return render(request, 'trading_system/register.html')
 
 
-def search(request):
+def get(request):
+    return HttpResponse("noo " )
     text = SearchForm(request.GET)
     if text.is_valid():
         return HttpResponse("yesss " + text)
 
-    return HttpResponse("noo " + text)
+
 
 
 
