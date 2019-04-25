@@ -1,5 +1,5 @@
 from django import forms
 
 
-class searchForm(forms.form):
+class SearchForm(forms.Form):
     text = forms.CharField()

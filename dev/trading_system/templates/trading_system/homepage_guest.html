@@ -92,9 +92,10 @@ Home Page
   <a href="/accounts/signup/">sign-up<a>
   <div class="search-container">
   <href
-    <form action="/action_page.php">
-      <input type="text" placeholder="Search.." name="search">
-      <button type="submit">Submit</button>
+    <form method="get">
+        {% csrf_token %}
+        {{ text.as_p }}
+      <button type="submit">Search</button>
     </form>
   </div>
 </div>
