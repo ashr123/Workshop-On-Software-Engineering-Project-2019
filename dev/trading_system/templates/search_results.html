@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+	<h3 class="center-align red lighten-3">{{ title }}</h3>
+	{% if results|length_is:0 %}
+		Sorry<br>We didn't find any result!
+	{% else %}
+		<ul class="collection">
+			{% for item in results.values %}
+				<li class="collection-item"><a href="home/item_page/{{ item }}"> {{ item }}</a></li>
+			{% endfor %}
+		</ul>
+	{% endif %}
+{% endblock %}
