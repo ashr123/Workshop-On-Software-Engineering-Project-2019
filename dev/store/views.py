@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.conf import settings
 from .models import Store, Item
 from . import forms
-
+from django.contrib.auth.models import Group ,User
 
 # Create your views here.
 def add_store(request):
@@ -20,7 +20,12 @@ def submit_open_store(request):
 		store.items.add(item1)
 		store.save()
 
-	stores = Store.objects.get(owner_id=int(request.session._session['_auth_user_id']))
+	my_group = Group.objects.get(name='store_owners')
+	#my_group.user_set.add(request.user)
+	# user = User.objects.get(username=request.user.username)
+	request.user.groups.add(my_group)
+
+	stores = Store.objects.get(owner_id=int(request.session._session['_auth_user_id']))[0]
 
 	context = {'title': 'stores:', 'results': stores}
 

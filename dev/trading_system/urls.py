@@ -6,5 +6,5 @@ urlpatterns = [
 	path(r'^item_page/(?P<id>\d+)/$', views.item),
 
 	path('actionUrl/', views.search),
-	path('homepage_member', views.member),
+	path('login_redirect', views.login_redirect),
 ]
