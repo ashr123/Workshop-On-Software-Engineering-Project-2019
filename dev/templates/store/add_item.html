@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<h2>Add item</h2>
+	<div class="add_item-container">
+		<form action="submit/" method="post">
+			{% csrf_token %}
+			{{ name.as_p }}
+			<button type="submit">Open</button>
+		</form>
+	</div>
+</head>
+<body>
+
+</body>
+</html>

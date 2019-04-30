@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from trading_system.forms import SearchForm
+from store.models import Store, Item
 from django.http import HttpResponse
 
 
@@ -21,11 +22,21 @@ def register(request):
 
 def search(request):
 	text = SearchForm(request.GET)
+	store = Store.objects.get(name="elhanan store")
+
 	if text.is_valid():
-		context = {'title': 'items', 'results': [{id: 1}, {id: 2}]}
+		context = {'title': 'items', 'results': store.items}
 
 	return render(request, 'search_results.html', context)
 
 
 def item(request, id):
-	return render(request, 'item_de.html')
+	item = Item.objects.get(name=id)
+	context = {
+		'item': item
+	}
+	# store = Store.objects.get(name=name_)
+	# context = {
+	# 	'store': store
+	# }
+	return render(request, 'item_page.html', context)
