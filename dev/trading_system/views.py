@@ -1,4 +1,4 @@
-from django.shortcuts import render
+ Pip install channels==2.1.2from django.shortcuts import render
 from trading_system.forms import SearchForm
 from store.models import Store, Item
 from django.http import HttpResponse
