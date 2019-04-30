@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
 	'trading_system',
 	'store',
+	'test_app',
 	'django.contrib.admin',
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
