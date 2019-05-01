@@ -35,8 +35,5 @@ def item(request, id):
 	context = {
 		'item': item
 	}
-	# store = Store.objects.get(name=name_)
-	# context = {
-	# 	'store': store
-	# }
+
 	return render(request, 'item_page.html', context)

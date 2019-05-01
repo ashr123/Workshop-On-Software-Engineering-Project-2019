@@ -106,15 +106,27 @@ class ArticleListView(ListView):
 		return context
 
 
+class ArticleUpdate(UpdateView):
+	model = Article
+	fields = ['content']
+	template_name_suffix = '_update_form'
+
+
+class ArticleDelete(DeleteView):
+	model = Article
+	template_name_suffix = '_delete_form'
+
+
 class AuthorCreate(CreateView):
 	model = Author
 	fields = ['name']
 
+
 class AuthorUpdate(UpdateView):
-    model = Author
-    fields = ['name']
-    template_name_suffix = '_update_form'
+	model = Author
+	template_name_suffix = '_update_form'
+
 
 class AuthorDelete(DeleteView):
-    model = Author
-    success_url = reverse_lazy('author-list')
+	model = Author
+	success_url = reverse_lazy('author-list')

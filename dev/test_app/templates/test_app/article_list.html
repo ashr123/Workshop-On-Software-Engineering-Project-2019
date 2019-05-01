@@ -4,13 +4,14 @@
 	<ul>
 		{% for article in object_list %}
 			<li>{{ article.pub_date|date }} - {{ article.headline }}</li>
-			<form action="save_1/" method="post">
-				{% csrf_token %}
-				<input type="submit" value="Save_1">
+			<form action="/test/articles/view/{{ article.pk }}" method="GET">
+				<input type="submit" value="View">
 			</form>
-			<form action="save_2/" method="post">
-				{% csrf_token %}
-				<input type="submit" value="Save_2">
+			<form action="/test/articles/delete/{{ article.pk }}" method="get">
+				<input type="submit" value="Delete">
+			</form>
+			<form action="/test/articles/update/{{ article.pk }}" method="GET">
+				<input type="submit" value="Update">
 			</form>
 		{% empty %}
 			<li>No articles yet.</li>
