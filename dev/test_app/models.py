@@ -1,5 +1,6 @@
 from django.db import models
 from django.forms import ModelForm
+from django.urls import reverse
 
 # Create your models here.
 
@@ -10,23 +11,29 @@ TITLE_CHOICES = (
 )
 
 class Author(models.Model):
-    name = models.CharField(max_length=100)
-    title = models.CharField(max_length=3, choices=TITLE_CHOICES)
-    birth_date = models.DateField(blank=True, null=True)
+    name = models.CharField(max_length=200)
 
-    def __str__(self):
-        return self.name
+    def get_absolute_url(self):
+        return reverse('author-detail', kwargs={'pk': self.pk})
 
 class Book(models.Model):
     name = models.CharField(max_length=100)
     authors = models.ManyToManyField(Author)
 
-class AuthorForm(ModelForm):
-    class Meta:
-        model = Author
-        fields = ['name', 'title', 'birth_date']
 
-class BookForm(ModelForm):
-    class Meta:
-        model = Book
-        fields = ['name', 'authors']
+
+
+class Reporter(models.Model):
+    full_name = models.CharField(max_length=70)
+
+    def __str__(self):
+        return self.full_name
+
+class Article(models.Model):
+    pub_date = models.DateField()
+    headline = models.CharField(max_length=200)
+    content = models.TextField()
+    reporter = models.ForeignKey(Reporter, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.headline

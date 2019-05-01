@@ -5,11 +5,15 @@ from .models import Author
 class NameForm(forms.Form):
     your_name = forms.CharField(label='Your name', max_length=100)
 
+from django import forms
+
 class ContactForm(forms.Form):
-    subject = forms.CharField(max_length=100)
+    name = forms.CharField()
     message = forms.CharField(widget=forms.Textarea)
-    sender = forms.EmailField()
-    cc_myself = forms.BooleanField(required=False)
+
+    def send_email(self):
+        # send email using the self.cleaned_data dictionary
+        pass
 
 class AuthorForm(forms.Form):
     name = forms.CharField(max_length=100)

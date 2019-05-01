@@ -18,11 +18,20 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-	path('test1/', views.get_name),
-	path('test1/your-name/', views.get_name),
+	path('test_Simple_Form/', views.get_name),
+	path('test_Simple_Form/your-name/', views.get_name),
 	path('test1/thanks/', views.thanks),
-	path('test2/', views.get_contact),
-	path('test2/contactExample/', views.get_name),
+	path('test_Complex_Form/', views.get_contact),
+	path('test_Complex_Form/contactExample/', views.get_name),
 	path('test3/', views.noa),
-	path('test4/', views.test4),
+	path('test_AnotherExample/', views.test4),
+	path('test_Like_The_One_Above_But_With_Customized_Html/', views.test5),
+	# path('<slug:slug>/', views.ArticleDetailView.as_view(), name='article-detail'),
+	path('test_Form_That_Represents_Object_Instance____You_Pass_The_PK_In_ThE_Path_!!!!_/<int:pk>/',
+	     views.ArticleDetailView.as_view(), name='article-detail'),
+	path('test_Form_That_Represents_Full_Table/', views.ArticleListView.as_view(), name='article-list'),
+	path('test_Not_Interesting/', views.ContactView.as_view()),
+	path('test_create_form/', views.AuthorCreate.as_view()),
+	path('test_update_form/<int:pk>', views.AuthorUpdate.as_view()),
+	path('test_delete_form/<int:pk>', views.AuthorDelete.as_view()),
 ]
