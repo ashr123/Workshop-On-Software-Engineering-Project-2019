@@ -30,7 +30,7 @@ def submit_open_store(request):
 	# user = User.objects.get(username=request.user.username)
 	request.user.groups.add(my_group)
 
-	stores = Store.objects.get(owner_id=int(request.session._session['_auth_user_id']))[0]
+	#stores = Store.objects.get(owner_id=int(request.session._session['_auth_user_id']))[0]
 
 	context = {'title': 'stores:', 'results': stores}
 

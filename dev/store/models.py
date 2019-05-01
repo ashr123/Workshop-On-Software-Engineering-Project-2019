@@ -11,5 +11,5 @@ class Item(models.Model):
 
 class Store(models.Model):
 	name = models.CharField(max_length=30)
-	owner = models.ForeignKey(User, on_delete=models.CASCADE)
+	owner = models.ForeignKey(User, on_delete=models.CASCADE,default=None)
 	items = models.ManyToManyField(Item)

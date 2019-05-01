@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render , redirect
 from trading_system.forms import SearchForm
 from store.models import Store, Item
 from django.http import HttpResponse
@@ -18,7 +18,7 @@ def login_redirect(request):
 		if request.user.is_superuser:
 			return render(request, 'homepage_member.html', {'text': text})
 		elif "store_owners" in user_groups:
-			return render(request, 'homepage_store_owner.html', {'text': text})
+			return redirect('/store/home_page_owner/')
 		else:
 			return render(request, 'homepage_member.html', {'text': text})
 
