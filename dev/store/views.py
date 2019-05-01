@@ -24,16 +24,19 @@ def submit_open_store(request):
 		# store.items.add(item1)
 		store.save()
 
-	stores = Store.objects.get(owner_id=int(request.session._session['_auth_user_id']))
+	stores = Store.objects.filter(owner_id=int(request.session._session['_auth_user_id']))
 
 	context = {'title': 'stores:', 'results': stores}
 
 	return render(request, 'store/homepage_store_owner.html', context)
 
 
-class StoreDetailView(ListView):
+class StoreDetailView(DetailView):
 	model = Store
 	paginate_by = 100  # if pagination is desired
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		return context
 
 
 class StoreListView(ListView):
