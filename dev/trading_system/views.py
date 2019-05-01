@@ -11,9 +11,18 @@ def index(request):
 	return render(request, 'homepage_guest.html', {'text': text})
 
 
-def member(request):
+def login_redirect(request):
 	text = SearchForm()
-	return render(request, 'homepage_member.html', {'text': text})
+	if request.user.is_authenticated:
+		user_groups = request.user.groups.values_list('name', flat=True)
+		if request.user.is_superuser:
+			return render(request, 'homepage_member.html', {'text': text})
+		elif "store_owners" in user_groups:
+			return render(request, 'homepage_store_owner.html', {'text': text})
+		else:
+			return render(request, 'homepage_member.html', {'text': text})
+
+	return render(request, 'homepage_guest.html', {'text': text})
 
 
 def register(request):

@@ -1,0 +1,63 @@
+
+.menu_bar {
+    overflow: hidden;
+    background-color: aliceblue;
+}
+
+.menu_bar a {
+    float: left;
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+    font-family: Arial;
+}
+
+.menu_bar a:hover {
+    background: #d8e3ff;
+}
+
+/*.top_page {*/
+    /*background: url(dev\statics\images\shopp.jpg) 0 0 no-repeat;*/
+    /*!*background-image: url("\dev\statics\images\shopp.jpg");*!*/
+    /*padding: 14px 16px;*/
+/*}*/
+
+.top_page div h1{
+    font-family: 'Gugi', cursive;
+    font-size: 70px;
+    margin-left: 30px;
+    margin-top: 200px;
+    color: white;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.after_title h4{
+    font-family: Arial;
+    font-size: 15px;
+    margin-left: 30px;
+}
+
+#cart_search {
+    margin-left: 1050px;
+}
+
+#search {
+    margin-left: 20px;
+}
+
+#cart_button {
+    background-color: DodgerBlue;
+    border: none;
+    color: white;
+    padding: 14px 16px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#cart_search button:hover{
+    background-color: RoyalBlue;
+}
+
