@@ -29,7 +29,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-	'channels',
 	'trading_system',
 	'store',
 	'test_app',
@@ -39,7 +38,7 @@ INSTALLED_APPS = [
 	'django.contrib.sessions',
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
-	'accounts',
+	'accounts.apps.AccountsConfig',
 	'static',
 	'templates',
 

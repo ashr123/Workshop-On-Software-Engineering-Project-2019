@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.conf import settings
+from django.views.generic import DetailView
+
 from .models import Store, Item
 from . import forms
 from django.contrib.auth.models import Group ,User
@@ -24,7 +26,7 @@ def submit_open_store(request):
 		store.save()
 
 	stores = Store.objects.filter(owner_id=int(request.session._session['_auth_user_id']))
-	#my_group.user_set.add(request.user)
+	my_group = Group.objects.get(name="store_owners")
 	# user = User.objects.get(username=request.user.username)
 	request.user.groups.add(my_group)
 
