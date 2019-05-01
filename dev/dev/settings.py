@@ -29,9 +29,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-	'channels',
 	'trading_system',
 	'store',
+	'external_systems',
 	'django.contrib.admin',
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
