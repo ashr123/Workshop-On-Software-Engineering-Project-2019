@@ -29,6 +29,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+	'channels',
 	'trading_system',
 	'store',
 	'django.contrib.admin',
@@ -131,7 +132,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 
-LOGIN_REDIRECT_URL = '/homepage_member'
+LOGIN_REDIRECT_URL = '/login_redirect'
 LOGOUT_REDIRECT_URL = '/'
 STATIC_URL = '/static/'
 # STATIC_ROOT = os.path.join(BASE_DIR, "static")
