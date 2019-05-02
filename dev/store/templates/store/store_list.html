@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+	<h1>Stores</h1>
+	<ul>
+		{% for store in object_list %}
+			<li>{{ store.name }}</li>
+			<form action="/store/view_details/{{ store.pk }}" method="GET">
+				<input type="submit" value="View">
+			</form>
+			<form action="delete/{{ store.pk }}" method="GET">
+				<input type="submit" value="Delete">
+			</form>
+			<form action="update/{{ store.pk }}" method="GET">
+				<input type="submit" value="Update">
+			</form>
+		{% empty %}
+			<li>No store yet.</li>
+		{% endfor %}
+	</ul>
+{% endblock %}
