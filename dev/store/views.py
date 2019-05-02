@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from django.conf import settings
 from django.views.generic import DetailView
 
@@ -7,8 +7,11 @@ from . import forms
 from django.contrib.auth.models import Group, User
 from django.views.generic.list import ListView
 from django.views.generic.edit import FormView, UpdateView, DeleteView
-from django.views.generic.edit import CreateView
 
+def add_item_to_store(request):
+
+
+	return render(request, 'store/add_store.html', {'name': name})
 
 # Create your views here.
 def add_store(request):
@@ -24,13 +27,18 @@ def submit_open_store(request):
 		store.save()
 	# in error masssege!!!!!!!!!!!!!
 	# stores = Store.objects.filter(owner_id=int(request.session._session['_auth_user_id']))
+
+	# need to be in the first time:
+	my_group = Group.objects.get_or_create(name="store_owners")
+
 	my_group = Group.objects.get(name="store_owners")
 	# user = User.objects.get(username=request.user.username)
 	request.user.groups.add(my_group)
 	# stores = Store.objects.get(owner_id=int(request.session._session['_auth_user_id']))[0]
-	#context = {'title': 'stores:', 'results': stores}
-	#return render(request, 'store/homepage_store_owner.html', context)
+	# context = {'title': 'stores:', 'results': stores}
+	# return render(request, 'store/homepage_store_owner.html', context)
 	return redirect('/store/home_page_owner/')
+
 
 class StoreDetailView(DetailView):
 	model = Store
@@ -44,3 +52,16 @@ class StoreDetailView(DetailView):
 class StoreListView(ListView):
 	model = Store
 	paginate_by = 100  # if pagination is desired
+
+
+class StoreUpdate(UpdateView):
+	model = Store
+	fields = ['name', 'owner', 'items']
+	template_name_suffix = '_update_form'
+
+
+class StoreDelete(DeleteView):
+	model = Store
+	template_name_suffix = '_delete_form'
+
+

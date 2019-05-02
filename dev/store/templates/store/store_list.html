@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_member.html' %}
 {% block content %}
 	<h1>Stores</h1>
 	<ul>
@@ -7,11 +7,15 @@
 			<form action="/store/view_details/{{ store.pk }}" method="GET">
 				<input type="submit" value="View">
 			</form>
-			<form action="delete/{{ store.pk }}" method="GET">
+			<form action="/store/delete/{{ store.pk }}" method="GET">
 				<input type="submit" value="Delete">
 			</form>
-			<form action="update/{{ store.pk }}" method="GET">
+			<form action="/store/update/{{ store.pk }}" method="GET">
 				<input type="submit" value="Update">
+			</form>
+
+			<form action="/store/add_item_to_store/{{ store.pk }}" method="GET">
+				<input type="submit" value="Add item">
 			</form>
 		{% empty %}
 			<li>No store yet.</li>

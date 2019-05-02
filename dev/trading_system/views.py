@@ -18,7 +18,7 @@ def login_redirect(request):
 		if request.user.is_superuser:
 			return render(request, 'homepage_member.html', {'text': text})
 		elif "store_owners" in user_groups:
-			return redirect('/store/home_page_owner/')
+			return redirect('/store/home_page_owner/', {'text': text})
 		else:
 			return render(request, 'homepage_member.html', {'text': text})
 
