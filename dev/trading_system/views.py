@@ -31,11 +31,12 @@ def register(request):
 
 def search(request):
 	text = SearchForm(request.GET)
-	store = Store.objects.get(name="elhanan store")
+
+	#spell checker
 
 	if text.is_valid():
-		context = {'title': 'items', 'results': store.items}
-
+		items = Item.objects.filter(name=text)
+		context = {'title': 'items: ', 'results': items}
 	return render(request, 'search_results.html', context)
 
 

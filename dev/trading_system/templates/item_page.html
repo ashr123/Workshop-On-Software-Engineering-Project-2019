@@ -6,8 +6,21 @@
 </head>
 <body>
 <div>
-	<div class="card-auction">
-		{{ item.itemId }}
+	<div class="add_item-container">
+
+
+		{% for item in results %}
+			<form action="/store/buy_item/{{ item.itemId }}" method="post">
+				<li class="collection-item"> {{ item.name }}</li>
+				<li class="collection-item">    {{ item.category }}</li>
+				<li class="collection-item">    {{ item.price }}</li>
+				<li class="collection-item">    {{ item.price }}</li>
+				<li class="collection-item"> {{ item.quantity }}</li>
+				<button type="submit">BUY</button>
+			</form>
+		{% endfor %}
+
+
 	</div>
 </div>
 <div>

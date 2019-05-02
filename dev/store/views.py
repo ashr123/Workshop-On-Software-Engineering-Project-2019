@@ -1,21 +1,72 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from django.conf import settings
 from django.views.generic import DetailView
-
+from .forms import ItemForm
 from .models import Store, Item
 from . import forms
 from django.contrib.auth.models import Group, User
 from django.views.generic.list import ListView
 from django.views.generic.edit import FormView, UpdateView, DeleteView
+from django.forms import modelformset_factory
+from trading_system.forms import SearchForm
 
-def add_item_to_store(request):
+
+def add_item(request, pk):
+	item_f = forms.ItemForm(request.POST)
+	# ItemFormSet = modelformset_factory(Item, fields=('name', 'description', 'price', 'category', 'quantity'))
+	# 	# if request.method == "POST":
+	# 	# 	formset = ItemFormSet(
+	# 	# 		request.POST, request.FILES,
+	# 	# 		queryset=Item.objects.filter(),
+	# 	# 	)
+	# 	#
+	# 	# 	if formset.is_valid():
+	# 	# 		store_name = request['store']
+	# 	# 		formset.save()
+	# 	# 		return HttpResponse(store_name)
+	name = 'jhhjhjh'
+	if item_f.is_valid():
+		item = Item.objects.create(name=item_f.cleaned_data.get('name'),description=item_f.cleaned_data.get('description')
+		                             ,price=item_f.cleaned_data.get('price'),category=item_f.cleaned_data.get('category'),quantity=item_f.cleaned_data.get('quantity'))
+		curr_store = Store.objects.get(id=pk)
+		item.save()
+		curr_store.items.add(item)
+		return redirect('/store/home_page_owner/')
+	return HttpResponse(" fail " )
 
 
-	return render(request, 'store/add_store.html', {'name': name})
+def add_item_to_store(request, pk):
+	ItemFormSet = modelformset_factory(Item, fields=('name', 'description', 'price', 'category', 'quantity'))
+	# ItemFormSet = modelformset_factory(Item, formset=ItemForm,
+	#                                    fields=('name', 'description', 'price', 'category', 'quantity', 'store_id'))
+	# if request.method == "POST":
+	# 	formset = ItemFormSet(
+	# 		request.POST, request.FILES,
+	# 		queryset=Item.objects.filter(),
+	# 	)
+	#
+	# 	if formset.is_valid():
+	# 		formset.save()
+	# # Do something.
+	# else:
+	formset = ItemFormSet(queryset=Item.objects.filter(name__startswith='O'))
+
+	# curr_store = Store.objects.get(id=pk)
+	# store_name = curr_store.name
+	context = {
+		'store': pk,
+		'formset': formset,
+	}
+	return render(request, 'store/add_item.html', context)
+
+
+# item = ItemForm()
+# return render(request, 'store/add_item.html', {'item': item})
 
 # Create your views here.
 def add_store(request):
 	name = forms.OpenStoreForm()
+
 	return render(request, 'store/add_store.html', {'name': name})
 
 
@@ -65,3 +116,5 @@ class StoreDelete(DeleteView):
 	template_name_suffix = '_delete_form'
 
 
+def buy_item(request, pk):
+	return 0

@@ -13,13 +13,15 @@ class CategoryChoice(Enum):  # A subclass of Enum
 # Create your models here.
 class Item(models.Model):
 	itemId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-	name = models.CharField(max_length=30)
-	description = models.CharField(max_length=64,default=None)
+	price = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+	name = models.CharField(max_length=30, default=None)
+	description = models.CharField(max_length=64, default=None)
 	category = models.CharField(
 		max_length=5,
 		choices=[(tag, tag.value) for tag in CategoryChoice], default='ALL')
-	price = models.DecimalField(max_digits=6, decimal_places=2,default=0)
+
 	quantity = models.PositiveIntegerField(default=1)
+	# store_id = models.IntegerField(default=404)
 
 	def __str__(self):
 		return str(self.item) + ": $" + str(self.price)
