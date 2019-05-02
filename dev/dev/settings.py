@@ -29,7 +29,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-	'channels',
 	'trading_system',
 	'store',
 	'django.contrib.admin',

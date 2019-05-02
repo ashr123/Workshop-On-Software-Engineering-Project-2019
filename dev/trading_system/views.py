@@ -49,3 +49,17 @@ def item(request, id):
 	# 	'store': store
 	# }
 	return render(request, 'item_page.html', context)
+
+def item(request, id):
+	item = Item.objects.get(name=id)
+	context = {
+		'item': item
+	}
+	# store = Store.objects.get(name=name_)
+	# context = {
+	# 	'store': store
+	# }
+	return render(request, 'item_page.html', context)
+
+def show_cart(request):
+	return render(request, 'cart_guest.html')

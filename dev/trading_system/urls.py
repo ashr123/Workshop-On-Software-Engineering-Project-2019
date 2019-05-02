@@ -7,4 +7,5 @@ urlpatterns = [
 
 	path('actionUrl/', views.search),
 	path('login_redirect', views.login_redirect),
+	path('cart_guest/', views.show_cart)
 ]
