@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 
-from external_systems.spellChecker import checker
+# from external_systems.spellChecker import checker
 from trading_system.forms import SearchForm
 from store.models import Store, Item
 from django.http import HttpResponse
@@ -15,14 +15,16 @@ def index(request):
 
 def login_redirect(request):
 	text = SearchForm()
+
 	if request.user.is_authenticated:
+		user_name = request.user.username
 		user_groups = request.user.groups.values_list('name', flat=True)
 		if request.user.is_superuser:
 			return render(request, 'homepage_member.html', {'text': text})
 		elif "store_owners" in user_groups:
-			return redirect('/store/home_page_owner/', {'text': text})
+			return redirect('/store/home_page_owner/', {'text': text,'user_name' : user_name})
 		else:
-			return render(request, 'homepage_member.html', {'text': text})
+			return render(request, 'homepage_member.html', {'text': text,'user_name' : user_name})
 
 	return render(request, 'homepage_guest.html', {'text': text})
 
@@ -36,8 +38,10 @@ def search(request):
 
 	if text.is_valid():
 		# spell checker
-		correct_word = checker.Spellchecker(text)
-		items = Item.objects.filter(name=correct_word)
+		# correct_word = checker.Spellchecker(text)
+		# items = Item.objects.filter(name=correct_word)
+
+		items = Item.objects.filter(name=text)
 		context = {'title': 'items: ', 'results': items}
 	return render(request, 'search_results.html', context)
 

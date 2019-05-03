@@ -9,7 +9,7 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import FormView, UpdateView, DeleteView
 from django.forms import modelformset_factory
 from trading_system.forms import SearchForm
-from spellchecker import Spellchecker
+
 
 
 def add_item(request, pk):
