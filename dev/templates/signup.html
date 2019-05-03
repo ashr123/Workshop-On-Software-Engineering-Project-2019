@@ -1,12 +1,22 @@
-{% extends 'layout.html' %}
-
-{% block title %}Sign Up{% endblock %}
+{% extends "base.html" %}
+{% load static %}
 
 {% block content %}
-	<h4>Sign up</h4>
-	<form method="post">
-		{% csrf_token %}
-		{{ form.as_p }}
-		<button type="submit">Sign up</button>
-	</form>
+	<table class="form_signup">
+		<tr>
+			<form method="post">
+				<td>
+					{% csrf_token %}
+					{{ form.as_p }}
+				</td>
+				<td>
+					<div id="sign_button">
+						<button class="buttons" type="submit">Sign up</button>
+					</div>
+				</td>
+			</form>
+
+		</tr>
+	</table>
+
 {% endblock %}

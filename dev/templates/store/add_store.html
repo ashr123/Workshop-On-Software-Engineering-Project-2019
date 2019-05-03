@@ -1,11 +1,31 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block menu_bar_left %}
+	<a href="/accounts/logout/">Logout</a>
+{% endblock %}
+
+
+
 {% block content %}
-	<h2>Add store</h2>
-	<div class="open-store-container">
-		<form action="submit/" method="get">
-			{% csrf_token %}
-			{{ name.as_p }}
-			<button type="submit">Open</button>
-		</form>
+	<div class="welcome">
+		<p>Hello * form of username *</p>
 	</div>
+	<div id="add_store_page">
+		<div class="vertical-menu">
+            <a href="/store/add_store/">Add store</a>
+            <a href="/accounts/password_change/">Change password</a>
+		</div>
+		<div class="open_store_container">
+			<h2 id="add_store">Add store</h2>
+			<form class="form_add_store" action="submit/" method="get">
+				{% csrf_token %}
+				{{ name.as_p }}
+				<button class="buttons" type="submit">Open</button>
+			</form>
+		</div>
+	</div>
+
+	{% block extra_content %}
+	{% endblock %}
 {% endblock %}

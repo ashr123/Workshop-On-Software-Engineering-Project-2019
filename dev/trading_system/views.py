@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 
 from external_systems.spellChecker import checker
-from store.models import Item
 from trading_system.forms import SearchForm
+from store.models import Store, Item
+from django.http import HttpResponse
 
 
 # Create your views here.
@@ -48,3 +49,28 @@ def item(request, id):
 	}
 
 	return render(request, 'item_page.html', context)
+
+
+def item(request, id):
+	item = Item.objects.get(name=id)
+	context = {
+		'item': item
+	}
+	# store = Store.objects.get(name=name_)
+	# context = {
+	# 	'store': store
+	# }
+	return render(request, 'item_page.html', context)
+
+
+def show_cart_guest(request):
+	text = SearchForm()
+	return render(request, 'cart_guest.html', {'text': text})
+
+def show_cart_member(request):
+	text = SearchForm()
+	return render(request, 'cart_member.html', {'text': text})
+
+
+def home_button(request):
+	return redirect('/login_redirect')
