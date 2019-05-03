@@ -3,6 +3,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from enum import Enum
 
+from django.urls import reverse
+
 
 class CategoryChoice(Enum):  # A subclass of Enum
 	AL = 'ALL'
@@ -22,9 +24,12 @@ class Item(models.Model):
 
 	quantity = models.PositiveIntegerField(default=1)
 	# store_id = models.IntegerField(default=404)
+	def get_absolute_url(self):
+		return reverse('item-detail', kwargs={'pk': self.pk})
 
 	def __str__(self):
 		return str(self.item) + ": $" + str(self.price)
+
 
 
 class Store(models.Model):

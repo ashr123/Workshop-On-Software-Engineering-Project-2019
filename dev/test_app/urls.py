@@ -27,8 +27,7 @@ urlpatterns = [
 	path('test_AnotherExample/', views.test4),
 	path('test_Like_The_One_Above_But_With_Customized_Html/', views.test5),
 	# path('<slug:slug>/', views.ArticleDetailView.as_view(), name='article-detail'),
-	# path('test_Form_That_Represents_Object_Instance____You_Pass_The_PK_In_ThE_Path_!!!!_/<int:pk>/',
-	#     views.ArticleDetailView.as_view(), name='article-detail'),
+	path('test_Form_That_Represents_Object_Instance/<int:pk>/',views.ArticleDetailView.as_view(), name='article-detail'),
 	path('test_8/<int:pk>/',
 	     views.ArticleDetailView.as_view(), name='article-detail'),
 	path('test_Form_That_Represents_Full_Table/', views.ArticleListView.as_view(), name='article-list'),
@@ -39,4 +38,5 @@ urlpatterns = [
 	path('articles/view/<int:pk>', views.ArticleDetailView.as_view(), name='article-detail'),
 	path('articles/delete/<int:pk>/', views.ArticleDelete.as_view()),
 	path('articles/update/<int:pk>', views.ArticleUpdate.as_view()),
+	path('test_9/<int:pk>', views.test_9, name='author-detail'),
 ]

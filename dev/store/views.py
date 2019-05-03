@@ -6,25 +6,24 @@ from .models import Store, Item
 from . import forms
 from django.contrib.auth.models import Group, User
 from django.views.generic.list import ListView
-from django.views.generic.edit import FormView, UpdateView, DeleteView
+from django.views.generic.edit import FormView, UpdateView, DeleteView, CreateView
 from django.forms import modelformset_factory
 from trading_system.forms import SearchForm
 
 
 def add_item(request, pk):
-	item_f = forms.ItemForm(request.POST)
-	# ItemFormSet = modelformset_factory(Item, fields=('name', 'description', 'price', 'category', 'quantity'))
-	# 	# if request.method == "POST":
-	# 	# 	formset = ItemFormSet(
-	# 	# 		request.POST, request.FILES,
-	# 	# 		queryset=Item.objects.filter(),
-	# 	# 	)
-	# 	#
-	# 	# 	if formset.is_valid():
-	# 	# 		store_name = request['store']
-	# 	# 		formset.save()
-	# 	# 		return HttpResponse(store_name)
-	name = 'jhhjhjh'
+	#item_f = forms.ItemForm(request.POST)
+	ItemFormSet = modelformset_factory(Item, fields=('name', 'description', 'price', 'category', 'quantity'))
+	if request.method == "POST":
+		item_f = ItemFormSet(
+			request.POST, request.FILES,
+			queryset=Item.objects.filter(),
+		)
+
+		# if item_f.is_valid():
+		# 	store_name = request['store']
+		# 	item_f.save()
+		# 	return HttpResponse(store_name)
 	if item_f.is_valid():
 		item = Item.objects.create(name=item_f.cleaned_data.get('name'),description=item_f.cleaned_data.get('description')
 		                             ,price=item_f.cleaned_data.get('price'),category=item_f.cleaned_data.get('category'),quantity=item_f.cleaned_data.get('quantity'))
@@ -118,3 +117,15 @@ class StoreDelete(DeleteView):
 
 def buy_item(request, pk):
 	return 0
+
+class AddItemToStore(CreateView):
+	model = Item
+	fields = ['name', 'description',  'price', 'quantity']
+	def form_valid(self, form):
+		x=1
+		return super().form_valid(form)
+
+
+def itemAddedSucceffuly(request, pk):
+	context = {'pk':pk}
+	return render(request, 'store/item_detail.html', context)
