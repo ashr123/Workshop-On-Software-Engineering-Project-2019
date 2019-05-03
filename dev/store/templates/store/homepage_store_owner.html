@@ -5,13 +5,13 @@
 	<ul>
 		{% for store in object_list %}
 			<li>{{ store.store_id }}</li>
-			<form action="view_details/{{ store.pk }}" method="GET">
+			<form action="/store/delete/{{{ store.pk }}" method="GET">
 				<input type="submit" value="View">
 			</form>
-			<form action="deleate/{{ store.pk }}" method="get">
+			<form action="/store/delete/{{ store.pk }}" method="GET">
 				<input type="submit" value="Delete">
 			</form>
-			<form action="update/{{ store.pk }}" method="GET">
+			<form action="/store/delete/{s{{ store.pk }}" method="GET">
 				<input type="submit" value="Update">
 			</form>
 		{% empty %}

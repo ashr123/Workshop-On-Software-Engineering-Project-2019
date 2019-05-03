@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render , redirect
 from trading_system.forms import SearchForm
 from store.models import Store, Item
 from django.http import HttpResponse
@@ -18,7 +18,7 @@ def login_redirect(request):
 		if request.user.is_superuser:
 			return render(request, 'homepage_member.html', {'text': text})
 		elif "store_owners" in user_groups:
-			return render(request, 'homepage_store_owner.html', {'text': text})
+			return redirect('/store/home_page_owner/', {'text': text})
 		else:
 			return render(request, 'homepage_member.html', {'text': text})
 
@@ -31,11 +31,12 @@ def register(request):
 
 def search(request):
 	text = SearchForm(request.GET)
-	store = Store.objects.get(name="elhanan store")
+
+	#spell checker
 
 	if text.is_valid():
-		context = {'title': 'items', 'results': store.items}
-
+		items = Item.objects.filter(name=text)
+		context = {'title': 'items: ', 'results': items}
 	return render(request, 'search_results.html', context)
 
 
