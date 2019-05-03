@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect,HttpResponse
 from trading_system.forms import SearchForm
 from store.models import Store, Item
 from django.http import HttpResponse
@@ -12,6 +12,7 @@ def index(request):
 
 
 def login_redirect(request):
+	#return HttpResponse(request.user.is_authenticated)
 	text = SearchForm()
 	if request.user.is_authenticated:
 		user_groups = request.user.groups.values_list('name', flat=True)
@@ -47,6 +48,7 @@ def item(request, id):
 
 	return render(request, 'item_page.html', context)
 
+
 def item(request, id):
 	item = Item.objects.get(name=id)
 	context = {
@@ -58,5 +60,15 @@ def item(request, id):
 	# }
 	return render(request, 'item_page.html', context)
 
-def show_cart(request):
-	return render(request, 'cart_guest.html')
+
+def show_cart_guest(request):
+	text = SearchForm()
+	return render(request, 'cart_guest.html', {'text': text})
+
+def show_cart_member(request):
+	text = SearchForm()
+	return render(request, 'cart_member.html', {'text': text})
+
+
+def home_button(request):
+	return redirect('/login_redirect')
