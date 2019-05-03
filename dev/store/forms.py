@@ -14,7 +14,7 @@ class OpenStoreForm(forms.Form):
 
 
 class ItemForm(forms.Form):
-	#store =forms.CharField()
-	class Meta:
-		model = Item
-		fields = ['name', 'description', 'category', 'price', 'quantity']
+	name = forms.CharField()
+# class Meta:
+# 	model = Item
+# 	fields = ['name', 'description', 'category', 'price', 'quantity']

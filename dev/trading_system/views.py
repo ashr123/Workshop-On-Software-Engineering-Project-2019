@@ -1,7 +1,8 @@
-from django.shortcuts import render , redirect
+from django.shortcuts import render, redirect
+
+from external_systems.spellChecker import checker
+from store.models import Item
 from trading_system.forms import SearchForm
-from store.models import Store, Item
-from django.http import HttpResponse
 
 
 # Create your views here.
@@ -32,10 +33,10 @@ def register(request):
 def search(request):
 	text = SearchForm(request.GET)
 
-	#spell checker
-
 	if text.is_valid():
-		items = Item.objects.filter(name=text)
+		# spell checker
+		correct_word = checker.Spellchecker(text)
+		items = Item.objects.filter(name=correct_word)
 		context = {'title': 'items: ', 'results': items}
 	return render(request, 'search_results.html', context)
 

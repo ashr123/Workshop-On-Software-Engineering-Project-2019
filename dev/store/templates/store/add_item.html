@@ -11,7 +11,7 @@
 				{% csrf_token %}
 				{{ form }}
 			{% endfor %}
-			<button type="submit">Add item to store id: {% csrf_token %} {{ store }} </button>
+			<button type="submit">Add item to store : {% csrf_token %} {{ store_name }} </button>
 		</form>
 
 	</div>
