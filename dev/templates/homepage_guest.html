@@ -1,0 +1,49 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeBuy</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
+{#	<link href="{% static "css/style.css" %}" rel="stylesheet">#}
+{#    <link rel="stylesheet" href="style.css">#}
+    <link href="https://fonts.googleapis.com/css?family=Gugi" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="menu_bar">
+    <div>
+        <a href="homepage_guest.html">Home</a>
+        <a href="/accounts/login/">Login</a>
+        <a href="/accounts/signup/">Sign up</a>
+    </div>
+
+    <div id="cart_search">
+        <button id="cart_button" onclick="window.location.href='my_cart.html'"><i class="fas fa-shopping-cart"></i></button>
+        <span id="search">* form goes here *</span>
+    </div>
+</div>
+
+
+<div class="top_page" style="background-image:url('{% static "images/shopp.jpg" %}'); padding: 14px 16px;">
+    <div>
+        <h1><strong>WeBuy</strong></h1>
+    </div>
+</div>
+
+<div class="after_title">
+    <h4>Hello guest {{ user_name }}</h4>
+</div>
+
+<div>
+    {% block content %}
+    {% endblock %}
+</div>
+
+
+</body>
+</html>

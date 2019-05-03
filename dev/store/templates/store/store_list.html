@@ -1,0 +1,24 @@
+{% extends 'base_member.html' %}
+{% block content %}
+	<h1>Stores</h1>
+	<ul>
+		{% for store in object_list %}
+			<li>{{ store.name }}</li>
+			<form action="/store/view_details/{{ store.pk }}" method="GET">
+				<input type="submit" value="View">
+			</form>
+			<form action="/store/delete/{{ store.pk }}" method="GET">
+				<input type="submit" value="Delete">
+			</form>
+			<form action="/store/update/{{ store.pk }}" method="GET">
+				<input type="submit" value="Update">
+			</form>
+
+			<form action="/store/add_item_to_store/{{ store.pk }}" method="GET">
+				<input type="submit" value="Add item">
+			</form>
+		{% empty %}
+			<li>No store yet  o fstore id = {{ store }}</li>
+		{% endfor %}
+	</ul>
+{% endblock %}

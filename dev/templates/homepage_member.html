@@ -82,10 +82,11 @@
 			}
 		}
 	</style>
-	<title>Home Page</title>
+	<title> <p2>Home Page</p2></title>
 </head>
 <body>
 <div class="topnav">
+
 	<div class="search-container">
 		<form action="actionUrl/" method="get">
 			{% csrf_token %}
@@ -93,6 +94,7 @@
 			<button type="submit">Search</button>
 		</form>
 	</div>
+
 
 	<div>
 		<a href="/accounts/logout/">logout</a>
@@ -102,6 +104,11 @@
 		<a href="/store/add_store/">Add store</a>
 
 	</div>
+	<div>
+		<a href="/accounts/password_change/">Change password </a>
+
+	</div>
+
 </div>
 
 <div style="padding-left:16px">
