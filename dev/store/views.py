@@ -24,7 +24,6 @@ def add_item(request, pk):
 	# 	# 		store_name = request['store']
 	# 	# 		formset.save()
 	# 	# 		return HttpResponse(store_name)
-	name = 'jhhjhjh'
 	if item_f.is_valid():
 		item = Item.objects.create(name=item_f.cleaned_data.get('name'),description=item_f.cleaned_data.get('description')
 		                             ,price=item_f.cleaned_data.get('price'),category=item_f.cleaned_data.get('category'),quantity=item_f.cleaned_data.get('quantity'))
@@ -96,13 +95,21 @@ class StoreDetailView(DetailView):
 	paginate_by = 100  # if pagination is desired
 
 	def get_context_data(self, **kwargs):
-		context = super().get_context_data(**kwargs)
+		text = SearchForm()
+		context = super(StoreDetailView, self).get_context_data(**kwargs)  # get the default context data
+		context['text'] = text
 		return context
 
 
 class StoreListView(ListView):
 	model = Store
 	paginate_by = 100  # if pagination is desired
+
+	def get_context_data(self, **kwargs):
+		text = SearchForm()
+		context = super(StoreListView, self).get_context_data(**kwargs)  # get the default context data
+		context['text'] = text
+		return context
 
 
 class StoreUpdate(UpdateView):
