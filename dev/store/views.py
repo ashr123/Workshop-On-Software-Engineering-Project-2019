@@ -1,15 +1,18 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, redirect, HttpResponse, render_to_response
 from django.views.generic import DetailView
-from django.views.generic.edit import UpdateView, DeleteView
+from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.views.generic.list import ListView
 
 from trading_system.forms import SearchForm
 from . import forms
 from .forms import ItemForm
+from .models import Item
 from .models import Store
 
 
+@login_required
 def add_item(request, pk):
 	if request.method == 'POST':
 		form = ItemForm(request.POST)
@@ -32,17 +35,26 @@ def add_item(request, pk):
 		return render(request, 'store/add_item.html', context)
 
 
+@login_required
 def add_store(request):
+	user_groups = request.user.groups.values_list('name', flat=True)
+	if "store_owners" in user_groups:
+		base_template_name = 'store/homepage_store_owner.html'
+	else:
+		base_template_name = 'homepage_member.html'
+	text = SearchForm()
 	user_name = request.user.username
 	set_input = forms.OpenStoreForm()
 	context = {
 		'set_input': set_input,
-		'user_name': user_name
+		'user_name': user_name,
+		'text': text,
+		'base_template_name': base_template_name
 	}
+	return render_to_response('store/add_store.html', context)
 
-	return render(request, 'store/add_store.html', context)
 
-
+@login_required
 def submit_open_store(request):
 	open_store_form = forms.OpenStoreForm(request.GET)
 	if open_store_form.is_valid():
@@ -56,9 +68,10 @@ def submit_open_store(request):
 	my_group = Group.objects.get(name="store_owners")
 
 	request.user.groups.add(my_group)
-	return redirect('/store/home_page_owner/')
+	return redirect('/store/home_page_owner')
 
 
+@login_required
 class StoreDetailView(DetailView):
 	model = Store
 	paginate_by = 100  # if pagination is desired
@@ -70,6 +83,7 @@ class StoreDetailView(DetailView):
 		return context
 
 
+@login_required
 class StoreListView(ListView):
 	model = Store
 	paginate_by = 100  # if pagination is desired
@@ -80,17 +94,69 @@ class StoreListView(ListView):
 		context['text'] = text
 		return context
 
+	def get_queryset(self):
+		return Store.objects.filter(owner_id=self.request.user.id)
 
+
+@login_required
 class StoreUpdate(UpdateView):
 	model = Store
 	fields = ['name', 'owner', 'items']
 	template_name_suffix = '_update_form'
 
 
+def have_no_more_stores(user_pk):
+	tmp = Store.objects.filter(owner_id=user_pk)
+	return len(tmp) == 0
+
+
+@login_required
+def change_store_owner_to_member(user):
+	owners_group = Group.objects.get(name="store_owners")
+	owners_group.user_set.remove(user)
+
+
+@login_required
 class StoreDelete(DeleteView):
 	model = Store
 	template_name_suffix = '_delete_form'
 
+	def delete(self, request, *args, **kwargs):
+		store = Store.objects.get(id=kwargs['pk'])
+		owner_id = store.owner_id
+		response = super(StoreDelete, self).delete(request, *args, **kwargs)
+		if have_no_more_stores(owner_id):
+			change_store_owner_to_member(request.user)
+			user_name = request.user.username
+			text = SearchForm()
+			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
+		else:
+			return response
 
+
+@login_required
 def buy_item(request, pk):
 	return 0
+
+
+@login_required
+def home_page_owner(request):
+	text = SearchForm()
+	user_name = request.user.username
+	context = {
+		'user_name': user_name,
+		'text': text
+	}
+	return render(request, 'store/homepage_store_owner.html', context)
+
+
+@login_required
+class AddItemToStore(CreateView):
+	model = Item
+	fields = ['name', 'description', 'price', 'quantity']
+
+
+@login_required
+def itemAddedSucceffuly(request, store_id, id):
+	x = 1
+	return render(request, 'store/item_detail.html')

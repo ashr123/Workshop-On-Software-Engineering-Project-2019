@@ -1,21 +1,10 @@
-{% extends 'homepage_member.html' %}
+{% extends "homepage_member.html" %}
+{% load static %}
 
-{% block content %}
-	<h1>Stores: </h1>
-	<ul>
-		{% for store in object_list %}
-			<li>{{ store.store_id }}</li>
-			<form action="/store/delete/{{{ store.pk }}" method="GET">
-				<input type="submit" value="View">
-			</form>
-			<form action="/store/delete/{{ store.pk }}" method="GET">
-				<input type="submit" value="Delete">
-			</form>
-			<form action="/store/delete/{s{{ store.pk }}" method="GET">
-				<input type="submit" value="Update">
-			</form>
-		{% empty %}
-			<li>No articles yet.</li>
-		{% endfor %}
-	</ul>
+{% block vertical_menu %}
+	<a href="/store/view_store/">View My Stores</a>
 {% endblock %}
+
+
+{%  block page_content %}
+{%  endblock %}
