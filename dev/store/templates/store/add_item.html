@@ -5,13 +5,21 @@
 	<h2>Add item</h2>
 	<div class="add_item-container">
 
+		{#		<form action="/store/add_item/{{ store }}" method="post">#}
+		{#						{{ formset.management_form }}#}
+		{#						{% for form in formset %}#}
+		{#							{% csrf_token %}#}
+		{#							{{ form }}#}
+		{#						{% endfor %}#}
+		{#			<button type="submit">Add item to store : {{ store_name }} </button>#}
+		{#		</form>#}
 		<form action="/store/add_item/{{ store }}" method="post">
-			{{ formset.management_form }}
-			{% for form in formset %}
-				{% csrf_token %}
-				{{ form }}
-			{% endfor %}
-			<button type="submit">Add item to store : {% csrf_token %} {{ store_name }} </button>
+			{% csrf_token %}
+			<table>
+				{{ form.as_table }}
+
+			</table>
+			<input type="submit" value="Add item to store : {{ store_name }}"/>
 		</form>
 
 	</div>

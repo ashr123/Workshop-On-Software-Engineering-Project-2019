@@ -6,7 +6,7 @@ urlpatterns = [
 	path('add_item/<int:pk>', views.add_item),
 	path('view_details/<int:pk>', views.StoreDetailView.as_view(), name='store-detail'),
 	path('delete/<int:pk>/', views.StoreDelete.as_view(success_url="/login_redirect")),
-	path('add_item_to_store/<int:pk>/', views.add_item_to_store),
+	path('add_item_to_store/<int:pk>/', views.add_item),
 	path('buy_item/<int:pk>/', views.buy_item),
 	path('update/<int:pk>', views.StoreUpdate.as_view()),
 	path('add_store/submit/', views.submit_open_store),
