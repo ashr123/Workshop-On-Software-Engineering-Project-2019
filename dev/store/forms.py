@@ -15,4 +15,7 @@ class ItemForm(forms.ModelForm):
 		model = Item
 		fields = ['name', 'description', 'category', 'price', 'quantity']
 
+class BuyForm(forms.Form):
+	amount =  forms.IntegerField()
+
 
