@@ -128,7 +128,7 @@ class StoreDelete(DeleteView):
 def buy_item(request, pk):
 	return 0
 
-def home_page_owner(request, o_id):
+def home_page_owner(request):
 	text = SearchForm()
 	user_name = request.user.username
 	context = {
