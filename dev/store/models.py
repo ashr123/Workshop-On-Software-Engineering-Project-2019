@@ -1,7 +1,8 @@
 import uuid
-from django.db import models
-from django.contrib.auth.models import User
 from enum import Enum
+
+from django.contrib.auth.models import User
+from django.db import models
 
 
 class CategoryChoice(Enum):  # A subclass of Enum
@@ -21,6 +22,7 @@ class Item(models.Model):
 		choices=[(tag, tag.value) for tag in CategoryChoice], default='ALL')
 
 	quantity = models.PositiveIntegerField(default=1)
+
 	# store_id = models.IntegerField(default=404)
 
 	def __str__(self):
@@ -31,3 +33,4 @@ class Store(models.Model):
 	name = models.CharField(max_length=30)
 	owner = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
 	items = models.ManyToManyField(Item)
+	description = models.CharField(max_length=64)

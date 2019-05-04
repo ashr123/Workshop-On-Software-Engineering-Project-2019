@@ -1,15 +1,13 @@
-from django.shortcuts import render, redirect, HttpResponse
-from django.conf import settings
-from django.views.generic import DetailView
-
-from .models import Store, Item
-from . import forms
-from django.contrib.auth.models import Group, User
-from django.views.generic.list import ListView
-from django.views.generic.edit import FormView, UpdateView, DeleteView
+from django.contrib.auth.models import Group
 from django.forms import modelformset_factory
-from trading_system.forms import SearchForm
+from django.shortcuts import render, redirect, HttpResponse
+from django.views.generic import DetailView
+from django.views.generic.edit import UpdateView, DeleteView
+from django.views.generic.list import ListView
 
+from trading_system.forms import SearchForm
+from . import forms
+from .models import Store, Item
 
 
 def add_item(request, pk):
@@ -26,14 +24,14 @@ def add_item(request, pk):
 	# 	# 		formset.save()
 	# 	# 		return HttpResponse(store_name)
 	if item_f.is_valid():
-		# item = Item.objects.create(name=item_f.cleaned_data.get('name'),description=item_f.cleaned_data.get('description')
-		#                              ,price=item_f.cleaned_data.get('price'),category=item_f.cleaned_data.get('category'),quantity=item_f.cleaned_data.get('quantity'))
-		# curr_store = Store.objects.get(id=pk)
-		# item.save()
-		# curr_store.items.add(item)
-		# return redirect('/store/home_page_owner/')
-		name = item_f.cleaned_data['name']
-		return HttpResponse(name)
+		print('\ndebug: \n\nAdd item\n'+item_f.Meta.fields['name'].cleaned_data.get('name'))
+		item = Item.objects.create(name=item_f.cleaned_data.get('name'),description=item_f.cleaned_data.get('description')
+		                             ,price=item_f.cleaned_data.get('price'),category=item_f.cleaned_data.get('category'),quantity=item_f.cleaned_data.get('quantity'))
+		curr_store = Store.objects.get(id=pk)
+		item.save()
+		curr_store.items.add(item)
+		return redirect('/store/home_page_owner/')
+
 	return HttpResponse(" fail ")
 
 
@@ -67,16 +65,22 @@ def add_item_to_store(request, pk):
 
 # Create your views here.
 def add_store(request):
-	name = forms.OpenStoreForm()
 
-	return render(request, 'store/add_store.html', {'name': name})
+	user_name = request.user.username
+	set_input = forms.OpenStoreForm()
+	context = {
+		'set_input': set_input,
+		'user_name':user_name
+	}
+
+	return render(request, 'store/add_store.html', context)
 
 
 def submit_open_store(request):
 	open_store_form = forms.OpenStoreForm(request.GET)
 	if open_store_form.is_valid():
 		store = Store.objects.create(name=open_store_form.cleaned_data.get('name'),
-		                             owner_id=int(request.session._session['_auth_user_id']))
+		                             owner_id=int(request.session._session['_auth_user_id']),description=open_store_form.cleaned_data.get('description'))
 		store.save()
 	# in error masssege!!!!!!!!!!!!!
 	# stores = Store.objects.filter(owner_id=int(request.session._session['_auth_user_id']))
@@ -128,5 +132,3 @@ class StoreDelete(DeleteView):
 
 def buy_item(request, pk):
 	return 0
-
-

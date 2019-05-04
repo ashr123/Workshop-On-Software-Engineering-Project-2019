@@ -13,14 +13,25 @@
 	</div>
 	<div id="add_store_page">
 		<div class="vertical-menu">
-            <a href="/store/add_store/">Add store</a>
-            <a href="/accounts/password_change/">Change password</a>
+			<a href="/store/add_store/">Add store</a>
+			<a href="/accounts/password_change/">Change password</a>
 		</div>
 		<div class="open_store_container">
 			<h2 id="add_store">Add store</h2>
 			<form class="form_add_store" action="submit/" method="get">
-				{% csrf_token %}
-				{{ name.as_p }}
+
+
+				<div>
+					<h4>Store name:</h4>
+					{% csrf_token %}
+					{{ set_input.name }}
+				</div>
+
+				<div>
+					<h4>Store description:</h4>
+					{% csrf_token %}
+					{{ set_input.description }}
+				</div>
 				<button class="buttons" type="submit">Open</button>
 			</form>
 		</div>
