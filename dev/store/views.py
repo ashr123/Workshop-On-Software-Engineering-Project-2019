@@ -65,7 +65,7 @@ def submit_open_store(request):
 	my_group = Group.objects.get(name="store_owners")
 
 	request.user.groups.add(my_group)
-	return redirect('/store/home_page_owner/{}'.format(request.user.pk))
+	return redirect('/store/home_page_owner')
 
 
 class StoreDetailView(DetailView):

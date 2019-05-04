@@ -46,7 +46,6 @@ def search(request):
 
 		print('\n\n', text.cleaned_data.get('search'))
 		items = Item.objects.filter(name__contains=text.cleaned_data.get('search'))
-
 		context = {'title': 'items: ', 'results': items}
 	return render(request, 'search_results.html', context)
 
