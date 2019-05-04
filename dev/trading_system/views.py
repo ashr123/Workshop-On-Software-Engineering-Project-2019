@@ -42,8 +42,9 @@ def search(request):
 		# spell checker
 		# correct_word = checker.Spellchecker(text)
 		# items = Item.objects.filter(name=correct_word)
+		print('\n\n', text.cleaned_data.get('search'))
+		items = Item.objects.filter(name=text.cleaned_data.get('search'))
 
-		items = Item.objects.filter(name=text)
 		context = {'title': 'items: ', 'results': items}
 	return render(request, 'search_results.html', context)
 
