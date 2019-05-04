@@ -89,7 +89,7 @@ class StoreListView(ListView):
 		return context
 
 	def get_queryset(self):
-		return Store.objects.filter(owner_id=self.kwargs['o_id'])
+		return Store.objects.filter(owner_id=self.request.user.id)
 
 
 class StoreUpdate(UpdateView):
@@ -128,7 +128,7 @@ class StoreDelete(DeleteView):
 def buy_item(request, pk):
 	return 0
 
-def home_page_owner(request):
+def home_page_owner(request, o_id):
 	text = SearchForm()
 	user_name = request.user.username
 	context = {
