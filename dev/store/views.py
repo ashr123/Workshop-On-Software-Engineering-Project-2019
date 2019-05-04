@@ -12,7 +12,7 @@ from trading_system.forms import SearchForm
 
 
 def add_item(request, pk):
-	#item_f = forms.ItemForm(request.POST)
+	# item_f = forms.ItemForm(request.POST)
 	ItemFormSet = modelformset_factory(Item, fields=('name', 'description', 'price', 'category', 'quantity'))
 	if request.method == "POST":
 		item_f = ItemFormSet(
@@ -20,18 +20,21 @@ def add_item(request, pk):
 			queryset=Item.objects.filter(),
 		)
 
-		# if item_f.is_valid():
-		# 	store_name = request['store']
-		# 	item_f.save()
-		# 	return HttpResponse(store_name)
+	# if item_f.is_valid():
+	# 	store_name = request['store']
+	# 	item_f.save()
+	# 	return HttpResponse(store_name)
 	if item_f.is_valid():
-		item = Item.objects.create(name=item_f.cleaned_data.get('name'),description=item_f.cleaned_data.get('description')
-		                             ,price=item_f.cleaned_data.get('price'),category=item_f.cleaned_data.get('category'),quantity=item_f.cleaned_data.get('quantity'))
+		item = Item.objects.create(name=item_f.cleaned_data.get('name'),
+		                           description=item_f.cleaned_data.get('description')
+		                           , price=item_f.cleaned_data.get('price'),
+		                           category=item_f.cleaned_data.get('category'),
+		                           quantity=item_f.cleaned_data.get('quantity'))
 		curr_store = Store.objects.get(id=pk)
 		item.save()
 		curr_store.items.add(item)
 		return redirect('/store/home_page_owner/')
-	return HttpResponse(" fail " )
+	return HttpResponse(" fail ")
 
 
 def add_item_to_store(request, pk):
@@ -118,14 +121,16 @@ class StoreDelete(DeleteView):
 def buy_item(request, pk):
 	return 0
 
+
 class AddItemToStore(CreateView):
 	model = Item
-	fields = ['name', 'description',  'price', 'quantity']
+	fields = ['name', 'description', 'price', 'quantity']
+
 	def form_valid(self, form):
-		x=1
+		x = 1
 		return super().form_valid(form)
 
 
 def itemAddedSucceffuly(request, pk):
-	context = {'pk':pk}
+	context = {'pk': pk}
 	return render(request, 'store/item_detail.html', context)
