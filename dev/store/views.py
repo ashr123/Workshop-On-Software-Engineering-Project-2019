@@ -91,6 +91,14 @@ class StoreListView(ListView):
 	def get_queryset(self):
 		return Store.objects.filter(owner_id=self.request.user.id)
 
+class ItemListView(ListView):
+	model = Item
+	paginate_by = 100  # if pagination is desired
+
+class ItemDetailView(DetailView):
+	model = Item
+	paginate_by = 100  # if pagination is desired
+
 
 class StoreUpdate(UpdateView):
 	model = Store
@@ -146,3 +154,5 @@ class AddItemToStore(CreateView):
 def itemAddedSucceffuly(request, store_id, id):
 	x = 1
 	return render(request, 'store/item_detail.html')
+
+
