@@ -71,7 +71,10 @@ def item(request, id):
 
 
 
+<<<<<<< HEAD
 
+def show_cart_member(request):
+=======
 def show_cart(request):
 	user_groups = request.user.groups.values_list('name', flat=True)
 	if request.user.is_authenticated:
@@ -81,6 +84,7 @@ def show_cart(request):
 			base_template_name = 'homepage_member.html'
 	else:
 		base_template_name = 'homepage_guest.html'
+>>>>>>> origin/styling_html
 	text = SearchForm()
 	user_name = request.user.username
 	context = {

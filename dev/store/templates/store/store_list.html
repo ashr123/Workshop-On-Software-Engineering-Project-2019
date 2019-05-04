@@ -1,8 +1,6 @@
 {% extends 'store/homepage_store_owner.html' %}
 {% block page_content %}
 	<h2 class="title">My stores</h2>
-
-	
 	<ul class="my_stores">
 		{% for store in object_list %}
 			<li>{{ store.name }}</li>

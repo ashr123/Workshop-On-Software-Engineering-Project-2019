@@ -8,14 +8,14 @@ from .models import Item
 class OpenStoreForm(forms.Form):
 	name = forms.CharField()
 	description = forms.CharField(max_length=128)
+<<<<<<< HEAD
 
 
 class ItemForm(forms.ModelForm):
 	class Meta:
 		model = Item
 		fields = ['name', 'description', 'category', 'price', 'quantity']
-
-<<<<<<< HEAD
-
 =======
->>>>>>> origin/owner_crud_page
+>>>>>>> origin/styling_html
+
+
