@@ -9,24 +9,14 @@ from trading_system.forms import SearchForm
 from . import forms
 from .forms import ItemForm
 from .models import Store
+from .models import Item
 
 
 def add_item(request, pk):
-	# item_f = forms.ItemForm(request.POST)
-	ItemFormSet = modelformset_factory(Item, fields=('name', 'description', 'price', 'category', 'quantity'))
-	if request.method == "POST":
-		item_f = ItemFormSet(
-			request.POST, request.FILES,
-			queryset=Item.objects.filter(),
-		)
-
-	# if item_f.is_valid():
-	# 	store_name = request['store']
-	# 	item_f.save()
-	# 	return HttpResponse(store_name)
-		                           , price=item_f.cleaned_data.get('price'),
-		                           category=item_f.cleaned_data.get('category'),
-		                           quantity=item_f.cleaned_data.get('quantity'))
+	if request.method == 'POST':
+		form = ItemForm(request.POST)
+		if form.is_valid():
+			item = form.save()
 			curr_store = Store.objects.get(id=pk)
 			curr_store.items.add(item)
 			return redirect('/store/home_page_owner/')
