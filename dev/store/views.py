@@ -12,7 +12,7 @@ from .models import Store, Item
 
 
 def add_item(request, pk):
-	#item_f = forms.ItemForm(request.POST)
+	# item_f = forms.ItemForm(request.POST)
 	ItemFormSet = modelformset_factory(Item, fields=('name', 'description', 'price', 'category', 'quantity'))
 	if request.method == "POST":
 		item_f = ItemFormSet(
@@ -20,14 +20,17 @@ def add_item(request, pk):
 			queryset=Item.objects.filter(),
 		)
 
-		# if item_f.is_valid():
-		# 	store_name = request['store']
-		# 	item_f.save()
-		# 	return HttpResponse(store_name)
+	# if item_f.is_valid():
+	# 	store_name = request['store']
+	# 	item_f.save()
+	# 	return HttpResponse(store_name)
 	if item_f.is_valid():
-		print('\ndebug: \n\nAdd item\n'+item_f.Meta.fields['name'].cleaned_data.get('name'))
-		item = Item.objects.create(name=item_f.cleaned_data.get('name'),description=item_f.cleaned_data.get('description')
-		                             ,price=item_f.cleaned_data.get('price'),category=item_f.cleaned_data.get('category'),quantity=item_f.cleaned_data.get('quantity'))
+		print('\ndebug: \n\nAdd item\n' + item_f.Meta.fields['name'].cleaned_data.get('name'))
+		item = Item.objects.create(name=item_f.cleaned_data.get('name'),
+		                           description=item_f.cleaned_data.get('description')
+		                           , price=item_f.cleaned_data.get('price'),
+		                           category=item_f.cleaned_data.get('category'),
+		                           quantity=item_f.cleaned_data.get('quantity'))
 		curr_store = Store.objects.get(id=pk)
 		item.save()
 		curr_store.items.add(item)
@@ -66,12 +69,11 @@ def add_item_to_store(request, pk):
 
 # Create your views here.
 def add_store(request):
-
 	user_name = request.user.username
 	set_input = forms.OpenStoreForm()
 	context = {
 		'set_input': set_input,
-		'user_name':user_name
+		'user_name': user_name
 	}
 
 	return render(request, 'store/add_store.html', context)
@@ -81,7 +83,8 @@ def submit_open_store(request):
 	open_store_form = forms.OpenStoreForm(request.GET)
 	if open_store_form.is_valid():
 		store = Store.objects.create(name=open_store_form.cleaned_data.get('name'),
-		                             owner_id=int(request.session._session['_auth_user_id']),description=open_store_form.cleaned_data.get('description'))
+		                             owner_id=int(request.session._session['_auth_user_id']),
+		                             description=open_store_form.cleaned_data.get('description'))
 		store.save()
 	# in error masssege!!!!!!!!!!!!!
 	# stores = Store.objects.filter(owner_id=int(request.session._session['_auth_user_id']))
@@ -95,7 +98,7 @@ def submit_open_store(request):
 	# stores = Store.objects.get(owner_id=int(request.session._session['_auth_user_id']))[0]
 	# context = {'title': 'stores:', 'results': stores}
 	# return render(request, 'store/homepage_store_owner.html', context)
-	return redirect('/store/home_page_owner/')
+	return redirect('/store/home_page_owner/{}'.format(request.user.pk))
 
 
 class StoreDetailView(DetailView):
@@ -119,6 +122,9 @@ class StoreListView(ListView):
 		context['text'] = text
 		return context
 
+	def get_queryset(self):
+		return Store.objects.filter(owner_id=self.kwargs['o_id'])
+
 
 class StoreUpdate(UpdateView):
 	model = Store
@@ -126,19 +132,42 @@ class StoreUpdate(UpdateView):
 	template_name_suffix = '_update_form'
 
 
+def have_no_more_stores(user_pk):
+	tmp = Store.objects.filter(owner_id=user_pk)
+	return len(tmp) == 0
+
+
+def change_store_owner_to_member(user):
+	owners_group = Group.objects.get(name="store_owners")
+	owners_group.user_set.remove(user)
+
+
 class StoreDelete(DeleteView):
 	model = Store
 	template_name_suffix = '_delete_form'
+
+	def delete(self, request, *args, **kwargs):
+		store = Store.objects.get(id = kwargs['pk'])
+		owner_id = store.owner_id
+		response = super(StoreDelete, self).delete(request, *args, **kwargs)
+		if have_no_more_stores(owner_id):
+			change_store_owner_to_member(request.user)
+			user_name = request.user.username
+			text = SearchForm()
+			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
+		else:
+			return response
 
 
 def buy_item(request, pk):
 	return 0
 
+
 class AddItemToStore(CreateView):
 	model = Item
-	fields = ['name', 'description',  'price', 'quantity']
+	fields = ['name', 'description', 'price', 'quantity']
 
 
-def itemAddedSucceffuly(request, store_id,id):
-	x =1
+def itemAddedSucceffuly(request, store_id, id):
+	x = 1
 	return render(request, 'store/item_detail.html')

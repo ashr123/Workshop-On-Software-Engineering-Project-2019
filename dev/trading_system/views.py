@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 
 # from external_systems.spellChecker import checker
+from django.urls import reverse
+
 from trading_system.forms import SearchForm
 from store.models import Store, Item
 from django.http import HttpResponse
@@ -22,9 +24,9 @@ def login_redirect(request):
 		if request.user.is_superuser:
 			return render(request, 'homepage_member.html', {'text': text})
 		elif "store_owners" in user_groups:
-			return redirect('/store/home_page_owner/', {'text': text,'user_name' : user_name})
+			return redirect('/store/home_page_owner/{}'.format(request.user.pk), {'text': text, 'user_name': user_name})
 		else:
-			return render(request, 'homepage_member.html', {'text': text,'user_name' : user_name})
+			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
 
 	return render(request, 'homepage_guest.html', {'text': text})
 
@@ -70,6 +72,7 @@ def item(request, id):
 def show_cart_guest(request):
 	text = SearchForm()
 	return render(request, 'cart_guest.html', {'text': text})
+
 
 def show_cart_member(request):
 	text = SearchForm()
