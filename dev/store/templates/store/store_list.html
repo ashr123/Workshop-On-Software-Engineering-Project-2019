@@ -1,7 +1,9 @@
-{% extends 'base_member.html' %}
-{% block content %}
-	<h1>Stores</h1>
-	<ul>
+{% extends 'store/homepage_store_owner.html' %}
+{% block page_content %}
+	<h2 class="title">My stores</h2>
+
+	
+	<ul class="my_stores">
 		{% for store in object_list %}
 			<li>{{ store.name }}</li>
 			<form action="/store/view_details/{{ store.pk }}" method="GET">
@@ -18,7 +20,7 @@
 				<input type="submit" value="Add item">
 			</form>
 		{% empty %}
-			<li>No store yet  o fstore id = {{ store }}</li>
+			<li>No stores yet</li>
 		{% endfor %}
 	</ul>
 {% endblock %}
