@@ -11,6 +11,7 @@ class CategoryChoice(Enum):  # A subclass of Enum
 
 class OpenStoreForm(forms.Form):
 	name = forms.CharField()
+	description = forms.CharField(max_length=128)
 
 
 class ItemForm(forms.Form):

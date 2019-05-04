@@ -69,15 +69,20 @@
     height: 50px;
 }
 
+#login_content {
+    margin-bottom: 30px;
+}
+
 .form_login {
     font-family: Arial;
-    margin-left: 30px;
+    margin-left: 50px;
     margin-top: 30px;
 }
 
 #forget {
-    margin-left: 296px;
-    margin-top: 40px;
+    margin-left: 318px;
+    margin-top: 60px;
+    padding: auto 0;
     text-decoration: none;
     font-family: Arial;
     color: cornflowerblue;
@@ -115,6 +120,7 @@
     margin-left: 12px;
 }
 
+
 .vertical-menu {
     width: 200px;
     display: flex;
@@ -132,27 +138,36 @@
 
 .vertical-menu a:hover {
     background-color: cornflowerblue;
-    color: white;
+color: white;
 }
 
-#add_store_page {
+#member_page {
     display: flex;
 }
 
 .form_add_store {
+font-family: Arial;
+margin-left: 50px;
+margin-top: 10px;
+justify-content: space-around;
+}
+
+.title {
+margin-left: 50px;
+margin-top: 30px;
+font-family: Arial;
+}
+
+.login_error {
     font-family: Arial;
     margin-left: 50px;
-    margin-top: 10px;
-    justify-content: space-around;
 }
 
-#add_store {
-    margin-left: 50px;
-    margin-top: 30px;
+#search_input {
+    margin-top: 15px;
+}
+
+.my_stores {
     font-family: Arial;
+    margin-left: 50px;
 }
-
-.open_store_container {
-    margin-left: 30px;
-}
-

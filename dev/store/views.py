@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, redirect, HttpResponse, render_to_response
 from django.conf import settings
 from django.views.generic import DetailView
 
@@ -65,12 +65,24 @@ def add_item_to_store(request, pk):
 # item = ItemForm()
 # return render(request, 'store/add_item.html', {'item': item})
 
+
 # Create your views here.
 def add_store(request):
-	name = forms.OpenStoreForm()
-
-	return render(request, 'store/add_store.html', {'name': name})
-
+	user_groups = request.user.groups.values_list('name', flat=True)
+	if "store_owners" in user_groups:
+		base_template_name = 'store/homepage_store_owner.html'
+	else:
+		base_template_name = 'homepage_member.html'
+	text = SearchForm()
+	user_name = request.user.username
+	set_input = forms.OpenStoreForm()
+	context = {
+		'set_input': set_input,
+		'user_name': user_name,
+		'text': text,
+		'base_template_name': base_template_name
+	}
+	return render_to_response('store/add_store.html', context)
 
 def submit_open_store(request):
 	open_store_form = forms.OpenStoreForm(request.GET)
@@ -107,7 +119,6 @@ class StoreDetailView(DetailView):
 class StoreListView(ListView):
 	model = Store
 	paginate_by = 100  # if pagination is desired
-
 	def get_context_data(self, **kwargs):
 		text = SearchForm()
 		context = super(StoreListView, self).get_context_data(**kwargs)  # get the default context data
@@ -128,5 +139,14 @@ class StoreDelete(DeleteView):
 
 def buy_item(request, pk):
 	return 0
+
+def home_page_owner(request):
+	text = SearchForm()
+	user_name = request.user.username
+	context = {
+		'user_name': user_name,
+		'text': text
+	}
+	return render(request, 'store/homepage_store_owner.html', context)
 
 

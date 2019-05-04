@@ -10,5 +10,6 @@ urlpatterns = [
 	path('buy_item/<int:pk>/', views.buy_item),
 	path('update/<int:pk>', views.StoreUpdate.as_view()),
 	path('add_store/submit/', views.submit_open_store),
-	path('home_page_owner/', views.StoreListView.as_view() , name='store-list', ),
+	path('home_page_owner/', views.home_page_owner),
+	path('view_store/', views.StoreListView.as_view(), name='store-list')
 ]

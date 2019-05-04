@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, render_to_response
 
 # from external_systems.spellChecker import checker
 from trading_system.forms import SearchForm
@@ -67,13 +67,25 @@ def item(request, id):
 	return render(request, 'item_page.html', context)
 
 
-def show_cart_guest(request):
-	text = SearchForm()
-	return render(request, 'cart_guest.html', {'text': text})
 
-def show_cart_member(request):
+def show_cart(request):
+	user_groups = request.user.groups.values_list('name', flat=True)
+	if request.user.is_authenticated:
+		if "store_owners" in user_groups:
+			base_template_name = 'store/homepage_store_owner.html'
+		else:
+			base_template_name = 'homepage_member.html'
+	else:
+		base_template_name = 'homepage_guest.html'
 	text = SearchForm()
-	return render(request, 'cart_member.html', {'text': text})
+	user_name = request.user.username
+	context = {
+		'user_name': user_name,
+		'text': text,
+		'base_template_name': base_template_name
+	}
+	return render_to_response('cart.html', context)
+
 
 
 def home_button(request):

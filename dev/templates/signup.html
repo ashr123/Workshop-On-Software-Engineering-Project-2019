@@ -1,7 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block menu_bar_right %}
+	<span id="search_input">
+		Search: <input type="text"><br>
+	</span>
+{% endblock %}
+
 {% block content %}
+	<h2 class="title">Sign up</h2>
 	<table class="form_signup">
 		<tr>
 			<form method="post">
