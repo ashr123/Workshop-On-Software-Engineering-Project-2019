@@ -121,11 +121,8 @@ def buy_item(request, pk):
 class AddItemToStore(CreateView):
 	model = Item
 	fields = ['name', 'description',  'price', 'quantity']
-	def form_valid(self, form):
-		x=1
-		return super().form_valid(form)
 
 
-def itemAddedSucceffuly(request, pk):
-	context = {'pk':pk}
-	return render(request, 'store/item_detail.html', context)
+def itemAddedSucceffuly(request, store_id,id):
+	x =1
+	return render(request, 'store/item_detail.html')

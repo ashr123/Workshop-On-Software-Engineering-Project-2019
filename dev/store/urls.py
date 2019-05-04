@@ -12,5 +12,5 @@ urlpatterns = [
 	path('update/<int:pk>', views.StoreUpdate.as_view()),
 	path('add_store/submit/', views.submit_open_store),
 	path('home_page_owner/', views.StoreListView.as_view(), name='store-list', ),
-	path('itemAddedSuccessfully/<int:pk>', views.itemAddedSucceffuly, name='item-detail', ),
+	path('add_item_to_store/<int:int>/<slug:id>', views.itemAddedSucceffuly, name='item-detail'),
 ]
