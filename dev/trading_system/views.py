@@ -24,7 +24,7 @@ def login_redirect(request):
 		if request.user.is_superuser:
 			return render(request, 'homepage_member.html', {'text': text})
 		elif "store_owners" in user_groups:
-			return redirect('/store/home_page_owner/{}'.format(request.user.pk), {'text': text, 'user_name': user_name})
+			return redirect('/store/home_page_owner/', {'text': text, 'user_name': user_name})
 		else:
 			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
 
@@ -37,13 +37,13 @@ def register(request):
 
 def search(request):
 	text = SearchForm(request.GET)
-
 	if text.is_valid():
 		# spell checker
 		# correct_word = checker.Spellchecker(text)
 		# items = Item.objects.filter(name=correct_word)
+
 		print('\n\n', text.cleaned_data.get('search'))
-		items = Item.objects.filter(name=text.cleaned_data.get('search'))
+		items = Item.objects.filter(name__contains=text.cleaned_data.get('search'))
 
 		context = {'title': 'items: ', 'results': items}
 	return render(request, 'search_results.html', context)
