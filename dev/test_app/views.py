@@ -121,6 +121,12 @@ class AuthorCreate(CreateView):
 	model = Author
 	fields = ['name']
 
+	def form_valid(self, form):
+		# This method is called when valid form data has been POSTed.
+		# It should return an HttpResponse.
+		x=1
+		return super().form_valid(form)
+
 
 class AuthorUpdate(UpdateView):
 	model = Author
@@ -130,3 +136,12 @@ class AuthorUpdate(UpdateView):
 class AuthorDelete(DeleteView):
 	model = Author
 	success_url = reverse_lazy('author-list')
+
+def author_detail(request):
+	x=1
+	pass
+
+
+def test_9(request, pk):
+	x = 1
+	pass

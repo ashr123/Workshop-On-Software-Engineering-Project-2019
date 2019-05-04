@@ -1,5 +1,11 @@
+<<<<<<< HEAD
+import uuid
+from enum import Enum
+
 from django.urls import reverse
 
+=======
+>>>>>>> origin/owner_crud_page
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -21,8 +27,13 @@ class Item(models.Model):
 	                            default=1)
 	quantity = models.PositiveIntegerField(default=1)
 
+<<<<<<< HEAD
+	# store_id = models.IntegerField(default=404)
 	def get_absolute_url(self):
 		return reverse('item-detail',kwargs={'id': self.pk})
+
+=======
+>>>>>>> origin/owner_crud_page
 	def __str__(self):
 		return self.name
 
