@@ -1,14 +1,14 @@
+from django.contrib.auth.models import Group
+from django.forms import modelformset_factory
 from django.shortcuts import render, redirect, HttpResponse
-from django.conf import settings
 from django.views.generic import DetailView
-from .forms import ItemForm
-from .models import Store, Item
-from . import forms
-from django.contrib.auth.models import Group, User
+from django.views.generic.edit import UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.views.generic.edit import FormView, UpdateView, DeleteView, CreateView
 from django.forms import modelformset_factory
 from trading_system.forms import SearchForm
+from . import forms
+from .models import Store, Item
 
 
 def add_item(request, pk):
@@ -25,13 +25,15 @@ def add_item(request, pk):
 		# 	item_f.save()
 		# 	return HttpResponse(store_name)
 	if item_f.is_valid():
+		print('\ndebug: \n\nAdd item\n'+item_f.Meta.fields['name'].cleaned_data.get('name'))
 		item = Item.objects.create(name=item_f.cleaned_data.get('name'),description=item_f.cleaned_data.get('description')
 		                             ,price=item_f.cleaned_data.get('price'),category=item_f.cleaned_data.get('category'),quantity=item_f.cleaned_data.get('quantity'))
 		curr_store = Store.objects.get(id=pk)
 		item.save()
 		curr_store.items.add(item)
 		return redirect('/store/home_page_owner/')
-	return HttpResponse(" fail " )
+
+	return HttpResponse(" fail ")
 
 
 def add_item_to_store(request, pk):
@@ -64,16 +66,22 @@ def add_item_to_store(request, pk):
 
 # Create your views here.
 def add_store(request):
-	name = forms.OpenStoreForm()
 
-	return render(request, 'store/add_store.html', {'name': name})
+	user_name = request.user.username
+	set_input = forms.OpenStoreForm()
+	context = {
+		'set_input': set_input,
+		'user_name':user_name
+	}
+
+	return render(request, 'store/add_store.html', context)
 
 
 def submit_open_store(request):
 	open_store_form = forms.OpenStoreForm(request.GET)
 	if open_store_form.is_valid():
 		store = Store.objects.create(name=open_store_form.cleaned_data.get('name'),
-		                             owner_id=int(request.session._session['_auth_user_id']))
+		                             owner_id=int(request.session._session['_auth_user_id']),description=open_store_form.cleaned_data.get('description'))
 		store.save()
 	# in error masssege!!!!!!!!!!!!!
 	# stores = Store.objects.filter(owner_id=int(request.session._session['_auth_user_id']))
@@ -95,13 +103,21 @@ class StoreDetailView(DetailView):
 	paginate_by = 100  # if pagination is desired
 
 	def get_context_data(self, **kwargs):
-		context = super().get_context_data(**kwargs)
+		text = SearchForm()
+		context = super(StoreDetailView, self).get_context_data(**kwargs)  # get the default context data
+		context['text'] = text
 		return context
 
 
 class StoreListView(ListView):
 	model = Store
 	paginate_by = 100  # if pagination is desired
+
+	def get_context_data(self, **kwargs):
+		text = SearchForm()
+		context = super(StoreListView, self).get_context_data(**kwargs)  # get the default context data
+		context['text'] = text
+		return context
 
 
 class StoreUpdate(UpdateView):
