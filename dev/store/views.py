@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
-from django.shortcuts import render, redirect, render_to_response
+from django.shortcuts import render, redirect, render_to_response, HttpResponse
 from django.views.generic import DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.views.generic.list import ListView
@@ -9,9 +9,8 @@ from django.views.generic.list import ListView
 from trading_system.forms import SearchForm
 from . import forms
 from .forms import ItemForm, BuyForm
-from .models import Store
 from .models import Item
-
+from .models import Store
 
 
 @login_required
@@ -104,9 +103,11 @@ class StoreListView(ListView):
 	def get_queryset(self):
 		return Store.objects.filter(owner_id=self.request.user.id)
 
+
 class ItemListView(ListView):
 	model = Item
 	paginate_by = 100  # if pagination is desired
+
 
 class ItemDetailView(DetailView):
 	model = Item
@@ -156,21 +157,24 @@ def buy_item(request, pk):
 			_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
 			amount_in_db = _item.quantity
-			if(amount <= amount_in_db):
-				new_q =amount_in_db -amount
-				_item.quantity=new_q
+			if (amount <= amount_in_db):
+				new_q = amount_in_db - amount
+				_item.quantity = new_q
 				_item.save()
+				messages.success(request, 'YES! at the moment you bought  : ', _item.description)  # <-
 				return redirect('/store/home_page_owner/')
-			return HttpResponse('there is no such amount')
-		return HttpResponse('error in :  ', form.errors)
+			messages.warning(request,'there is no such amount ! please try again!')
+			return redirect('/store/home_page_owner/')
+		messages.warning(request,'error in :  ', form.errors)
+		return redirect('/store/home_page_owner/')
 	else:
 		form_class = BuyForm
 		curr_item = Item.objects.get(id=pk)
 		context = {
-			'pk':curr_item.id,
+			'pk': curr_item.id,
 			'form': form_class,
 			'price': curr_item.price,
-			'description':curr_item.description
+			'description': curr_item.description
 		}
 		return render(request, 'store/buy_item.html', context)
 
@@ -194,5 +198,3 @@ class AddItemToStore(CreateView):
 def itemAddedSucceffuly(request, store_id, id):
 	x = 1
 	return render(request, 'store/item_detail.html')
-
-
