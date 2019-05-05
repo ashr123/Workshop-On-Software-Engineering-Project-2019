@@ -1,8 +1,9 @@
 from functools import reduce
 from typing import List, Optional
 
-from main.moneyCollectionSystem import Facade as MoneyCollectionFacade
-from main.productSupplySystem import Facade as ProductSupplyFacade
+from main.CollectionSystemBridge import Facade as MoneyCollectionFacade
+from main.SupplySystemBridge import Facade as ProductSupplyFacade
+from main.ConsistencySystemBridge import Facade as ConsistencyRulesFacade
 from main.domain.ManagementState import ManagementState
 from main.domain.Permission import Permissions
 from .TradingSystem import TradingSystem
@@ -33,14 +34,17 @@ logev = logging.getLogger('event log')
 loger = logging.getLogger('error log')
 
 
-
 class DomainFacade(object):
     _money_collection_handler = MoneyCollectionFacade.MoneyCollectionFacade()
     _supply_handler = ProductSupplyFacade.SupplyFacade()
+    _consistency_handler = ConsistencyRulesFacade.ConsistencyFacade()
 
     @staticmethod
     def clear():
         TradingSystem.clear()
+        DomainFacade._money_collection_handler.make_sys_pass()
+        DomainFacade.make_consistency_pass()
+        DomainFacade.make_supply_pass()
 
     @staticmethod
     def initiate_session():
@@ -282,9 +286,9 @@ class DomainFacade(object):
         logev.info("Starting system set up")
         try:
             TradingSystem.register_master_member(master_user, password)
-            TradingSystem.connect_to_money_collection_system()
-            TradingSystem.connect_to_product_supply_system()
-            TradingSystem.connect_to_consistency_system()
+            DomainFacade._money_collection_handler.connect()
+            DomainFacade._supply_handler.connect()
+            DomainFacade. _consistency_handler.connect()
         except TradingSystemException as e:
             loger.error("Registration of system manager failed!")
             return e.msg
@@ -329,3 +333,28 @@ class DomainFacade(object):
         price = TradingSystem.calculate_price(TradingSystem.get_trans(trans_id))
         if DomainFacade._money_collection_handler.pay(creditcard, date, snum, price):
             return "OK"
+
+    # for test
+    @staticmethod
+    def make_collection_pass():
+        return DomainFacade._money_collection_handler.make_sys_pass()
+
+    @staticmethod
+    def make_collection_fail():
+        return DomainFacade._money_collection_handler.make_sys_fail()
+
+    @staticmethod
+    def make_consistency_pass():
+        return DomainFacade._consistency_handler.make_sys_pass()
+
+    @staticmethod
+    def make_consistency_fail():
+        return DomainFacade._consistency_handler.make_sys_fail()
+
+    @staticmethod
+    def make_supply_pass():
+        return DomainFacade._supply_handler.make_sys_pass()
+
+    @staticmethod
+    def make_supply_fail():
+        return DomainFacade._supply_handler.make_sys_fail()

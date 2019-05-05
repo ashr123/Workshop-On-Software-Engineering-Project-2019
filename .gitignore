@@ -263,3 +263,4 @@ $RECYCLE.BIN/
 
 dev/SADNA.egg-info
 dev/venv
+/dev/.idea/workspace.xml
