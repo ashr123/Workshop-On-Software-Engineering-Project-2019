@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+	<h3 class="center-align red lighten-3">{{ title }}</h3>
+	<ul class="my_stores">
+		{% for item in object_list %}
+			<li>Name:{{ item.name }} Description:{{ item.description }}</li>
+			<form action="/store/view_item/{{ item.pk }}" method="GET">
+				<input type="submit" value="View">
+			</form>
+			<form action="/store/buy_item/{{ item.pk }}" method="GET">
+				<input type="submit" value="Buy">
+			</form>
+		{% empty %}
+			<li>No stores yet</li>
+		{% endfor %}
+	</ul>
+{% endblock %}
