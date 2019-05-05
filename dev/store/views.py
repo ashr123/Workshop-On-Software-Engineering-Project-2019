@@ -34,7 +34,6 @@ def add_item(request, pk):
 		return render(request, 'store/add_item.html', context)
 
 
-
 def add_store(request):
 	user_groups = request.user.groups.values_list('name', flat=True)
 	if "store_owners" in user_groups:
@@ -51,6 +50,7 @@ def add_store(request):
 		'base_template_name': base_template_name
 	}
 	return render_to_response('store/add_store.html', context)
+
 
 def submit_open_store(request):
 	open_store_form = forms.OpenStoreForm(request.GET)
@@ -82,10 +82,13 @@ class StoreDetailView(DetailView):
 class StoreListView(ListView):
 	model = Store
 	paginate_by = 100  # if pagination is desired
+
 	def get_context_data(self, **kwargs):
 		text = SearchForm()
+		user_name = self.request.user.username
 		context = super(StoreListView, self).get_context_data(**kwargs)  # get the default context data
 		context['text'] = text
+		context['user_name'] = user_name
 		return context
 
 	def get_queryset(self):
@@ -113,7 +116,7 @@ class StoreDelete(DeleteView):
 	template_name_suffix = '_delete_form'
 
 	def delete(self, request, *args, **kwargs):
-		store = Store.objects.get(id = kwargs['pk'])
+		store = Store.objects.get(id=kwargs['pk'])
 		owner_id = store.owner_id
 		response = super(StoreDelete, self).delete(request, *args, **kwargs)
 		if have_no_more_stores(owner_id):
@@ -127,6 +130,7 @@ class StoreDelete(DeleteView):
 
 def buy_item(request, pk):
 	return 0
+
 
 def home_page_owner(request):
 	text = SearchForm()
