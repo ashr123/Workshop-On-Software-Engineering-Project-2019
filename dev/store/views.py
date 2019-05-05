@@ -1,6 +1,7 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
-from django.shortcuts import render, redirect, HttpResponse, render_to_response
+from django.shortcuts import render, redirect, render_to_response
 from django.views.generic import DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.views.generic.list import ListView
@@ -20,8 +21,11 @@ def add_item(request, pk):
 			item = form.save()
 			curr_store = Store.objects.get(id=pk)
 			curr_store.items.add(item)
+			messages.success(request, 'Your Item was added successfully!')  # <-
 			return redirect('/store/home_page_owner/')
-		return HttpResponse('error in :  ', form.errors)
+		else:
+			messages.warning(request, 'Problem with filed : !', form.errors, 'please try again!')  # <-
+			return redirect('/store/home_page_owner/')
 	else:
 		form_class = ItemForm
 		curr_store = Store.objects.get(id=pk)
@@ -62,16 +66,19 @@ def submit_open_store(request):
 		                             owner_id=int(request.session._session['_auth_user_id']),
 		                             description=open_store_form.cleaned_data.get('description'))
 		store.save()
+		messages.success(request, 'Your Store was added successfully!')  # <-
+		my_group = Group.objects.get_or_create(name="store_owners")
+		my_group = Group.objects.get(name="store_owners")
+		request.user.groups.add(my_group)
+		return redirect('/store/home_page_owner')
+	else:
+		messages.warning(request, 'Please correct the error and try again.')  # <-
+		return redirect('/login_redirect')
 
-	# need to be in the first time:
-	my_group = Group.objects.get_or_create(name="store_owners")
-	my_group = Group.objects.get(name="store_owners")
 
-	request.user.groups.add(my_group)
-	return redirect('/store/home_page_owner')
+# need to be in the first time:
 
 
-@login_required
 class StoreDetailView(DetailView):
 	model = Store
 	paginate_by = 100  # if pagination is desired
@@ -83,7 +90,6 @@ class StoreDetailView(DetailView):
 		return context
 
 
-@login_required
 class StoreListView(ListView):
 	model = Store
 	paginate_by = 100  # if pagination is desired
@@ -98,7 +104,6 @@ class StoreListView(ListView):
 		return Store.objects.filter(owner_id=self.request.user.id)
 
 
-@login_required
 class StoreUpdate(UpdateView):
 	model = Store
 	fields = ['name', 'owner', 'items']
@@ -116,7 +121,6 @@ def change_store_owner_to_member(user):
 	owners_group.user_set.remove(user)
 
 
-@login_required
 class StoreDelete(DeleteView):
 	model = Store
 	template_name_suffix = '_delete_form'
@@ -150,13 +154,11 @@ def home_page_owner(request):
 	return render(request, 'store/homepage_store_owner.html', context)
 
 
-@login_required
 class AddItemToStore(CreateView):
 	model = Item
 	fields = ['name', 'description', 'price', 'quantity']
 
 
-@login_required
 def itemAddedSucceffuly(request, store_id, id):
 	x = 1
 	return render(request, 'store/item_detail.html')
