@@ -1,14 +1,17 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
-from django.shortcuts import render, redirect, render_to_response, HttpResponse
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect, render_to_response
 from django.views.generic import DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.views.generic.list import ListView
+from guardian.decorators import permission_required_or_403
+from guardian.shortcuts import assign_perm
 
 from trading_system.forms import SearchForm
 from . import forms
-from .forms import ItemForm, BuyForm
+from .forms import ItemForm, BuyForm, AddManagerForm
 from .models import Item
 from .models import Store
 
@@ -66,10 +69,15 @@ def submit_open_store(request):
 		                             owner_id=int(request.session._session['_auth_user_id']),
 		                             description=open_store_form.cleaned_data.get('description'))
 		store.save()
+		_user =request.user
 		messages.success(request, 'Your Store was added successfully!')  # <-
 		my_group = Group.objects.get_or_create(name="store_owners")
 		my_group = Group.objects.get(name="store_owners")
-		request.user.groups.add(my_group)
+		_user.groups.add(my_group)
+		assign_perm('ADD_ITEM', _user, store)
+		assign_perm('REMOVE_ITEM', _user, store)
+		assign_perm('EDIT_ITEM', _user, store)
+		assign_perm('ADD_MANAGER', _user, store)
 		return redirect('/store/home_page_owner')
 	else:
 		messages.warning(request, 'Please correct the error and try again.')  # <-
@@ -163,9 +171,9 @@ def buy_item(request, pk):
 				_item.save()
 				messages.success(request, 'YES! at the moment you bought  : ', _item.description)  # <-
 				return redirect('/store/home_page_owner/')
-			messages.warning(request,'there is no such amount ! please try again!')
+			messages.warning(request, 'there is no such amount ! please try again!')
 			return redirect('/store/home_page_owner/')
-		messages.warning(request,'error in :  ', form.errors)
+		messages.warning(request, 'error in :  ', form.errors)
 		return redirect('/store/home_page_owner/')
 	else:
 		form_class = BuyForm
@@ -198,3 +206,33 @@ class AddItemToStore(CreateView):
 def itemAddedSucceffuly(request, store_id, id):
 	x = 1
 	return render(request, 'store/item_detail.html')
+
+
+@permission_required_or_403('ADD_MANAGER',
+                            (Store, 'id', 'pk'))
+@login_required
+def add_manager_to_store(request, pk):
+	if request.method == 'POST':
+		form = AddManagerForm(request.POST)
+		if form.is_valid():
+			user_name = form.cleaned_data.get('user_name')
+			picked = form.cleaned_data.get('permissions')
+			is_owner = form.cleaned_data.get('is_owner')
+			user_ = User.objects.get(username=user_name)
+			store_ = Store.objects.get(id=pk)
+			if (user_ == None):
+				messages.warning(request, 'no such user')
+				return redirect('/store/home_page_owner/')
+			for perm in picked:
+				assign_perm(perm, user_, store_)
+			if (is_owner):
+				my_group = Group.objects.get(name="store_owners")
+				user_.groups.add(my_group)
+			messages.success(request, 'add manager :  ' + user_name)
+			return redirect('/store/home_page_owner/')
+		messages.warning(request, 'error in :  ', form.errors)
+		return redirect('/store/home_page_owner/')
+	# do something with your results
+	else:
+		form = AddManagerForm
+	return render(request, 'store/add_manager.html', {'form': form, 'pk': pk})

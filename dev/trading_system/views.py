@@ -1,16 +1,12 @@
 from django.shortcuts import render, redirect, render_to_response
-
+from django.template import RequestContext
 # from external_systems.spellChecker import checker
-from django.urls import reverse
 from django.views.generic import DetailView
-
-from trading_system.forms import SearchForm
-from store.models import Store, Item
 from django.views.generic.list import ListView
-from store.models import Item
-from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
 
+from store.models import Item
+from store.models import Store
+from trading_system.forms import SearchForm, SomeForm
 # Create your views here.
 from trading_system.models import Cart
 
@@ -90,8 +86,8 @@ class SearchListView(ListView):
 
 	def get_queryset(self):
 		return search(self.request)
-	def get_context_data(self, **kwargs):
 
+	def get_context_data(self, **kwargs):
 		text = SearchForm()
 		context = super(SearchListView, self).get_context_data(**kwargs)  # get the default context data
 		context['text'] = text
@@ -108,16 +104,14 @@ def search(request):
 		return Item.objects.filter(name__contains=text.cleaned_data.get('search'))
 
 
-
 def add_item_to_cart(request, item_pk):
 	item_store = get_item_store(item_pk)
 	cart = get_cart(item_store, request.user.pk)
-	if cart==None:
+	if cart == None:
 		open_cart_for_user_in_store(item_store.pk, request.user.pk)
 		cart = get_cart(item_store, request.user.pk)
 	cart.items.add(item_pk)
 	return render(request, 'trading_system/item_added_successfuly.html')
-
 
 
 def get_item_store(item_pk):
@@ -125,8 +119,9 @@ def get_item_store(item_pk):
 	# Might cause bug. Need to apply the item-in-one-store condition
 	return stores[0]
 
+
 def user_has_cart_for_store(store_pk, user_pk):
-	return len(Cart.objects.filter(customer_id = user_pk, store_id=store_pk)) > 0
+	return len(Cart.objects.filter(customer_id=user_pk, store_id=store_pk)) > 0
 
 
 def open_cart_for_user_in_store(store_pk, user_pk):
@@ -135,8 +130,8 @@ def open_cart_for_user_in_store(store_pk, user_pk):
 
 
 def get_cart(store_pk, user_pk):
-	carts = Cart.objects.filter(customer_id = user_pk, store_id=store_pk)
-	if len(carts) ==0:
+	carts = Cart.objects.filter(customer_id=user_pk, store_id=store_pk)
+	if len(carts) == 0:
 		return None
 	else:
 		return carts[0]
@@ -144,10 +139,11 @@ def get_cart(store_pk, user_pk):
 
 class CartDetail(DetailView):
 	model = Cart
+
 	def get_context_data(self, **kwargs):
 		cart = Cart.objects.get(pk=kwargs['object'].pk)
-		item_ids = list(map(lambda i: i.pk,cart.items.all()))
-		items = list(map(lambda i_pk: Item.objects.get(pk=i_pk),item_ids))
+		item_ids = list(map(lambda i: i.pk, cart.items.all()))
+		items = list(map(lambda i_pk: Item.objects.get(pk=i_pk), item_ids))
 		context = super(CartDetail, self).get_context_data(**kwargs)  # get the default context data
 		context['items'] = items
 		context['store_name'] = Store.objects.get(pk=cart.store_id).name
@@ -157,5 +153,20 @@ class CartDetail(DetailView):
 class CartsListView(ListView):
 	model = Cart
 	template_name = 'trading_system/user_carts.html'
+
 	def get_queryset(self):
 		return Cart.objects.filter(customer_id=self.request.user.pk)
+
+
+def approve_event(request):
+	if request.method == 'POST':
+		form = SomeForm(request.POST)
+		if form.is_valid():
+			picked = form.cleaned_data.get('picked')
+			print('\n',picked)
+			render(request,'check_box_items.html', {'form': form})
+		render(request,'check_box_items.html', {'form': form})
+	# do something with your results
+	else:
+		form = SomeForm
+	return render(request,'check_box_items.html', {'form': form})

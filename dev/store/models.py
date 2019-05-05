@@ -27,3 +27,11 @@ class Store(models.Model):
 	owner = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
 	items = models.ManyToManyField(Item)
 	description = models.CharField(max_length=64)
+
+	class Meta:
+		permissions = (
+			('ADD_ITEM', 'add item'),
+			('REMOVE_ITEM', 'delete item'),
+			('EDIT_ITEM', 'update item'),
+			('ADD_MANAGER', 'add manager'),
+		)

@@ -11,15 +11,20 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+
 from django.contrib.messages import constants as messages
 
+AUTHENTICATION_BACKENDS = (
+	'django.contrib.auth.backends.ModelBackend',  # this is default
+	'guardian.backends.ObjectPermissionBackend',
+)
 
 MESSAGE_TAGS = {
-    messages.DEBUG: 'alert-info',
-    messages.INFO: 'alert-info',
-    messages.SUCCESS: 'alert-success',
-    messages.WARNING: 'alert-warning',
-    messages.ERROR: 'alert-danger',
+	messages.DEBUG: 'alert-info',
+	messages.INFO: 'alert-info',
+	messages.SUCCESS: 'alert-success',
+	messages.WARNING: 'alert-warning',
+	messages.ERROR: 'alert-danger',
 }
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -51,7 +56,7 @@ INSTALLED_APPS = [
 	'accounts.apps.AccountsConfig',
 	'static',
 	'templates',
-
+	'guardian',
 
 ]
 
@@ -147,12 +152,7 @@ LOGOUT_REDIRECT_URL = '/'
 STATIC_URL = '/static/'
 # STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-STATICFILES_DIRS = ["static",]
+STATICFILES_DIRS = ["static", ]
 
 MEDIA_URL = '/images/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "static/images")
-
-
-
-
-

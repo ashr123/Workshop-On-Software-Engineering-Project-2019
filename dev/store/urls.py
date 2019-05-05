@@ -1,4 +1,5 @@
 from django.urls import path
+
 from . import views
 
 urlpatterns = [
@@ -11,10 +12,12 @@ urlpatterns = [
 	path('buy_item/<int:pk>/', views.buy_item),
 	path('update/<int:pk>', views.StoreUpdate.as_view()),
 	path('add_store/submit/', views.submit_open_store),
-	#path('home_page_owner/<int:o_id>', views.StoreListView.as_view(), name='store-owner-detail', ),
+	# path('home_page_owner/<int:o_id>', views.StoreListView.as_view(), name='store-owner-detail', ),
 	path('add_item_to_store/<int:int>/<slug:id>', views.itemAddedSucceffuly, name='item-detail'),
 	path('home_page_owner/', views.home_page_owner),
-	path('view_store/', views.StoreListView.as_view(), name='store-owner-detail',),
-	path('view_item/<int:pk>', views.ItemDetailView.as_view(), name='item-detail',),
-	path('buy_item/<int:pk>', views.buy_item ),
+	path('view_store/', views.StoreListView.as_view(), name='store-owner-detail', ),
+	path('view_item/<int:pk>', views.ItemDetailView.as_view(), name='item-detail', ),
+	path('buy_item/<int:pk>', views.buy_item),
+	path('add_manager_to_store/<int:pk>', views.add_manager_to_store),
+	path('add_manager_to_store/<int:pk>/', views.add_manager_to_store),
 ]
