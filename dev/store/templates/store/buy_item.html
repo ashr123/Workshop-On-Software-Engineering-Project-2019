@@ -7,21 +7,21 @@
 		<tr>
 			<form action="/store/buy_item/{{ pk }}" method="post">
 				<p>description</p>
-			<td class="description">{{ description }}</td>
-			<p>price</p>
-			<td>
-				<input type="text" id="price" readonly value={{ price }} class="readonly"/>
-			</td>
-			<td>
-				{% csrf_token %}
-				{{ form.as_p }}
-			</td>
-			<p>total</p>
-			<td>
-				<input type="text" id="total" readonly value="" class="readonly"/>
-			</td>
-			<input type="submit" value="Buy now!"/>
-		</form>
+				<td class="description">{{ description }}</td>
+				<p>price</p>
+				<td>
+					<input type="text" id="price" readonly value={{ price }} class="readonly"/>
+				</td>
+				<td>
+					{% csrf_token %}
+					{{ form.as_p }}
+				</td>
+				<p>total</p>
+				<td>
+					<input type="text" id="total" readonly value="" class="readonly"/>
+				</td>
+				<input type="submit" value="Buy now!"/>
+			</form>
 
 		</tr>
 		<script>

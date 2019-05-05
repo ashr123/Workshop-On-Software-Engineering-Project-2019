@@ -14,7 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.urls import path, include
+from django.urls import path
+
 from . import views
 
 urlpatterns = [
@@ -27,7 +28,8 @@ urlpatterns = [
 	path('test_AnotherExample/', views.test4),
 	path('test_Like_The_One_Above_But_With_Customized_Html/', views.test5),
 	# path('<slug:slug>/', views.ArticleDetailView.as_view(), name='article-detail'),
-	path('test_Form_That_Represents_Object_Instance/<int:pk>/',views.ArticleDetailView.as_view(), name='article-detail'),
+	path('test_Form_That_Represents_Object_Instance/<int:pk>/', views.ArticleDetailView.as_view(),
+	     name='article-detail'),
 	path('test_8/<int:pk>/',
 	     views.ArticleDetailView.as_view(), name='article-detail'),
 	path('test_Form_That_Represents_Full_Table/', views.ArticleListView.as_view(), name='article-list'),

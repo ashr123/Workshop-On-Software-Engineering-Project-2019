@@ -1,12 +1,6 @@
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from django.views import generic
-from trading_system.forms import SearchForm
-from django.contrib.auth import logout
-from django.shortcuts import redirect
-from django.contrib.auth import authenticate, login
 
 
 # def logout_view(request):

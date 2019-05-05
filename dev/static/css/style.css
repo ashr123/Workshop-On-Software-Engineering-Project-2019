@@ -19,7 +19,7 @@
     background: #c1ceff;
 }
 
-.top_page div h1{
+.top_page div h1 {
     font-family: 'Gugi', cursive;
     font-size: 70px;
     margin-left: 30px;
@@ -55,7 +55,7 @@
     cursor: pointer;
 }
 
-.menu_bar_buttons:hover{
+.menu_bar_buttons:hover {
     background-color: RoyalBlue;
 }
 
@@ -88,7 +88,7 @@
     color: cornflowerblue;
 }
 
-#forget a:visited{
+#forget a:visited {
     font-family: Arial;
     color: cornflowerblue;
 }
@@ -138,7 +138,7 @@
 
 .vertical-menu a:hover {
     background-color: cornflowerblue;
-color: white;
+    color: white;
 }
 
 #member_page {
@@ -146,16 +146,16 @@ color: white;
 }
 
 .form_add_store {
-font-family: Arial;
-margin-left: 50px;
-margin-top: 10px;
-justify-content: space-around;
+    font-family: Arial;
+    margin-left: 50px;
+    margin-top: 10px;
+    justify-content: space-around;
 }
 
 .title {
-margin-left: 50px;
-margin-top: 30px;
-font-family: Arial;
+    margin-left: 50px;
+    margin-top: 30px;
+    font-family: Arial;
 }
 
 .login_error {

@@ -1,4 +1,4 @@
-{% extends 'layout.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
 	<h3 class="center-align red lighten-3">{{ title }}</h3>
@@ -12,14 +12,17 @@
 				<form action="/store/buy_item/{{ item.pk }}" method="GET">
 					<input type="submit" value="Buy">
 				</form>
+				<form action="/add_item_to_cart/{{ item.pk }}" method="GET">
+					<input type="submit" value="Add to cart">
+				</form>
 			{% empty %}
-				<li>No stores yet</li>
+				<li>No Such item</li>
 			{% endfor %}
 		</ul>
-{#		{% for item in results %}#}
-{#			<li class="collection-item"><a href="home/item_page/{{ item.id }} "> {{ item.name }}#}
-{#				: {{ item.description }}  </a></li>#}
-			{#			<p>lllllll</p>#}
-{#		{% endfor %}#}
+		{#		{% for item in results %}#}
+		{#			<li class="collection-item"><a href="home/item_page/{{ item.id }} "> {{ item.name }}#}
+		{#				: {{ item.description }}  </a></li>#}
+		{#			<p>lllllll</p>#}
+		{#		{% endfor %}#}
 	</ul>
 {% endblock %}

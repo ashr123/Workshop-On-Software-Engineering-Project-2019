@@ -1,8 +1,6 @@
-
 from django import forms
 
 from .models import Item
-
 
 
 class OpenStoreForm(forms.Form):
@@ -15,7 +13,6 @@ class ItemForm(forms.ModelForm):
 		model = Item
 		fields = ['name', 'description', 'category', 'price', 'quantity']
 
+
 class BuyForm(forms.Form):
-	amount =  forms.IntegerField()
-
-
+	amount = forms.IntegerField()

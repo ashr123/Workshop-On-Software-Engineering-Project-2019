@@ -9,21 +9,19 @@
 
 {% block content %}
 	<h2 class="title">Sign up</h2>
-	<table class="form_signup">
-		<tr>
-			<form method="post">
+	<form method="post">
+		<table class="form_signup">
+			<tr>
 				<td>
 					{% csrf_token %}
 					{{ form.as_p }}
 				</td>
 				<td>
 					<div id="sign_button">
-						<button class="buttons" type="submit">Sign up</button>
+						<button class="buttons" id="sign_up" type="submit">Sign up</button>
 					</div>
 				</td>
-			</form>
-
-		</tr>
-	</table>
-
+			</tr>
+		</table>
+	</form>
 {% endblock %}
