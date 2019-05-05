@@ -2,9 +2,10 @@ from django.shortcuts import render, redirect, render_to_response
 
 # from external_systems.spellChecker import checker
 from django.urls import reverse
-
 from trading_system.forms import SearchForm
 from store.models import Store, Item
+from django.views.generic.list import ListView
+from store.models import Item
 from django.http import HttpResponse
 
 
@@ -33,20 +34,6 @@ def login_redirect(request):
 
 def register(request):
 	return render(request, 'trading_system/register.html')
-
-
-def search(request):
-	text = SearchForm(request.GET)
-	if text.is_valid():
-		# spell checker
-		# correct_word = checker.Spellchecker(text)
-		# items = Item.objects.filter(name=correct_word)
-
-		print('\n\n', text.cleaned_data.get('search'))
-		items = Item.objects.filter(name__contains=text.cleaned_data.get('search'))
-		context = {'title': 'items: ', 'results': items}
-	return render(request, 'search_results.html', context)
-
 
 def item(request, id):
 	item = Item.objects.get(name=id)
@@ -93,3 +80,21 @@ def show_cart(request):
 
 def home_button(request):
 	return redirect('/login_redirect')
+
+class SearchListView(ListView):
+	model = Item
+	template_name = 'search_results.html'
+
+	def get_queryset(self):
+		return search(self.request)
+
+##ELHANANA - note that search returns the filtered items list
+def search(request):
+	text = SearchForm(request.GET)
+	if text.is_valid():
+		# spell checker
+		# correct_word = checker.Spellchecker(text)
+		# items = Item.objects.filter(name=correct_word)
+		print('\n\n', text.cleaned_data.get('search'))
+		return Item.objects.filter(name__contains=text.cleaned_data.get('search'))
+
