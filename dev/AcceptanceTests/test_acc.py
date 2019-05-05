@@ -23,7 +23,7 @@ class TestClass(object):
         self._item_2 = {'name': "fur conditioner", 'price': 12, 'store_name': self._store_1['name']}
         self._item_3 = {'name': "fur mask", 'price': 40, 'store_name': self._store_1['name']}
         self._serviceFacade.login(id1, "noa", "098765")
-        self._serviceFacade.addStore(id1, self._store_1['name'], "Everything you need for your dog")
+        self._serviceFacade.addStore(id1, self._store_1['name'], "Everything you need for your dog", [])
         self._item_1['id_DEPRECATED'] = self._serviceFacade.addItemToStore(id1, self._store_1['name'],
                                                                            self._item_1['name'],
                                                                            "Pets",
@@ -470,7 +470,7 @@ class TestClass(object):
     # 3.2 add store 1
     def test_addStore1(self):
         sessionId = self.set_up1()
-        assert "OK" == self._serviceFacade.addStore(sessionId, "Cats World", "Everything you need for your cat")
+        assert "OK" == self._serviceFacade.addStore(sessionId, "Cats World", "Everything you need for your cat", [])
         self._serviceFacade.clear()
 
     # 3.2 add store 2
@@ -478,20 +478,27 @@ class TestClass(object):
         self.set_up()
         sessionId = self._serviceFacade.initiateSession()
         assert "Guset has no permission to open a store" == self._serviceFacade.addStore(sessionId, "Cats World",
-                                                                                         "Everything you need for your cat")
+                                                                                         "Everything you need for your cat", [])
         self._serviceFacade.clear()
 
     # 3.2 add store 3
     def test_addStore3(self):
         sessionId = self.set_up1()
         assert 'store Dogs World already exists' == self._serviceFacade.addStore(sessionId, "Dogs World",
-                                                                                 "Everything you need for your cat")
+                                                                                 "Everything you need for your cat", [])
         self._serviceFacade.clear()
 
     # 3.2 add store 4
     def test_addStore4(self):
         sessionId = self.set_up1()
-        assert "description is too short" == self._serviceFacade.addStore(sessionId, "Cats World", "e")
+        assert "description is too short" == self._serviceFacade.addStore(sessionId, "Cats World", "e", [])
+        self._serviceFacade.clear()
+
+    # 3.2 add store 5// check bad rules
+    @pytest.mark.skip(reason="no way of currently testing this, there is no support for rules yet")
+    def test_addStore5(self):
+        sessionId = self.set_up1()
+        assert "description is too short" == self._serviceFacade.addStore(sessionId, "Cats World", "Everything you need for your cat", [])
         self._serviceFacade.clear()
 
     # 4.1.1 add item to store 1
@@ -891,7 +898,7 @@ class TestClass(object):
         self._item_2 = {'name': "fur conditioner", 'price': 12, 'store_name': self._store_1['name']}
         self._item_3 = {'name': "fur mask", 'price': 40, 'store_name': self._store_1['name']}
         self._serviceFacade.login(sessionid, "noa", "098765")
-        self._serviceFacade.addStore(sessionid, self._store_1['name'], "Everything you need for your dog")
+        self._serviceFacade.addStore(sessionid, self._store_1['name'], "Everything you need for your dog", [])
         self._item_1['id_DEPRECATED'] = self._serviceFacade.addItemToStore(sessionid, self._store_1['name'],
                                                                            self._item_1['name'],
                                                                            "Pets",

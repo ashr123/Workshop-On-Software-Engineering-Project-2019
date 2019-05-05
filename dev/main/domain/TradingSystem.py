@@ -82,7 +82,7 @@ class TradingSystem(object):
 
     @staticmethod
     def open_store(session_id: int, store_name: str, desc: str,
-                   permissions_list: List[Permission.Permissions]) -> bool:  # TODO take care of permissions_list
+                   rules) -> bool:
         if store_name in map(lambda s: s.name, TradingSystem._stores):
             raise OpenStoreExeption("store {} already exists".format(store_name))
         user: Optional[Member] = TradingSystem.get_user_if_member(session_id)
@@ -90,9 +90,9 @@ class TradingSystem(object):
             raise OpenStoreExeption(message="you are not a member!")
         if len(desc) < 20:
             raise OpenStoreExeption(message="description is too short")
-        store: Store = Store(name=store_name, creator=user, description=desc)
+        store: Store = Store(name=store_name, creator=user, description=desc, rules=rules)
         TradingSystem._stores.append(store)
-        user.add_managment_state(is_owner=True, permissions_list=permissions_list, store=store, nominator=None)
+        user.add_managment_state(is_owner=True, permissions_list=[], store=store, nominator=None)
         return True
 
     @staticmethod

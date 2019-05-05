@@ -8,7 +8,7 @@ from .TradingSystemException import ItemNotAvailableInStoreException
 
 
 class Store(object):
-    def __init__(self, name: str, creator, description: str):
+    def __init__(self, name: str, creator, description: str, rules):
         self._items: List[Item] = []
         self._resereved_items = {}
         self._name: str = name
@@ -18,6 +18,7 @@ class Store(object):
         self._managers = [creator]
         self._desc: str = description
         self._rank: int = 5
+        self._rules = rules
 
     @property
     def name(self) -> str:

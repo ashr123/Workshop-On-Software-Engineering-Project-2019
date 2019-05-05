@@ -164,12 +164,14 @@ class DomainFacade(object):
             return e.msg
 
     @staticmethod
-    def add_store(session_id: int, name: str, desc: str) -> str:
+    def add_store(session_id: int, name: str, desc: str, rules) -> str:
         try:
             member: Member = TradingSystem.get_user_if_member(session_id)
             if member is None:
                 raise GuestCannotOpenStoreException("Guset has no permission to open a store")
-            if member.open_store(session_id=session_id, store_name=name, desc=desc):
+            if DomainFacade._consistency_handler.is_valid(rules) is False:
+                raise AnomalyException("bundle of rules is not valid")
+            if member.open_store(session_id=session_id, store_name=name, desc=desc, rules=rules):
                 return "OK"
         except UserAlreadyHasStoreException as e:
             return e.msg

@@ -4,7 +4,7 @@ class ConsistencySys(object):
     _up = True
 
     @staticmethod
-    def is_valid():
+    def is_valid(rules):
         return True
 
     @staticmethod

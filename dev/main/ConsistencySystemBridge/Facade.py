@@ -6,8 +6,8 @@ class ConsistencyFacade(object):
     def __init__(self):
         self._sys = ConsistencySys()
 
-    def is_valid(self):
-        return self._sys.is_valid()
+    def is_valid(self, rules):
+        return self._sys.is_valid(rules)
 
     def connect(self):
         if not self._sys.connect():
