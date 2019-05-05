@@ -143,9 +143,9 @@ class DomainFacade(object):
         return "OK"
 
     @staticmethod
-    def buy_single_item(sessionId: int, store_name: str, item_name: str):
+    def buy_single_item(sessionId: int, store_name: str, item_name: str, amount: int):
         try:
-            if TradingSystem.reserve_item_from_store(sessionId, store_name, item_name):
+            if TradingSystem.reserve_item_from_store(sessionId, store_name, item_name ,amount):
                 trans_id = TradingSystem.createTransaction(sessionId, store_name)
                 TradingSystem.add_item_to_trans(trans_id, item_name)
                 return trans_id
@@ -287,10 +287,10 @@ class DomainFacade(object):
     def setup(master_user, password):
         logev.info("Starting system set up")
         try:
-            TradingSystem.register_master_member(master_user, password)
             DomainFacade._money_collection_handler.connect()
             DomainFacade._supply_handler.connect()
             DomainFacade. _consistency_handler.connect()
+            TradingSystem.register_master_member(master_user, password)
         except TradingSystemException as e:
             loger.error("Registration of system manager failed!")
             return e.msg
