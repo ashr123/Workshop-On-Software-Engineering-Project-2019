@@ -15,7 +15,8 @@ from .forms import ItemForm, BuyForm, AddManagerForm
 from .models import Item
 from .models import Store
 
-
+@permission_required_or_403('ADD_ITEM',
+                            (Store, 'id', 'pk'))
 @login_required
 def add_item(request, pk):
 	if request.method == 'POST':
@@ -66,8 +67,8 @@ def submit_open_store(request):
 	open_store_form = forms.OpenStoreForm(request.GET)
 	if open_store_form.is_valid():
 		store = Store.objects.create(name=open_store_form.cleaned_data.get('name'),
-		                             owner_id=int(request.session._session['_auth_user_id']),
 		                             description=open_store_form.cleaned_data.get('description'))
+		store.owners.add(request.user)
 		store.save()
 		_user =request.user
 		messages.success(request, 'Your Store was added successfully!')  # <-
@@ -109,7 +110,9 @@ class StoreListView(ListView):
 		return context
 
 	def get_queryset(self):
-		return Store.objects.filter(owner_id=self.request.user.id)
+		# return Store.objects.filter(owner_id=self.request.user.id)
+		cur_user_id = self.request.user.id
+		return Store.objects.filter(owners__id__in=[cur_user_id])
 
 
 class ItemListView(ListView):
@@ -228,6 +231,7 @@ def add_manager_to_store(request, pk):
 			if (is_owner):
 				my_group = Group.objects.get(name="store_owners")
 				user_.groups.add(my_group)
+				store_.owners.add(user_)
 			messages.success(request, 'add manager :  ' + user_name)
 			return redirect('/store/home_page_owner/')
 		messages.warning(request, 'error in :  ', form.errors)
