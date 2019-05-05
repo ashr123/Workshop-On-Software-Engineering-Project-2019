@@ -1,34 +1,30 @@
-import uuid
-from django.db import models
-from django.contrib.auth.models import User
-from enum import Enum
-
 from django.urls import reverse
 
+from django.contrib.auth.models import User
+from django.db import models
 
-class CategoryChoice(Enum):  # A subclass of Enum
-	AL = 'ALL'
-	HO = 'HOME'
-	WO = 'WORK'
+CategoryChoice = (
+	("1", "ALL"),
+	("2", "HOME"),
+	("3", "WORK"),
+)
+
 
 
 # Create your models here.
 class Item(models.Model):
-	itemId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+	# itemId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	price = models.DecimalField(max_digits=6, decimal_places=2, default=0)
 	name = models.CharField(max_length=30, default=None)
 	description = models.CharField(max_length=64, default=None)
-	category = models.CharField(
-		max_length=5,
-		choices=[(tag, tag.value) for tag in CategoryChoice], default='ALL')
-
+	category = models.CharField(max_length=30,choices=CategoryChoice,
+	                            default=1)
 	quantity = models.PositiveIntegerField(default=1)
-	# store_id = models.IntegerField(default=404)
-	def get_absolute_url(self):
-		return reverse('item-detail', kwargs={'pk': self.pk})
 
+	def get_absolute_url(self):
+		return reverse('item-detail',kwargs={'id': self.pk})
 	def __str__(self):
-		return str(self.item) + ": $" + str(self.price)
+		return self.name
 
 
 
@@ -36,3 +32,4 @@ class Store(models.Model):
 	name = models.CharField(max_length=30)
 	owner = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
 	items = models.ManyToManyField(Item)
+	description = models.CharField(max_length=64)

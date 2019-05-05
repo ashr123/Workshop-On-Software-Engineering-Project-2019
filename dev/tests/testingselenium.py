@@ -1,17 +1,11 @@
 from django.contrib.auth.models import User
 from selenium import webdriver
 from django.contrib.auth.hashers import make_password
-# from selenium.webdriver.common.keys import Keys
 
 from django.test import LiveServerTestCase
 
 
-# class TestCase(DTestCase):
-# 	multi_db = True
-
-
 class UnitTesting(LiveServerTestCase):
-
 	def setUp(self):
 		self.driver = webdriver.Chrome()
 

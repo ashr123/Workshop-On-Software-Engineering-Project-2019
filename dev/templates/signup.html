@@ -1,12 +1,29 @@
-{% extends 'layout.html' %}
+{% extends "base.html" %}
+{% load static %}
 
-{% block title %}Sign Up{% endblock %}
+{% block menu_bar_right %}
+	<span id="search_input">
+		Search: <input type="text"><br>
+	</span>
+{% endblock %}
 
 {% block content %}
-	<h4>Sign up</h4>
-	<form method="post">
-		{% csrf_token %}
-		{{ form.as_p }}
-		<button type="submit">Sign up</button>
-	</form>
+	<h2 class="title">Sign up</h2>
+	<table class="form_signup">
+		<tr>
+			<form method="post">
+				<td>
+					{% csrf_token %}
+					{{ form.as_p }}
+				</td>
+				<td>
+					<div id="sign_button">
+						<button class="buttons" type="submit">Sign up</button>
+					</div>
+				</td>
+			</form>
+
+		</tr>
+	</table>
+
 {% endblock %}
