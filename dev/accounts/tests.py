@@ -1,37 +1,13 @@
 # Create your tests here.
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium import webdriver
+
+from dev.mainTest import MyUnitTesting
 
 
-class UnitTesting(StaticLiveServerTestCase):
-	default_password = "q2w44r32c1"
-	default_user = "qqq"
-	driver = webdriver.Chrome()
-
-	@classmethod
-	def setUpClass(cls):
-		super().setUpClass()
-		User.objects.create(username=cls.default_user, password=make_password(cls.default_password))
-
-
-	@classmethod
-	def tearDownClass(cls):
-		cls.driver.close()
-		super().tearDownClass()
-
-	def login(self, user, password):
-		self.driver.get(self.live_server_url + "/accounts/login/")
-		self.driver.find_element_by_name("username").send_keys(user)
-		element = self.driver.find_element_by_name("password")
-		element.send_keys(password)
-		element.submit()
-
+class AccountUnitTesting(MyUnitTesting):
 	def test_website_uploading(self):
 		self.driver.get(self.live_server_url)
 		self.assertIn("WeBuy", self.driver.title)
-
 
 	def test_signup(self):
 		password = "q2w44r32c1"
