@@ -6,7 +6,7 @@ from django.urls import reverse
 from trading_system.forms import SearchForm
 from store.models import Store, Item
 from django.http import HttpResponse
-
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
