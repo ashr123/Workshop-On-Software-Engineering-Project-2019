@@ -17,6 +17,10 @@
 			<form action="/store/add_item_to_store/{{ store.pk }}" method="GET">
 				<input type="submit" value="Add item">
 			</form>
+
+			<form action="/store/add_manager_to_store/{{ store.pk }}" method="GET">
+				<input type="submit" value="Add manager">
+			</form>
 		{% empty %}
 			<li>No stores yet</li>
 		{% endfor %}

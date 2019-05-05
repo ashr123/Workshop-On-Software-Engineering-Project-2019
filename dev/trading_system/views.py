@@ -5,7 +5,7 @@ from django.views.generic.list import ListView
 
 from store.models import Item
 from store.models import Store
-from trading_system.forms import SearchForm
+from trading_system.forms import SearchForm, SomeForm
 # Create your views here.
 from trading_system.models import Cart
 
@@ -155,3 +155,17 @@ class CartsListView(ListView):
 
 	def get_queryset(self):
 		return Cart.objects.filter(customer_id=self.request.user.pk)
+
+
+def approve_event(request):
+	if request.method == 'POST':
+		form = SomeForm(request.POST)
+		if form.is_valid():
+			picked = form.cleaned_data.get('picked')
+			print('\n', picked)
+			render(request, 'check_box_items.html', {'form': form})
+		render(request, 'check_box_items.html', {'form': form})
+	# do something with your results
+	else:
+		form = SomeForm
+	return render(request, 'check_box_items.html', {'form': form})

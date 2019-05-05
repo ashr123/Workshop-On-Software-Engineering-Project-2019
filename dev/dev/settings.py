@@ -14,6 +14,11 @@ import os
 
 from django.contrib.messages import constants as messages
 
+AUTHENTICATION_BACKENDS = (
+	'django.contrib.auth.backends.ModelBackend',  # this is default
+	'guardian.backends.ObjectPermissionBackend',
+)
+
 MESSAGE_TAGS = {
 	messages.DEBUG: 'alert-info',
 	messages.INFO: 'alert-info',
@@ -51,6 +56,7 @@ INSTALLED_APPS = [
 	'accounts.apps.AccountsConfig',
 	'static',
 	'templates',
+	'guardian',
 
 ]
 
@@ -100,7 +106,7 @@ DATABASES = {
 		'ENGINE': 'django.db.backends.mysql',
 		'NAME': 'tradingsystem',
 		'USER': 'root',
-		'default_password': '',
+		'password': '',
 		'HOST': 'localhost',
 		'PORT': ''
 	}
@@ -146,7 +152,7 @@ LOGOUT_REDIRECT_URL = '/'
 STATIC_URL = '/static/'
 # STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-STATICFILES_DIRS = ["static"]
+STATICFILES_DIRS = ["static", ]
 
 MEDIA_URL = '/images/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "static/images")
