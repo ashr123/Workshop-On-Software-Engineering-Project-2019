@@ -50,8 +50,8 @@ class ServiceFacade(object):
     def buySingleItem(self, sessionId: int, store_name: str, item_name: str, amount: int) -> int:
         return DomainFacade.buy_single_item(sessionId=sessionId, store_name=store_name, item_name=item_name, amount=amount)
 
-    def buyManyItems(self, sessionId, store_name, items):
-        return DomainFacade.buy_many_items(sessionId, store_name, items)
+    def buyManyItems(self, sessionId, list_of_carts_to_buy):
+        return DomainFacade.buy_many_items(sessionId, list_of_carts_to_buy)
 
     def pay(self, sessionId, trans_id, creditcard, date, snum):
         return DomainFacade.pay(sessionId, trans_id, creditcard, date, snum)
@@ -110,3 +110,6 @@ class ServiceFacade(object):
 
     def make_supply_fail(self):
         return DomainFacade.make_supply_fail()
+
+    def get_item_amount(self, store_name, item_name):
+        return DomainFacade.get_item_amount(store_name, item_name)

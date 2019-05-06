@@ -141,3 +141,13 @@ class Store(object):
     def apply_trans(self, session_id):
         trans_reserved = list(filter(lambda dic: dic["session_id"] == session_id, self._resereved_items))[0]["reserved"]
         trans_reserved = []
+
+    def restock(self, item_name, amount):
+        self.get_item_by_name(item_name).inc_quantity(amount)
+
+    def get_discount_price(self, item_name, amount):
+        item = self.get_item_by_name(item_name)
+        for rule in self.rules:
+            if rule.apply_rule(item, amount):
+                return rule.apply_rule(item, amount)
+            return item.price*amount

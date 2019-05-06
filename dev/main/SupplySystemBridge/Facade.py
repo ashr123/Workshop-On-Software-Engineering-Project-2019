@@ -6,12 +6,12 @@ class SupplyFacade(object):
     def __init__(self):
         self._sys = SupplySys()
 
-    def supply(self, trans_id, address):
+    def supply(self, trans_id, package_details,  address):
         if not self._sys.connect():
             raise SupplyException("supply system is down")
         if trans_id is None or address is None:
             raise SupplyException("missing details to complete supply")
-        return self._sys.supply(trans_id, address)
+        return self._sys.supply(trans_id, package_details, address)
 
     def connect(self):
         if not self._sys.connect():

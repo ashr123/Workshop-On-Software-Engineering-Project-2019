@@ -9,6 +9,8 @@ class Transaction(object):
         self._items = []
         self._is_supply_approved = False
         self._is_payment_approved = False
+        self._num_of_items = 0
+        self._is_purchase = False
 
     @property
     def id(self):
@@ -27,6 +29,10 @@ class Transaction(object):
         return self._is_payment_approved
 
     @property
+    def num_of_items(self):
+        return self._num_of_items
+
+    @property
     def items(self):
         return self._items
 
@@ -35,6 +41,7 @@ class Transaction(object):
         return self._store_name
 
     def add_item_and_amount(self, item_name, amount):
+        self._num_of_items += amount
         return self._items.append({"item_name": item_name, "amount": amount})
 
     def pay_succ(self):
@@ -42,3 +49,5 @@ class Transaction(object):
 
     def supply_succ(self):
         self._is_supply_approved = True
+
+

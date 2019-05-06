@@ -4,7 +4,7 @@ class SupplySys(object):
 
     _up = True
     @staticmethod
-    def supply(trans_id, address):
+    def supply(trans_id, package_details, address):
         return True
 
     @staticmethod

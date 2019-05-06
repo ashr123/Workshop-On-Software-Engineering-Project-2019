@@ -145,22 +145,24 @@ class DomainFacade(object):
     @staticmethod
     def buy_single_item(sessionId: int, store_name: str, item_name: str, amount: int):
         try:
-            if TradingSystem.reserve_item_from_store(sessionId, store_name, item_name ,amount):
+            if TradingSystem.reserve_item_from_store(sessionId, store_name, item_name, amount):
                 trans_id = TradingSystem.createTransaction(sessionId, store_name)
                 TradingSystem.add_item_to_trans(trans_id, item_name, amount)
                 return trans_id
-        except StoreExeption as e:
+        except TradingSystemException as e:
             return e.msg
 
     @staticmethod
-    def buy_many_items(sessionId, store_name, items):
+    def buy_many_items(sessionId, list_of_carts_to_buy):
         try:
-            trans_id = TradingSystem.createTransaction(sessionId, store_name)
-            for item in items:
-                if TradingSystem.reserve_item_from_store(sessionId, store_name, item):
-                    TradingSystem.add_item_to_trans(trans_id, item)
-                return trans_id
-        except StoreExeption as e:
+            purchase = TradingSystem.createPurchase(sessionId)
+            for cart in list_of_carts_to_buy:
+                store = cart["store"]
+                for item in cart["list_of_items"]:
+                    TradingSystem.reserve_item_from_store(sessionId, store, item, TradingSystem.get_amount(sessionId, store, item))
+                    TradingSystem.add_item_to_purch(purchase, store, item, TradingSystem.get_amount(sessionId, store, item))
+            return purchase
+        except TradingSystemException as e:
             return e.msg
 
     @staticmethod
@@ -329,7 +331,7 @@ class DomainFacade(object):
         try:
             trans = TradingSystem.get_trans(trans_id)
             TradingSystem.check_order(trans, address)
-            if DomainFacade._supply_handler.supply(trans_id, address):
+            if DomainFacade._supply_handler.supply(trans_id, trans.num_of_items, address):
                 trans.supply_succ()
                 return "OK"
         except TradingSystemException as e:
@@ -373,3 +375,7 @@ class DomainFacade(object):
     @staticmethod
     def make_supply_fail():
         return DomainFacade._supply_handler.make_sys_fail()
+
+    @staticmethod
+    def get_item_amount(store_name, item_name):
+        return TradingSystem.get_item( item_name, store_name).quantity

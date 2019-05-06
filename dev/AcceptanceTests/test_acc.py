@@ -379,6 +379,7 @@ class TestClass(object):
     def test_buySingleItem1_only_pay_step(self):
         sessionId, trans_id = self.set_up4()
         assert self._serviceFacade.pay(sessionId, trans_id, "1234123412341234", "09/20", "777") == "OK"
+        assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 119
         self._serviceFacade.clear()
 
     # 2.8.1 buy single item 2
@@ -397,12 +398,14 @@ class TestClass(object):
         sessionId = self._serviceFacade.initiateSession()
         assert "Cannot decrease the amount of fur shampoo in 400, there are only 120" ==  self._serviceFacade.buySingleItem(sessionId, store_name=self._item_1['store_name'],
                                                      item_name=self._item_1['name'], amount=400)
+        assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 120
         self._serviceFacade.clear()
 
     # 2.8.1 buy single item 4
     def test_buySingleItem4(self):
         sessionId, trans_id = self.set_up3()
         assert self._serviceFacade.supply(trans_id, None) == "missing details to complete supply"
+        assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 120
         self._serviceFacade.clear()
 
     # 2.8.1 buy single item 5
@@ -410,6 +413,7 @@ class TestClass(object):
         sessionId, trans_id = self.set_up4()
         assert self._serviceFacade.pay(sessionId, trans_id, "1234123412341234", "09/18",
                                        None) == "missing details to complete payment"
+        assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 120
         self._serviceFacade.clear()
 
 
@@ -424,6 +428,7 @@ class TestClass(object):
         self._serviceFacade.make_collection_fail()
         assert self._serviceFacade.pay(sessionId, trans_id, "1234123412341234", "09/18",
                                        None) == "collection system is down"
+        assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 120
         self._serviceFacade.make_collection_pass()
         self._serviceFacade.clear()
 
@@ -432,6 +437,7 @@ class TestClass(object):
         sessionId, trans_id = self.set_up3()
         self._serviceFacade.make_supply_fail()
         assert self._serviceFacade.supply(trans_id, "Hakishon 12, Tel Aviv, 7514050, Israel") == "supply system is down"
+        assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 120
         self._serviceFacade.make_supply_pass()
         self._serviceFacade.clear()
 
@@ -440,6 +446,7 @@ class TestClass(object):
         sessionId, trans_id = self.set_up3()
         assert self._serviceFacade.pay(sessionId, trans_id, "1234123412341234", "09/18",
                                        "777") == "transaction not approved"
+        assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 120
         self._serviceFacade.clear()
 
     # 2.8.1 buy single item 10
@@ -447,16 +454,17 @@ class TestClass(object):
     def test_buySingleItem10(self):
         sessionId, trans_id = self.set_up3()
         assert self._serviceFacade.supply(trans_id, "Hakishon 12, Tel Aviv, 7514050, UK") == ""
+        assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 120
         self._serviceFacade.clear()
 
-    # # 2.8.2 buy many items 1
-    # def test_buyManyItems1_only_buy_test(self):
-    #     sessionId = self.set_up2()
-    #     trans_id = self._serviceFacade.buyManyItems(sessionId, self._item_1['store_name'], [self._item_1['name'],
-    #                                                                                         self._item_2['name']])
-    #     assert self._serviceFacade.watch_trans(trans_id) == "price: {}".format(self._item_1['price'])
-    #     self._serviceFacade.clear()
-    #
+    # 2.8.2 buy many items 1
+    def test_buyManyItems1_only_buy_test(self):
+        sessionId = self.set_up2()
+        tosend = [{"store": self._item_1['store_name'], "list_of_items": [self._item_1['name'], self._item_2['name']]}]
+        trans_id = self._serviceFacade.buyManyItems(sessionId, tosend)
+        assert self._serviceFacade.watch_trans(trans_id) == "price: {}".format(self._item_1['price'])
+        self._serviceFacade.clear()
+
     # # 2.8.2 buy many items 1
     # def test_buyManyItems1_only_pay_test(self):
     #     sessionId, trans_id = self.set_up5()

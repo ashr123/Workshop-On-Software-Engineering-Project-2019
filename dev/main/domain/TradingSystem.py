@@ -7,6 +7,7 @@ from main.security import Security
 from .Guest import Guest
 from .Member import Member
 from .Store import Store
+from .Purchase import Purchase
 from .TradingSystemException import *
 
 
@@ -198,6 +199,16 @@ class TradingSystem(object):
         TradingSystem._transactions.append(trans)
         return trans.id
 
+    def createPurchase(sessionId) -> int:
+        purch = Purchase(TradingSystem.generate_trans_id(), sessionId)
+        TradingSystem._transactions.append(purch)
+        return purch.id
+
+    def get_amount(sessionId, store, item_name) -> int:
+        user = TradingSystem.get_user(sessionId)
+        item = TradingSystem.get_item(item_name, store)
+        return user.check_quantity(item, store)
+
     @staticmethod
     def watch_trans(trans_id):
         return "price: {}".format(TradingSystem.calculate_price(TradingSystem.get_trans(trans_id=trans_id)))
@@ -209,13 +220,20 @@ class TradingSystem(object):
 
     @staticmethod
     def calculate_price(trans):
-        store = TradingSystem.get_store(trans.store_name)
-        return reduce(lambda acc, curr: acc + store.get_item_by_name(curr["item_name"]).price, trans.items, 0)
+        if not trans._is_purchase:
+            store = TradingSystem.get_store(trans.store_name)
+            return reduce(lambda acc, curr: acc + store.get_item_by_name(curr["item_name"]).price*curr["amount"], trans.items, 0)
+        total_price = 0
+        for row in trans.items:
+            store = TradingSystem.get_store(row["store"])
+            total_price += reduce(lambda acc, curr: acc + store.get_discount_price(curr["item_name"], curr["amount"]), row["items"], 0)
+        return total_price
+
 
     @staticmethod
     def reserve_item_from_store(sessionId: int, store_name: str, item_name: str, amount: int):
         store: Store.Store = TradingSystem.get_store(store_name=store_name)
-        if store == None:
+        if store is None:
             raise StoreNotExistException('{} not exist'.format(store_name))
         store.reserve_item(session_id=sessionId, item_name=item_name, amount=amount)
         return True
@@ -225,8 +243,13 @@ class TradingSystem(object):
         trans = TradingSystem.get_trans(trans_id)
         if not trans.is_payment_approved or not trans.is_supply_approved:
             raise TradingSystemException("transaction not approved")
-        store: Store = TradingSystem.get_store(trans.store_name)
-        store.apply_trans(session_id)
+        if not trans._is_purchase:
+            store: Store = TradingSystem.get_store(trans.store_name)
+            store.apply_trans(session_id)
+            return
+        for row in trans.items:
+            store = TradingSystem.get_store(row["store"])
+            store.apply_trans(session_id)
 
     @staticmethod
     def add_item_to_trans(trans_id, item_name, amount):
@@ -234,11 +257,28 @@ class TradingSystem(object):
         trans.add_item_and_amount(item_name, amount)
 
     @staticmethod
+    def add_item_to_purch(purchase, store, item, amount):
+        purchase = TradingSystem.get_trans(trans_id=purchase)
+        purchase.add_item_and_amount(store, item, amount)
+
+    @staticmethod
     def remove_trans(trans_id):
-        TradingSystem._transactions.remove(TradingSystem.get_trans(trans_id))
+        trans = TradingSystem.get_trans(trans_id)
+        TradingSystem._transactions.remove(trans)
+        if not trans._is_purchase:
+            store = TradingSystem.get_store(trans.store_name)
+            for row in trans.items:
+                store.restock(row["item_name"], row["amount"])
+            return
+        for row in trans.items:
+            store = TradingSystem.get_store(row["store"])
+            for item in row["items"]:
+                store.restock(item["item_name"], item["amount"])
+
 
     @staticmethod
     def check_order(trans, address):
-        rules = TradingSystem.get_store(trans.store_name).rules
-        items = trans.items
-        return reduce(lambda acc, rule: acc and rule.check_validity(items, address), rules, True)
+        if not trans._is_purchase:
+            rules = TradingSystem.get_store(trans.store_name).rules
+            items = trans.items
+            return reduce(lambda acc, rule: acc and rule.check_validity(items, address), rules, True)
