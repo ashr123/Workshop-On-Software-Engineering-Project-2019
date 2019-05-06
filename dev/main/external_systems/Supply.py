@@ -11,6 +11,7 @@ class SupplySys(object):
     def connect():
         return SupplySys._up
 
+
     #for test
     @staticmethod
     def make_sys_fail():

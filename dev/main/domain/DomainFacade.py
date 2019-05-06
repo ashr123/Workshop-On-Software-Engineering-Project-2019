@@ -147,7 +147,7 @@ class DomainFacade(object):
         try:
             if TradingSystem.reserve_item_from_store(sessionId, store_name, item_name ,amount):
                 trans_id = TradingSystem.createTransaction(sessionId, store_name)
-                TradingSystem.add_item_to_trans(trans_id, item_name)
+                TradingSystem.add_item_to_trans(trans_id, item_name, amount)
                 return trans_id
         except StoreExeption as e:
             return e.msg
@@ -325,10 +325,14 @@ class DomainFacade(object):
         return TradingSystem.watch_trans(trans_id)
 
     @staticmethod
-    def supply(sessionId, trans_id, address):
-        if DomainFacade._supply_handler.supply(trans_id, address):
-            TradingSystem.apply_trans(sessionId, trans_id)
-            return "OK"
+    def supply(trans_id, address):
+        try:
+            if DomainFacade._supply_handler.supply(trans_id, address):
+                TradingSystem.get_trans(trans_id).supply_succ()
+                return "OK"
+        except TradingSystemException as e:
+            return e.msg
+
 
     @staticmethod
     def pay(trans_id, creditcard, date, snum):

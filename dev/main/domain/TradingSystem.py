@@ -223,14 +223,14 @@ class TradingSystem(object):
     @staticmethod
     def calculate_price(trans):
         store = TradingSystem.get_store(trans.store_name)
-        return reduce(lambda acc, curr: acc + store.get_item_by_name(curr).price, trans.items, 0)
+        return reduce(lambda acc, curr: acc + store.get_item_by_name(curr["item_name"]).price, trans.items, 0)
 
     @staticmethod
-    def reserve_item_from_store(sessionId: int, store_name: str, item_name: str):
+    def reserve_item_from_store(sessionId: int, store_name: str, item_name: str, amount: int):
         store: Store.Store = TradingSystem.get_store(store_name=store_name)
         if store == None:
             raise StoreNotExistException('{} not exist'.format(store_name))
-        store.reserve_item(session_id=sessionId, item_name=item_name)
+        store.reserve_item(session_id=sessionId, item_name=item_name, amount=amount)
         return True
 
     @staticmethod
@@ -240,6 +240,6 @@ class TradingSystem(object):
         store.apply_trans(session_id, trans.items)
 
     @staticmethod
-    def add_item_to_trans(trans_id, item_name):
+    def add_item_to_trans(trans_id, item_name, amount):
         trans = TradingSystem.get_trans(trans_id=trans_id)
-        trans.add_item(item_name)
+        trans.add_item_and_amount(item_name, amount)

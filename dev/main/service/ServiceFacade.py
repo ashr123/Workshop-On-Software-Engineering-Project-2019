@@ -89,8 +89,8 @@ class ServiceFacade(object):
     def watch_trans(self, trans_id):
         return DomainFacade.watch_trans(trans_id)
 
-    def supply(self, sessionId, trans_id, address):
-        return DomainFacade.supply(sessionId, trans_id, address)
+    def supply(self, trans_id, address):
+        return DomainFacade.supply(trans_id, address)
 
     #for tests
     def make_collection_pass(self):

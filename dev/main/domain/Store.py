@@ -10,7 +10,7 @@ from .TradingSystemException import ItemNotAvailableInStoreException
 class Store(object):
     def __init__(self, name: str, creator, description: str, rules):
         self._items: List[Item] = []
-        self._resereved_items = {}
+        self._resereved_items = []
         self._name: str = name
         self._creator = creator
         self._rules: List[Rule] = []
@@ -113,20 +113,25 @@ class Store(object):
         ans += list(filter(lambda i: fil_rankItem != None and i.rank >= fil_rankItem, self._items))
         return set(ans)
 
-    def reserve_item(self, session_id: int, item_name: str):
+    def reserve_item(self, session_id: int, item_name: str, amount: int):
         item = self.get_item_by_name(item_name=item_name)
-        if item == None:
+        if item is None:
             raise ItemNotAvailableInStoreException("{} not exist in {}".format(item_name, self.name))
-        self.get_item_by_name(item_name=item_name).dec_quantity(1)
-        if not session_id in self._resereved_items:
-            self._resereved_items[session_id] = {}
-        if not item_name in self._resereved_items[session_id]:
-            self._resereved_items[session_id][item_name] = 0
-        self._resereved_items[session_id][item_name] += 1
+        self.get_item_by_name(item_name=item_name).dec_quantity(amount)
+        user_dict = list(filter(lambda dic: dic["session_id"] == session_id, self._resereved_items))
+        if len(user_dict) == 0:
+            self._resereved_items.append({"session_id": session_id, "reserved": []})
+            user_dict = [self._resereved_items[-1]]
+        item_res = list(filter(lambda dic: dic["item_id"] == item, user_dict[0]["reserved"]))
+        if len(item_res) == 0:
+            item_res = user_dict[0]["reserved"]
+            item_res.append({"item_id": item.id, "amount": 0})
+            item_res = list(item_res)
+        item_res[0]["amount"] += amount
 
-    def add_reserved_item(self, item_name):
-        item = self.get_item_by_name(item_name=item_name)
-        self._resereved_items.append(Item(id=item.id, name=item.name, description=item.desc, ))
+    # def add_reserved_item(self, item_name, amount):
+    #     item = self.get_item_by_name(item_name=item_name)
+    #     self._resereved_items.append({"session_id":session_id, "item_id": item, "amount": amount})
 
     def apply_trans(self, session_id, items):
         trans_items = self._resereved_items[session_id]
