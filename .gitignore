@@ -35,27 +35,27 @@ Temporary Items
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff
-.idea/**/workspace.xml
-.idea/**/tasks.xml
-.idea/**/usage.statistics.xml
-.idea/**/dictionaries
-.idea/**/shelf
+dev/.idea/**/workspace.xml
+dev/.idea/**/tasks.xml
+dev/.idea/**/usage.statistics.xml
+dev/.idea/**/dictionaries
+dev/.idea/**/shelf
 
 # Generated files
-.idea/**/contentModel.xml
+dev/.idea/**/contentModel.xml
 
 # Sensitive or high-churn files
-.idea/**/dataSources/
-.idea/**/dataSources.ids
-.idea/**/dataSources.local.xml
-.idea/**/sqlDataSources.xml
-.idea/**/dynamic.xml
-.idea/**/uiDesigner.xml
-.idea/**/dbnavigator.xml
+dev/.idea/**/dataSources/
+dev/.idea/**/dataSources.ids
+dev/.idea/**/dataSources.local.xml
+dev/.idea/**/sqlDataSources.xml
+dev/.idea/**/dynamic.xml
+dev/.idea/**/uiDesigner.xml
+dev/.idea/**/dbnavigator.xml
 
 # Gradle
-.idea/**/gradle.xml
-.idea/**/libraries
+dev/.idea/**/gradle.xml
+dev/.idea/**/libraries
 
 # Gradle and Maven with auto-import
 # When using Gradle or Maven with auto-import, you should exclude module files,
@@ -69,7 +69,7 @@ Temporary Items
 cmake-build-*/
 
 # Mongo Explorer plugin
-.idea/**/mongoSettings.xml
+dev/.idea/**/mongoSettings.xml
 
 # File-based project format
 *.iws
@@ -93,10 +93,10 @@ crashlytics-build.properties
 fabric.properties
 
 # Editor-based Rest Client
-.idea/httpRequests
+dev/.idea/httpRequests
 
 # Android studio 3.1+ serialized cache file
-.idea/caches/build_file_checksums.ser
+dev/.idea/caches/build_file_checksums.ser
 
 ### PyCharm Patch ###
 # Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
@@ -107,7 +107,7 @@ fabric.properties
 # *.ipr
 
 # Sonarlint plugin
-.idea/sonarlint
+dev/.idea/sonarlint
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -208,14 +208,14 @@ celerybeat-schedule
 *.sage.py
 
 # Environments
-.env
-.venv
-env/
-venv/
-venv
+dev/.env
+dev/.venv
+dev/env/
+dev/venv/
+dev/venv
 ENV/
-env.bak/
-venv.bak/
+dev/env.bak/
+dev/venv.bak/
 
 # Spyder project settings
 .spyderproject
