@@ -54,7 +54,7 @@ class TestClass(object):
 
     def set_up4(self):
         sessionId, trans_id = self.set_up3()
-        self._serviceFacade.pay(sessionId, trans_id, "1234123412341234", "09/20", "777")
+        self._serviceFacade.supply(trans_id, "Hakishon 12, Tel Aviv, 7514050, Israel")
         return sessionId, trans_id
 
     # def set_up5(self):
@@ -369,43 +369,86 @@ class TestClass(object):
         assert self._serviceFacade.watch_trans(trans_id) == "price: {}".format(self._item_1['price'])
         self._serviceFacade.clear()
 
-    # # 2.8.1 buy singel item 1
-    # def test_buySingleItem1_only_pay_step(self):
-    #     sessionId, trans_id = self.set_up3()
-    #     assert self._serviceFacade.pay(sessionId, trans_id, "1234123412341234", "09/20", "777") == "OK"
-    #     self._serviceFacade.clear()
-
-    # 2.8.1 buy singel item 1
+    # 2.8.1/8 buy single item 1
     def test_buySingleItem1_only_supply_step(self):
-        #  sessionId, trans_id = self.set_up4()
         sessionId, trans_id = self.set_up3()
         assert self._serviceFacade.supply(trans_id, "Hakishon 12, Tel Aviv, 7514050, Israel") == "OK"
         self._serviceFacade.clear()
 
-    # # 2.8.1 buy singel item 2
-    # def test_buySingleItem2_only_buy_step(self):
-    #     self.set_up1()
-    #     item_that_not_exist_name = "TEST_item_that_not_exist"
-    #     sessionId = self._serviceFacade.initiateSession()
-    #     res = self._serviceFacade.buySingleItem(sessionId, store_name=self._item_1['store_name'],
-    #                                             item_name=item_that_not_exist_name)
-    #     assert res == "{} not exist in {}".format(item_that_not_exist_name, self._item_1['store_name'])
-    #     self._serviceFacade.clear()
-    #
-    # # 2.8.1 buy singel item 3
-    # @pytest.mark.skip(reason="no way of currently testing this")
-    # def test_buySingleItem3(self):
-    #     self.set_up1()
-    #     sessionId = self._serviceFacade.initiateSession()
-    #     price = self._serviceFacade.buySingleItem(sessionId, self._item2)
-    #     exist = False
-    #     if price > 0:
-    #         exist = True
-    #     assert True == exist
-    #     assert "Payment failed" == self._serviceFacade.pay(sessionId, "1234123412341234", "09/18", "777",
-    #                                                        "Hakishon 12, Tel Aviv")
-    #     self._serviceFacade.clear()
-    #
+    # 2.8.1/7 buy singel item 1
+    def test_buySingleItem1_only_pay_step(self):
+        sessionId, trans_id = self.set_up4()
+        assert self._serviceFacade.pay(sessionId, trans_id, "1234123412341234", "09/20", "777") == "OK"
+        self._serviceFacade.clear()
+
+    # 2.8.1 buy single item 2
+    def test_buySingleItem2_only_buy_step(self):
+        self.set_up1()
+        item_that_not_exist_name = "TEST_item_that_not_exist"
+        sessionId = self._serviceFacade.initiateSession()
+        res = self._serviceFacade.buySingleItem(sessionId, store_name=self._item_1['store_name'],
+                                                item_name=item_that_not_exist_name, amount=1)
+        assert res == "{} not exist in {}".format(item_that_not_exist_name, self._item_1['store_name'])
+        self._serviceFacade.clear()
+
+    # 2.8.1 buy single item 3
+    def test_buySingleItem3_only_buy_step(self):
+        self.set_up1()
+        sessionId = self._serviceFacade.initiateSession()
+        assert "Cannot decrease the amount of fur shampoo in 400, there are only 120" ==  self._serviceFacade.buySingleItem(sessionId, store_name=self._item_1['store_name'],
+                                                     item_name=self._item_1['name'], amount=400)
+        self._serviceFacade.clear()
+
+    # 2.8.1 buy single item 4
+    def test_buySingleItem4(self):
+        sessionId, trans_id = self.set_up3()
+        assert self._serviceFacade.supply(trans_id, None) == "missing details to complete supply"
+        self._serviceFacade.clear()
+
+    # 2.8.1 buy single item 5
+    def test_buySingleItem5(self):
+        sessionId, trans_id = self.set_up4()
+        assert self._serviceFacade.pay(sessionId, trans_id, "1234123412341234", "09/18",
+                                       None) == "missing details to complete payment"
+        self._serviceFacade.clear()
+
+
+    # 2.8.1 buy single item 6
+    @pytest.mark.skip(reason="no way of currently testing this, no rules yet")
+    def test_buySingleItem6(self):
+        pass
+
+    # 2.8.1 buy single item 7
+    def test_buySingleItem7(self):
+        sessionId, trans_id = self.set_up4()
+        self._serviceFacade.make_collection_fail()
+        assert self._serviceFacade.pay(sessionId, trans_id, "1234123412341234", "09/18",
+                                       None) == "collection system is down"
+        self._serviceFacade.make_collection_pass()
+        self._serviceFacade.clear()
+
+    # 2.8.1 buy single item 8
+    def test_buySingleItem8(self):
+        sessionId, trans_id = self.set_up3()
+        self._serviceFacade.make_supply_fail()
+        assert self._serviceFacade.supply(trans_id, "Hakishon 12, Tel Aviv, 7514050, Israel") == "supply system is down"
+        self._serviceFacade.make_supply_pass()
+        self._serviceFacade.clear()
+
+    # 2.8.1 buy single item 9
+    def test_buySingleItem9(self):
+        sessionId, trans_id = self.set_up3()
+        assert self._serviceFacade.pay(sessionId, trans_id, "1234123412341234", "09/18",
+                                       "777") == "transaction not approved"
+        self._serviceFacade.clear()
+
+    # 2.8.1 buy single item 10
+    @pytest.mark.skip(reason="no way of currently testing this, no rules yet")
+    def test_buySingleItem10(self):
+        sessionId, trans_id = self.set_up3()
+        assert self._serviceFacade.supply(trans_id, "Hakishon 12, Tel Aviv, 7514050, UK") == ""
+        self._serviceFacade.clear()
+
     # # 2.8.2 buy many items 1
     # def test_buyManyItems1_only_buy_test(self):
     #     sessionId = self.set_up2()

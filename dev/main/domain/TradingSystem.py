@@ -132,19 +132,6 @@ class TradingSystem(object):
         TradingSystem._managers.append(new_manager)
         TradingSystem.add_member(new_manager)
 
-
-    # @staticmethod
-    # def connect_to_money_collection_system():  # TODO implement
-    #     return True
-    #
-    # @staticmethod
-    # def connect_to_product_supply_system():  # TODO implement
-    #     return True
-    #
-    # @staticmethod
-    # def connect_to_consistency_system():  # TODO implement
-    #     return True
-
     @staticmethod
     def register_master_member(master_user: str, password: str):
         if TradingSystem.pass_word_short(password):
@@ -236,10 +223,22 @@ class TradingSystem(object):
     @staticmethod
     def apply_trans(session_id, trans_id):
         trans = TradingSystem.get_trans(trans_id)
+        if not trans.is_payment_approved or not trans.is_supply_approved:
+            raise TradingSystemException("transaction not approved")
         store: Store = TradingSystem.get_store(trans.store_name)
-        store.apply_trans(session_id, trans.items)
+        store.apply_trans(session_id)
 
     @staticmethod
     def add_item_to_trans(trans_id, item_name, amount):
         trans = TradingSystem.get_trans(trans_id=trans_id)
         trans.add_item_and_amount(item_name, amount)
+
+    @staticmethod
+    def remove_trans(trans_id):
+        TradingSystem._transactions.remove(TradingSystem.get_trans(trans_id))
+
+    @staticmethod
+    def check_order(trans, address):
+        rules = TradingSystem.get_store(trans.store_name).rules
+        items = trans.items
+        return reduce(lambda acc, rule: acc and rule.check_validity(items, address), rules, True)

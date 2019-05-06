@@ -36,6 +36,10 @@ class Store(object):
     def rank(self):
         return self._rank
 
+    @property
+    def rules(self):
+        return self._rules
+
     def add_item(self, new_item: Item):
         self._items.append(new_item)
 
@@ -129,12 +133,11 @@ class Store(object):
             item_res = list(item_res)
         item_res[0]["amount"] += amount
 
+
     # def add_reserved_item(self, item_name, amount):
     #     item = self.get_item_by_name(item_name=item_name)
     #     self._resereved_items.append({"session_id":session_id, "item_id": item, "amount": amount})
 
-    def apply_trans(self, session_id, items):
-        trans_items = self._resereved_items[session_id]
-        for item in trans_items:
-            if item in items:
-                self._resereved_items[session_id][item] -= 1
+    def apply_trans(self, session_id):
+        trans_reserved = list(filter(lambda dic: dic["session_id"] == session_id, self._resereved_items))[0]["reserved"]
+        trans_reserved = []

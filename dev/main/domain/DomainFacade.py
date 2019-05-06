@@ -327,18 +327,27 @@ class DomainFacade(object):
     @staticmethod
     def supply(trans_id, address):
         try:
+            trans = TradingSystem.get_trans(trans_id)
+            TradingSystem.check_order(trans, address)
             if DomainFacade._supply_handler.supply(trans_id, address):
-                TradingSystem.get_trans(trans_id).supply_succ()
+                trans.supply_succ()
                 return "OK"
         except TradingSystemException as e:
+            TradingSystem.remove_trans(trans_id)
             return e.msg
 
 
     @staticmethod
-    def pay(trans_id, creditcard, date, snum):
+    def pay(session_id, trans_id, creditcard, date, snum):
         price = TradingSystem.calculate_price(TradingSystem.get_trans(trans_id))
-        if DomainFacade._money_collection_handler.pay(creditcard, date, snum, price):
-            return "OK"
+        try:
+            if DomainFacade._money_collection_handler.pay(creditcard, date, snum, price):
+                TradingSystem.get_trans(trans_id).pay_succ()
+                TradingSystem.apply_trans(session_id, trans_id)
+                return "OK"
+        except TradingSystemException as e:
+            TradingSystem.remove_trans(trans_id)
+            return e.msg
 
     # for test
     @staticmethod

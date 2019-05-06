@@ -54,7 +54,7 @@ class ServiceFacade(object):
         return DomainFacade.buy_many_items(sessionId, store_name, items)
 
     def pay(self, sessionId, trans_id, creditcard, date, snum):
-        return DomainFacade.pay(trans_id, creditcard, date, snum)
+        return DomainFacade.pay(sessionId, trans_id, creditcard, date, snum)
 
     def addStore(self, sessionId, name, description, rules):
         return DomainFacade.add_store(sessionId, name, description, rules)

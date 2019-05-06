@@ -19,8 +19,20 @@ class Transaction(object):
         return self._store_name
 
     @property
+    def is_supply_approved(self):
+        return self._is_supply_approved
+
+    @property
+    def is_payment_approved(self):
+        return self._is_payment_approved
+
+    @property
     def items(self):
         return self._items
+
+    @property
+    def store_name(self):
+        return self._store_name
 
     def add_item_and_amount(self, item_name, amount):
         return self._items.append({"item_name": item_name, "amount": amount})
