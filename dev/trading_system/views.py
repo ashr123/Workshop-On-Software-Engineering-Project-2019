@@ -45,18 +45,6 @@ def item(request, id):
 	return render(request, 'trading_system/item_page.html', context)
 
 
-def item(request, id):
-	item = Item.objects.get(name=id)
-	context = {
-		'item': item
-	}
-	# store = Store.objects.get(name=name_)
-	# context = {
-	# 	'store': store
-	# }
-	return render(request, 'trading_system/item_page.html', context)
-
-
 def show_cart(request):
 	user_groups = request.user.groups.values_list('name', flat=True)
 	if request.user.is_authenticated:

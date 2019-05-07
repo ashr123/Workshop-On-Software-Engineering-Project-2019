@@ -2,7 +2,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
+from django.contrib.gis.geoip2 import GeoIP2
 from django.shortcuts import render, redirect, render_to_response
+from django.utils.decorators import method_decorator
 from django.views.generic import DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.views.generic.list import ListView
@@ -14,6 +16,22 @@ from . import forms
 from .forms import ItemForm, BuyForm, AddManagerForm
 from .models import Item
 from .models import Store
+
+
+def get_client_ip(request):
+	x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+	if x_forwarded_for:
+		ip = x_forwarded_for.split(',')[0]
+	else:
+		ip = request.META.get('REMOTE_ADDR')
+	return ip
+
+
+def get_country_of_request(request):
+	ip_ = get_client_ip(request)
+	g = GeoIP2()
+	return g.country_name(ip_)
+
 
 @permission_required_or_403('ADD_ITEM',
                             (Store, 'id', 'pk'))
@@ -45,6 +63,9 @@ def add_item(request, pk):
 
 @login_required
 def add_store(request):
+	# g = GeoIP2()
+	# print('\n\ncountry :  ',get_country_of_request(request))
+	# print('\n\ncountry :  ', g.country('132.73.202.157'))
 	user_groups = request.user.groups.values_list('name', flat=True)
 	if "store_owners" in user_groups:
 		base_template_name = 'store/homepage_store_owner.html'
@@ -70,7 +91,7 @@ def submit_open_store(request):
 		                             description=open_store_form.cleaned_data.get('description'))
 		store.owners.add(request.user)
 		store.save()
-		_user =request.user
+		_user = request.user
 		messages.success(request, 'Your Store was added successfully!')  # <-
 		my_group = Group.objects.get_or_create(name="store_owners")
 		my_group = Group.objects.get(name="store_owners")
@@ -87,10 +108,11 @@ def submit_open_store(request):
 
 # need to be in the first time:
 
-
+@method_decorator(login_required, name='dispatch')
 class StoreDetailView(DetailView):
 	model = Store
 	paginate_by = 100  # if pagination is desired
+	permission_required = "@login_required"
 
 	def get_context_data(self, **kwargs):
 		text = SearchForm()
@@ -99,9 +121,11 @@ class StoreDetailView(DetailView):
 		return context
 
 
+@method_decorator(login_required, name='dispatch')
 class StoreListView(ListView):
 	model = Store
 	paginate_by = 100  # if pagination is desired
+	permission_required = "@login_required"
 
 	def get_context_data(self, **kwargs):
 		text = SearchForm()
@@ -124,11 +148,36 @@ class ItemDetailView(DetailView):
 	model = Item
 	paginate_by = 100  # if pagination is desired
 
+	def get_context_data(self, **kwargs):
+		text = SearchForm()
+		context = super(ItemDetailView, self).get_context_data(**kwargs)  # get the default context data
+		context['text'] = text
+		return context
 
+
+@method_decorator(login_required, name='dispatch')
 class StoreUpdate(UpdateView):
 	model = Store
-	fields = ['name', 'owner', 'items']
+	fields = ['name', 'owners', 'items', 'description']
 	template_name_suffix = '_update_form'
+	permission_required = "@login_required"
+
+	def get_context_data(self, **kwargs):
+		text = SearchForm()
+		context = super(StoreUpdate, self).get_context_data(**kwargs)  # get the default context data
+		context['text'] = text
+		return context
+
+
+# def update(self, request, *args, **kwargs):
+# 	store = Store.objects.get(id=kwargs['pk'])
+# 	owner_id = store.owner_id
+# 	response = super(StoreUpdate, self).update(request, *args, **kwargs)
+# 	user_name = request.user.username
+# 	text = SearchForm()
+# 	context['text'] = text
+# 	return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
+#
 
 
 def have_no_more_stores(user_pk):
@@ -142,10 +191,13 @@ def change_store_owner_to_member(user):
 	owners_group.user_set.remove(user)
 
 
+@method_decorator(login_required, name='dispatch')
 class StoreDelete(DeleteView):
 	model = Store
 	template_name_suffix = '_delete_form'
 
+	@permission_required_or_403('REMOVE_ITEM',
+	                            (Store, 'id', 'id'), accept_global_perms=True)
 	def delete(self, request, *args, **kwargs):
 		store = Store.objects.get(id=kwargs['pk'])
 		owner_id = store.owner_id
@@ -158,8 +210,13 @@ class StoreDelete(DeleteView):
 		else:
 			return response
 
+	def get_context_data(self, **kwargs):
+		text = SearchForm()
+		context = super(StoreDelete, self).get_context_data(**kwargs)  # get the default context data
+		context['text'] = text
+		return context
 
-@login_required
+
 def buy_item(request, pk):
 	if request.method == 'POST':
 		form = BuyForm(request.POST)

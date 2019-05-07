@@ -42,7 +42,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # Application definition
-
+GEOIP_PATH = os.path.join(BASE_DIR, '_geoip2_')
 INSTALLED_APPS = [
 	'trading_system',
 	'store',
@@ -57,6 +57,7 @@ INSTALLED_APPS = [
 	'static',
 	'templates',
 	'guardian',
+	# 'django_geoi',
 
 ]
 
