@@ -37,6 +37,10 @@ class Store(object):
         return self._rank
 
     @property
+    def description(self):
+        return self._desc
+
+    @property
     def rules(self):
         return self._rules
     @property

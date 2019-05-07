@@ -49,6 +49,11 @@ class TradingSystem(object):
         if isinstance(user, Member):
             return user
 
+    #for test only
+    @staticmethod
+    def t_add_to_stores(store):
+        TradingSystem._stores.append(store)
+
     @staticmethod
     def get_member(member_name: str) -> Optional[Member]:
         if member_name in map(lambda member: member.name, TradingSystem._members):
@@ -194,6 +199,7 @@ class TradingSystem(object):
     def remove_store(store: Store):
         TradingSystem._stores.remove(store)
 
+    @staticmethod
     def createTransaction(session_id, store_name) -> int:
         trans = Transaction(TradingSystem.generate_trans_id(), session_id, store_name)
         TradingSystem._transactions.append(trans)
@@ -246,8 +252,7 @@ class TradingSystem(object):
         user = TradingSystem.get_user(session_id)
         if not trans._is_purchase:
             store: Store = TradingSystem.get_store(trans.store_name)
-            store.apply_trans(session_id)
-            return
+            return store.apply_trans(session_id)
         for row in trans.items:
             store = TradingSystem.get_store(row["store"])
             for item in row["items"]:
