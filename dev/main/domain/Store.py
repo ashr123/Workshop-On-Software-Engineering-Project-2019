@@ -39,6 +39,9 @@ class Store(object):
     @property
     def rules(self):
         return self._rules
+    @property
+    def reserved_items(self):
+        return self._resereved_items
 
     def add_item(self, new_item: Item):
         self._items.append(new_item)
@@ -64,6 +67,8 @@ class Store(object):
                 raise AnomalyException("price must be a positive number")
             item.edit_price(new_price)
         elif field == "description":
+            if len(value) < 20:
+                raise AnomalyException("description must contain at least 20 characters")
             item.edit_des(value)
         elif field == "category":
             item.edit_category(value)
@@ -126,7 +131,7 @@ class Store(object):
         if len(user_dict) == 0:
             self._resereved_items.append({"session_id": session_id, "reserved": []})
             user_dict = [self._resereved_items[-1]]
-        item_res = list(filter(lambda dic: dic["item_id"] == item, user_dict[0]["reserved"]))
+        item_res = list(filter(lambda dic: dic["item_id"] == item.id, user_dict[0]["reserved"]))
         if len(item_res) == 0:
             item_res = user_dict[0]["reserved"]
             item_res.append({"item_id": item.id, "amount": 0})

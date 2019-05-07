@@ -42,7 +42,11 @@ class Guest(User):
         return self._groceryCarts
 
     def check_quantity(self, item, store_name):
-        return self._groceryCarts[store_name].items[item]
+        try:
+            return self._groceryCarts[store_name].items[item]
+        except KeyError as e:
+            return 0
+
 
     def has_item_in_cart(self, item_name, store_name):
         if store_name not in self._groceryCarts.keys():
