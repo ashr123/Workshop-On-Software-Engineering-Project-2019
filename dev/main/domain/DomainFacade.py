@@ -144,6 +144,7 @@ class DomainFacade(object):
 
     @staticmethod
     def buy_single_item(sessionId: int, store_name: str, item_name: str, amount: int):
+
         try:
             if TradingSystem.reserve_item_from_store(sessionId, store_name, item_name, amount):
                 trans_id = TradingSystem.createTransaction(sessionId, store_name)
@@ -163,6 +164,7 @@ class DomainFacade(object):
                     TradingSystem.add_item_to_purch(purchase, store, item, TradingSystem.get_amount(sessionId, store, item))
             return purchase
         except TradingSystemException as e:
+            TradingSystem.remove_trans(purchase)
             return e.msg
 
     @staticmethod

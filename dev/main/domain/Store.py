@@ -131,7 +131,7 @@ class Store(object):
             item_res = user_dict[0]["reserved"]
             item_res.append({"item_id": item.id, "amount": 0})
             item_res = list(item_res)
-        item_res[0]["amount"] += amount
+        item_res[-1]["amount"] += amount
 
 
     # def add_reserved_item(self, item_name, amount):
@@ -150,4 +150,4 @@ class Store(object):
         for rule in self.rules:
             if rule.apply_rule(item, amount):
                 return rule.apply_rule(item, amount)
-            return item.price*amount
+        return item.price * amount
