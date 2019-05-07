@@ -71,7 +71,7 @@ class TradingSystem(object):
         return False
 
     @staticmethod
-    def register_member(session_id: int, username: str, password: str) -> None:  # TODO ללהאשאש את הססמא של המשתשמש
+    def register_member(session_id: int, username: str, password: str) -> None:
         TradingSystem.validate_password(password)
         if username in map(lambda m: m.name, TradingSystem._members):
             raise RegistrationExeption(message="the user {} is already registered".format(username))

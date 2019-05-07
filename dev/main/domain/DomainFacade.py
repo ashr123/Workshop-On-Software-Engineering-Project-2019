@@ -168,7 +168,7 @@ class DomainFacade(object):
             return e.msg
 
     @staticmethod
-    def add_store(session_id: int, name: str, desc: str, rules) -> str:
+    def add_store(session_id: int, name: str, desc: str, rules: List[str]) -> str:
         try:
             member: Member = TradingSystem.get_user_if_member(session_id)
             if member is None:
