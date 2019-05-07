@@ -113,3 +113,4 @@ class ServiceFacade(object):
 
     def get_item_amount(self, store_name, item_name):
         return DomainFacade.get_item_amount(store_name, item_name)
+

@@ -28,6 +28,8 @@ class Guest(User):
         if store_name not in self._groceryCarts.keys():
             raise AnomalyException("store {} doesn't exist in your cart".format(store_name))
         self._groceryCarts[store_name].remove_item(item)
+        if len(self._groceryCarts[store_name].items) == 0:
+            self._groceryCarts.pop(store_name)
         return True
 
     def change_item_quantity_in_cart(self, item: Item, store_name: str, quantity: int) -> bool:

@@ -3,26 +3,26 @@ from typing import Dict
 
 
 class Security(object):
-	_passwords: Dict[str, str] = {}
+    _passwords: Dict[str, str] = {}
 
-	@staticmethod
-	def contains(key: str) -> bool:
-		return key in Security._passwords.keys()
+    @staticmethod
+    def contains(key: str) -> bool:
+        return key in Security._passwords.keys()
 
-	@staticmethod
-	def add_user_password(username: str, password: str) -> bool:
-		if username in Security._passwords.keys():
-			return False
-		Security._passwords[username] = pbkdf2_sha512.hash(password)
-		return True
+    @staticmethod
+    def add_user_password(username: str, password: str) -> bool:
+        if username in Security._passwords.keys():
+            return False
+        Security._passwords[username] = pbkdf2_sha512.hash(password)
+        return True
 
-	@staticmethod
-	def verify(user_name: str, password: str) -> bool:
-		return pbkdf2_sha512.verify(password, Security._passwords[user_name])
+    @staticmethod
+    def verify(user_name: str, password: str) -> bool:
+        return pbkdf2_sha512.verify(password, Security._passwords[user_name])
 
-	@staticmethod
-	def clear_pass_dict() -> None:
-		Security._passwords.clear()
+    @staticmethod
+    def clear_pass_dict() -> None:
+        Security._passwords.clear()
 
 # Example
 # Security.add_user_password("Roy", "BabaYaga")

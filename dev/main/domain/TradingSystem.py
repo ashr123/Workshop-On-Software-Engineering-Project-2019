@@ -243,13 +243,17 @@ class TradingSystem(object):
         trans = TradingSystem.get_trans(trans_id)
         if not trans.is_payment_approved or not trans.is_supply_approved:
             raise TradingSystemException("transaction not approved")
+        user = TradingSystem.get_user(session_id)
         if not trans._is_purchase:
             store: Store = TradingSystem.get_store(trans.store_name)
             store.apply_trans(session_id)
             return
         for row in trans.items:
             store = TradingSystem.get_store(row["store"])
-            store.apply_trans(session_id)
+            for item in row["items"]:
+                user.remove_item_from_cart(TradingSystem.get_item(item["item_name"], row["store"]), row["store"])
+
+
 
     @staticmethod
     def add_item_to_trans(trans_id, item_name, amount):

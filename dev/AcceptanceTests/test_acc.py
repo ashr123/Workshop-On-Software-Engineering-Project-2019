@@ -489,6 +489,7 @@ class TestClass(object):
         assert self._serviceFacade.pay(sessionId, trans_id, "1234123412341234", "09/18", "222") == 'OK'
         assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 119
         assert self._serviceFacade.get_item_amount(self._item_2['store_name'], self._item_2['name']) == 39
+        assert self._item_1['name'] not in self._serviceFacade.watchCart(sessionId) and self._item_2['name'] not in self._serviceFacade.watchCart(sessionId)
         self._serviceFacade.clear()
 
     # 2.8.2 buy many items 2
@@ -503,6 +504,11 @@ class TestClass(object):
         assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 119
         assert self._serviceFacade.get_item_amount(self._item_2['store_name'], self._item_2['name']) == 39
         assert self._serviceFacade.get_item_amount(self._item_4['store_name'], self._item_4['name']) == 6
+        self._serviceFacade.supply(trans_id, 'Hakishon 12, Tel Aviv, 7514050, Israel')
+        self._serviceFacade.pay(sessionId, trans_id, "1234123412341234", "09/18", "222")
+        assert self._item_1['name'] not in self._serviceFacade.watchCart(sessionId) and self._item_2[
+                                                                                            'name'] not in self._serviceFacade.watchCart(
+            sessionId) and self._store_2['name'] not in self._serviceFacade.watchCart(sessionId)
         self._serviceFacade.clear()
 
     # 2.8.2 buy many items 3
@@ -512,6 +518,7 @@ class TestClass(object):
             {"store": self._item_1['store_name'], "list_of_items": [self._item_1['name'], "not a real item"]}]
         assert "item not a real item in store Dogs World doesn't exist" == self._serviceFacade.buyManyItems(sessionId, tosend)
         assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 120
+        assert self._item_1['name'] in self._serviceFacade.watchCart(sessionId)
         self._serviceFacade.clear()
 
     # 2.8.2 buy many items 4
@@ -524,6 +531,7 @@ class TestClass(object):
             sessionId, tosend)
         assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 0
         assert self._serviceFacade.get_item_amount(self._item_2['store_name'], self._item_2['name']) == 40
+        assert self._item_1['name'] in self._serviceFacade.watchCart(sessionId) and self._item_2['name'] in self._serviceFacade.watchCart(sessionId)
         self._serviceFacade.clear()
 
     # 2.8.2 buy many items 5
@@ -532,6 +540,9 @@ class TestClass(object):
         assert "missing details to complete supply" == self._serviceFacade.supply(trans_id=trans_id, address=None)
         assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 120
         assert self._serviceFacade.get_item_amount(self._item_2['store_name'], self._item_2['name']) == 40
+        assert self._item_1['name'] in self._serviceFacade.watchCart(sessionId) and self._item_2[
+                                                                                        'name'] in self._serviceFacade.watchCart(
+            sessionId)
         self._serviceFacade.clear()
 
     # 2.8.2 buy many items 6
@@ -540,6 +551,9 @@ class TestClass(object):
         assert "missing details to complete payment" == self._serviceFacade.pay(sessionId, trans_id, '1234123412341234', '03/20', None)
         assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 120
         assert self._serviceFacade.get_item_amount(self._item_2['store_name'], self._item_2['name']) == 40
+        assert self._item_1['name'] in self._serviceFacade.watchCart(sessionId) and self._item_2[
+                                                                                        'name'] in self._serviceFacade.watchCart(
+            sessionId)
         self._serviceFacade.clear()
 
     # 2.8.1 buy single item 7
@@ -556,6 +570,9 @@ class TestClass(object):
         self._serviceFacade.make_collection_pass()
         assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 120
         assert self._serviceFacade.get_item_amount(self._item_2['store_name'], self._item_2['name']) == 40
+        assert self._item_1['name'] in self._serviceFacade.watchCart(sessionId) and self._item_2[
+                                                                                        'name'] in self._serviceFacade.watchCart(
+            sessionId)
         self._serviceFacade.clear()
 
     # 2.8.2 buy many items 9
@@ -566,15 +583,21 @@ class TestClass(object):
         self._serviceFacade.make_supply_pass()
         assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 120
         assert self._serviceFacade.get_item_amount(self._item_2['store_name'], self._item_2['name']) == 40
+        assert self._item_1['name'] in self._serviceFacade.watchCart(sessionId) and self._item_2[
+                                                                                        'name'] in self._serviceFacade.watchCart(
+            sessionId)
         self._serviceFacade.clear()
 
-    # 2.8.1 buy many item 9
+    # 2.8.1 buy many item 10
     def test_buyManyItems10(self):
         sessionId, trans_id = self.set_up5()
         assert self._serviceFacade.pay(sessionId, trans_id, "1234123412341234", "09/18",
                                        "777") == "transaction not approved"
         assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 120
         assert self._serviceFacade.get_item_amount(self._item_2['store_name'], self._item_2['name']) == 40
+        assert self._item_1['name'] in self._serviceFacade.watchCart(sessionId) and self._item_2[
+                                                                                        'name'] in self._serviceFacade.watchCart(
+            sessionId)
         self._serviceFacade.clear()
 
 
