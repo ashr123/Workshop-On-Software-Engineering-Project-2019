@@ -35,6 +35,9 @@ class Member(User):
 
     def add_managment_state(self, is_owner: bool, permissions_list: List[Permissions],
                             store: Store, nominator) -> None:
+        has = list(filter(lambda x: x.store == store, self._storesManaged_states))
+        if len(has) != 0:
+            raise AnomalyException("member %s already a manager/owner of this store")
         self._storesManaged_states.append(
             ManagementState.ManagementState(is_owner=is_owner, permissions_list=permissions_list, store=store,
                                             nominator=nominator))

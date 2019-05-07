@@ -68,10 +68,10 @@ class TestClass(object):
         self._serviceFacade.supply(trans_id, "Hakishon 12, Tel Aviv, 7514050, Israel")
         return sessionId, trans_id
 
-
     def set_up5(self):
         sessionId = self.set_up2()
-        trans_id = self._serviceFacade.buyManyItems(sessionId, [{"store": self._item_1['store_name'], "list_of_items": [self._item_1['name'], self._item_2['name']]}])
+        trans_id = self._serviceFacade.buyManyItems(sessionId, [
+            {"store": self._item_1['store_name'], "list_of_items": [self._item_1['name'], self._item_2['name']]}])
         return sessionId, trans_id
 
     def set_up6(self):
@@ -406,8 +406,9 @@ class TestClass(object):
     def test_buySingleItem3_only_buy_step(self):
         self.set_up1()
         sessionId = self._serviceFacade.initiateSession()
-        assert "Cannot decrease the amount of fur shampoo in 400, there are only 120" ==  self._serviceFacade.buySingleItem(sessionId, store_name=self._item_1['store_name'],
-                                                     item_name=self._item_1['name'], amount=400)
+        assert "Cannot decrease the amount of fur shampoo in 400, there are only 120" == self._serviceFacade.buySingleItem(
+            sessionId, store_name=self._item_1['store_name'],
+            item_name=self._item_1['name'], amount=400)
         assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 120
         self._serviceFacade.clear()
 
@@ -425,7 +426,6 @@ class TestClass(object):
                                        None) == "missing details to complete payment"
         assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 120
         self._serviceFacade.clear()
-
 
     # 2.8.1 buy single item 6
     @pytest.mark.skip(reason="no way of currently testing this, no rules yet")
@@ -472,14 +472,15 @@ class TestClass(object):
         sessionId = self.set_up2()
         tosend = [{"store": self._item_1['store_name'], "list_of_items": [self._item_1['name'], self._item_2['name']]}]
         trans_id = self._serviceFacade.buyManyItems(sessionId, tosend)
-        assert self._serviceFacade.watch_trans(trans_id) == "price: {}".format(self._item_1['price'] + self._item_2['price'])
+        assert self._serviceFacade.watch_trans(trans_id) == "price: {}".format(
+            self._item_1['price'] + self._item_2['price'])
         assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 119
         assert self._serviceFacade.get_item_amount(self._item_2['store_name'], self._item_2['name']) == 39
         self._serviceFacade.clear()
 
     # 2.8.2 buy many items 1
     def test_buyManyItems1_only_supply_test(self):
-        sessionId, trans_id= self.set_up5()
+        sessionId, trans_id = self.set_up5()
         assert self._serviceFacade.supply(trans_id, 'Hakishon 12, Tel Aviv, 7514050, Israel') == 'OK'
         self._serviceFacade.clear()
 
@@ -489,7 +490,9 @@ class TestClass(object):
         assert self._serviceFacade.pay(sessionId, trans_id, "1234123412341234", "09/18", "222") == 'OK'
         assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 119
         assert self._serviceFacade.get_item_amount(self._item_2['store_name'], self._item_2['name']) == 39
-        assert self._item_1['name'] not in self._serviceFacade.watchCart(sessionId) and self._item_2['name'] not in self._serviceFacade.watchCart(sessionId)
+        assert self._item_1['name'] not in self._serviceFacade.watchCart(sessionId) and self._item_2[
+                                                                                            'name'] not in self._serviceFacade.watchCart(
+            sessionId)
         self._serviceFacade.clear()
 
     # 2.8.2 buy many items 2
@@ -516,7 +519,8 @@ class TestClass(object):
         sessionId = self.set_up2()
         tosend = [
             {"store": self._item_1['store_name'], "list_of_items": [self._item_1['name'], "not a real item"]}]
-        assert "item not a real item in store Dogs World doesn't exist" == self._serviceFacade.buyManyItems(sessionId, tosend)
+        assert "item not a real item in store Dogs World doesn't exist" == self._serviceFacade.buyManyItems(sessionId,
+                                                                                                            tosend)
         assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 120
         assert self._item_1['name'] in self._serviceFacade.watchCart(sessionId)
         self._serviceFacade.clear()
@@ -526,12 +530,14 @@ class TestClass(object):
         sessionId = self.set_up2()
         self._serviceFacade.changeItemInStore(self._id1, self._item_1["name"], self._store_1["name"], "quantity", 0)
         tosend = [
-            {"store": self._item_1['store_name'], "list_of_items": [self._item_1['name'],  self._item_2['name']]}]
+            {"store": self._item_1['store_name'], "list_of_items": [self._item_1['name'], self._item_2['name']]}]
         assert "Cannot decrease the amount of fur shampoo in 1, there are only 0" == self._serviceFacade.buyManyItems(
             sessionId, tosend)
         assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 0
         assert self._serviceFacade.get_item_amount(self._item_2['store_name'], self._item_2['name']) == 40
-        assert self._item_1['name'] in self._serviceFacade.watchCart(sessionId) and self._item_2['name'] in self._serviceFacade.watchCart(sessionId)
+        assert self._item_1['name'] in self._serviceFacade.watchCart(sessionId) and self._item_2[
+                                                                                        'name'] in self._serviceFacade.watchCart(
+            sessionId)
         self._serviceFacade.clear()
 
     # 2.8.2 buy many items 5
@@ -548,7 +554,8 @@ class TestClass(object):
     # 2.8.2 buy many items 6
     def test_buyManyItems6(self):
         sessionId, trans_id = self.set_up6()
-        assert "missing details to complete payment" == self._serviceFacade.pay(sessionId, trans_id, '1234123412341234', '03/20', None)
+        assert "missing details to complete payment" == self._serviceFacade.pay(sessionId, trans_id, '1234123412341234',
+                                                                                '03/20', None)
         assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 120
         assert self._serviceFacade.get_item_amount(self._item_2['store_name'], self._item_2['name']) == 40
         assert self._item_1['name'] in self._serviceFacade.watchCart(sessionId) and self._item_2[
@@ -566,7 +573,7 @@ class TestClass(object):
         sessionId, trans_id = self.set_up6()
         self._serviceFacade.make_collection_fail()
         assert "collection system is down" == self._serviceFacade.pay(sessionId, trans_id,
-                                                                                '1234123412341234', '03/20', '999')
+                                                                      '1234123412341234', '03/20', '999')
         self._serviceFacade.make_collection_pass()
         assert self._serviceFacade.get_item_amount(self._item_1['store_name'], self._item_1['name']) == 120
         assert self._serviceFacade.get_item_amount(self._item_2['store_name'], self._item_2['name']) == 40
@@ -600,7 +607,6 @@ class TestClass(object):
             sessionId)
         self._serviceFacade.clear()
 
-
     # 3.1 logout 1
     def test_logout1(self):
         sessionId = self.set_up1()
@@ -630,7 +636,8 @@ class TestClass(object):
         self.set_up()
         sessionId = self._serviceFacade.initiateSession()
         assert "Guset has no permission to open a store" == self._serviceFacade.addStore(sessionId, "Cats World",
-                                                                                         "Everything you need for your cat", [])
+                                                                                         "Everything you need for your cat",
+                                                                                         [])
         self._serviceFacade.clear()
 
     # 3.2 add store 3
@@ -650,7 +657,8 @@ class TestClass(object):
     @pytest.mark.skip(reason="no way of currently testing this, there is no support for rules yet")
     def test_addStore5(self):
         sessionId = self.set_up1()
-        assert "description is too short" == self._serviceFacade.addStore(sessionId, "Cats World", "Everything you need for your cat", [])
+        assert "description is too short" == self._serviceFacade.addStore(sessionId, "Cats World",
+                                                                          "Everything you need for your cat", [])
         self._serviceFacade.clear()
 
     # 4.1.1 add item to store 1
@@ -676,8 +684,12 @@ class TestClass(object):
         ownerid = self.set_up1()
         self._serviceFacade.addItemToStore(ownerid, "Dogs World", "fur comb", "Pets",
                                            "for all kinds of fur", 4, 321)
-        assert "there is already item with this name in this store" ==  self._serviceFacade.addItemToStore(ownerid, "Dogs World", "fur comb", "Pets",
-                                           "for all kinds of fur", 4, 321)
+        assert "there is already item with this name in this store" == self._serviceFacade.addItemToStore(ownerid,
+                                                                                                          "Dogs World",
+                                                                                                          "fur comb",
+                                                                                                          "Pets",
+                                                                                                          "for all kinds of fur",
+                                                                                                          4, 321)
         self._serviceFacade.clear()
 
     # 4.1.1 add item to store 4
@@ -698,7 +710,8 @@ class TestClass(object):
     def test_addItemToStore6(self):
         ownerid = self.set_up1()
         assert self._serviceFacade.addItemToStore(ownerid, "Dogs World", "fur comb", "Pets",
-                                                  "for all kinds of fur", 3, 12.56) == "amount can't be negative integer"
+                                                  "for all kinds of fur", 3,
+                                                  12.56) == "amount can't be negative integer"
         self._serviceFacade.clear()
 
     # 4.1.2 remove item from store 1 ok
@@ -719,7 +732,8 @@ class TestClass(object):
         sessionId = self._serviceFacade.initiateSession()
         self._serviceFacade.register(sessionId, "mor", "852085")
         self._serviceFacade.login(sessionId, "mor", "852085")
-        assert self._serviceFacade.removeItemFromStore(sessionId, self._item_1['id_DEPRECATED'], "Dogs World") == "member mor is not a manager of this store"
+        assert self._serviceFacade.removeItemFromStore(sessionId, self._item_1['id_DEPRECATED'],
+                                                       "Dogs World") == "member mor is not a manager of this store"
         self._serviceFacade.clear()
 
     # 4.1.3 edit item in store 1 ok
@@ -755,7 +769,8 @@ class TestClass(object):
     # 4.1.3 edit item in store 5
     def test_changeItemInStore5(self):
         ownerid = self.set_up1()
-        assert self._serviceFacade.changeItemInStore(ownerid, self._item_1['name'], self._item_1['store_name'], "quantity",
+        assert self._serviceFacade.changeItemInStore(ownerid, self._item_1['name'], self._item_1['store_name'],
+                                                     "quantity",
                                                      10.5) == "quantity must be an int"
         self._serviceFacade.clear()
 
@@ -802,7 +817,6 @@ class TestClass(object):
         self._serviceFacade.addOwner(sessionId, username, "Dogs World")
         assert "circular nomination" in self._serviceFacade.addOwner(ownerId, "noa", "Dogs World")
         self._serviceFacade.clear()
-
 
     # 4.3 add owner 5
     def test_addOwner5(self):
@@ -895,13 +909,15 @@ class TestClass(object):
         password = "666666"
         self._serviceFacade.register(managerId, username, password)
         self._serviceFacade.addManager(sessionId, username, "Dogs World", ["REMOVE_ITEM"])
-        assert "you're already a manager of this store! (circular nomination)" == self._serviceFacade.addManager(sessionId, username, "Dogs World", ["REMOVE_ITEM"])
+        assert "you're already a manager of this store! (circular nomination)" == self._serviceFacade.addManager(
+            sessionId, username, "Dogs World", ["REMOVE_ITEM"])
         self._serviceFacade.clear()
 
     # 4.5 add manager 4
     def test_addManager4(self):
         sessionId = self.set_up1()
-        assert "member to be promoted doesn't exists" == self._serviceFacade.addManager(sessionId, "dummy", "Dogs World", ["REMOVE_ITEM"])
+        assert "member to be promoted doesn't exists" == self._serviceFacade.addManager(sessionId, "dummy",
+                                                                                        "Dogs World", ["REMOVE_ITEM"])
         self._serviceFacade.clear()
 
     # 4.5 add manager 5
@@ -915,6 +931,7 @@ class TestClass(object):
         self._serviceFacade.addManager(sessionId, username, "Dogs World", ["ADD_MANAGER"])
         assert "circular nomination" in self._serviceFacade.addManager(ownerId, "noa", "Dogs World", ["ADD_MANAGER"])
         self._serviceFacade.clear()
+
 
     # 4.6 remove manager 1
     def test_removeManager1(self):
@@ -952,7 +969,8 @@ class TestClass(object):
     # 4.6 remove manager 3
     def test_removeManager3(self):
         sessionId = self.set_up1()
-        assert "yoni is not a manager of this store" == self._serviceFacade.removeManager(sessionId, "yoni", "Dogs World")
+        assert "yoni is not a manager of this store" == self._serviceFacade.removeManager(sessionId, "yoni",
+                                                                                          "Dogs World")
         self._serviceFacade.clear()
 
     # 5.1 manager tries to remove item 1

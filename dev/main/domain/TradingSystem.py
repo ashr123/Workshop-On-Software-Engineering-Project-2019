@@ -66,9 +66,9 @@ class TradingSystem(object):
         TradingSystem._users[new_session_id] = Guest()
         return new_session_id
 
-    @staticmethod
-    def search(keyword):  # TODO implement
-        return False
+    # @staticmethod
+    # def search(keyword):  # TODO implement
+    #     return False
 
     @staticmethod
     def register_member(session_id: int, username: str, password: str) -> None:
