@@ -105,7 +105,7 @@ class ManagementState(object):
                                         nominator=nominator)
         self.store.add_owner(owner=new_manager)
 
-    def set_manager_permissions(self, manager_id) -> bool:
-        # if not self.permissions[8] == True:
-        # 	raise PermissionException(message="you d'ont have the permission to do this auction !")
-        return False
+    # def set_manager_permissions(self, manager_id) -> bool:
+    #     # if not self.permissions[8] == True:
+    #     # 	raise PermissionException(message="you d'ont have the permission to do this auction !")
+    #     return False
