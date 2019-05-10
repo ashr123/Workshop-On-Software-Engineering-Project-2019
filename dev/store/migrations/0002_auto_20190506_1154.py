@@ -5,24 +5,25 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+	dependencies = [
+		migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+		('store', '0001_initial'),
+	]
 
-    dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('store', '0001_initial'),
-    ]
-
-    operations = [
-        migrations.AlterModelOptions(
-            name='store',
-            options={'permissions': (('ADD_ITEM', 'add item'), ('REMOVE_ITEM', 'delete item'), ('EDIT_ITEM', 'update item'), ('ADD_MANAGER', 'add manager'))},
-        ),
-        migrations.RemoveField(
-            model_name='store',
-            name='owner',
-        ),
-        migrations.AddField(
-            model_name='store',
-            name='owners',
-            field=models.ManyToManyField(to=settings.AUTH_USER_MODEL),
-        ),
-    ]
+	operations = [
+		migrations.AlterModelOptions(
+			name='store',
+			options={'permissions': (
+			('ADD_ITEM', 'add item'), ('REMOVE_ITEM', 'delete item'), ('EDIT_ITEM', 'update item'),
+			('ADD_MANAGER', 'add manager'))},
+		),
+		migrations.RemoveField(
+			model_name='store',
+			name='owner',
+		),
+		migrations.AddField(
+			model_name='store',
+			name='owners',
+			field=models.ManyToManyField(to=settings.AUTH_USER_MODEL),
+		),
+	]

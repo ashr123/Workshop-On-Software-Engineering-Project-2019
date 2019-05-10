@@ -11,23 +11,20 @@ from trading_system.models import Cart
 
 
 def index(request):
-	text = SearchForm()
-	return render(request, 'homepage_guest.html', {'text': text})
+	return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
 
 def login_redirect(request):
 	text = SearchForm()
 
 	if request.user.is_authenticated:
-		user_name = request.user.username
 		user_groups = request.user.groups.values_list('name', flat=True)
 		if request.user.is_superuser:
 			return render(request, 'homepage_member.html', {'text': text})
 		elif "store_owners" in user_groups:
-			return redirect('/store/home_page_owner/', {'text': text, 'user_name': user_name})
+			return redirect('/store/home_page_owner/', {'text': text, 'user_name': request.user.username})
 		else:
-			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
-
+			return render(request, 'homepage_member.html', {'text': text, 'user_name': request.user.username})
 	return render(request, 'homepage_guest.html', {'text': text})
 
 
@@ -39,18 +36,6 @@ def item(request, id):
 	return render(request, 'trading_system/item_page.html', {
 		'item': Item.objects.get(name=id)
 	})
-
-
-# def item(request, id):
-# 	item = Item.objects.get(name=id)
-# 	context = {
-# 		'item': item
-# 	}
-# 	# store = Store.objects.get(name=name_)
-# 	# context = {
-# 	# 	'store': store
-# 	# }
-# 	return render(request, 'trading_system/item_page.html', context)
 
 
 def show_cart(request):
@@ -98,7 +83,7 @@ def search(request):
 def add_item_to_cart(request, item_pk):
 	item_store = get_item_store(item_pk)
 	cart = get_cart(item_store, request.user.pk)
-	if cart == None:
+	if cart is None:
 		open_cart_for_user_in_store(item_store.pk, request.user.pk)
 		cart = get_cart(item_store, request.user.pk)
 	cart.items.add(item_pk)
@@ -132,9 +117,8 @@ class CartDetail(DetailView):
 	def get_context_data(self, **kwargs):
 		cart = Cart.objects.get(pk=kwargs['object'].pk)
 		item_ids = list(map(lambda i: i.pk, cart.items.all()))
-		items = list(map(lambda i_pk: Item.objects.get(pk=i_pk), item_ids))
 		context = super(CartDetail, self).get_context_data(**kwargs)  # get the default context data
-		context['items'] = items
+		context['items'] = list(map(lambda i_pk: Item.objects.get(pk=i_pk), item_ids))
 		context['store_name'] = Store.objects.get(pk=cart.store_id).name
 		return context
 
@@ -151,8 +135,7 @@ def approve_event(request):
 	if request.method == 'POST':
 		form = SomeForm(request.POST)
 		if form.is_valid():
-			picked = form.cleaned_data.get('picked')
-			print('\n', picked)
+			print('\n', form.cleaned_data.get('picked'))
 			render(request, 'check_box_items.html', {'form': form})
 		render(request, 'check_box_items.html', {'form': form})
 	# do something with your results

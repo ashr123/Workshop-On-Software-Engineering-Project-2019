@@ -14,5 +14,4 @@ urlpatterns = [
 	path('view_carts', views.CartsListView.as_view()),
 	path('view_cart/<int:pk>', views.CartDetail.as_view()),
 	path('approve_event/', views.approve_event),
-
 ]

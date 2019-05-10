@@ -1,6 +1,7 @@
 from setuptools import setup, find_packages
 
-install_requires = ['django','mysqlclient','channels','pypiwin32','channels_redis','websocket-client']
+install_requires = ['django', 'mysqlclient', 'channels', 'pypiwin32', 'channels_redis', 'websocket-client',
+                    'django-guardian', 'GeoIP2']
 
 setup(
 	name='SADNA',
