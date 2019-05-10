@@ -12,21 +12,6 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
-from django.contrib.messages import constants as messages
-
-AUTHENTICATION_BACKENDS = (
-	'django.contrib.auth.backends.ModelBackend',  # this is default
-	'guardian.backends.ObjectPermissionBackend',
-)
-
-MESSAGE_TAGS = {
-	messages.DEBUG: 'alert-info',
-	messages.INFO: 'alert-info',
-	messages.SUCCESS: 'alert-success',
-	messages.WARNING: 'alert-warning',
-	messages.ERROR: 'alert-danger',
-}
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -47,6 +32,7 @@ INSTALLED_APPS = [
 	'trading_system',
 	'store',
 	'test_app',
+	'channels',
 	'django.contrib.admin',
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
@@ -56,7 +42,6 @@ INSTALLED_APPS = [
 	'accounts.apps.AccountsConfig',
 	'static',
 	'templates',
-	'guardian',
 
 ]
 
@@ -90,6 +75,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'dev.wsgi.application'
+ASGI_APPLICATION = "dev.routing.application"
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
@@ -110,6 +96,16 @@ DATABASES = {
 		'HOST': 'localhost',
 		'PORT': ''
 	}
+}
+redis_host = os.environ.get('REDIS_HOST', 'localhost')
+CHANNEL_LAYERS = {
+	"default": {
+		# This example app uses the Redis channel layer implementation channels_redis
+		"BACKEND": "channels_redis.core.RedisChannelLayer",
+		"CONFIG": {
+			"hosts": [(redis_host, 6379)],
+		},
+	},
 }
 
 # Password validation
