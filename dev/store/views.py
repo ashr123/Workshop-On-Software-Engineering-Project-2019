@@ -46,7 +46,7 @@ def add_item(request, pk):
 			messages.success(request, 'Your Item was added successfully!')  # <-
 			return redirect('/store/home_page_owner/')
 		else:
-			messages.warning(request, 'Problem with filed : !', form.errors, 'please try again!')  # <-
+			messages.warning(request, 'Problem with filed : ', form.errors, 'please try again!')  # <-
 			return redirect('/store/home_page_owner/')
 	else:
 		form_class = ItemForm
@@ -63,9 +63,6 @@ def add_item(request, pk):
 
 @login_required
 def add_store(request):
-	# g = GeoIP2()
-	# print('\n\ncountry :  ',get_country_of_request(request))
-	# print('\n\ncountry :  ', g.country('132.73.202.157'))
 	user_groups = request.user.groups.values_list('name', flat=True)
 	if "store_owners" in user_groups:
 		base_template_name = 'store/homepage_store_owner.html'
@@ -160,7 +157,6 @@ class StoreUpdate(UpdateView):
 	model = Store
 	fields = ['name', 'owners', 'items', 'description']
 	template_name_suffix = '_update_form'
-	permission_required = "@login_required"
 
 	def get_context_data(self, **kwargs):
 		text = SearchForm()
@@ -168,16 +164,13 @@ class StoreUpdate(UpdateView):
 		context['text'] = text
 		return context
 
-
-# def update(self, request, *args, **kwargs):
-# 	store = Store.objects.get(id=kwargs['pk'])
-# 	owner_id = store.owner_id
-# 	response = super(StoreUpdate, self).update(request, *args, **kwargs)
-# 	user_name = request.user.username
-# 	text = SearchForm()
-# 	context['text'] = text
-# 	return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
-#
+	def update(self, request, *args, **kwargs):
+		if not (self.request.user.has_perm('EDIT_ITEM')):
+			messages.warning(request, 'there is no edit perm!')
+			user_name = request.user.username
+			text = SearchForm()
+			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
+		return super(StoreUpdate, self).update(request, *args, **kwargs)
 
 
 def have_no_more_stores(user_pk):
@@ -196,12 +189,16 @@ class StoreDelete(DeleteView):
 	model = Store
 	template_name_suffix = '_delete_form'
 
-	@permission_required_or_403('REMOVE_ITEM',
-	                            (Store, 'id', 'id'), accept_global_perms=True)
 	def delete(self, request, *args, **kwargs):
+
 		store = Store.objects.get(id=kwargs['pk'])
-		owner_id = store.owner_id
+		owner_id = store.owners.all()[0]  # craetor
 		response = super(StoreDelete, self).delete(request, *args, **kwargs)
+		if not (self.request.user.has_perm('REMOVE_ITEM')):
+			messages.warning(request, 'there is no delete perm!')
+			user_name = request.user.username
+			text = SearchForm()
+			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
 		if have_no_more_stores(owner_id):
 			change_store_owner_to_member(request.user)
 			user_name = request.user.username
@@ -229,7 +226,9 @@ def buy_item(request, pk):
 				new_q = amount_in_db - amount
 				_item.quantity = new_q
 				_item.save()
-				messages.success(request, 'YES! at the moment you bought  : ', _item.description)  # <-
+				total = amount * _item.price
+				messages.success(request, 'YES! at the moment you bought  : ' + _item.description)  # <-
+				messages.success(request, 'total : ' + str(total) + ' $')  # <-
 				return redirect('/store/home_page_owner/')
 			messages.warning(request, 'there is no such amount ! please try again!')
 			return redirect('/store/home_page_owner/')
@@ -242,7 +241,8 @@ def buy_item(request, pk):
 			'pk': curr_item.id,
 			'form': form_class,
 			'price': curr_item.price,
-			'description': curr_item.description
+			'description': curr_item.description,
+
 		}
 		return render(request, 'store/buy_item.html', context)
 
@@ -280,6 +280,9 @@ def add_manager_to_store(request, pk):
 			is_owner = form.cleaned_data.get('is_owner')
 			user_ = User.objects.get(username=user_name)
 			store_ = Store.objects.get(id=pk)
+			if (user_name == request.user.username):
+				messages.warning(request, 'can`t add yourself as a manager!')
+				return redirect('/store/home_page_owner/')
 			if (user_ == None):
 				messages.warning(request, 'no such user')
 				return redirect('/store/home_page_owner/')

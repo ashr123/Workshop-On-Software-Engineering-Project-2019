@@ -1,12 +1,12 @@
+from django.db.models import Q
 from django.shortcuts import render, redirect, render_to_response
-from django.template import RequestContext
 # from external_systems.spellChecker import checker
 from django.views.generic import DetailView
 from django.views.generic.list import ListView
-
+from django.contrib import messages
 from store.models import Item
 from store.models import Store
-from trading_system.forms import SearchForm, SomeForm
+from trading_system.forms import SearchForm, SomeForm,CartForm
 # Create your views here.
 from trading_system.models import Cart
 
@@ -89,7 +89,9 @@ def search(request):
 		# spell checker
 		# correct_word = checker.Spellchecker(text)
 		# items = Item.objects.filter(name=correct_word)
-		return Item.objects.filter(name__contains=text.cleaned_data.get('search'))
+		return Item.objects.filter(Q(name__contains=text.cleaned_data.get('search')) | Q(
+			description__contains=text.cleaned_data.get('search')) | Q(
+			category__contains=text.cleaned_data.get('search')))
 
 
 def add_item_to_cart(request, item_pk):
@@ -151,10 +153,42 @@ def approve_event(request):
 		form = SomeForm(request.POST)
 		if form.is_valid():
 			picked = form.cleaned_data.get('picked')
-			print('\n',picked)
-			render(request,'check_box_items.html', {'form': form})
-		render(request,'check_box_items.html', {'form': form})
+			print('\n', picked)
+			render(request, 'check_box_items.html', {'form': form})
+		render(request, 'check_box_items.html', {'form': form})
 	# do something with your results
 	else:
 		form = SomeForm
-	return render(request,'check_box_items.html', {'form': form})
+	return render(request, 'check_box_items.html', {'form': form})
+
+
+def make_cart_list(request):
+	if request.method == 'POST':
+		form = CartForm(request.user,request.POST)
+		if form.is_valid():
+			picked_items_to_buy = form.cleaned_data.get('items')
+			for item_id in picked_items_to_buy:
+				print(item_id)
+				item_to_buy = Item.objects.get(id=item_id)
+				amount_in_db = item_to_buy.quantity
+				print('\n amaount ',amount_in_db)
+				if (amount_in_db > 0):
+					new_q = amount_in_db - 1
+					item_to_buy.quantity = new_q
+					item_to_buy.save()
+				else:
+					messages.warning(request, 'not enough amount of this item ')
+					return redirect('/login_redirect')
+			messages.success(request, 'you just bought this item !')
+			return redirect('/login_redirect')
+
+		messages.warning(request, 'error in :  ', form.errors)
+		return redirect('/login_redirect')
+
+	else:
+		form = CartForm(request.user)
+		# context ={
+		# 	'form':form
+		# }
+		return render(request, 'trading_system/cart_test.html', {'form': form})
+

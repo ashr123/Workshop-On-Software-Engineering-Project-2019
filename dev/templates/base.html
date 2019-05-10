@@ -17,12 +17,13 @@
 <div class="menu_bar">
 	<div>
 		<a href="/home_button/">Home</a>
+{#		<a href="/test_cart/">testt</a>#}
 		{% block menu_bar_left %}
 		{% endblock %}
 	</div>
 
 	<div id="cart_search">
-		<button class="menu_bar_buttons" onclick="window.location.href='/home/view_carts'"><i
+		<button class="menu_bar_buttons" onclick="window.location.href='/show_cart/'"><i
 				class="fas fa-shopping-cart"></i></button>
 		<span id="form_search_1">
 			{% block menu_bar_right %}
