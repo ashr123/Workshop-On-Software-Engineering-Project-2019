@@ -5,10 +5,6 @@ from dev.mainTest import MyUnitTesting
 
 
 class AccountUnitTesting(MyUnitTesting):
-	def test_website_uploading(self):
-		self.driver.get(self.live_server_url)
-		self.assertIn("WeBuy", self.driver.title)
-
 	def test_signup(self):
 		password = "q2w44r32c1"
 		user = "silvFire"
@@ -18,7 +14,6 @@ class AccountUnitTesting(MyUnitTesting):
 		element = self.driver.find_element_by_name("password2")
 		element.send_keys(password)
 		element.submit()
-		# default_user = User.objects.filter(username=default_user)[0]
 		self.assertTrue(User.objects.filter(username=user).exists())
 
 		self.driver.get(self.live_server_url + "/accounts/signup/")

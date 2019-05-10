@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, render_to_response
+from django.shortcuts import render, redirect
 # from external_systems.spellChecker import checker
 from django.views.generic import DetailView
 from django.views.generic.list import ListView
@@ -36,43 +36,36 @@ def register(request):
 
 
 def item(request, id):
-	item = Item.objects.get(name=id)
-	context = {
-		'item': item
-	}
-
-	return render(request, 'trading_system/item_page.html', context)
+	return render(request, 'trading_system/item_page.html', {
+		'item': Item.objects.get(name=id)
+	})
 
 
-def item(request, id):
-	item = Item.objects.get(name=id)
-	context = {
-		'item': item
-	}
-	# store = Store.objects.get(name=name_)
-	# context = {
-	# 	'store': store
-	# }
-	return render(request, 'trading_system/item_page.html', context)
+# def item(request, id):
+# 	item = Item.objects.get(name=id)
+# 	context = {
+# 		'item': item
+# 	}
+# 	# store = Store.objects.get(name=name_)
+# 	# context = {
+# 	# 	'store': store
+# 	# }
+# 	return render(request, 'trading_system/item_page.html', context)
 
 
 def show_cart(request):
-	user_groups = request.user.groups.values_list('name', flat=True)
 	if request.user.is_authenticated:
-		if "store_owners" in user_groups:
+		if "store_owners" in request.user.groups.values_list('name', flat=True):
 			base_template_name = 'store/homepage_store_owner.html'
 		else:
 			base_template_name = 'homepage_member.html'
 	else:
 		base_template_name = 'homepage_guest.html'
-	text = SearchForm()
-	user_name = request.user.username
-	context = {
-		'user_name': user_name,
-		'text': text,
+	return render(request, 'cart.html', {
+		'user_name': request.user.username,
+		'text': SearchForm(),
 		'base_template_name': base_template_name
-	}
-	return render_to_response('cart.html', context)
+	})
 
 
 def home_button(request):
@@ -87,9 +80,8 @@ class SearchListView(ListView):
 		return search(self.request)
 
 	def get_context_data(self, **kwargs):
-		text = SearchForm()
 		context = super(SearchListView, self).get_context_data(**kwargs)  # get the default context data
-		context['text'] = text
+		context['text'] = SearchForm()
 		return context
 
 
@@ -114,9 +106,8 @@ def add_item_to_cart(request, item_pk):
 
 
 def get_item_store(item_pk):
-	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
 	# Might cause bug. Need to apply the item-in-one-store condition
-	return stores[0]
+	return list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))[0]
 
 
 def user_has_cart_for_store(store_pk, user_pk):
@@ -124,8 +115,7 @@ def user_has_cart_for_store(store_pk, user_pk):
 
 
 def open_cart_for_user_in_store(store_pk, user_pk):
-	cart = Cart(customer_id=user_pk, store_id=store_pk)
-	cart.save()
+	Cart(customer_id=user_pk, store_id=store_pk).save()
 
 
 def get_cart(store_pk, user_pk):

@@ -1,8 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group
-from django.contrib.auth.models import User
-from django.shortcuts import render, redirect, render_to_response
+from django.contrib.auth.models import Group, User
+from django.shortcuts import render, redirect
 from django.views.generic import DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.views.generic.list import ListView
@@ -16,51 +15,39 @@ from .models import Item
 from .models import Store
 
 
-@permission_required_or_403('ADD_ITEM',
-                            (Store, 'id', 'pk'))
+@permission_required_or_403('ADD_ITEM', (Store, 'id', 'pk'))
 @login_required
 def add_item(request, pk):
 	if request.method == 'POST':
 		form = ItemForm(request.POST)
 		if form.is_valid():
 			item = form.save()
-			curr_store = Store.objects.get(id=pk)
-			curr_store.items.add(item)
+			Store.objects.get(id=pk).items.add(item)
 			messages.success(request, 'Your Item was added successfully!')  # <-
 			return redirect('/store/home_page_owner/')
 		else:
-			messages.warning(request, 'Problem with filed : !', form.errors, 'please try again!')  # <-
+			messages.warning(request, 'Problem with filed: ', form.errors, 'please try again!')  # <-
 			return redirect('/store/home_page_owner/')
 	else:
-		form_class = ItemForm
-		curr_store = Store.objects.get(id=pk)
-		store_name = curr_store.name
-		context = {
-			'store': pk,
-			'form': form_class,
-			'store_name': store_name
-		}
 		print('\ndebug\n\n', pk)
-		return render(request, 'store/add_item.html', context)
+		return render(request, 'store/add_item.html', {
+			'store': pk,
+			'form': ItemForm,
+			'store_name': Store.objects.get(id=pk).name
+		})
 
 
 @login_required
 def add_store(request):
-	user_groups = request.user.groups.values_list('name', flat=True)
-	if "store_owners" in user_groups:
-		base_template_name = 'store/homepage_store_owner.html'
-	else:
-		base_template_name = 'homepage_member.html'
-	text = SearchForm()
-	user_name = request.user.username
-	set_input = forms.OpenStoreForm()
-	context = {
-		'set_input': set_input,
-		'user_name': user_name,
-		'text': text,
-		'base_template_name': base_template_name
-	}
-	return render_to_response('store/add_store.html', context)
+	return render(request, 'store/add_store.html', {
+		'set_input': forms.OpenStoreForm(),
+		'user_name': request.user.username,
+		'text': SearchForm(),
+		'base_template_name':
+			'store/homepage_store_owner.html'
+			if "store_owners" in request.user.groups.values_list('name', flat=True)
+			else 'homepage_member.html'
+	})
 
 
 @login_required
@@ -71,15 +58,13 @@ def submit_open_store(request):
 		                             description=open_store_form.cleaned_data.get('description'))
 		store.owners.add(request.user)
 		store.save()
-		_user = request.user
 		messages.success(request, 'Your Store was added successfully!')  # <-
-		my_group = Group.objects.get_or_create(name="store_owners")
-		my_group = Group.objects.get(name="store_owners")
-		_user.groups.add(my_group)
-		assign_perm('ADD_ITEM', _user, store)
-		assign_perm('REMOVE_ITEM', _user, store)
-		assign_perm('EDIT_ITEM', _user, store)
-		assign_perm('ADD_MANAGER', _user, store)
+		# my_group = Group.objects.get_or_create(name="store_owners")
+		request.user.groups.add(Group.objects.get(name="store_owners"))
+		assign_perm('ADD_ITEM', request.user, store)
+		assign_perm('REMOVE_ITEM', request.user, store)
+		assign_perm('EDIT_ITEM', request.user, store)
+		assign_perm('ADD_MANAGER', request.user, store)
 		return redirect('/store/home_page_owner')
 	else:
 		messages.warning(request, 'Please correct the error and try again.')  # <-
@@ -105,15 +90,13 @@ class StoreListView(ListView):
 	paginate_by = 100  # if pagination is desired
 
 	def get_context_data(self, **kwargs):
-		text = SearchForm()
 		context = super(StoreListView, self).get_context_data(**kwargs)  # get the default context data
-		context['text'] = text
+		context['text'] = SearchForm()
 		return context
 
 	def get_queryset(self):
 		# return Store.objects.filter(owner_id=self.request.user.id)
-		cur_user_id = self.request.user.id
-		return Store.objects.filter(owners__id__in=[cur_user_id])
+		return Store.objects.filter(owners__id__in=[self.request.user.id])
 
 
 class ItemListView(ListView):
@@ -128,19 +111,17 @@ class ItemDetailView(DetailView):
 
 class StoreUpdate(UpdateView):
 	model = Store
-	fields = ['name', 'owner', 'items']
+	fields = ['name', 'owners', 'items']
 	template_name_suffix = '_update_form'
 
 
 def have_no_more_stores(user_pk):
-	tmp = Store.objects.filter(owner_id=user_pk)
-	return len(tmp) == 0
+	return len(Store.objects.filter(owner_id=user_pk)) == 0
 
 
 @login_required
 def change_store_owner_to_member(user):
-	owners_group = Group.objects.get(name="store_owners")
-	owners_group.user_set.remove(user)
+	Group.objects.get(name="store_owners").user_set.remove(user)
 
 
 class StoreDelete(DeleteView):
@@ -148,16 +129,11 @@ class StoreDelete(DeleteView):
 	template_name_suffix = '_delete_form'
 
 	def delete(self, request, *args, **kwargs):
-		store = Store.objects.get(id=kwargs['pk'])
-		owner_id = store.owner_id
-		response = super(StoreDelete, self).delete(request, *args, **kwargs)
-		if have_no_more_stores(owner_id):
+		if have_no_more_stores(Store.objects.get(id=kwargs['pk']).owner_id):
 			change_store_owner_to_member(request.user)
-			user_name = request.user.username
-			text = SearchForm()
-			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
+			return render(request, 'homepage_member.html', {'text': SearchForm(), 'user_name': request.user.username})
 		else:
-			return response
+			return super(StoreDelete, self).delete(request, *args, **kwargs)  # response
 
 
 @login_required
@@ -165,13 +141,10 @@ def buy_item(request, pk):
 	if request.method == 'POST':
 		form = BuyForm(request.POST)
 		if form.is_valid():
-
 			_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
-			amount_in_db = _item.quantity
-			if (amount <= amount_in_db):
-				new_q = amount_in_db - amount
-				_item.quantity = new_q
+			if amount <= _item.quantity:
+				_item.quantity -= amount
 				_item.save()
 				messages.success(request, 'YES! at the moment you bought  : ', _item.description)  # <-
 				return redirect('/store/home_page_owner/')
@@ -180,26 +153,21 @@ def buy_item(request, pk):
 		messages.warning(request, 'error in :  ', form.errors)
 		return redirect('/store/home_page_owner/')
 	else:
-		form_class = BuyForm
 		curr_item = Item.objects.get(id=pk)
-		context = {
+		return render(request, 'store/buy_item.html', {
 			'pk': curr_item.id,
-			'form': form_class,
+			'form': BuyForm,
 			'price': curr_item.price,
 			'description': curr_item.description
-		}
-		return render(request, 'store/buy_item.html', context)
+		})
 
 
 @login_required
 def home_page_owner(request):
-	text = SearchForm()
-	user_name = request.user.username
-	context = {
-		'user_name': user_name,
-		'text': text
-	}
-	return render(request, 'store/homepage_store_owner.html', context)
+	return render(request, 'store/homepage_store_owner.html', {
+		'user_name': request.user.username,
+		'text': SearchForm()
+	})
 
 
 class AddItemToStore(CreateView):
@@ -207,29 +175,25 @@ class AddItemToStore(CreateView):
 	fields = ['name', 'description', 'price', 'quantity']
 
 
-def itemAddedSucceffuly(request, store_id, id):
-	x = 1
+def item_added_ssuccefuly(request):
 	return render(request, 'store/item_detail.html')
 
 
-@permission_required_or_403('ADD_MANAGER',
-                            (Store, 'id', 'pk'))
+@permission_required_or_403('ADD_MANAGER', (Store, 'id', 'pk'))
 @login_required
 def add_manager_to_store(request, pk):
 	if request.method == 'POST':
 		form = AddManagerForm(request.POST)
 		if form.is_valid():
 			user_name = form.cleaned_data.get('user_name')
-			picked = form.cleaned_data.get('permissions')
-			is_owner = form.cleaned_data.get('is_owner')
 			user_ = User.objects.get(username=user_name)
 			store_ = Store.objects.get(id=pk)
-			if (user_ == None):
+			if user_ is None:
 				messages.warning(request, 'no such user')
 				return redirect('/store/home_page_owner/')
-			for perm in picked:
+			for perm in form.cleaned_data.get('permissions'):
 				assign_perm(perm, user_, store_)
-			if (is_owner):
+			if form.cleaned_data.get('is_owner'):
 				my_group = Group.objects.get(name="store_owners")
 				user_.groups.add(my_group)
 				store_.owners.add(user_)

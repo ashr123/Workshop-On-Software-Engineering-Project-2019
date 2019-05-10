@@ -1,6 +1,7 @@
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from guardian.shortcuts import assign_perm
 from selenium import webdriver
 
 from store.models import Store
@@ -15,13 +16,19 @@ class MyUnitTesting(StaticLiveServerTestCase):
 	def setUpClass(cls):
 		super().setUpClass()
 		cls.user = User.objects.create(username=cls.default_user, password=make_password(cls.default_password))
-		cls.store = Store.objects.create(name=cls.default_store, description="bla bla bla", owner=cls.user)
+		cls.store = Store.objects.create(name=cls.default_store, description="bla bla bla")
+		cls.store.owners.add(cls.user)
+		assign_perm('ADD_ITEM', cls.user, cls.store)
+		assign_perm('REMOVE_ITEM', cls.user, cls.store)
+		assign_perm('EDIT_ITEM', cls.user, cls.store)
+		assign_perm('ADD_MANAGER', cls.user, cls.store)
 
-	@classmethod
-	def tearDownClass(cls):
-		super().tearDownClass()
+	# @classmethod
+	# def tearDownClass(cls):
+	# 	super().tearDownClass()
 
 	def setUp(self) -> None:
+		super().setUp()
 		self.driver = webdriver.Chrome()
 
 	def tearDown(self) -> None:
