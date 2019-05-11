@@ -82,7 +82,7 @@ def submit_open_store(request):
 		                             description=open_store_form.cleaned_data.get('description'))
 		store.owners.add(request.user)
 		store.save()
-		messages.success(request, 'Your Store was added successfully!')  # <-
+		messages.success(request, 'Your Store was added successfully!')
 		# my_group = Group.objects.get(name="store_owners")
 		request.user.groups.add(Group.objects.get_or_create(name="store_owners"))
 		assign_perm('ADD_ITEM', request.user, store)
@@ -91,7 +91,7 @@ def submit_open_store(request):
 		assign_perm('ADD_MANAGER', request.user, store)
 		return redirect('/store/home_page_owner')
 	else:
-		messages.warning(request, 'Please correct the error and try again.')  # <-
+		messages.warning(request, 'Please correct the error and try again.')
 		return redirect('/login_redirect')
 
 
@@ -263,3 +263,10 @@ def add_manager_to_store(request, pk):
 	else:
 		form = AddManagerForm
 	return render(request, 'store/add_manager.html', {'form': form, 'pk': pk})
+
+
+def owner_feed(request, owner_id):
+	return render(request, 'store/owner_feed.html', {
+		# 'owner_id_json': mark_safe(json.dumps(owner_id)),
+		'owner_id': owner_id
+	})

@@ -13,7 +13,7 @@
 		{#						{% endfor %}#}
 		{#			<button type="submit">Add item to store : {{ store_name }} </button>#}
 		{#		</form>#}
-		<form action="/store/add_item/{{ store }}" method="post">
+		<form action="/store/add_item/{{ store }}/" method="post">
 			{% csrf_token %}
 			<table>
 				{{ form.as_table }}
