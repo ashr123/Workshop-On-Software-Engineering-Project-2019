@@ -101,6 +101,7 @@ def submit_open_store(request):
 		assign_perm('REMOVE_ITEM', _user, store)
 		assign_perm('EDIT_ITEM', _user, store)
 		assign_perm('ADD_MANAGER', _user, store)
+		assign_perm('REMOVE_STORE', _user, store)
 		return redirect('/store/home_page_owner')
 	else:
 		messages.warning(request, 'Please correct the error and try again.')  # <-
@@ -182,13 +183,14 @@ class StoreUpdate(UpdateView):
 
 
 def have_no_more_stores(user_pk):
-	tmp = Store.objects.filter(owner_id=user_pk)
+	tmp = Store.objects.filter(owners__username__contains=user_pk)
 	return len(tmp) == 0
 
 
 @login_required
-def change_store_owner_to_member(user):
+def change_store_owner_to_member(user_name_):
 	owners_group = Group.objects.get(name="store_owners")
+	user = User.objects.get(user_name=user_name_)
 	owners_group.user_set.remove(user)
 
 
@@ -198,17 +200,31 @@ class StoreDelete(DeleteView):
 	template_name_suffix = '_delete_form'
 
 	def delete(self, request, *args, **kwargs):
-
 		store = Store.objects.get(id=kwargs['pk'])
-		owner_id = store.owners.all()[0]  # craetor
-		response = super(StoreDelete, self).delete(request, *args, **kwargs)
-		if not (self.request.user.has_perm('REMOVE_ITEM')):
+		items_to_delete = store.items.all()
+		print('\n h    hhhhhhh',items_to_delete)
+		if not (self.request.user.has_perm('REMOVE_STORE', store)):
 			messages.warning(request, 'there is no delete perm!')
 			user_name = request.user.username
 			text = SearchForm()
 			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
-		if have_no_more_stores(owner_id):
-			change_store_owner_to_member(request.user)
+
+		owner_name = store.owners.all()[0]  # craetor
+		print('\n id : ', owner_name)
+		for item_ in items_to_delete:
+			print('\n delete ')
+			item_.delete()
+
+		response = super(StoreDelete, self).delete(request, *args, **kwargs)
+
+
+		messages.success(request, 'store was deleted : ', store.name)
+		if have_no_more_stores(owner_name):
+
+			owners_group = Group.objects.get(name="store_owners")
+			user = User.objects.get(username=owner_name)
+			owners_group.user_set.remove(user)
+
 			user_name = request.user.username
 			text = SearchForm()
 			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
