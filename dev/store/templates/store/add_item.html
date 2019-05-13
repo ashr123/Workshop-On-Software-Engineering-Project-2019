@@ -1,31 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<h2>Add item</h2>
-	<div class="add_item-container">
-
-		{#		<form action="/store/add_item/{{ store }}" method="post">#}
-		{#						{{ formset.management_form }}#}
-		{#						{% for form in formset %}#}
-		{#							{% csrf_token %}#}
-		{#							{{ form }}#}
-		{#						{% endfor %}#}
-		{#			<button type="submit">Add item to store : {{ store_name }} </button>#}
-		{#		</form>#}
-{#		<p>	{% csrf_token %}{{ form.name }}</p>#}
+{% extends 'store/homepage_store_owner.html' %}
+{% block page_content %}
+	<h2 class="title">Add item</h2>
+	<div>
 		<form action="/store/add_item/{{ store }}" method="post">
 			{% csrf_token %}
-			<table>
-				{{ form.as_table }}
-
-			</table>
-			<input type="submit" value="Add item to store : {{ store_name }}"/>
+			<div id="add_item_container">
+				<table id="form_add_item">
+					{{ form.as_table }}
+				</table>
+				<input id="add_button" type="submit" value="Add"/>
+			</div>
 		</form>
-
 	</div>
-</head>
-<body>
-
-</body>
-</html>
+{% endblock %}

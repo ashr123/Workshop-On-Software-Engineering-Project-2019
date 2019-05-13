@@ -24,15 +24,20 @@
 	<div id="cart_search">
 		<button class="menu_bar_buttons" onclick="window.location.href='/home/view_carts'"><i
 				class="fas fa-shopping-cart"></i></button>
-		<span id="form_search_1">
-			{% block menu_bar_right %}
-				<form id="form_search" action="/view_items/" method="get">
+		{% block menu_bar_right %}
+			<form id="form_search" action="/view_items/" method="get">
 				{% csrf_token %}
-				{{ text.as_p }}
-				</form>
-			{% endblock %}
-		</span>
-		<button class="menu_bar_buttons" type="submit"><i class="fas fa-search"></i></button>
+				<table id="table_search">
+					<tr>
+						<td>{{ text.as_p }}</td>
+						<td></td>
+						<td>
+							<button class="search_button" type="submit"><i class="fas fa-search"></i></button>
+						</td>
+					</tr>
+				</table>
+			</form>
+		{% endblock %}
 	</div>
 </div>
 

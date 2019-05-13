@@ -30,10 +30,14 @@ def add_item(request, pk):
 		form_class = ItemForm
 		curr_store = Store.objects.get(id=pk)
 		store_name = curr_store.name
+		text = SearchForm()
+		user_name = request.user.username
 		context = {
 			'store': pk,
 			'form': form_class,
-			'store_name': store_name
+			'store_name': store_name,
+			'user_name': user_name,
+			'text': text,
 		}
 		print('\ndebug\n\n', pk)
 		return render(request, 'store/add_item.html', context)
@@ -85,8 +89,10 @@ class StoreDetailView(DetailView):
 
 	def get_context_data(self, **kwargs):
 		text = SearchForm()
+		user_name = self.request.user.username
 		context = super(StoreDetailView, self).get_context_data(**kwargs)  # get the default context data
 		context['text'] = text
+		context['user_name'] = user_name
 		return context
 
 
@@ -96,8 +102,10 @@ class StoreListView(ListView):
 
 	def get_context_data(self, **kwargs):
 		text = SearchForm()
+		user_name = self.request.user.username
 		context = super(StoreListView, self).get_context_data(**kwargs)  # get the default context data
 		context['text'] = text
+		context['user_name'] = user_name
 		return context
 
 	def get_queryset(self):

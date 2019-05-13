@@ -2,16 +2,17 @@
 {% load static %}
 
 {% block menu_bar_right %}
-	<span id="search_input">
-		Search: <input type="text"><br>
-	</span>
+	<div id="search_input">
+		<span id="search_input_1">Search: <input type="text"><br></span>
+		<button class="search_button" type="submit"><i class="fas fa-search"></i></button>
+	</div>
 {% endblock %}
 
 {% block content %}
 	<h2 class="title">Sign up</h2>
-	<table class="form_signup">
-		<tr>
-			<form method="post">
+	<form method="post">
+		<table class="form_signup">
+			<tr>
 				<td>
 					{% csrf_token %}
 					{{ form.as_p }}
@@ -21,9 +22,8 @@
 						<button class="buttons" type="submit">Sign up</button>
 					</div>
 				</td>
-			</form>
-
-		</tr>
-	</table>
+			</tr>
+		</table>
+	</form>
 
 {% endblock %}

@@ -1,5 +1,12 @@
 {% extends 'base.html' %}
 
+{% block menu_bar_right %}
+	<div id="search_input">
+		<span id="search_input_1">Search: <input type="text"><br></span>
+		<button class="search_button" type="submit"><i class="fas fa-search"></i></button>
+	</div>
+{% endblock %}
+
 {% block content %}
 	<h3 class="center-align red lighten-3">{{ title }}</h3>
 	<ul class="collection">
@@ -10,13 +17,8 @@
 					<input type="submit" value="View">
 				</form>
 			{% empty %}
-				<li>No stores yet</li>
+				<li>No Carts yet</li>
 			{% endfor %}
 		</ul>
-{#		{% for item in results %}#}
-{#			<li class="collection-item"><a href="home/item_page/{{ item.id }} "> {{ item.name }}#}
-{#				: {{ item.description }}  </a></li>#}
-			{#			<p>lllllll</p>#}
-{#		{% endfor %}#}
 	</ul>
 {% endblock %}
