@@ -323,4 +323,12 @@ def add_manager_to_store(request, pk):
 	# do something with your results
 	else:
 		form = AddManagerForm
-	return render(request, 'store/add_manager.html', {'form': form, 'pk': pk})
+		text = SearchForm()
+		user_name = request.user.username
+		context = {
+			'user_name': user_name,
+			'text': text,
+			'pk': pk,
+			'form': form
+		}
+	return render(request, 'store/add_manager.html', context)

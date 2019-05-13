@@ -4,7 +4,6 @@
 	<table class="my_stores">
 		{% for store in object_list %}
 			<tr>
-{#				<td class="store_name">{{ store.name }}</td>#}
 				<td>
 					<form action="/store/view_details/{{ store.pk }}" method="GET">
 						<input class="store_name_button" type="submit" value="{{ store.name }}">
@@ -27,9 +26,14 @@
 				</td>
 				<td>
 					<form action="/store/add_manager_to_store/{{ store.pk }}" method="GET">
-						<button class="store_buttons" type="submit"><i class="fas fa-trash-alt"></i></button>
+						<button class="store_buttons" type="submit"><i class="fas fa-user-plus"></i></button>
 					</form>
-				</td>v
+				</td>
+				<td>
+					<form action="/store/add_discount_to_store/{{ store.pk }}" method="GET">
+						<button class="store_buttons" type="submit"><i class="fas fa-tags"></i></button>
+					</form>
+				</td>
 
 			</tr>
 		{% empty %}
