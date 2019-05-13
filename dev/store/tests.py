@@ -56,5 +56,4 @@ class StoreUnitTesting(MyUnitTesting):
 		element = self.driver.find_element_by_id("id_permissions_0")
 		element.click()
 		element.submit()
-		
-
+		self.assertTrue(user.has_perm('ADD_ITEM', self.store))

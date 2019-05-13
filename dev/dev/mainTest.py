@@ -11,7 +11,6 @@ class MyUnitTesting(StaticLiveServerTestCase):
 	default_password = "q2w44r32c1"
 	default_user = "qqq"
 	default_store = "rrr"
-	driver = None
 
 	@classmethod
 	def setUpClass(cls):
@@ -36,9 +35,10 @@ class MyUnitTesting(StaticLiveServerTestCase):
 	# def tearDown(self) -> None:
 	# 	self.driver.close()
 
-	def login(self, user, password):
-		self.driver.get(self.live_server_url + "/accounts/login/")
-		self.driver.find_element_by_name("username").send_keys(user)
-		element = self.driver.find_element_by_name("password")
+	@classmethod
+	def login(cls, user, password):
+		cls.driver.get(cls.live_server_url + "/accounts/login/")
+		cls.driver.find_element_by_name("username").send_keys(user)
+		element = cls.driver.find_element_by_name("password")
 		element.send_keys(password)
 		element.submit()
