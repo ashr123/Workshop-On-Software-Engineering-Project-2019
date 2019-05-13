@@ -30,6 +30,7 @@ class Store(models.Model):
 	owners = models.ManyToManyField(User)
 	items = models.ManyToManyField(Item)
 	description = models.CharField(max_length=64)
+	discount = models.PositiveIntegerField(default=0)
 
 	class Meta:
 		permissions = (
@@ -37,4 +38,5 @@ class Store(models.Model):
 			('REMOVE_ITEM', 'delete item'),
 			('EDIT_ITEM', 'update item'),
 			('ADD_MANAGER', 'add manager'),
+			('REMOVE_STORE', 'delete store'),
 		)
