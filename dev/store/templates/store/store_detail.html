@@ -1,8 +1,7 @@
-{% extends 'base_member.html' %}
-{% block content %}
-
-	<h2>The name of the store: {{ object.name }}</h2>
-
-
-	<h4>Description : </h4>  <h5>{{ object.description }} </h5>
+{% extends 'store/homepage_store_owner.html' %}
+{% block page_content %}
+	<div id="store_details">
+		<h2>The name of the store: {{ object.name }}</h2>
+		<h4>Description: {{ object.description }}</h4>
+	</div>
 {% endblock %}
