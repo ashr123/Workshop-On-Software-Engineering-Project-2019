@@ -176,8 +176,9 @@ def make_cart_list(request):
 					new_q = amount_in_db - 1
 					item_to_buy.quantity = new_q
 					item_to_buy.save()
-					cart_item = Cart.objects.get(items__id__contains=item_id)
-					cart_item.delete()
+					cart = Cart.objects.get(customer = request.user)
+					item = cart.items.get(id=item_id)
+					item.delete()
 				else:
 					messages.warning(request, 'not enough amount of this item ')
 					return redirect('/login_redirect')
