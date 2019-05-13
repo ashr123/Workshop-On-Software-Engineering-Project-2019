@@ -19,4 +19,6 @@ urlpatterns = [
 	path('buy_item/<int:pk>', views.buy_item),
 	path('add_manager_to_store/<int:pk>', views.add_manager_to_store),
 	path('add_manager_to_store/<int:pk>/', views.add_manager_to_store),
+	path('add_discount_to_store/<int:pk>', views.add_discount_to_store),
+	path('add_discount_to_store/<int:pk>/', views.add_discount_to_store),
 ]

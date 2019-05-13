@@ -13,7 +13,7 @@ from guardian.shortcuts import assign_perm
 
 from trading_system.forms import SearchForm
 from . import forms
-from .forms import ItemForm, BuyForm, AddManagerForm
+from .forms import ItemForm, BuyForm, AddManagerForm, AddDiscountToStore
 from .models import Item
 from .models import Store
 
@@ -202,7 +202,7 @@ class StoreDelete(DeleteView):
 	def delete(self, request, *args, **kwargs):
 		store = Store.objects.get(id=kwargs['pk'])
 		items_to_delete = store.items.all()
-		print('\n h    hhhhhhh',items_to_delete)
+		print('\n h    hhhhhhh', items_to_delete)
 		if not (self.request.user.has_perm('REMOVE_STORE', store)):
 			messages.warning(request, 'there is no delete perm!')
 			user_name = request.user.username
@@ -216,7 +216,6 @@ class StoreDelete(DeleteView):
 			item_.delete()
 
 		response = super(StoreDelete, self).delete(request, *args, **kwargs)
-
 
 		messages.success(request, 'store was deleted : ', store.name)
 		if have_no_more_stores(owner_name):
@@ -251,6 +250,10 @@ def buy_item(request, pk):
 				_item.quantity = new_q
 				_item.save()
 				total = amount * _item.price
+				store_of_item = Store.objects.get(items__id__contains=pk)
+				if(store_of_item.discount>0):
+					total = (100-store_of_item.discount)/100 * float(total)
+					messages.success(request, 'you have discount for this store : ' + str(store_of_item.discount) + ' %')  # <-
 				messages.success(request, 'YES! at the moment you bought  : ' + _item.description)  # <-
 				messages.success(request, 'total : ' + str(total) + ' $')  # <-
 				return redirect('/store/home_page_owner/')
@@ -324,3 +327,25 @@ def add_manager_to_store(request, pk):
 	else:
 		form = AddManagerForm
 	return render(request, 'store/add_manager.html', {'form': form, 'pk': pk})
+
+
+def add_discount_to_store(request, pk):
+	if request.method == 'POST':
+		form = AddDiscountToStore(request.POST)
+		if form.is_valid():
+			discount = form.cleaned_data.get('discount')
+			store = Store.objects.get(id=pk)
+			store.discount = discount
+			store.save()
+			messages.success(request, 'add discount :  ' + str(discount) + '%')
+			return redirect('/store/home_page_owner/')
+		messages.warning(request, 'error in :  ', form.errors)
+		return redirect('/store/home_page_owner/')
+
+	else:
+		discountForm = AddDiscountToStore()
+		context = {
+			'form': discountForm,
+			'pk': pk,
+		}
+		return render(request, 'store/add_discount_to_store.html', context)

@@ -1,10 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'store/homepage_store_owner.html' %}
+{% block page_content %}
+	<h2 class="title">Add Discount To Store</h2>
+	<div>
+		<form action="/store/add_discount_to_store/{{ pk }}" method="post">
+			{% csrf_token %}
+			<div id="add_discount_container">
+
+				{{ form }}
+
+				<input id="add_button" type="submit" value="Add"/>
+			</div>
+		</form>
+	</div>
+{% endblock %}

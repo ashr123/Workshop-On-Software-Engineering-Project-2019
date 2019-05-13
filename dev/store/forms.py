@@ -3,6 +3,10 @@ from django import forms
 from .models import Item
 
 
+class AddDiscountToStore(forms.Form):
+	discount = forms.IntegerField(max_value=100)
+
+
 class AddManagerForm(forms.Form):
 	user_name = forms.CharField()
 	is_owner = forms.BooleanField( required=False)

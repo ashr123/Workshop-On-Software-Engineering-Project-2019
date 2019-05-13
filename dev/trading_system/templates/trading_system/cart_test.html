@@ -11,7 +11,7 @@
 	{#		<input type="submit" value="Buy">#}
 	{#	</form>#}
 
-	<form action="/test_cart" method='post'>
+	<form action="/show_cart" method='post'>
 		{% csrf_token %}
 		{{ form.as_p }}
 		<input type='submit' value='Buy'>
