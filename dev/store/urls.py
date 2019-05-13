@@ -19,5 +19,5 @@ urlpatterns = [
 	path('view_store/', views.StoreListView.as_view(), name='store-owner-detail', ),
 	path('view_item/<int:pk>', views.ItemDetailView.as_view(), name='item-detail', ),
 	path('buy_item/<int:pk>', views.buy_item),
-	path('store_owner_feed/<slug:owner_id>', views.owner_feed),
+	# path('store_owner_feed/<slug:owner_id>', views.owner_feed),
 ]

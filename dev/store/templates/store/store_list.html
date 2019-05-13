@@ -5,21 +5,19 @@
 		{% for store in object_list %}
 			<li>{{ store.name }}</li>
 			<form action="/store/view_details/{{ store.pk }}" method="GET">
-				<input type="submit" value="View">
+				<input type="submit" id="view {{ store.pk }}" value="View">
 			</form>
 			<form action="/store/delete/{{ store.pk }}" method="GET">
-				<input type="submit" value="Delete">
+				<input type="submit" id="delete {{ store.pk }}" value="Delete">
 			</form>
 			<form action="/store/update/{{ store.pk }}" method="GET">
-				<input type="submit" value="Update">
+				<input type="submit" id="update {{ store.pk }}" value="Update">
 			</form>
-
 			<form action="/store/add_item_to_store/{{ store.pk }}" method="GET">
-				<input type="submit" value="Add item">
+				<input type="submit" id="add item to {{ store.pk }}" value="Add item">
 			</form>
-
 			<form action="/store/add_manager_to_store/{{ store.pk }}" method="GET">
-				<input type="submit" value="Add manager">
+				<input type="submit" id="add manager to {{ store.pk }}" value="Add manager">
 			</form>
 		{% empty %}
 			<li>No stores yet</li>

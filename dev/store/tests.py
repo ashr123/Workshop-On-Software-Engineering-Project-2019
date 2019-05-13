@@ -1,7 +1,5 @@
 from unittest import skip
 
-from django.contrib.auth.models import User
-
 from dev.mainTest import MyUnitTesting
 from store.models import Store, Item
 
@@ -39,3 +37,10 @@ class StoreUnitTesting(MyUnitTesting):
 		element.send_keys("qwer")
 		element.submit()
 		not_finished = True
+
+	def test_delete_store(self):
+		self.assertTrue(Store.objects.filter(name=self.default_store).exists())
+		self.driver.get(self.live_server_url + "/store/view_store/")
+		self.driver.find_element_by_id("delete " + str(self.store.id)).submit()
+		self.driver.find_element_by_name("csrfmiddlewaretoken").submit()
+		self.assertFalse(Store.objects.filter(name=self.default_store).exists())

@@ -15,3 +15,4 @@ class Cart(models.Model):
 
 	class Meta:
 		unique_together = (("customer", "store"),)
+
