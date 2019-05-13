@@ -198,7 +198,6 @@ class StoreDelete(DeleteView):
 	template_name_suffix = '_delete_form'
 
 	def delete(self, request, *args, **kwargs):
-
 		store = Store.objects.get(id=kwargs['pk'])
 		owner_id = store.owners.all()[0]  # craetor
 		response = super(StoreDelete, self).delete(request, *args, **kwargs)
@@ -286,12 +285,16 @@ def add_manager_to_store(request, pk):
 			user_name = form.cleaned_data.get('user_name')
 			picked = form.cleaned_data.get('permissions')
 			is_owner = form.cleaned_data.get('is_owner')
-			user_ = User.objects.get(username=user_name)
+			try:
+				user_ = User.objects.get(username=user_name)
+			except:
+				messages.warning(request, 'no such user')
+				return redirect('/store/add_manager_to_store/' + str(pk) + '/')
 			store_ = Store.objects.get(id=pk)
-			if (user_name == request.user.username):
+			if user_name == request.user.username:
 				messages.warning(request, 'can`t add yourself as a manager!')
 				return redirect('/store/home_page_owner/')
-			if (user_ == None):
+			if user_ is None:
 				messages.warning(request, 'no such user')
 				return redirect('/store/home_page_owner/')
 			for perm in picked:

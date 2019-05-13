@@ -1,5 +1,8 @@
 from unittest import skip
 
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import User
+
 from dev.mainTest import MyUnitTesting
 from store.models import Store, Item
 
@@ -44,3 +47,14 @@ class StoreUnitTesting(MyUnitTesting):
 		self.driver.find_element_by_id("delete " + str(self.store.id)).submit()
 		self.driver.find_element_by_name("csrfmiddlewaretoken").submit()
 		self.assertFalse(Store.objects.filter(name=self.default_store).exists())
+
+	def test_add_manager_to_store(self):
+		new_user = 'user_to_manager'
+		self.driver.get(self.live_server_url + "/store/add_manager_to_store/" + str(self.store.id) + '/')
+		user = User.objects.create(username=new_user, password=make_password(self.default_password))
+		self.driver.find_element_by_id('id_user_name').send_keys(new_user)
+		element = self.driver.find_element_by_id("id_permissions_0")
+		element.click()
+		element.submit()
+		
+
