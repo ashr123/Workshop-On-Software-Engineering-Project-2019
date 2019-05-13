@@ -143,6 +143,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# SESSION_ENGINE = "multi_sessions.session"
 LOGIN_REDIRECT_URL = '/login_redirect'
 LOGOUT_REDIRECT_URL = '/'
 STATIC_URL = '/static/'
@@ -152,3 +153,10 @@ STATICFILES_DIRS = ["static", ]
 
 MEDIA_URL = '/images/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "static/images")
+
+PROJ_IP = '127.0.0.1'
+PROJ_PORT = '8000'
+# SESSION_MULTISESSIONS_POOL = (
+#     {"backend": "redis_sessions.session", "modes": ["read", "write"]},
+#     {"backend": "django.contrib.sessions.backends.db", "modes": ["read", "delete"]},
+# )
