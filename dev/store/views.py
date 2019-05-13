@@ -310,6 +310,13 @@ def add_manager_to_store(request, pk):
 			if (user_name == request.user.username):
 				messages.warning(request, 'can`t add yourself as a manager!')
 				return redirect('/store/home_page_owner/')
+			pre_store_owners = store_.owners.all()
+			# print('\n owners: ' ,pre_store_owners)
+			for owner in pre_store_owners:
+				if(owner.username  == user_name):
+					messages.warning(request, 'allready owner')
+					return redirect('/store/home_page_owner/')
+
 			if (user_ == None):
 				messages.warning(request, 'no such user')
 				return redirect('/store/home_page_owner/')

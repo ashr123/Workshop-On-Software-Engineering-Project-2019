@@ -26,6 +26,11 @@
 					</form>
 				</td>
 				<td>
+					<form action="/store/add_manager_to_store/{{ store.pk }}" method="GET">
+						<button class="store_buttons" type="submit"><i class="fas fa-user-plus"></i></button>
+					</form>
+				</td>
+				<td>
 					<form action="/store/add_discount_to_store/{{ store.pk }}" method="GET">
 						<button class="store_buttons" type="submit"><i class="fas fa-tags"></i></button>
 					</form>
