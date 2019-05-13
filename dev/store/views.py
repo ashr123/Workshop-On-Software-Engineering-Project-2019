@@ -13,7 +13,7 @@ from guardian.shortcuts import assign_perm
 
 from trading_system.forms import SearchForm
 from . import forms
-from .forms import ItemForm, BuyForm, AddManagerForm, AddDiscountToStore
+from .forms import ItemForm, BuyForm, AddManagerForm, AddDiscountToStore, AddRuleToStore
 from .models import Item
 from .models import Store
 
@@ -349,3 +349,27 @@ def add_discount_to_store(request, pk):
 			'pk': pk,
 		}
 		return render(request, 'store/add_discount_to_store.html', context)
+
+def add_rule_to_store(request, pk):
+	if request.method == 'POST':
+		form = AddRuleToStore(request.POST)
+		if form.is_valid():
+			rule = form.cleaned_data.get('rules')
+			if rule is 'MAX_QUANTITY':
+				pass
+			elif rule is 'MIN_QUANTITY':
+				pass
+			elif rule is 'REGISTERED_ONLY':
+				pass
+			messages.success(request, 'added rule :  ' + rule + 'successfully!')
+			return redirect('/store/home_page_owner/')
+		messages.warning(request, 'error in :  ', form.errors)
+		return redirect('/store/home_page_owner/')
+
+	else:
+		ruleForm = AddRuleToStore()
+		context = {
+			'form': ruleForm,
+			'pk': pk,
+		}
+		return render(request, 'store/add_rule_to_store.html', context)

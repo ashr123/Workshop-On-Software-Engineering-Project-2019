@@ -6,6 +6,12 @@ from .models import Item
 class AddDiscountToStore(forms.Form):
 	discount = forms.IntegerField(max_value=100)
 
+class AddRuleToStore(forms.Form):
+	CHOICES = (('MAX_QUANTITY', 'Max_quantity - restrict max amount of items per order'),
+	           ('MIN_QUANTITY', 'Min_quantity - restrict min amount of items per order'),
+	           ('REGISTERED_ONLY', 'Registered_only - only members will be able to buy from your store'),)
+	rules = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect)
+	parameter = forms.IntegerField(min_value=0)
 
 class AddManagerForm(forms.Form):
 	user_name = forms.CharField()
