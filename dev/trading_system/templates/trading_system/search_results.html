@@ -1,28 +1,35 @@
 {% extends 'base.html' %}
 
 {% block content %}
-	<h3 class="center-align red lighten-3">{{ title }}</h3>
-	<ul class="collection">
-		<ul class="my_stores">
+	<div id="items_table">
+		<h2 class="title">Results</h2>
+		<table class="search_results">
 			{% for item in object_list %}
-				<li>Name:{{ item.name }} Description:{{ item.description }}</li>
-				<form action="/store/view_item/{{ item.pk }}" method="GET">
-					<input type="submit" value="View">
-				</form>
-				<form action="/store/buy_item/{{ item.pk }}" method="GET">
-					<input type="submit" value="Buy">
-				</form>
-				<form action="/add_item_to_cart/{{ item.pk }}" method="GET">
-					<input type="submit" value="Add to cart">
-				</form>
+				<tr>
+					<td>
+						<form action="/store/view_item/{{ item.pk }}" method="GET">
+							<input class="item_name_button" type="submit" value="{{ item.name }}">
+						</form>
+						<div id="item_desc">{{ item.description }}</div>
+					</td>
+					<td>
+						<div class="item_price">{{ item.price }}</div>
+					</td>
+					<td>
+						<form action="/store/buy_item/{{ item.pk }}" method="GET">
+							<button class="item_buttons" type="submit"><i class="far fa-credit-card"></i></button>
+						</form>
+					</td>
+					<td>
+						<form action="/add_item_to_cart/{{ item.pk }}" method="GET">
+							<button class="item_buttons" type="submit"><i class="fas fa-cart-plus"></i></button>
+						</form>
+					</td>
+				</tr>
 			{% empty %}
-				<li>No Such item</li>
+				<tr>No results for that search</tr>
 			{% endfor %}
-		</ul>
-		{#		{% for item in results %}#}
-		{#			<li class="collection-item"><a href="home/item_page/{{ item.id }} "> {{ item.name }}#}
-		{#				: {{ item.description }}  </a></li>#}
-		{#			<p>lllllll</p>#}
-		{#		{% endfor %}#}
-	</ul>
+		</table>
+	</div>
+
 {% endblock %}
