@@ -2,7 +2,6 @@
 
 <!DOCTYPE html>
 <html>
-
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>WeBuy</title>
@@ -17,7 +16,7 @@
 <div class="menu_bar">
 	<div>
 		<a href="/home_button/">Home</a>
-{#		<a href="/test_cart/">testt</a>#}
+		{#		<a href="/test_cart/">testt</a>#}
 		{% block menu_bar_left %}
 		{% endblock %}
 	</div>
@@ -45,14 +44,19 @@
 
 <div class="top_page" style="background-image:url('{% static "images/shopp.jpg" %}'); padding: 14px 16px;">
 	<div>
-		<div>
-			<div class="container">
-				{% include 'messages.html' %}
-			</div>
-		</div>
+		{#		<div>#}
+		{#			<div class="container">#}
+		{#				{% include 'messages.html' %}#}
+		{#			</div>#}
+		{#		</div>#}
 		<h1><strong>WeBuy</strong></h1>
 	</div>
 </div>
+
+<div>
+	{% include 'messages.html' %}
+</div>
+
 
 <div>
 	{% block content %}
@@ -61,4 +65,5 @@
 
 
 </body>
+
 </html>

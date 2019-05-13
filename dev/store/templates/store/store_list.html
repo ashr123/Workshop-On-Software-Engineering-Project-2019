@@ -25,9 +25,15 @@
 						<button class="store_buttons" type="submit"><i class="fas fa-trash-alt"></i></button>
 					</form>
 				</td>
+				<td>
+					<form action="/store/add_manager_to_store/{{ store.pk }}" method="GET">
+						<button class="store_buttons" type="submit"><i class="fas fa-trash-alt"></i></button>
+					</form>
+				</td>v
+
 			</tr>
 		{% empty %}
-			<tr>No stores yet</tr>
+			<tr class="title" >No stores yet</tr>
 		{% endfor %}
 	</table>
 {% endblock %}
