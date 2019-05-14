@@ -122,9 +122,11 @@ class StoreDetailView(ListView):
 	permission_required = "@login_required"
 
 	def get_context_data(self, **kwargs):
-		context = super().get_context_data(**kwargs)  # get the default context data
-		context['text'] = SearchForm()
-		context['user_name'] = self.request.user.username
+		text = SearchForm()
+		user_name = self.request.user.username
+		context = super(StoreDetailView, self).get_context_data(**kwargs)  # get the default context data
+		context['text'] = text
+		context['user_name'] = user_name
 		return context
 
 	def get_queryset(self):
@@ -277,21 +279,24 @@ def buy_item(request, pk):
 					ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(owner.id))
 					ws.send(json.dumps({'message': 'I BOUGHT AN ITEM FROM YOU'}))
 
-
-				return redirect('/store/home_page_owner/')
+				messages.success(request, 'Thank you! you bought ' + _item.name)  # <-
+				messages.success(request, 'Total : ' + str(total) + ' $')  # <-
+				return redirect('/login_redirect')
 			messages.warning(request, 'there is no such amount ! please try again!')
-			return redirect('/store/home_page_owner/')
+			return redirect('/login_redirect')
 		messages.warning(request, 'error in :  ', form.errors)
-		return redirect('/store/home_page_owner/')
+		return redirect('/login_redirect')
 	else:
+		text = SearchForm()
 		form_class = BuyForm
 		curr_item = Item.objects.get(id=pk)
 		context = {
+			'name': curr_item.name,
 			'pk': curr_item.id,
 			'form': form_class,
 			'price': curr_item.price,
 			'description': curr_item.description,
-
+			'text': text
 		}
 		return render(request, 'store/buy_item.html', context)
 
@@ -345,7 +350,7 @@ def add_manager_to_store(request, pk):
 					return redirect('/store/home_page_owner/')
 
 			if (user_ == None):
-				messages.warning(request, 'no such user')
+				messages.warning(request, 'No such user')
 				return redirect('/store/home_page_owner/')
 			for perm in picked:
 				assign_perm(perm, user_, store_)
@@ -353,14 +358,24 @@ def add_manager_to_store(request, pk):
 				my_group = Group.objects.get(name="store_owners")
 				user_.groups.add(my_group)
 				store_.owners.add(user_)
-			messages.success(request, 'add manager :  ' + user_name)
+			messages.success(request, user_name + 'is appointed')
 			return redirect('/store/home_page_owner/')
 		messages.warning(request, 'error in :  ', form.errors)
 		return redirect('/store/home_page_owner/')
 	# do something with your results
 	else:
+		else:
 		form = AddManagerForm
-	return render(request, 'store/add_manager.html', {'form': form, 'pk': pk})
+		text = SearchForm()
+		user_name = request.user.username
+		context = {
+			'user_name': user_name,
+			'text': text,
+			'pk': pk,
+			'form': form
+		}
+
+	return render(request, 'store/add_manager.html', context)
 
 
 def add_discount_to_store(request, pk):
@@ -421,4 +436,15 @@ def get_item_store(item_pk):
 	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
 	# Might cause bug. Need to apply the item-in-one-store condition
 	return stores[0]
+
+
+		text = SearchForm()
+		user_name = request.user.username
+		context = {
+			'user_name': user_name,
+			'text': text,
+			'pk': pk,
+			'form': form
+		}
+	return render(request, 'store/add_manager.html', context)
 

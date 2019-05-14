@@ -4,7 +4,9 @@
 	<table class="my_stores">
 		{% for store in object_list %}
 			<tr>
+
 				{#				<td class="store_name">{{ store.name }}</td>#}
+
 				<td>
 					<form action="/store/view_details/{{ store.pk }}" method="GET">
 						<input class="store_name_button" type="submit" value="{{ store.name }}">
@@ -35,9 +37,10 @@
 						<button class="store_buttons" type="submit"><i class="fas fa-tags"></i></button>
 					</form>
 				</td>
+
 			</tr>
 		{% empty %}
-			<tr>No stores yet</tr>
+			<tr class="title" >No stores yet</tr>
 		{% endfor %}
 	</table>
 {% endblock %}
