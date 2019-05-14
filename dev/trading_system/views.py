@@ -85,14 +85,29 @@ def search(request: Any) -> QuerySet:
 			description__contains=text.cleaned_data.get('search')) | Q(
 			category__contains=text.cleaned_data.get('search')))
 
-
+cart_index = 0
 def add_item_to_cart(request: Any, item_pk: int) -> HttpResponse:  # TODO check!!
-	item_store = get_item_store(item_pk)
-	cart = get_cart(item_store, request.user.pk)
-	if cart is None:
-		open_cart_for_user_in_store(item_store.pk, request.user.pk)  # TODO
+	if (request.user.is_authenticated):
+		item_store = get_item_store(item_pk)
 		cart = get_cart(item_store, request.user.pk)
-	cart.items.add(item_pk)
+		if cart is None:
+			open_cart_for_user_in_store(item_store.pk, request.user.pk)  # TODO
+			cart = get_cart(item_store, request.user.pk)
+		cart.items.add(item_pk)
+		return render(request, 'trading_system/item_added_successfuly.html')
+	else:
+		if 'cart_index' in request.session:
+			cart_index = request.session['cart_index']
+			cart_index = cart_index + 1
+			request.session['cart_index'] = cart_index
+		else:
+			request.session['cart_index'] = 0
+			cart_index = request.session['cart_index']
+		request.session[cart_index] = item_pk
+
+		print('\ncart:  ', request.session[cart_index])
+		print('\ncart_ijndex :  ',cart_index)
+
 	return render(request, 'trading_system/item_added_successfuly.html')
 
 
