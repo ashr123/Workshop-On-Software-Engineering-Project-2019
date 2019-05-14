@@ -120,6 +120,7 @@ class StoreDetailView(ListView):
 		context = super().get_context_data(**kwargs)  # get the default context data
 		context['text'] = SearchForm()
 		context['user_name'] = self.request.user.username
+		context['store'] = Store.objects.get(id=self.kwargs['pk'])
 		return context
 
 	def get_queryset(self):
@@ -148,14 +149,15 @@ class ItemListView(ListView):
 	paginate_by = 100  # if pagination is desired
 
 	def get_context_data(self, **kwargs):
+		store = Store.objects.get(id=kwargs['store_pk'])
 		context = super().get_context_data(**kwargs)  # get the default context data
 		context['text'] = SearchForm()
-		context['user_name'] = self.request.user.username
 		return context
 
 	def get_queryset(self, **kwargs):
-		store = Store.objects.get(id=kwargs['store_pk'])
-		items = store.items.all()
+		return Store.objects.get(id=kwargs['store_pk']).items.all()
+
+
 # return Item.objects.filter(owners__id__in=[self.request.user.id])
 
 
@@ -296,7 +298,6 @@ class AddItemToStore(CreateView):
 
 
 def itemAddedSucceffuly(request, store_id, id):
-	x = 1
 	return render(request, 'store/item_detail.html')
 
 
@@ -338,10 +339,9 @@ def add_manager_to_store(request, pk):
 
 
 def update_item(request, pk):
+	form = ItemForm(request.POST or None, instance=get_object_or_404(Item, id=pk))
+
 	if request.method == "POST":
-
-		form = ItemForm(request.POST or None)
-
 		if form.is_valid():
 			obj = form.save(commit=False)
 
@@ -356,9 +356,9 @@ def update_item(request, pk):
 			                                                'error': 'The form was not updated successfully. Please enter in a title and content'})
 	else:
 		return render(request, 'store/edit_item.html', {
-			'store': pk,
-			'form': ItemForm,
-			'store_name': Store.objects.get(id=pk).name,  # TODO
-			'user_name': request.user.username,
-			'text': SearchForm(),
+			# 'store': pk,
+			'form': form,
+			# 'item_name': Item.objects.get(id=pk).name,
+			# 'user_name': request.user.username,
+			# 'text': SearchForm(),
 		})
