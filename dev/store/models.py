@@ -37,4 +37,5 @@ class Store(models.Model):
 			('EDIT_ITEM', 'update item'),
 			('ADD_MANAGER', 'add manager'),
 			('REMOVE_STORE', 'delete store'),
+			('ADD_DISCOUNT', 'add discount'),
 		)

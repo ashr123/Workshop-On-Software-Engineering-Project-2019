@@ -9,11 +9,15 @@ class AddDiscountToStore(forms.Form):
 
 class AddManagerForm(forms.Form):
 	user_name = forms.CharField()
-	is_owner = forms.BooleanField( required=False)
+	is_owner = forms.BooleanField(required=False)
 	CHOICES = (('ADD_ITEM', 'add item'),
 	           ('REMOVE_ITEM', 'delete item'),
 	           ('EDIT_ITEM', 'update item'),
-	           ('ADD_MANAGER', 'add manager'),)
+	           ('ADD_MANAGER', 'add manager'),
+	           ('REMOVE_STORE', 'delete store'),
+	           ('ADD_DISCOUNT', 'add discount'),
+	           )
+
 	permissions = forms.MultipleChoiceField(choices=CHOICES, widget=forms.CheckboxSelectMultiple())
 
 
@@ -30,4 +34,3 @@ class ItemForm(forms.ModelForm):
 
 class BuyForm(forms.Form):
 	amount = forms.IntegerField()
-

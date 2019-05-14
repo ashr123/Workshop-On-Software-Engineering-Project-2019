@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.contrib.gis.geoip2 import GeoIP2
-from django.shortcuts import render, redirect, render_to_response, get_object_or_404
+from django.shortcuts import render, redirect, render_to_response
 from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
 from django.views.generic import DetailView
@@ -14,6 +14,7 @@ from django.views.generic.list import ListView
 from guardian.decorators import permission_required_or_403
 from guardian.shortcuts import assign_perm
 from websocket import create_connection
+
 from trading_system.forms import SearchForm
 from . import forms
 from .forms import ItemForm, BuyForm, AddManagerForm, AddDiscountToStore
@@ -127,8 +128,8 @@ class StoreDetailView(DetailView):
 		context['user_name'] = user_name
 		return context
 
-	# def get_queryset(self):
-	# 	return Store.objects.get(id=self.kwargs['pk']).items.all()
+# def get_queryset(self):
+# 	return Store.objects.get(id=self.kwargs['pk']).items.all()
 
 
 @method_decorator(login_required, name='dispatch')
@@ -161,6 +162,8 @@ class ItemListView(ListView):
 	def get_queryset(self, **kwargs):
 		store = Store.objects.get(id=kwargs['store_pk'])
 		items = store.items.all()
+
+
 # return Item.objects.filter(owners__id__in=[self.request.user.id])
 
 
@@ -266,9 +269,10 @@ def buy_item(request, pk):
 
 				total = amount * _item.price
 				store_of_item = Store.objects.get(items__id__contains=pk)
-				if(store_of_item.discount>0):
-					total = (100-store_of_item.discount)/100 * float(total)
-					messages.success(request, 'you have discount for this store : ' + str(store_of_item.discount) + ' %')  # <-
+				if (store_of_item.discount > 0):
+					total = (100 - store_of_item.discount) / 100 * float(total)
+					messages.success(request,
+					                 'you have discount for this store : ' + str(store_of_item.discount) + ' %')  # <-
 				# messages.success(request, 'YES! at the moment you bought  : ' + _item.description)  # <-
 				# messages.success(request, 'total : ' + str(total) + ' $')  # <-
 
@@ -276,8 +280,11 @@ def buy_item(request, pk):
 				for owner in store.owners.all():
 					ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(owner.id))
 					ws.send(json.dumps({'message': 'I BOUGHT AN ITEM FROM YOU'}))
+				_item_name = _item.name
+				if (_item.quantity == 0):
+					_item.delete()
 
-				messages.success(request, 'Thank you! you bought ' + _item.name)  # <-
+				messages.success(request, 'Thank you! you bought ' + _item_name)  # <-
 				messages.success(request, 'Total : ' + str(total) + ' $')  # <-
 				return redirect('/login_redirect')
 			messages.warning(request, 'there is no such amount ! please try again!')
@@ -321,7 +328,6 @@ def itemAddedSucceffuly(request, store_id, id):
 	return render(request, 'store/item_detail.html')
 
 
-
 @permission_required_or_403('ADD_MANAGER', (Store, 'id', 'pk'))
 @login_required
 def add_manager_to_store(request, pk):
@@ -343,7 +349,7 @@ def add_manager_to_store(request, pk):
 			pre_store_owners = store_.owners.all()
 			# print('\n owners: ' ,pre_store_owners)
 			for owner in pre_store_owners:
-				if(owner.username  == user_name):
+				if (owner.username == user_name):
 					messages.warning(request, 'allready owner')
 					return redirect('/store/home_page_owner/')
 
@@ -374,7 +380,8 @@ def add_manager_to_store(request, pk):
 
 		return render(request, 'store/add_manager.html', context)
 
-
+@permission_required_or_403('ADD_DISCOUNT', (Store, 'id', 'pk'))
+@login_required
 def add_discount_to_store(request, pk):
 	if request.method == 'POST':
 		form = AddDiscountToStore(request.POST)
@@ -395,6 +402,7 @@ def add_discount_to_store(request, pk):
 			'pk': pk,
 		}
 		return render(request, 'store/add_discount_to_store.html', context)
+
 
 def update_item(request, pk):
 	if request.method == "POST":
@@ -422,6 +430,7 @@ def update_item(request, pk):
 			'text': SearchForm(),
 		})
 
+
 def owner_feed(request, owner_id):
 	context = {
 		'owner_id_json': mark_safe(json.dumps(owner_id)),
@@ -429,8 +438,8 @@ def owner_feed(request, owner_id):
 	}
 	return render(request, 'store/owner_feed.html', context)
 
+
 def get_item_store(item_pk):
 	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
 	# Might cause bug. Need to apply the item-in-one-store condition
 	return stores[0]
-
