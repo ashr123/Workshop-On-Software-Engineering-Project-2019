@@ -4,6 +4,7 @@ from django.utils.safestring import mark_safe
 from .models import Cart
 
 
+
 class SomeForm(forms.Form):
 	CHOICES = (('a', 'add item'),
 	           ('b', 'delete item'),

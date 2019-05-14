@@ -1,6 +1,7 @@
 from django import forms
-from .models import TITLE_CHOICES
+
 from .models import Author
+from .models import TITLE_CHOICES
 
 
 class NameForm(forms.Form):

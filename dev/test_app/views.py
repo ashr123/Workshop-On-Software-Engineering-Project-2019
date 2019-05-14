@@ -3,13 +3,13 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic.detail import DetailView
-from django.views.generic.list import ListView
-from django.views.generic.edit import FormView, UpdateView, DeleteView
 from django.views.generic.edit import CreateView
+from django.views.generic.edit import FormView, UpdateView, DeleteView
+from django.views.generic.list import ListView
 
-from .forms import NameForm
-from .forms import ContactForm
 from .forms import AuthorForm
+from .forms import ContactForm
+from .forms import NameForm
 from .models import Article
 from .models import Author
 
@@ -124,7 +124,7 @@ class AuthorCreate(CreateView):
 	def form_valid(self, form):
 		# This method is called when valid form data has been POSTed.
 		# It should return an HttpResponse.
-		x=1
+		x = 1
 		return super().form_valid(form)
 
 
@@ -137,8 +137,9 @@ class AuthorDelete(DeleteView):
 	model = Author
 	success_url = reverse_lazy('author-list')
 
+
 def author_detail(request):
-	x=1
+	x = 1
 	pass
 
 

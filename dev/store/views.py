@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.contrib.gis.geoip2 import GeoIP2
-from django.shortcuts import render, redirect, render_to_response
+from django.shortcuts import render, redirect, render_to_response, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
@@ -111,18 +111,19 @@ def submit_open_store(request):
 # need to be in the first time:
 
 @method_decorator(login_required, name='dispatch')
-class StoreDetailView(DetailView):
+class StoreDetailView(ListView):
 	model = Store
 	paginate_by = 100  # if pagination is desired
 	permission_required = "@login_required"
 
 	def get_context_data(self, **kwargs):
-		text = SearchForm()
-		user_name = self.request.user.username
-		context = super(StoreDetailView, self).get_context_data(**kwargs)  # get the default context data
-		context['text'] = text
-		context['user_name'] = user_name
+		context = super().get_context_data(**kwargs)  # get the default context data
+		context['text'] = SearchForm()
+		context['user_name'] = self.request.user.username
 		return context
+
+	def get_queryset(self):
+		return Store.objects.get(id=self.kwargs['pk']).items.all()
 
 
 @method_decorator(login_required, name='dispatch')
@@ -132,22 +133,30 @@ class StoreListView(ListView):
 	permission_required = "@login_required"
 
 	def get_context_data(self, **kwargs):
-		text = SearchForm()
-		user_name = self.request.user.username
-		context = super(StoreListView, self).get_context_data(**kwargs)  # get the default context data
-		context['text'] = text
-		context['user_name'] = user_name
+		context = super().get_context_data(**kwargs)  # get the default context data
+		context['text'] = SearchForm()
+		context['user_name'] = self.request.user.username
 		return context
 
 	def get_queryset(self):
 		# return Store.objects.filter(owner_id=self.request.user.id)
-		cur_user_id = self.request.user.id
-		return Store.objects.filter(owners__id__in=[cur_user_id])
+		return Store.objects.filter(owners__id__in=[self.request.user.id])
 
 
 class ItemListView(ListView):
 	model = Item
 	paginate_by = 100  # if pagination is desired
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)  # get the default context data
+		context['text'] = SearchForm()
+		context['user_name'] = self.request.user.username
+		return context
+
+	def get_queryset(self, **kwargs):
+		store = Store.objects.get(id=kwargs['store_pk'])
+		items = store.items.all()
+# return Item.objects.filter(owners__id__in=[self.request.user.id])
 
 
 class ItemDetailView(DetailView):
@@ -179,7 +188,7 @@ class StoreUpdate(UpdateView):
 			user_name = request.user.username
 			text = SearchForm()
 			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
-		return super(StoreUpdate, self).update(request, *args, **kwargs)
+		return super().update(request, *args, **kwargs)
 
 
 def have_no_more_stores(user_pk):
@@ -295,8 +304,7 @@ def itemAddedSucceffuly(request, store_id, id):
 	return render(request, 'store/item_detail.html')
 
 
-@permission_required_or_403('ADD_MANAGER',
-                            (Store, 'id', 'pk'))
+@permission_required_or_403('ADD_MANAGER', (Store, 'id', 'pk'))
 @login_required
 def add_manager_to_store(request, pk):
 	if request.method == 'POST':
@@ -305,9 +313,13 @@ def add_manager_to_store(request, pk):
 			user_name = form.cleaned_data.get('user_name')
 			picked = form.cleaned_data.get('permissions')
 			is_owner = form.cleaned_data.get('is_owner')
-			user_ = User.objects.get(username=user_name)
+			try:
+				user_ = User.objects.get(username=user_name)
+			except:
+				messages.warning(request, 'no such user')
+				return redirect('/store/add_manager_to_store/' + str(pk) + '/')
 			store_ = Store.objects.get(id=pk)
-			if (user_name == request.user.username):
+			if user_name == request.user.username:
 				messages.warning(request, 'can`t add yourself as a manager!')
 				return redirect('/store/home_page_owner/')
 			pre_store_owners = store_.owners.all()
@@ -356,3 +368,30 @@ def add_discount_to_store(request, pk):
 			'pk': pk,
 		}
 		return render(request, 'store/add_discount_to_store.html', context)
+
+def update_item(request, pk):
+	if request.method == "POST":
+
+		form = ItemForm(request.POST or None)
+
+		if form.is_valid():
+			obj = form.save(commit=False)
+
+			obj.save()
+
+			messages.success(request, "You successfully updated the post")
+
+			return redirect(request.META.get('HTTP_REFERER', '/'))
+
+		else:
+			return render(request, 'store/edit_item.html', {'form': form,
+			                                                'error': 'The form was not updated successfully. Please enter in a title and content'})
+	else:
+		return render(request, 'store/edit_item.html', {
+			'store': pk,
+			'form': ItemForm,
+			'store_name': Store.objects.get(id=pk).name,  # TODO
+			'user_name': request.user.username,
+			'text': SearchForm(),
+		})
+

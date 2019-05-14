@@ -1,70 +1,63 @@
-from django.db.models import Q
-from django.shortcuts import render, redirect, render_to_response
+from typing import Any, Dict, List, Optional, Union
+
+from django.contrib import messages
+from django.db.models import Q, QuerySet
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect
 # from external_systems.spellChecker import checker
 from django.views.generic import DetailView
 from django.views.generic.list import ListView
-from django.contrib import messages
+
 from store.models import Item
 from store.models import Store
-from trading_system.forms import SearchForm, SomeForm,CartForm
+from trading_system.forms import SearchForm, SomeForm, CartForm
 # Create your views here.
 from trading_system.models import Cart
 
 
-def index(request):
-	text = SearchForm()
-	return render(request, 'homepage_guest.html', {'text': text})
+def index(request: Any) -> HttpResponse:
+	return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
 
-def login_redirect(request):
-	text = SearchForm()
-
+def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	if request.user.is_authenticated:
-		user_name = request.user.username
-		user_groups = request.user.groups.values_list('name', flat=True)
 		if request.user.is_superuser:
-			return render(request, 'homepage_member.html', {'text': text})
-		elif "store_owners" in user_groups:
-			return redirect('/store/home_page_owner/', {'text': text, 'user_name': user_name})
+			return render(request, 'homepage_member.html', {'text': SearchForm()})
+		elif "store_owners" in request.user.groups.values_list('name', flat=True):
+			return redirect('/store/home_page_owner/', {'text': SearchForm(), 'user_name': request.user.username})
 		else:
-			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
+			return render(request, 'homepage_member.html', {'text': SearchForm(), 'user_name': request.user.username})
 
-	return render(request, 'homepage_guest.html', {'text': text})
+	return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
 
-def register(request):
+def register(request: Any) -> HttpResponse:
 	return render(request, 'trading_system/register.html')
 
 
-def item(request, id):
-	item = Item.objects.get(name=id)
-	context = {
-		'item': item
-	}
-
-	return render(request, 'trading_system/item_page.html', context)
+def item(request: Any, id: int) -> HttpResponse:
+	return render(request, 'trading_system/item_page.html', {
+		'item': Item.objects.get(name=id)
+	})
 
 
-def show_cart(request):
-	user_groups = request.user.groups.values_list('name', flat=True)
+def show_cart(request: Any) -> HttpResponse:
 	if request.user.is_authenticated:
-		if "store_owners" in user_groups:
+		if "store_owners" in request.user.groups.values_list('name', flat=True):
 			base_template_name = 'store/homepage_store_owner.html'
 		else:
 			base_template_name = 'homepage_member.html'
 	else:
 		base_template_name = 'homepage_guest.html'
-	text = SearchForm()
-	user_name = request.user.username
-	context = {
-		'user_name': user_name,
-		'text': text,
+
+	return render(request, 'cart.html', {
+		'user_name': request.user.username,
+		'text': SearchForm(),
 		'base_template_name': base_template_name
-	}
-	return render_to_response('cart.html', context)
+	})
 
 
-def home_button(request):
+def home_button(request: Any) -> HttpResponseRedirect:
 	return redirect('/login_redirect')
 
 
@@ -75,15 +68,14 @@ class SearchListView(ListView):
 	def get_queryset(self):
 		return search(self.request)
 
-	def get_context_data(self, **kwargs):
-		text = SearchForm()
-		context = super(SearchListView, self).get_context_data(**kwargs)  # get the default context data
-		context['text'] = text
+	def get_context_data(self, **kwargs) -> Dict[str, Any]:
+		context = super().get_context_data(**kwargs)  # get the default context data
+		context['text'] = SearchForm()
 		return context
 
 
 ##ELHANANA - note that search returns the filtered items list
-def search(request):
+def search(request: Any) -> QuerySet:
 	text = SearchForm(request.GET)
 	if text.is_valid():
 		# spell checker
@@ -94,32 +86,30 @@ def search(request):
 			category__contains=text.cleaned_data.get('search')))
 
 
-def add_item_to_cart(request, item_pk):
+def add_item_to_cart(request: Any, item_pk: int) -> HttpResponse:  # TODO check!!
 	item_store = get_item_store(item_pk)
 	cart = get_cart(item_store, request.user.pk)
-	if cart == None:
-		open_cart_for_user_in_store(item_store.pk, request.user.pk)
+	if cart is None:
+		open_cart_for_user_in_store(item_store.pk, request.user.pk)  # TODO
 		cart = get_cart(item_store, request.user.pk)
 	cart.items.add(item_pk)
 	return render(request, 'trading_system/item_added_successfuly.html')
 
 
-def get_item_store(item_pk):
-	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
+def get_item_store(item_pk: int) -> Store:
 	# Might cause bug. Need to apply the item-in-one-store condition
-	return stores[0]
+	return list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))[0]
 
 
-def user_has_cart_for_store(store_pk, user_pk):
+def user_has_cart_for_store(store_pk: int, user_pk: int) -> bool:
 	return len(Cart.objects.filter(customer_id=user_pk, store_id=store_pk)) > 0
 
 
-def open_cart_for_user_in_store(store_pk, user_pk):
-	cart = Cart(customer_id=user_pk, store_id=store_pk)
-	cart.save()
+def open_cart_for_user_in_store(store_pk: int, user_pk: int) -> None:
+	Cart(customer_id=user_pk, store_id=store_pk).save()
 
 
-def get_cart(store_pk, user_pk):
+def get_cart(store_pk: int, user_pk: int) -> Optional[Cart]:
 	carts = Cart.objects.filter(customer_id=user_pk, store_id=store_pk)
 	if len(carts) == 0:
 		return None
@@ -130,12 +120,11 @@ def get_cart(store_pk, user_pk):
 class CartDetail(DetailView):
 	model = Cart
 
-	def get_context_data(self, **kwargs):
+	def get_context_data(self, **kwargs) -> Dict[str, Any]:
 		cart = Cart.objects.get(pk=kwargs['object'].pk)
 		item_ids = list(map(lambda i: i.pk, cart.items.all()))
-		items = list(map(lambda i_pk: Item.objects.get(pk=i_pk), item_ids))
-		context = super(CartDetail, self).get_context_data(**kwargs)  # get the default context data
-		context['items'] = items
+		context = super().get_context_data(**kwargs)  # get the default context data
+		context['items'] = list(map(lambda i_pk: Item.objects.get(pk=i_pk), item_ids))
 		context['store_name'] = Store.objects.get(pk=cart.store_id).name
 		return context
 
@@ -144,16 +133,15 @@ class CartsListView(ListView):
 	model = Cart
 	template_name = 'trading_system/user_carts.html'
 
-	def get_queryset(self):
+	def get_queryset(self) -> List[Cart]:
 		return Cart.objects.filter(customer_id=self.request.user.pk)
 
 
-def approve_event(request):
+def approve_event(request: Any) -> HttpResponse:
 	if request.method == 'POST':
 		form = SomeForm(request.POST)
 		if form.is_valid():
-			picked = form.cleaned_data.get('picked')
-			print('\n', picked)
+			print('\n', form.cleaned_data.get('picked'))
 			render(request, 'check_box_items.html', {'form': form})
 		render(request, 'check_box_items.html', {'form': form})
 	# do something with your results
@@ -162,20 +150,18 @@ def approve_event(request):
 	return render(request, 'check_box_items.html', {'form': form})
 
 
-def make_cart_list(request):
+def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	if request.method == 'POST':
-		form = CartForm(request.user,request.POST)
+		form = CartForm(request.user, request.POST)
 		if form.is_valid():
-			picked_items_to_buy = form.cleaned_data.get('items')
-			for item_id in picked_items_to_buy:
+			for item_id in form.cleaned_data.get('items'):
 				print(item_id)
-				item_to_buy = Item.objects.get(id=item_id)
-				amount_in_db = item_to_buy.quantity
-				print('\n amaount ',amount_in_db)
+				amount_in_db = Item.objects.get(id=item_id).quantity
+				print('\n amaount ', amount_in_db)
 				if (amount_in_db > 0):
-					new_q = amount_in_db - 1
-					item_to_buy.quantity = new_q
-					item_to_buy.save()
+					item = Item.objects.get(id=item_id)
+					item.quantity = amount_in_db - 1
+					item.save()
 				else:
 					messages.warning(request, 'not enough amount of this item ')
 					return redirect('/login_redirect')
@@ -186,9 +172,4 @@ def make_cart_list(request):
 		return redirect('/login_redirect')
 
 	else:
-		form = CartForm(request.user)
-		# context ={
-		# 	'form':form
-		# }
-		return render(request, 'trading_system/cart_test.html', {'form': form})
-
+		return render(request, 'trading_system/cart_test.html', {'form': CartForm(request.user)})

@@ -1,18 +1,34 @@
-{% extends 'layout.html' %}
-
-{% block content %}
-	<h3 class="center-align red lighten-3">{{ title }}</h3>
-	<ul class="my_stores">
+{% extends 'store/homepage_store_owner.html' %}
+{% block page_content %}
+	<div id="store_details">
+		<h2>The name of the store: {{ object.name }}</h2>
+		<h4>Description: {{ object.description }}</h4>
+	</div><br>
+	<h2 class="title">My items</h2>
+	<table class="my_stores">
 		{% for item in object_list %}
-			<li>Name:{{ item.name }} Description:{{ item.description }}</li>
-			<form action="/store/view_item/{{ item.pk }}" method="GET">
-				<input type="submit" value="View">
-			</form>
-			<form action="/store/buy_item/{{ item.pk }}" method="GET">
-				<input type="submit" value="Buy">
-			</form>
+			<tr>
+				<td>
+					<label class="store_name_button">{{ item.name }}</label>
+				</td>
+{#				<td>#}
+{#					<form action="/store/add_item_to_store/{{ item.pk }}" method="GET">#}
+{#						<button class="store_buttons" type="submit"><i class="fas fa-folder-plus"></i></button>#}
+{#					</form>#}
+{#				</td>#}
+				<td>
+					<form action="/store/update_item/{{ item.pk }}/" method="GET">
+						<button class="store_buttons" type="submit"><i class="fas fa-edit"></i></button>
+					</form>
+				</td>
+				<td>
+					<form action="/store/delete_item/{{ item.pk }}/" method="GET">
+						<button class="store_buttons" type="submit"><i class="fas fa-trash-alt"></i></button>
+					</form>
+				</td>
+			</tr>
 		{% empty %}
-			<li>No stores yet</li>
+			<tr>No items yet</tr>
 		{% endfor %}
-	</ul>
+	</table>
 {% endblock %}
