@@ -354,14 +354,69 @@ def add_rule_to_store(request, pk):
 	if request.method == 'POST':
 		form = AddRuleToStore(request.POST)
 		if form.is_valid():
+			store = Store.objects.get(id=pk)
 			rule = form.cleaned_data.get('rules')
-			if rule is 'MAX_QUANTITY':
-				pass
-			elif rule is 'MIN_QUANTITY':
-				pass
-			elif rule is 'REGISTERED_ONLY':
-				pass
-			messages.success(request, 'added rule :  ' + rule + 'successfully!')
+			operator = form.cleaned_data.get('operator')
+			parameter = form.cleaned_data.get('parameter')
+			if rule == 'MAX_QUANTITY':
+				max_quantity_old = store.max_quantity
+				# new max quantity rule
+				if max_quantity_old is None and (store.min_quantity is None or operator == 'OR'):
+					store.max_quantity = parameter
+					store.max_op = operator
+					store.save()
+				elif max_quantity_old is None and store.min_quantity is not None and operator == 'AND':
+					if store.min_quantity > parameter:
+						messages.warning(request, 'error: min quantity cant be larger than max quantity')
+						return redirect('/store/home_page_owner/')
+					else:
+						store.max_quantity = parameter
+						store.max_op = operator
+						store.save()
+				# there is max quantity rule - error, cant override exsisting rule
+				elif max_quantity_old is not None and operator == 'AND':
+					messages.warning(request, 'error: there is already max quantity rule')
+					return redirect('/store/home_page_owner/')
+				# there is max quantity rule - operator is or, choose higher value
+				else:
+					if store.max_quantity < parameter:
+						store.max_quantity = parameter
+						store.max_op = operator
+						store.save()
+			elif rule == 'MIN_QUANTITY':
+				min_quantity_old = store.min_quantity
+				# new min quantity rule
+				if min_quantity_old is None and (store.max_quantity is None or operator == 'OR'):
+					store.min_quantity = parameter
+					store.min_op = operator
+					store.save()
+				elif min_quantity_old is None and store.max_quantity is not None and operator == 'AND':
+					if store.max_quantity < parameter:
+						messages.warning(request, 'error: min quantity cant be larger than max quantity')
+						return redirect('/store/home_page_owner/')
+					else:
+						store.min_quantity = parameter
+						store.min_op = operator
+						store.save()
+				# there is min quantity rule - error, cant override exsisting rule
+				elif min_quantity_old is not None and operator == 'AND':
+					messages.warning(request, 'error: there is already min quantity rule')
+					return redirect('/store/home_page_owner/')
+				# there is min quantity rule - operator is or, choose lower value
+				else:
+					if store.min_quantity > parameter:
+						store.min_quantity = parameter
+						store.min_op = operator
+						store.save()
+			elif rule == 'REGISTERED_ONLY':
+				if store.registered_only == False:
+					store.registered_only = True
+					store.registered_op = operator
+					store.save()
+				else:
+					messages.warning(request, 'error: exists REGISTERED_ONLY rule for this store')
+					return redirect('/store/home_page_owner/')
+			messages.success(request, 'added rule :  ' + rule + 'successfully! operator '+ operator)
 			return redirect('/store/home_page_owner/')
 		messages.warning(request, 'error in :  ', form.errors)
 		return redirect('/store/home_page_owner/')

@@ -29,6 +29,12 @@ class Store(models.Model):
 	items = models.ManyToManyField(Item)
 	description = models.CharField(max_length=64)
 	discount = models.PositiveIntegerField(default=0)
+	max_quantity = models.PositiveIntegerField(null=True, blank=True)
+	max_op = models.CharField(max_length=3, null=True, blank=True)
+	min_quantity = models.PositiveIntegerField(null=True, blank=True)
+	min_op = models.CharField(max_length=3, null=True, blank=True)
+	registered_only = models.BooleanField(default=False)
+	registered_op = models.CharField(max_length=3, null=True, blank=True)
 
 	class Meta:
 		permissions = (
