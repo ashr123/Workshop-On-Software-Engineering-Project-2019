@@ -44,7 +44,7 @@ def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 		if request.user.is_superuser:
 			return render(request, 'homepage_member.html', {'text': SearchForm()})
 		elif "store_owners" in request.user.groups.values_list('name', flat=True):
-			return redirect('/store/home_page_owner/', {'text': SearchForm(), 'user_name': request.user.username})
+			return redirect('/store/home_page_owner/', {'text': SearchForm(), 'user_name': request.user.username,'owner_id': request.user.pk,})
 		else:
 
 			return render(request, 'homepage_member.html', {'text': SearchForm(), 'user_name': request.user.username})

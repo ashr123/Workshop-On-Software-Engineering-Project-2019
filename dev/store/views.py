@@ -269,8 +269,8 @@ def buy_item(request, pk):
 				if(store_of_item.discount>0):
 					total = (100-store_of_item.discount)/100 * float(total)
 					messages.success(request, 'you have discount for this store : ' + str(store_of_item.discount) + ' %')  # <-
-				messages.success(request, 'YES! at the moment you bought  : ' + _item.description)  # <-
-				messages.success(request, 'total : ' + str(total) + ' $')  # <-
+				# messages.success(request, 'YES! at the moment you bought  : ' + _item.description)  # <-
+				# messages.success(request, 'total : ' + str(total) + ' $')  # <-
 
 				store = get_item_store(_item.pk)
 				for owner in store.owners.all():
