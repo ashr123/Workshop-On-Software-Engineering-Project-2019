@@ -187,7 +187,7 @@ def join_auction(request, item_pk):
 		auction = Auction.objects.get(item_id=item_pk)
 	except ObjectDoesNotExist:
 		auction = Auction.objects.create(item_id=item_pk)
-	ap = AuctionParticipant(auction_id=auction.pk, customer_id=request.user.pk, offer=0,
+	ap = AuctionParticipant(auction_id=auction.pk, customer_id=request.user.pk, offer=3,
 	                        address="ws://{}:{}/ws/{}/{}/{}/".format(PROJ_IP, PROJ_PORT, AUCTION_PARTICIPANT_URL,
 	                                                              item_pk, request.user.pk))
 	context = {'action_desc': ''}

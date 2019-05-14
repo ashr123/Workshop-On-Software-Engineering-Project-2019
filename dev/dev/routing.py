@@ -7,7 +7,7 @@ application = ProtocolTypeRouter({
 	# (http->django views is added by default)
 	'websocket': AuthMiddlewareStack(
 		URLRouter(
-			trading_system.routing.websocket_urlpatterns
+			store.routing.websocket_urlpatterns
 		)
 	),
 })

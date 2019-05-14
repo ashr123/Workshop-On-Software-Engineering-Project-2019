@@ -154,8 +154,8 @@ def buy_item(request, pk):
 				new_q = amount_in_db - amount
 				_item.quantity = new_q
 				_item.save()
-
-				ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/4/")
+				store = get_item_store(_item.pk)
+				ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(store.owner_id))
 				ws.send(json.dumps({'message': 'I BOUGHT AN ITEM FROM YOU'}))
 				return redirect('/store/home_page_owner/')
 			return HttpResponse('there is no such amount')
@@ -198,3 +198,8 @@ def owner_feed(request, owner_id):
 		'owner_id': owner_id
 	}
 	return render(request, 'store/owner_feed.html', context)
+
+def get_item_store(item_pk):
+	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
+	# Might cause bug. Need to apply the item-in-one-store condition
+	return stores[0]
