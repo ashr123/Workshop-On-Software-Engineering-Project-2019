@@ -25,6 +25,11 @@
 							<button class="item_buttons" type="submit"><i class="fas fa-cart-plus"></i></button>
 						</form>
 					</td>
+					<td>
+<form action="/join_auction/{{ item.pk }}" method="GET">
+					<input type="submit" value="Join Auction">
+				</form>
+					</td>
 				</tr>
 			{% empty %}
 				<tr>No results for that search</tr>

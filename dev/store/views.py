@@ -258,6 +258,7 @@ def buy_item(request, pk):
 				new_q = amount_in_db - amount
 				_item.quantity = new_q
 				_item.save()
+
 				total = amount * _item.price
 				store_of_item = Store.objects.get(items__id__contains=pk)
 				if(store_of_item.discount>0):
@@ -265,6 +266,11 @@ def buy_item(request, pk):
 					messages.success(request, 'you have discount for this store : ' + str(store_of_item.discount) + ' %')  # <-
 				messages.success(request, 'YES! at the moment you bought  : ' + _item.description)  # <-
 				messages.success(request, 'total : ' + str(total) + ' $')  # <-
+
+				store = get_item_store(_item.pk)
+				ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(store.owner_id))
+				ws.send(json.dumps({'message': 'I BOUGHT AN ITEM FROM YOU'}))
+
 				return redirect('/store/home_page_owner/')
 			messages.warning(request, 'there is no such amount ! please try again!')
 			return redirect('/store/home_page_owner/')
@@ -302,6 +308,7 @@ class AddItemToStore(CreateView):
 def itemAddedSucceffuly(request, store_id, id):
 	x = 1
 	return render(request, 'store/item_detail.html')
+
 
 
 @permission_required_or_403('ADD_MANAGER', (Store, 'id', 'pk'))
@@ -394,4 +401,16 @@ def update_item(request, pk):
 			'user_name': request.user.username,
 			'text': SearchForm(),
 		})
+
+def owner_feed(request, owner_id):
+	context = {
+		'owner_id_json': mark_safe(json.dumps(owner_id)),
+		'owner_id': owner_id
+	}
+	return render(request, 'store/owner_feed.html', context)
+
+def get_item_store(item_pk):
+	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
+	# Might cause bug. Need to apply the item-in-one-store condition
+	return stores[0]
 

@@ -32,3 +32,7 @@ class CartForm(forms.Form):
 			, widget=forms.CheckboxSelectMultiple(),
 
 		)
+
+class BidForm(forms.Form):
+	offer = forms.DecimalField(max_digits=6, decimal_places=2)
+
