@@ -61,7 +61,7 @@ def add_item(request, pk):
 			'user_name': user_name,
 			'text': text,
 		}
-		print('\ndebug\n\n', pk)
+		# print('\ndebug\n\n', pk)
 		return render(request, 'store/add_item.html', context)
 
 
@@ -211,7 +211,7 @@ class StoreDelete(DeleteView):
 	def delete(self, request, *args, **kwargs):
 		store = Store.objects.get(id=kwargs['pk'])
 		items_to_delete = store.items.all()
-		print('\n h    hhhhhhh', items_to_delete)
+		# print('\n h    hhhhhhh', items_to_delete)
 		if not (self.request.user.has_perm('REMOVE_STORE', store)):
 			messages.warning(request, 'there is no delete perm!')
 			user_name = request.user.username
@@ -219,9 +219,9 @@ class StoreDelete(DeleteView):
 			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
 
 		owner_name = store.owners.all()[0]  # craetor
-		print('\n id : ', owner_name)
+		# print('\n id : ', owner_name)
 		for item_ in items_to_delete:
-			print('\n delete ')
+			# print('\n delete ')
 			item_.delete()
 
 		response = super(StoreDelete, self).delete(request, *args, **kwargs)
