@@ -242,8 +242,10 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 					item = Item.objects.get(id=item_id)
 					item.quantity = amount_in_db - 1
 					item.save()
-					cart = Cart.objects.get(customer=request.user)
-					cart.items.remove(item)
+					if(request.user.is_authenticated):
+						cart = Cart.objects.get(customer=request.user)
+						cart.items.remove(item)
+
 					if (item.quantity == 0):
 						item.delete()
 
