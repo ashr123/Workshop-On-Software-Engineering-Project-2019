@@ -144,7 +144,10 @@ def add_item_to_cart(request: Any, item_pk: int) -> HttpResponse:  # TODO check!
 	return render(request, 'trading_system/item_added_successfuly.html')
 
 
-def get_item_store(item_pk: int) -> Store:
+def get_item_store(item_pk):
+	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
+	# Might cause bug. Need to apply the item-in-one-store condition
+	return stores[0]
 
 def add_item_to_cart(request, item_pk):
 	item_store = get_item_store(item_pk)
@@ -177,7 +180,7 @@ def open_cart_for_user_in_store(store_pk: int, user_pk: int) -> None:
 
 
 
-def get_cart(store_pk: int, user_pk: int) -> Optional[Cart]:
+
 
 def get_cart(store_pk, user_pk):
 

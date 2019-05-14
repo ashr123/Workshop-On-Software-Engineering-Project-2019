@@ -1,3 +1,7 @@
+import json
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
@@ -5,12 +9,13 @@ from django.contrib.auth.models import User
 from django.contrib.gis.geoip2 import GeoIP2
 from django.shortcuts import render, redirect, render_to_response, get_object_or_404
 from django.utils.decorators import method_decorator
+from django.utils.safestring import mark_safe
 from django.views.generic import DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.views.generic.list import ListView
 from guardian.decorators import permission_required_or_403
 from guardian.shortcuts import assign_perm
-
+from websocket import create_connection
 from trading_system.forms import SearchForm
 from . import forms
 from .forms import ItemForm, BuyForm, AddManagerForm, AddDiscountToStore
@@ -268,8 +273,10 @@ def buy_item(request, pk):
 				messages.success(request, 'total : ' + str(total) + ' $')  # <-
 
 				store = get_item_store(_item.pk)
-				ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(store.owner_id))
-				ws.send(json.dumps({'message': 'I BOUGHT AN ITEM FROM YOU'}))
+				for owner in store.owners.all():
+					ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(owner.id))
+					ws.send(json.dumps({'message': 'I BOUGHT AN ITEM FROM YOU'}))
+
 
 				return redirect('/store/home_page_owner/')
 			messages.warning(request, 'there is no such amount ! please try again!')
@@ -295,7 +302,8 @@ def home_page_owner(request):
 	user_name = request.user.username
 	context = {
 		'user_name': user_name,
-		'text': text
+		'text': text,
+		'owner_id': request.user.pk,
 	}
 	return render(request, 'store/homepage_store_owner.html', context)
 

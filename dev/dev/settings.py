@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 	'trading_system',
 	'store',
 	'test_app',
+	'channels',
 	'django.contrib.admin',
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
@@ -91,7 +92,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'dev.wsgi.application'
-
+ASGI_APPLICATION = "dev.routing.application"
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
@@ -113,6 +114,17 @@ DATABASES = {
 	}
 }
 
+redis_host = os.environ.get('REDIS_HOST', 'localhost')
+CHANNEL_LAYERS = {
+	"default": {
+		# This example app uses the Redis channel layer implementation channels_redis
+		"BACKEND": "channels_redis.core.RedisChannelLayer",
+		"CONFIG": {
+			"hosts": [(redis_host, 6379)],
+		},
+
+	},
+}
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
@@ -148,6 +160,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# SESSION_ENGINE = "multi_sessions.session"
 LOGIN_REDIRECT_URL = '/login_redirect'
 LOGOUT_REDIRECT_URL = '/'
 STATIC_URL = '/static/'
@@ -157,3 +170,10 @@ STATICFILES_DIRS = ["static", ]
 
 MEDIA_URL = '/images/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "static/images")
+
+PROJ_IP = '127.0.0.1'
+PROJ_PORT = '8000'
+# SESSION_MULTISESSIONS_POOL = (
+#     {"backend": "redis_sessions.session", "modes": ["read", "write"]},
+#     {"backend": "django.contrib.sessions.backends.db", "modes": ["read", "delete"]},
+# )
