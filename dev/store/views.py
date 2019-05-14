@@ -1,6 +1,4 @@
 import json
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -116,7 +114,7 @@ def submit_open_store(request):
 # need to be in the first time:
 
 @method_decorator(login_required, name='dispatch')
-class StoreDetailView(ListView):
+class StoreDetailView(DetailView):
 	model = Store
 	paginate_by = 100  # if pagination is desired
 	permission_required = "@login_required"
@@ -129,8 +127,8 @@ class StoreDetailView(ListView):
 		context['user_name'] = user_name
 		return context
 
-	def get_queryset(self):
-		return Store.objects.get(id=self.kwargs['pk']).items.all()
+	# def get_queryset(self):
+	# 	return Store.objects.get(id=self.kwargs['pk']).items.all()
 
 
 @method_decorator(login_required, name='dispatch')
@@ -364,7 +362,6 @@ def add_manager_to_store(request, pk):
 		return redirect('/store/home_page_owner/')
 	# do something with your results
 	else:
-		else:
 		form = AddManagerForm
 		text = SearchForm()
 		user_name = request.user.username
@@ -375,7 +372,7 @@ def add_manager_to_store(request, pk):
 			'form': form
 		}
 
-	return render(request, 'store/add_manager.html', context)
+		return render(request, 'store/add_manager.html', context)
 
 
 def add_discount_to_store(request, pk):
@@ -436,15 +433,4 @@ def get_item_store(item_pk):
 	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
 	# Might cause bug. Need to apply the item-in-one-store condition
 	return stores[0]
-
-
-		text = SearchForm()
-		user_name = request.user.username
-		context = {
-			'user_name': user_name,
-			'text': text,
-			'pk': pk,
-			'form': form
-		}
-	return render(request, 'store/add_manager.html', context)
 
