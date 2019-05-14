@@ -17,9 +17,9 @@ class Item(models.Model):
 	quantity = models.PositiveIntegerField(default=1)
 
 	def get_absolute_url(self):
-		return reverse('item-detail',kwargs={'id': self.pk})
+		return reverse('item-detail', kwargs={'id': self.pk})
 	def __str__(self):
-		return self.name
+		return "Name: " + self.name + ", Category: " + self.get_category_display() + ", Description: " + self.description + ", Price: " + str(self.price) + ", Quantity: " + str(self.quantity)
 
 
 class Store(models.Model):

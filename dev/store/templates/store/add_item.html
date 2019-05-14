@@ -6,48 +6,9 @@
 			{% csrf_token %}
 			<div id="add_item_container">
 				<table id="form_add_item">
-					<tr>
-						<td>{{ form.user_name.label_tag }}</td>
-						<td>{{ form.user_name }}</td>
-					</tr>
-					<tr>
-						<td>{{ form.is_owner.label_tag }}</td>
-						<td>{{ form.is_owner }}</td>
-					</tr>
-					<tr>
-						<td>{{ form.permissions.label_tag }}</td>
-						<td>{{ form.permissions }}</td>
-					</tr>
-
+					{{ form.as_table }}
 				</table>
 				<input id="add_button" type="submit" value="Add"/>
-			</div>
-		</form>
-
-
-
-
-
-
-	<form action="/store/add_manager_to_store/{{ pk }}" method="post">
-			{% csrf_token %}
-			<div id="add_manager_container">
-				<table id="form_add_manager">
-					<tr>
-						<td>{{ form.user_name.label_tag }}</td>
-						<td>{{ form.user_name }}</td>
-					</tr>
-					<tr>
-						<td>{{ form.is_owner.label_tag }}</td>
-						<td>{{ form.is_owner }}</td>
-					</tr>
-					<tr>
-						<td>{{ form.permissions.label_tag }}</td>
-						<td>{{ form.permissions }}</td>
-					</tr>
-
-				</table>
-				<input id="appoint_button" type="submit" value="Appoint"/>
 			</div>
 		</form>
 	</div>

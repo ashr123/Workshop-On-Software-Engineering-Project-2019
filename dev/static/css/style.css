@@ -19,7 +19,7 @@
     background: #c1ceff;
 }
 
-.top_page div h1{
+.top_page div h1 {
     font-family: 'Gugi', cursive;
     font-size: 70px;
     margin-left: 30px;
@@ -71,11 +71,11 @@
     /*margin-bottom: 20px;*/
 }
 
-.search_button:hover{
+.search_button:hover {
     background-color: RoyalBlue;
 }
 
-.menu_bar_buttons:hover{
+.menu_bar_buttons:hover {
     background-color: RoyalBlue;
 }
 
@@ -102,7 +102,7 @@
     color: cornflowerblue;
 }
 
-#forget a:visited{
+#forget a:visited {
     font-family: Arial;
     color: cornflowerblue;
 }
@@ -152,7 +152,7 @@
 
 .vertical-menu a:hover {
     background-color: cornflowerblue;
-color: white;
+    color: white;
 }
 
 #member_page {
@@ -160,16 +160,16 @@ color: white;
 }
 
 .form_add_store {
-font-family: Arial;
-margin-left: 50px;
-margin-top: 10px;
-justify-content: space-around;
+    font-family: Arial;
+    margin-left: 50px;
+    margin-top: 10px;
+    justify-content: space-around;
 }
 
 .title {
-margin-left: 50px;
-margin-top: 30px;
-font-family: Arial;
+    margin-left: 50px;
+    margin-top: 30px;
+    font-family: Arial;
 }
 
 .login_error {
@@ -206,8 +206,8 @@ font-family: Arial;
     width: 400px;
 }
 
-.my_stores td{
-  border-bottom: 2px solid #ced9ff;
+.my_stores td {
+    border-bottom: 2px solid #ced9ff;
 }
 
 .my_stores tr:hover {
@@ -215,7 +215,7 @@ font-family: Arial;
 }
 
 .store_name_button {
-    background-color: rgba(0,0,0,0.0);
+    background-color: rgba(0, 0, 0, 0.0);
     border: none;
     color: cornflowerblue;
     font-size: 30px;
@@ -238,7 +238,7 @@ font-family: Arial;
     margin-left: 30px;
 }
 
-.store_buttons:hover{
+.store_buttons:hover {
     background-color: RoyalBlue;
 }
 
@@ -274,19 +274,19 @@ font-family: Arial;
     margin-top: 110px;
 }
 
-.item_name{
+.item_name {
     font-family: Arial;
     font-size: 20px;
 }
 
 
-#item_desc{
+#item_desc {
     font-family: Arial;
     font-size: 15px;
     margin-left: 7px;
 }
 
-.item_price{
+.item_price {
     font-family: Arial;
     font-size: 15px;
     text-align: center;
@@ -294,13 +294,18 @@ font-family: Arial;
 
 .search_results {
     font-family: Arial;
-    margin-left: 50px;
+
 }
 
 .search_results tr {
     height: 60px;
     /*border: 10px solid aliceblue;*/
 }
+
+.search_results tr:nth-of-type(1) {
+    height: 50px;
+}
+
 
 .search_results tr td {
     width: 150px;
@@ -311,22 +316,26 @@ font-family: Arial;
 }
 
 #items_table {
-    margin-left: 200px;
+    margin-left: 70px;
 }
 
-.search_results td{
-  border-bottom: 2px solid #ced9ff;
+.search_results td {
+    border-bottom: 2px solid #ced9ff;
 }
 
 .search_results tr:hover {
     background-color: aliceblue;
 }
 
+.search_results th {
+    background-color: #7ba3ed;
+    color: white;
+}
 
 .item_buttons {
-    background-color: cornflowerblue;
+    background-color: white;
     border: none;
-    color: white;
+    color: cornflowerblue;
     /*padding: 14px 14px;*/
     font-size: 18px;
     cursor: pointer;
@@ -335,12 +344,13 @@ font-family: Arial;
     margin-left: 60px;
 }
 
-.item_buttons:hover{
+.item_buttons:hover {
     background-color: RoyalBlue;
+    color: white;
 }
 
 .item_name_button {
-    background-color: rgba(0,0,0,0.0);
+    background-color: rgba(0, 0, 0, 0.0);
     border: none;
     color: cornflowerblue;
     font-size: 25px;
@@ -386,4 +396,98 @@ font-family: Arial;
     width: 80px;
     margin-left: 130px;
     margin-top: 140px;
+}
+
+
+.store_details {
+    font-family: Arial;
+    margin-left: 20px;
+    border-collapse: collapse;
+    font-size: 20px;
+}
+
+.store_details tr td:nth-of-type(1) {
+    width: 200px;
+    font-size: 25px;
+}
+
+.store_details tr td:nth-of-type(2) {
+    width: 760px;
+    font-size: 18px;
+}
+
+.store_details td {
+    border: 2px solid #ced9ff;
+}
+
+.store_details tr:hover {
+    background-color: aliceblue;
+}
+
+.item_details {
+    font-family: Arial;
+    margin-left: 370px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    border-collapse: collapse;
+    font-size: 20px;
+}
+
+.item_details tr td:nth-of-type(1) {
+    width: 200px;
+    font-size: 25px;
+}
+
+.item_details tr td:nth-of-type(2) {
+    width: 250px;
+    font-size: 18px;
+}
+
+.item_details td {
+    border: 2px solid #ced9ff;
+}
+
+.item_details tr:hover {
+    background-color: aliceblue;
+}
+
+.title_1 {
+    margin-top: 30px;
+    font-family: Arial;
+}
+
+#buy_item {
+    background-color: aliceblue;
+    width: 300px;
+    border: 4px solid cornflowerblue;
+    padding: 40px;
+    margin-left: 425px;
+}
+
+
+#buy_name {
+    font-family: Arial;
+    font-size: 30px;
+}
+
+.buy_1 {
+    font-family: Arial;
+    font-size: 20px;
+}
+
+#buy_desc {
+    font-size: 20px;
+    font-family: Arial;
+    margin-bottom: 30px;
+}
+
+.title_2 {
+    margin-top: 30px;
+    margin-left: 30px;
+    font-family: Arial;
+}
+
+#buy_button {
+    margin-left: 190px;
+    margin-top: 40px;
 }

@@ -101,7 +101,8 @@ def add_item_to_cart(request, item_pk):
 		open_cart_for_user_in_store(item_store.pk, request.user.pk)
 		cart = get_cart(item_store, request.user.pk)
 	cart.items.add(item_pk)
-	return render(request, 'trading_system/item_added_successfuly.html')
+	messages.success(request, 'add to cart successfully')
+	return redirect('/login_redirect')
 
 
 def get_item_store(item_pk):

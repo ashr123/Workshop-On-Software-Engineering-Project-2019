@@ -251,22 +251,24 @@ def buy_item(request, pk):
 				_item.quantity = new_q
 				_item.save()
 				total = amount * _item.price
-				messages.success(request, 'YES! at the moment you bought  : ' + _item.description)  # <-
-				messages.success(request, 'total : ' + str(total) + ' $')  # <-
-				return redirect('/store/home_page_owner/')
+				messages.success(request, 'Thank you! you bought ' + _item.name)  # <-
+				messages.success(request, 'Total : ' + str(total) + ' $')  # <-
+				return redirect('/login_redirect')
 			messages.warning(request, 'there is no such amount ! please try again!')
-			return redirect('/store/home_page_owner/')
+			return redirect('/login_redirect')
 		messages.warning(request, 'error in :  ', form.errors)
-		return redirect('/store/home_page_owner/')
+		return redirect('/login_redirect')
 	else:
+		text = SearchForm()
 		form_class = BuyForm
 		curr_item = Item.objects.get(id=pk)
 		context = {
+			'name': curr_item.name,
 			'pk': curr_item.id,
 			'form': form_class,
 			'price': curr_item.price,
 			'description': curr_item.description,
-
+			'text': text
 		}
 		return render(request, 'store/buy_item.html', context)
 
@@ -305,10 +307,10 @@ def add_manager_to_store(request, pk):
 			user_ = User.objects.get(username=user_name)
 			store_ = Store.objects.get(id=pk)
 			if (user_name == request.user.username):
-				messages.warning(request, 'can`t add yourself as a manager!')
+				messages.warning(request, 'You can`t add yourself as a manager!')
 				return redirect('/store/home_page_owner/')
 			if (user_ == None):
-				messages.warning(request, 'no such user')
+				messages.warning(request, 'No such user')
 				return redirect('/store/home_page_owner/')
 			for perm in picked:
 				assign_perm(perm, user_, store_)
@@ -316,7 +318,7 @@ def add_manager_to_store(request, pk):
 				my_group = Group.objects.get(name="store_owners")
 				user_.groups.add(my_group)
 				store_.owners.add(user_)
-			messages.success(request, 'add manager :  ' + user_name)
+			messages.success(request, user_name + 'is appointed')
 			return redirect('/store/home_page_owner/')
 		messages.warning(request, 'error in :  ', form.errors)
 		return redirect('/store/home_page_owner/')

@@ -1,5 +1,25 @@
 {% extends 'base.html' %}
 {% block content %}
-	<h1>Item name:{{ object.name}}</h1>
-	<p>Description:{{ object.description }}</p>
+	<table class="item_details">
+		<tr>
+			<td>Item:</td>
+			<td>{{ object.name }}</td>
+		</tr>
+		<tr>
+			<td>Category:</td>
+			<td>{{ object.get_category_display }}</td>
+		</tr>
+		<tr>
+			<td>Description:</td>
+			<td>{{ object.description }}</td>
+		</tr>
+		<tr>
+			<td>Price:</td>
+			<td>{{ object.price }}</td>
+		</tr>
+		<tr>
+			<td>Quantity:</td>
+			<td>{{ object.quantity }}</td>
+		</tr>
+	</table>
 {% endblock %}

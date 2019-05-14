@@ -2,9 +2,17 @@
 
 {% block content %}
 	<div id="items_table">
-		<h2 class="title">Results</h2>
+		<h2 class="title_1">Results</h2>
 		<table class="search_results">
 			{% for item in object_list %}
+				<tr>
+					<th>Item</th>
+					<th>Category</th>
+					<th>Price</th>
+					<th>Quantity</th>
+					<th>Buy</th>
+					<th>Add to Cart</th>
+				</tr>
 				<tr>
 					<td>
 						<form action="/store/view_item/{{ item.pk }}" method="GET">
@@ -13,7 +21,13 @@
 						<div id="item_desc">{{ item.description }}</div>
 					</td>
 					<td>
+						<div class="item_price">{{ item.get_category_display }}</div>
+					</td>
+					<td>
 						<div class="item_price">{{ item.price }}</div>
+					</td>
+					<td>
+						<div class="item_price">{{ item.quantity }}</div>
 					</td>
 					<td>
 						<form action="/store/buy_item/{{ item.pk }}" method="GET">
