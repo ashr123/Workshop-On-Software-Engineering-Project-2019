@@ -355,10 +355,4 @@ def update_item(request, pk):
 			return render(request, 'store/edit_item.html', {'form': form,
 			                                                'error': 'The form was not updated successfully. Please enter in a title and content'})
 	else:
-		return render(request, 'store/edit_item.html', {
-			# 'store': pk,
-			'form': form,
-			# 'item_name': Item.objects.get(id=pk).name,
-			# 'user_name': request.user.username,
-			# 'text': SearchForm(),
-		})
+		return render(request, 'store/edit_item.html', {'form': form})
