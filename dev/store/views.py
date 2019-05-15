@@ -13,7 +13,7 @@ from guardian.shortcuts import assign_perm
 
 from trading_system.forms import SearchForm
 from . import forms
-from .forms import ItemForm, BuyForm, AddManagerForm
+from .forms import ItemForm, BuyForm, AddManagerForm, StoreForm
 from .models import Item
 from .models import Store
 
@@ -172,25 +172,25 @@ class ItemDetailView(DetailView):
 		return context
 
 
-@method_decorator(login_required, name='dispatch')
-class StoreUpdate(UpdateView):
-	model = Store
-	fields = ['name', 'owners', 'items', 'description']
-	template_name_suffix = '_update_form'
-
-	def get_context_data(self, **kwargs):
-		text = SearchForm()
-		context = super(StoreUpdate, self).get_context_data(**kwargs)  # get the default context data
-		context['text'] = text
-		return context
-
-	def update(self, request, *args, **kwargs):
-		if not (self.request.user.has_perm('EDIT_ITEM')):
-			messages.warning(request, 'there is no edit perm!')
-			user_name = request.user.username
-			text = SearchForm()
-			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
-		return super().update(request, *args, **kwargs)
+# @method_decorator(login_required, name='dispatch')
+# class StoreUpdate(UpdateView):
+# 	model = Store
+# 	fields = ['name', 'owners', 'items', 'description']
+# 	template_name_suffix = '_update_form'
+#
+# 	def get_context_data(self, **kwargs):
+# 		text = SearchForm()
+# 		context = super(StoreUpdate, self).get_context_data(**kwargs)  # get the default context data
+# 		context['text'] = text
+# 		return context
+#
+# 	def update(self, request, *args, **kwargs):
+# 		if not (self.request.user.has_perm('EDIT_ITEM')):
+# 			messages.warning(request, 'there is no edit perm!')
+# 			user_name = request.user.username
+# 			text = SearchForm()
+# 			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
+# 		return super().update(request, *args, **kwargs)
 
 
 def have_no_more_stores(user_pk):
@@ -352,7 +352,26 @@ def update_item(request, pk):
 			return redirect(request.META.get('HTTP_REFERER', '/'))
 
 		else:
-			return render(request, 'store/edit_item.html', {'form': form,
+			return render(request, 'store/edit_page.html', {'form': form,
 			                                                'error': 'The form was not updated successfully. Please enter in a title and content'})
 	else:
-		return render(request, 'store/edit_item.html', {'form': form})
+		return render(request, 'store/edit_page.html', {'form': form})
+
+def update_store(request, pk):
+	form = StoreForm(request.POST or None, instance=get_object_or_404(Store, id=pk))
+
+	if request.method == "POST":
+		if form.is_valid():
+			obj = form.save(commit=False)
+
+			obj.save()
+
+			messages.success(request, "You successfully updated the post")
+
+			return redirect(request.META.get('HTTP_REFERER', '/'))
+
+		else:
+			return render(request, 'store/edit_page.html', {'form': form,
+			                                                'error': 'The form was not updated successfully. Please enter in a title and content'})
+	else:
+		return render(request, 'store/edit_page.html', {'form': form})
