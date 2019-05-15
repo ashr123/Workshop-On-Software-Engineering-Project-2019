@@ -1,15 +1,11 @@
 {% extends 'store/homepage_store_owner.html' %}
 {% block page_content %}
 	<h2 class="title">Add Discount To Store</h2>
-	<div>
-		<form action="/store/add_discount_to_store/{{ pk }}" method="post">
+		<form id="add_discount_container" action="/store/add_discount_to_store/{{ pk }}" method="post">
 			{% csrf_token %}
-			<div id="add_discount_container">
-
-				{{ form }}
-
-				<input id="add_button" type="submit" value="Add"/>
-			</div>
+			<span>{{ form.discount.label_tag }} </span>
+			<span>{{ form.discount }} </span>
+			<span> % </span>
+			<input id="add_button" type="submit" value="Add"/>
 		</form>
-	</div>
 {% endblock %}

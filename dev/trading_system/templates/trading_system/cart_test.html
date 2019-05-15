@@ -1,24 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Title</title>
-	{#	<form action="/test_cart" method="POST">#}
-	{#		<p>#}
-	{#			{{ csrf.token }}#}
-	{#			{{ form.as_p }}#}
-	{#		</p>#}
-	{#		<input type="submit" value="Buy">#}
-	{#	</form>#}
-
-	<form action="/show_cart" method='post'>
+{% extends base_template_name %}
+{% block page_content %}
+	<h2 class="title">My Cart</h2>
+	<form id="my_cart" action="/show_cart" method='post'>
 		{% csrf_token %}
-		{{ form.as_p }}
-		<input type='submit' value='Buy'>
+		{% for item in form.items %}
+			<div class="check_item">{{ item }}</div>
+		{% endfor %}
+	<div id="buy_button_1"><input class="buttons" type="submit" value="Buy now!"/></div>
 	</form>
-
-</head>
-<body>
-
-</body>
-</html>
+{% endblock %}

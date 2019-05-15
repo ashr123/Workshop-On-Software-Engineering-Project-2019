@@ -252,7 +252,7 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 				else:
 					messages.warning(request, 'not enough amount of this item ')
 					return redirect('/login_redirect')
-			messages.success(request, 'you just bought this item !')
+			messages.success(request, 'Thank you! you just bought items from cart')
 			return redirect('/login_redirect')
 
 		messages.warning(request, 'error in :  ', form.errors)
@@ -261,11 +261,25 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	else:
 		list_ = []
 		if not (request.user.is_authenticated):
+			base_template_name = 'homepage_guest.html'
 			list_ = makeGuestCart(request)
 		else:
+			if "store_owners" in request.user.groups.values_list('name', flat=True):
+				base_template_name = 'store/homepage_store_owner.html'
+			else:
+				base_template_name = 'homepage_member.html'
+		
 			list_ = None
-		print('\nlist:  ', list_)
-		return render(request, 'trading_system/cart_test.html', {'form': CartForm(request.user, list_)})
+		form = CartForm(request.user,list_)
+		text = SearchForm()
+		user_name = request.user.username
+		context = {
+			'user_name': user_name,
+			'text': text,
+			'form': form,
+			'base_template_name': base_template_name
+		}
+		return render(request, 'trading_system/cart_test.html', context)
 
 
 def get_queryset(self):

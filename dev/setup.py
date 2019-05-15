@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-install_requires = ['django', 'mysqlclient', 'channels', 'channels_redis', 'websocket-client',
+install_requires = ['django', 'mysqlclient', 'channels', 'channels_redis', 'pywin32', 'websocket-client',
                     'django-guardian', 'GeoIP2'] + ['pypiwin32']
 
 
@@ -13,5 +13,6 @@ setup(
 	author='Rotem Barak',
 	author_email='rotba@post.bgu.ac.il',
 	install_requires=install_requires,
-	description='Python Distribution Utilities'
+	description='Python Distribution Utilities',
+
 )
