@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.contrib.gis.geoip2 import GeoIP2
-from django.shortcuts import render, redirect, render_to_response, get_object_or_404
+from django.shortcuts import render, redirect, render_to_response
 from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
 from django.views.generic import DetailView
@@ -14,9 +14,10 @@ from django.views.generic.list import ListView
 from guardian.decorators import permission_required_or_403
 from guardian.shortcuts import assign_perm
 from websocket import create_connection
+
 from trading_system.forms import SearchForm
 from . import forms
-from .forms import ItemForm, BuyForm, AddManagerForm, AddDiscountToStore
+from .forms import ItemForm, BuyForm, AddManagerForm, AddDiscountToStore, AddRuleToStore
 from .models import Item
 from .models import Store
 
@@ -105,6 +106,7 @@ def submit_open_store(request):
 		assign_perm('EDIT_ITEM', _user, store)
 		assign_perm('ADD_MANAGER', _user, store)
 		assign_perm('REMOVE_STORE', _user, store)
+		assign_perm('ADD_DISCOUNT', _user, store)
 		return redirect('/store/home_page_owner')
 	else:
 		messages.warning(request, 'Please correct the error and try again.')  # <-
@@ -127,8 +129,9 @@ class StoreDetailView(DetailView):
 		context['user_name'] = user_name
 		return context
 
-	# def get_queryset(self):
-	# 	return Store.objects.get(id=self.kwargs['pk']).items.all()
+
+# def get_queryset(self):
+# 	return Store.objects.get(id=self.kwargs['pk']).items.all()
 
 
 @method_decorator(login_required, name='dispatch')
@@ -161,6 +164,8 @@ class ItemListView(ListView):
 	def get_queryset(self, **kwargs):
 		store = Store.objects.get(id=kwargs['store_pk'])
 		items = store.items.all()
+
+
 # return Item.objects.filter(owners__id__in=[self.request.user.id])
 
 
@@ -266,18 +271,22 @@ def buy_item(request, pk):
 
 				total = amount * _item.price
 				store_of_item = Store.objects.get(items__id__contains=pk)
-				if(store_of_item.discount>0):
-					total = (100-store_of_item.discount)/100 * float(total)
-					messages.success(request, 'you have discount for this store : ' + str(store_of_item.discount) + ' %')  # <-
-				messages.success(request, 'YES! at the moment you bought  : ' + _item.description)  # <-
-				messages.success(request, 'total : ' + str(total) + ' $')  # <-
+				if (store_of_item.discount > 0):
+					total = (100 - store_of_item.discount) / 100 * float(total)
+					messages.success(request,
+					                 'you have discount for this store : ' + str(store_of_item.discount) + ' %')  # <-
+				# messages.success(request, 'YES! at the moment you bought  : ' + _item.description)  # <-
+				# messages.success(request, 'total : ' + str(total) + ' $')  # <-
 
 				store = get_item_store(_item.pk)
 				for owner in store.owners.all():
 					ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(owner.id))
 					ws.send(json.dumps({'message': 'I BOUGHT AN ITEM FROM YOU'}))
+				_item_name = _item.name
+				if (_item.quantity == 0):
+					_item.delete()
 
-				messages.success(request, 'Thank you! you bought ' + _item.name)  # <-
+				messages.success(request, 'Thank you! you bought ' + _item_name)  # <-
 				messages.success(request, 'Total : ' + str(total) + ' $')  # <-
 				return redirect('/login_redirect')
 			messages.warning(request, 'there is no such amount ! please try again!')
@@ -321,7 +330,6 @@ def itemAddedSucceffuly(request, store_id, id):
 	return render(request, 'store/item_detail.html')
 
 
-
 @permission_required_or_403('ADD_MANAGER', (Store, 'id', 'pk'))
 @login_required
 def add_manager_to_store(request, pk):
@@ -343,7 +351,7 @@ def add_manager_to_store(request, pk):
 			pre_store_owners = store_.owners.all()
 			# print('\n owners: ' ,pre_store_owners)
 			for owner in pre_store_owners:
-				if(owner.username  == user_name):
+				if (owner.username == user_name):
 					messages.warning(request, 'allready owner')
 					return redirect('/store/home_page_owner/')
 
@@ -375,6 +383,8 @@ def add_manager_to_store(request, pk):
 		return render(request, 'store/add_manager.html', context)
 
 
+@permission_required_or_403('ADD_DISCOUNT', (Store, 'id', 'pk'))
+@login_required
 def add_discount_to_store(request, pk):
 	if request.method == 'POST':
 		form = AddDiscountToStore(request.POST)
@@ -399,6 +409,7 @@ def add_discount_to_store(request, pk):
 			'pk': pk,
 		}
 		return render(request, 'store/add_discount_to_store.html', context)
+
 
 def update_item(request, pk):
 	if request.method == "POST":
@@ -426,6 +437,7 @@ def update_item(request, pk):
 			'text': SearchForm(),
 		})
 
+
 def owner_feed(request, owner_id):
 	text = SearchForm()
 	user_name = request.user.username
@@ -437,8 +449,88 @@ def owner_feed(request, owner_id):
 	}
 	return render(request, 'store/owner_feed.html', context)
 
+
 def get_item_store(item_pk):
 	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
 	# Might cause bug. Need to apply the item-in-one-store condition
 	return stores[0]
 
+
+def add_rule_to_store(request, pk):
+	if request.method == 'POST':
+		form = AddRuleToStore(request.POST)
+		if form.is_valid():
+			store = Store.objects.get(id=pk)
+			rule = form.cleaned_data.get('rules')
+			operator = form.cleaned_data.get('operator')
+			parameter = form.cleaned_data.get('parameter')
+			if rule == 'MAX_QUANTITY':
+				max_quantity_old = store.max_quantity
+				# new max quantity rule
+				if max_quantity_old is None and (store.min_quantity is None or operator == 'OR'):
+					store.max_quantity = parameter
+					store.max_op = operator
+					store.save()
+				elif max_quantity_old is None and store.min_quantity is not None and operator == 'AND':
+					if store.min_quantity > parameter:
+						messages.warning(request, 'error: min quantity cant be larger than max quantity')
+						return redirect('/store/home_page_owner/')
+					else:
+						store.max_quantity = parameter
+						store.max_op = operator
+						store.save()
+				# there is max quantity rule - error, cant override exsisting rule
+				elif max_quantity_old is not None and operator == 'AND':
+					messages.warning(request, 'error: there is already max quantity rule')
+					return redirect('/store/home_page_owner/')
+				# there is max quantity rule - operator is or, choose higher value
+				else:
+					if store.max_quantity < parameter:
+						store.max_quantity = parameter
+						store.max_op = operator
+						store.save()
+			elif rule == 'MIN_QUANTITY':
+				min_quantity_old = store.min_quantity
+				# new min quantity rule
+				if min_quantity_old is None and (store.max_quantity is None or operator == 'OR'):
+					store.min_quantity = parameter
+					store.min_op = operator
+					store.save()
+				elif min_quantity_old is None and store.max_quantity is not None and operator == 'AND':
+					if store.max_quantity < parameter:
+						messages.warning(request, 'error: min quantity cant be larger than max quantity')
+						return redirect('/store/home_page_owner/')
+					else:
+						store.min_quantity = parameter
+						store.min_op = operator
+						store.save()
+				# there is min quantity rule - error, cant override exsisting rule
+				elif min_quantity_old is not None and operator == 'AND':
+					messages.warning(request, 'error: there is already min quantity rule')
+					return redirect('/store/home_page_owner/')
+				# there is min quantity rule - operator is or, choose lower value
+				else:
+					if store.min_quantity > parameter:
+						store.min_quantity = parameter
+						store.min_op = operator
+						store.save()
+			elif rule == 'REGISTERED_ONLY':
+				if store.registered_only == False:
+					store.registered_only = True
+					store.registered_op = operator
+					store.save()
+				else:
+					messages.warning(request, 'error: exists REGISTERED_ONLY rule for this store')
+					return redirect('/store/home_page_owner/')
+			messages.success(request, 'added rule :  ' + rule + 'successfully! operator ' + operator)
+			return redirect('/store/home_page_owner/')
+		messages.warning(request, 'error in :  ', form.errors)
+		return redirect('/store/home_page_owner/')
+
+	else:
+		ruleForm = AddRuleToStore()
+		context = {
+			'form': ruleForm,
+			'pk': pk,
+		}
+		return render(request, 'store/add_rule_to_store.html', context)

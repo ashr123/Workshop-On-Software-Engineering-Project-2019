@@ -37,10 +37,15 @@
 						<button class="store_buttons" type="submit"><i class="fas fa-tags"></i></button>
 					</form>
 				</td>
+				<td>
+					<form action="/store/add_rule_to_store/{{ store.pk }}" method="GET">
+						<button class="store_buttons" type="submit"><i class="fas fa-lightbulb"></i></button>
+					</form>
+				</td>
 
 			</tr>
 		{% empty %}
-			<tr class="title" >No stores yet</tr>
+			<tr class="title">No stores yet</tr>
 		{% endfor %}
 	</table>
 {% endblock %}
