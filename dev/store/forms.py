@@ -2,6 +2,17 @@ from django import forms
 
 from .models import Item
 
+class AddRuleToStore(forms.Form):
+	CHOICES = (('MAX_QUANTITY', 'Max_quantity - restrict max amount of items per order'),
+	           ('MIN_QUANTITY', 'Min_quantity - restrict min amount of items per order'),
+	           ('REGISTERED_ONLY', 'Registered_only - only members will be able to buy from your store'),)
+	LOGICS = (('OR', 'or - OR to existing rules of this store'),
+	             ('AND', 'and - AND to existing rules of this store'),
+	             ('XOR', 'xor - XOR to existing rules of this store'))
+	operator = forms.ChoiceField(choices=LOGICS, widget=forms.RadioSelect)
+	rules = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect)
+	parameter = forms.IntegerField(min_value=0)
+
 
 class AddDiscountToStore(forms.Form):
 	discount = forms.IntegerField(max_value=100)

@@ -17,7 +17,7 @@ from websocket import create_connection
 
 from trading_system.forms import SearchForm
 from . import forms
-from .forms import ItemForm, BuyForm, AddManagerForm, AddDiscountToStore
+from .forms import ItemForm, BuyForm, AddManagerForm, AddDiscountToStore, AddRuleToStore
 from .models import Item
 from .models import Store
 
@@ -106,6 +106,7 @@ def submit_open_store(request):
 		assign_perm('EDIT_ITEM', _user, store)
 		assign_perm('ADD_MANAGER', _user, store)
 		assign_perm('REMOVE_STORE', _user, store)
+		assign_perm('ADD_DISCOUNT', _user, store)
 		return redirect('/store/home_page_owner')
 	else:
 		messages.warning(request, 'Please correct the error and try again.')  # <-
@@ -127,6 +128,7 @@ class StoreDetailView(DetailView):
 		context['text'] = text
 		context['user_name'] = user_name
 		return context
+
 
 # def get_queryset(self):
 # 	return Store.objects.get(id=self.kwargs['pk']).items.all()
@@ -380,6 +382,7 @@ def add_manager_to_store(request, pk):
 
 		return render(request, 'store/add_manager.html', context)
 
+
 @permission_required_or_403('ADD_DISCOUNT', (Store, 'id', 'pk'))
 @login_required
 def add_discount_to_store(request, pk):
@@ -443,3 +446,83 @@ def get_item_store(item_pk):
 	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
 	# Might cause bug. Need to apply the item-in-one-store condition
 	return stores[0]
+
+
+def add_rule_to_store(request, pk):
+	if request.method == 'POST':
+		form = AddRuleToStore(request.POST)
+		if form.is_valid():
+			store = Store.objects.get(id=pk)
+			rule = form.cleaned_data.get('rules')
+			operator = form.cleaned_data.get('operator')
+			parameter = form.cleaned_data.get('parameter')
+			if rule == 'MAX_QUANTITY':
+				max_quantity_old = store.max_quantity
+				# new max quantity rule
+				if max_quantity_old is None and (store.min_quantity is None or operator == 'OR'):
+					store.max_quantity = parameter
+					store.max_op = operator
+					store.save()
+				elif max_quantity_old is None and store.min_quantity is not None and operator == 'AND':
+					if store.min_quantity > parameter:
+						messages.warning(request, 'error: min quantity cant be larger than max quantity')
+						return redirect('/store/home_page_owner/')
+					else:
+						store.max_quantity = parameter
+						store.max_op = operator
+						store.save()
+				# there is max quantity rule - error, cant override exsisting rule
+				elif max_quantity_old is not None and operator == 'AND':
+					messages.warning(request, 'error: there is already max quantity rule')
+					return redirect('/store/home_page_owner/')
+				# there is max quantity rule - operator is or, choose higher value
+				else:
+					if store.max_quantity < parameter:
+						store.max_quantity = parameter
+						store.max_op = operator
+						store.save()
+			elif rule == 'MIN_QUANTITY':
+				min_quantity_old = store.min_quantity
+				# new min quantity rule
+				if min_quantity_old is None and (store.max_quantity is None or operator == 'OR'):
+					store.min_quantity = parameter
+					store.min_op = operator
+					store.save()
+				elif min_quantity_old is None and store.max_quantity is not None and operator == 'AND':
+					if store.max_quantity < parameter:
+						messages.warning(request, 'error: min quantity cant be larger than max quantity')
+						return redirect('/store/home_page_owner/')
+					else:
+						store.min_quantity = parameter
+						store.min_op = operator
+						store.save()
+				# there is min quantity rule - error, cant override exsisting rule
+				elif min_quantity_old is not None and operator == 'AND':
+					messages.warning(request, 'error: there is already min quantity rule')
+					return redirect('/store/home_page_owner/')
+				# there is min quantity rule - operator is or, choose lower value
+				else:
+					if store.min_quantity > parameter:
+						store.min_quantity = parameter
+						store.min_op = operator
+						store.save()
+			elif rule == 'REGISTERED_ONLY':
+				if store.registered_only == False:
+					store.registered_only = True
+					store.registered_op = operator
+					store.save()
+				else:
+					messages.warning(request, 'error: exists REGISTERED_ONLY rule for this store')
+					return redirect('/store/home_page_owner/')
+			messages.success(request, 'added rule :  ' + rule + 'successfully! operator ' + operator)
+			return redirect('/store/home_page_owner/')
+		messages.warning(request, 'error in :  ', form.errors)
+		return redirect('/store/home_page_owner/')
+
+	else:
+		ruleForm = AddRuleToStore()
+		context = {
+			'form': ruleForm,
+			'pk': pk,
+		}
+		return render(request, 'store/add_rule_to_store.html', context)

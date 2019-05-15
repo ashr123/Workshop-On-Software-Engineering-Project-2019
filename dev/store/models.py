@@ -21,6 +21,14 @@ class Item(models.Model):
 	def __str__(self):
 		return "Name: " + self.name + ", Category: " + self.get_category_display() + ", Description: " + self.description + ", Price: " + str(self.price) + ", Quantity: " + str(self.quantity)
 
+	# def your_view(request, category_):
+	#
+	# 	if category_ == "all" or category_ == "ALL":
+	# 		item = Item.objects.filter(category=1)
+	# 	elif category_ == "all" or category_ == "HOME":
+	# 		item = Item.objects.filter(category=2)
+	# 	else:
+	# 		item = Item.objects.filter(category=3)
 
 class Store(models.Model):
 	name = models.CharField(max_length=30)
@@ -29,6 +37,13 @@ class Store(models.Model):
 	items = models.ManyToManyField(Item)
 	description = models.CharField(max_length=64)
 	discount = models.PositiveIntegerField(default=0)
+
+	max_quantity = models.PositiveIntegerField(null=True, blank=True)
+	max_op = models.CharField(max_length=3, null=True, blank=True)
+	min_quantity = models.PositiveIntegerField(null=True, blank=True)
+	min_op = models.CharField(max_length=3, null=True, blank=True)
+	registered_only = models.BooleanField(default=False)
+	registered_op = models.CharField(max_length=3, null=True, blank=True)
 
 	class Meta:
 		permissions = (
