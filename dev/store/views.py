@@ -281,7 +281,7 @@ def buy_item(request, pk):
 				store = get_item_store(_item.pk)
 				for owner in store.owners.all():
 					ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(owner.id))
-					ws.send(json.dumps({'message': 'I BOUGHT AN ITEM FROM YOU'}))
+					ws.send(json.dumps({'message': 'user : '+request.user.username+' BOUGHT AN ITEM FROM YOU'}))
 				_item_name = _item.name
 				if (_item.quantity == 0):
 					_item.delete()

@@ -133,7 +133,7 @@ def add_item_to_cart(request, item_pk):
 			request.session['cart_index'] = 0
 			cart_index = request.session['cart_index']
 		request.session[str(cart_index)] = item_pk
-
+		print('\ncart_index: ',cart_index)
 		messages.success(request, 'add to cart successfully')
 		return redirect('/login_redirect')
 
@@ -212,6 +212,8 @@ from decimal import Decimal
 def makeGuestCart(request):
 	guest_cart = []
 	cart_index_ = request.session['cart_index']
+	if str(0) in request.session:
+		guest_cart.append(request.session[str(0)])
 	for x in range(0, cart_index_):
 		if str(x) in request.session:
 			guest_cart.append(request.session[str(x)])
@@ -270,7 +272,8 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 				base_template_name = 'homepage_member.html'
 		
 			list_ = None
-		form = CartForm(request.user,list_)
+
+		form = CartForm(request.user, list_)
 		text = SearchForm()
 		user_name = request.user.username
 		context = {
@@ -279,6 +282,7 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			'form': form,
 			'base_template_name': base_template_name
 		}
+		print('\nlist :',list_)
 		return render(request, 'trading_system/cart_test.html', context)
 
 
