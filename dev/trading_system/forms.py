@@ -35,7 +35,7 @@ class CartForm(forms.Form):
 		else:
 			carts = Cart.objects.filter(customer=user)
 			list_ = []
-			print('\nan 2 ',user.is_anonymous)
+			print('\nan 2 ', user.is_anonymous)
 			for cart in carts:
 				list_ += list(cart.items.all())
 			self.fields['items'] = forms.MultipleChoiceField(
