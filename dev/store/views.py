@@ -529,8 +529,12 @@ def add_rule_to_store(request, pk):
 
 	else:
 		ruleForm = AddRuleToStore()
+		text = SearchForm()
+		user_name = request.user.username
 		context = {
 			'form': ruleForm,
+			'user_name': user_name,
+			'text': text,
 			'pk': pk,
 		}
 		return render(request, 'store/add_rule_to_store.html', context)
