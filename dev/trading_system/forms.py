@@ -26,8 +26,8 @@ class CartForm(forms.Form):
 			list_ += list(cart.items.all())
 		self.fields['items'] = forms.MultipleChoiceField(
 			choices=[(o.id,
-			          mark_safe(' <a href=' + '/' + 'store/view_item/' + str(
-				          o.id) + '>' + o.name + '  :  ' + o.description + '</a>')) for o in
+			          mark_safe(' <a id="buy_href" href=' + '/' + 'store/view_item/' + str(
+				          o.id) + '>' + o.name + ': ' + o.description + '</a>')) for o in
 			         list_]
 			, widget=forms.CheckboxSelectMultiple(),
 

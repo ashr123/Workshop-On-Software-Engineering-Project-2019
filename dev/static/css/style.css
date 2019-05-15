@@ -66,6 +66,10 @@
     cursor: pointer;
 }
 
+.buttons:hover {
+    background-color: royalblue;
+}
+
 #table_search {
     /*padding: auto 0;*/
     /*margin-bottom: 20px;*/
@@ -321,7 +325,7 @@
 }
 
 #items_table {
-    margin-left: 70px;
+    /*margin-left: 40px;*/
 }
 
 .search_results td {
@@ -495,4 +499,39 @@
 #buy_button {
     margin-left: 190px;
     margin-top: 40px;
+}
+
+#add_discount_container {
+    font-family: Arial;
+    font-size: 20px;
+    margin-left: 50px;
+    margin-bottom: 30px;
+}
+
+.check_item {
+    font-family: Arial;
+    height: 30px;
+    font-size: 20px;
+    margin-left: 45px;
+
+}
+
+#buy_href {
+    background-color: rgba(0, 0, 0, 0.0);
+    border: none;
+    color: cornflowerblue;
+    cursor: pointer;
+    text-decoration:none;
+}
+
+#buy_href:hover {
+   color: RoyalBlue;
+}
+
+#buy_button_1{
+    margin-left: 350px;
+}
+
+#feed {
+    margin-left: 30px;
 }

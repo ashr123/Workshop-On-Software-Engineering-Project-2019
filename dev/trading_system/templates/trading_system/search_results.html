@@ -4,15 +4,16 @@
 	<div id="items_table">
 		<h2 class="title_1">Results</h2>
 		<table class="search_results">
+			<tr>
+				<th>Item</th>
+				<th>Category</th>
+				<th>Price</th>
+				<th>Quantity</th>
+				<th>Buy</th>
+				<th>Add to Cart</th>
+				<th>Join Auction</th>
+			</tr>
 			{% for item in object_list %}
-				<tr>
-					<th>Item</th>
-					<th>Category</th>
-					<th>Price</th>
-					<th>Quantity</th>
-					<th>Buy</th>
-					<th>Add to Cart</th>
-				</tr>
 				<tr>
 					<td>
 						<form action="/store/view_item/{{ item.pk }}" method="GET">
@@ -40,9 +41,9 @@
 						</form>
 					</td>
 					<td>
-<form action="/join_auction/{{ item.pk }}" method="GET">
-					<input type="submit" value="Join Auction">
-				</form>
+						<form action="/join_auction/{{ item.pk }}" method="GET">
+							<button class="item_buttons" type="submit"><i class="fas fa-gavel"></i></button>
+						</form>
 					</td>
 				</tr>
 			{% empty %}

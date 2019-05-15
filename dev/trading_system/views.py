@@ -44,7 +44,7 @@ def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 		if request.user.is_superuser:
 			return render(request, 'homepage_member.html', {'text': SearchForm()})
 		elif "store_owners" in request.user.groups.values_list('name', flat=True):
-			return redirect('/store/home_page_owner/', {'text': SearchForm(), 'user_name': request.user.username})
+			return redirect('/store/home_page_owner/', {'text': SearchForm(), 'user_name': request.user.username,'owner_id': request.user.pk})
 		else:
 
 			return render(request, 'homepage_member.html', {'text': SearchForm(), 'user_name': request.user.username})
@@ -250,14 +250,31 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 				else:
 					messages.warning(request, 'not enough amount of this item ')
 					return redirect('/login_redirect')
-			messages.success(request, 'you just bought this item !')
+			messages.success(request, 'Thank you! you just bought items from cart')
 			return redirect('/login_redirect')
 
 		messages.warning(request, 'error in :  ', form.errors)
 		return redirect('/login_redirect')
 
 	else:
-		return render(request, 'trading_system/cart_test.html', {'form': CartForm(request.user)})
+		if request.user.is_authenticated:
+			if "store_owners" in request.user.groups.values_list('name', flat=True):
+				base_template_name = 'store/homepage_store_owner.html'
+			else:
+				base_template_name = 'homepage_member.html'
+		else:
+			base_template_name = 'homepage_guest.html'
+
+		form = CartForm(request.user)
+		text = SearchForm()
+		user_name = request.user.username
+		context = {
+			'user_name': user_name,
+			'text': text,
+			'form': form,
+			'base_template_name': base_template_name
+		}
+		return render(request, 'trading_system/cart_test.html', context)
 
 	def get_queryset(self):
 		return Cart.objects.filter(customer_id=self.request.user.pk)

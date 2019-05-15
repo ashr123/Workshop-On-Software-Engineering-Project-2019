@@ -356,7 +356,7 @@ def add_manager_to_store(request, pk):
 				my_group = Group.objects.get(name="store_owners")
 				user_.groups.add(my_group)
 				store_.owners.add(user_)
-			messages.success(request, user_name + 'is appointed')
+			messages.success(request, user_name + ' is appointed')
 			return redirect('/store/home_page_owner/')
 		messages.warning(request, 'error in :  ', form.errors)
 		return redirect('/store/home_page_owner/')
@@ -389,8 +389,12 @@ def add_discount_to_store(request, pk):
 		return redirect('/store/home_page_owner/')
 
 	else:
+		text = SearchForm()
+		user_name = request.user.username
 		discountForm = AddDiscountToStore()
 		context = {
+			'user_name': user_name,
+			'text': text,
 			'form': discountForm,
 			'pk': pk,
 		}
@@ -423,7 +427,11 @@ def update_item(request, pk):
 		})
 
 def owner_feed(request, owner_id):
+	text = SearchForm()
+	user_name = request.user.username
 	context = {
+		'user_name': user_name,
+		'text': text,
 		'owner_id_json': mark_safe(json.dumps(owner_id)),
 		'owner_id': owner_id
 	}
