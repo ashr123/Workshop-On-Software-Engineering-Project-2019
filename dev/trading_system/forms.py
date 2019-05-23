@@ -17,6 +17,7 @@ class SearchForm(forms.Form):
 
 
 class CartForm(forms.Form):
+
 	def __init__(self, user, list_for_guest, *args, **kwargs):
 		super(CartForm, self).__init__(*args, **kwargs)
 		print('\n an ', user.is_anonymous)

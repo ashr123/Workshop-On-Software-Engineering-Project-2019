@@ -18,7 +18,7 @@ from store.models import Item
 from store.models import Store
 from trading_system.forms import SearchForm, SomeForm, CartForm
 # Create your views here.
-from trading_system.models import Cart, Auction
+from trading_system.models import Cart, Auction,CartGuest
 from trading_system.observer import AuctionSubject
 from .models import AuctionParticipant
 from .routing import AUCTION_PARTICIPANT_URL
@@ -125,15 +125,14 @@ def add_item_to_cart(request, item_pk):
 		messages.success(request, 'add to cart successfully')
 		return redirect('/login_redirect')
 	else:
-		if 'cart_index' in request.session:
-			cart_index = request.session['cart_index']
-			cart_index = cart_index + 1
-			request.session['cart_index'] = cart_index
+		if 'cart' in request.session:
+			cartG = request.session['cart']
+			cartG['items_id'].append(item_pk)
 		else:
-			request.session['cart_index'] = 0
-			cart_index = request.session['cart_index']
-		request.session[str(cart_index)] = item_pk
-		print('\ncart_index: ',cart_index)
+			cartG = CartGuest([item_pk]).serialize()
+
+		request.session['cart'] = cartG
+
 		messages.success(request, 'add to cart successfully')
 		return redirect('/login_redirect')
 
@@ -210,16 +209,13 @@ from decimal import Decimal
 
 
 def makeGuestCart(request):
-	guest_cart = []
-	cart_index_ = request.session['cart_index']
-	if str(0) in request.session:
-		guest_cart.append(request.session[str(0)])
-	for x in range(0, cart_index_):
-		if str(x) in request.session:
-			guest_cart.append(request.session[str(x)])
+	if (request.user.is_authenticated):
+		return []
 	items_ = []
-	for id in guest_cart:
-		items_ += list([Item.objects.get(id=Decimal(id))])
+	cartG = request.session['cart']
+	id_list = cartG['items_id']
+	for id in id_list:
+		items_ += list([Item.objects.get(id=id)])
 
 	return items_
 
@@ -235,18 +231,25 @@ def makeGuestCart(request):
 def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	# if not (request.user.is_authenticated):
 	# 	return makeGuestCart(request)
+	items_bought = []
 	if request.method == 'POST':
 		form = CartForm(request.user, makeGuestCart(request), request.POST)
 		if form.is_valid():
+
 			for item_id in form.cleaned_data.get('items'):
 				amount_in_db = Item.objects.get(id=item_id).quantity
 				if (amount_in_db > 0):
 					item = Item.objects.get(id=item_id)
 					item.quantity = amount_in_db - 1
 					item.save()
+					items_bought.append(item_id)
 					if(request.user.is_authenticated):
 						cart = Cart.objects.get(customer=request.user)
 						cart.items.remove(item)
+					else:
+						cartG = request.session['cart']
+						cartG['items_id'].remove(Decimal(item_id))
+						request.session['cart'] = cartG
 
 					if (item.quantity == 0):
 						item.delete()
@@ -255,6 +258,7 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 					messages.warning(request, 'not enough amount of this item ')
 					return redirect('/login_redirect')
 			messages.success(request, 'Thank you! you just bought items from cart')
+
 			return redirect('/login_redirect')
 
 		messages.warning(request, 'error in :  ', form.errors)
