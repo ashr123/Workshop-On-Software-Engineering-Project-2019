@@ -220,12 +220,6 @@ def makeGuestCart(request):
 	return items_
 
 
-# context = {
-# 	'items': items_
-# }
-# print('\n guest_cart : ', guest_cart)
-# return render(request, 'store/guest_cart.html', context)
-
 
 
 def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
