@@ -229,6 +229,7 @@ class StoreDelete(DeleteView):
 			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
 
 		owner_name = store.owners.all()[0]  # craetor
+		
 		# print('\n id : ', owner_name)
 		for item_ in items_to_delete:
 			# print('\n delete ')

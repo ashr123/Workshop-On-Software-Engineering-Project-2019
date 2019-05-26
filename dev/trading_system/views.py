@@ -20,11 +20,16 @@ from trading_system.forms import SearchForm, SomeForm, CartForm
 # Create your views here.
 from trading_system.models import Cart, Auction,CartGuest
 from trading_system.observer import AuctionSubject
+from store.models import Item,Store
 from .models import AuctionParticipant
 from .routing import AUCTION_PARTICIPANT_URL
+from django.contrib import admin
 
 
 def index(request: Any) -> HttpResponse:
+	# admin.site.register(Cart)
+	# admin.site.register(Item)
+	# admin.site.register(Store)
 	return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
 
