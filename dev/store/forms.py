@@ -1,7 +1,10 @@
+from multiprocessing.managers import State
+
 from django import forms
+from django.utils.safestring import mark_safe
 
 from .models import Item, Store
-from django.utils.safestring import mark_safe
+
 
 class StoreForm(forms.ModelForm):
 	class Meta:
@@ -11,6 +14,7 @@ class StoreForm(forms.ModelForm):
 			'owners': forms.CheckboxSelectMultiple,
 			# 'items': forms.CheckboxSelectMultiple,
 		}
+
 
 # 		def __init__(self, user, list_for_guest, *args, **kwargs):
 # 			super(StoreForm, self).__init__(*args, **kwargs)
@@ -23,8 +27,8 @@ class StoreForm(forms.ModelForm):
 
 class UpdateItems(forms.Form):
 
-	def _init_(self, items, *args, **kwargs):
-		super(UpdateItems, self)._init_(*args, **kwargs)
+	def __init__(self, items, *args, **kwargs):
+		super(UpdateItems, self).__init__(*args, **kwargs)
 		print('\n kkkk ', items)
 		list_ = items
 		self.fields['items'] = forms.MultipleChoiceField(
@@ -35,6 +39,8 @@ class UpdateItems(forms.Form):
 			, widget=forms.CheckboxSelectMultiple(),
 
 		)
+
+
 
 
 class AddRuleToStore(forms.Form):
@@ -81,5 +87,31 @@ class ItemForm(forms.ModelForm):
 		fields = ['name', 'description', 'category', 'price', 'quantity']
 
 
+from .fileds import CreditCardField, ExpiryDateField, VerificationValueField
+
 class BuyForm(forms.Form):
 	amount = forms.IntegerField()
+
+
+class PayForm(forms.Form):
+	holder = forms.CharField(max_length=50, required=True)
+	id = forms.IntegerField()
+	card_number = forms.IntegerField(required=True)
+	month = forms.IntegerField(required=True)
+	year = forms.IntegerField(required=True)
+	cvc = forms.CharField(required=True, label='CVV / CVC',
+	widget = forms.TextInput(attrs={'size': '3',
+	'maxlength': '3',
+	'placeholder':''}))
+
+
+
+
+
+class ShippingForm(forms.Form):
+	name = forms.CharField(label='Customer', max_length=25, required=True)
+	street = forms.CharField(label='Street', max_length=30)
+	city = forms.CharField(label='City', max_length=25)
+	country = forms.CharField(max_length=25)
+	zip = forms.IntegerField(label='Zip Code')
+

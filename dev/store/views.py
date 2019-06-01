@@ -17,7 +17,8 @@ from websocket import create_connection
 
 from trading_system.forms import SearchForm
 from . import forms
-from .forms import ItemForm, BuyForm, AddManagerForm, AddDiscountToStore, AddRuleToStore
+from .forms import BuyForm, AddManagerForm, AddDiscountToStore, AddRuleToStore
+from .forms import ShippingForm
 from .models import Item
 from .models import Store
 from .models import BaseRule
@@ -76,7 +77,7 @@ def add_item(request, pk):
 @login_required
 def add_store(request):
 	user_groups = request.user.groups.values_list('name', flat=True)
-	if "store_owners" in user_groups:
+	if "store_owners" in user_groups or "store_managers" in user_groups:
 		base_template_name = 'store/homepage_store_owner.html'
 	else:
 		base_template_name = 'homepage_member.html'
@@ -184,20 +185,21 @@ class ItemDetailView(DetailView):
 		return context
 
 
+from .forms import UpdateItems, StoreForm, ItemForm
 
 
-
-# @method_decorator(login_required, name='dispatch')
-# class ItemUpdate(UpdateView):
-
-
-from .forms import UpdateItems,StoreForm
+@method_decorator(login_required, name='dispatch')
+class ItemUpdate(UpdateView):
+	model = Item
+	# fields = ['name', 'owners', 'items', 'description']
+	form_class = ItemForm
+	template_name_suffix = '_update_form'
 
 
 @method_decorator(login_required, name='dispatch')
 class StoreUpdate(UpdateView):
 	model = Store
-	#fields = ['name', 'owners', 'items', 'description']
+	# fields = ['name', 'owners', 'items', 'description']
 	form_class = StoreForm
 	template_name_suffix = '_update_form'
 
@@ -215,13 +217,14 @@ class StoreUpdate(UpdateView):
 		context['form_'] = UpdateItems(store_items)
 		return context
 
-	# def update(self, request, *args, **kwargs):
-	# 	if not (self.request.user.has_perm('EDIT_ITEM')):
-	# 		messages.warning(request, 'there is no edit perm!')
-	# 		user_name = request.user.username
-	# 		text = SearchForm()
-	# 		return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
-	# 	return super().update(request, *args, **kwargs)
+
+# def update(self, request, *args, **kwargs):
+# 	if not (self.request.user.has_perm('EDIT_ITEM')):
+# 		messages.warning(request, 'there is no edit perm!')
+# 		user_name = request.user.username
+# 		text = SearchForm()
+# 		return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
+# 	return super().update(request, *args, **kwargs)
 
 
 def have_no_more_stores(user_pk):
@@ -280,20 +283,119 @@ class StoreDelete(DeleteView):
 		return context
 
 
+from external_systems.money_collector.payment_system import Payment
+
+from .forms import PayForm
+
+# FORMS_ = [('_step1', BuyForm),
+#           ('_step2', PayForm),
+#
+#           ]
+# TEMPLATES_ = {'_step1': 'store/buy_step_1.html',
+#               '_step2': 'store/buy_step_2.html',
+#               }
+#
+# class ContactWizard(SessionWizardView):
+# 	def get_context_data(self, form, **kwargs):
+# 		context = super(ContactWizard, self).get_context_data(form=form, **kwargs)
+# 		if self.steps.current == '_step1':
+# 			pk = self.kwargs['pk']
+# 			text = SearchForm()
+# 			form_class = BuyForm
+# 			curr_item = Item.objects.get(id=pk)
+# 			context.update({
+# 				'name': curr_item.name,
+# 				'pk': curr_item.id,
+# 				'form': form_class,
+# 				'price': curr_item.price,
+# 				'description': curr_item.description,
+# 				'text': text
+# 			})
+# 		if self.steps.current == '_step2':
+# 			if self.request.user.is_authenticated:
+# 				if "store_owners" in self.request.user.groups.values_list('name',
+# 				                                                          flat=True) or "store_managers" in self.request.user.groups.values_list(
+# 					'name', flat=True):
+# 					base_template_name = 'store/homepage_store_owner.html'
+# 				else:
+# 					base_template_name = 'homepage_member.html'
+# 			else:
+# 				base_template_name = 'homepage_guest.html'
+#
+# 			pay_form = PayForm()
+# 			context.update({
+# 				'base_template_name': base_template_name,
+# 				'text': SearchForm(),
+# 				'formset': pay_form,
+# 			})
+# 		return context
+#
+# 	def get_template_names(self):
+# 		return [TEMPLATES_[self.steps.current]]
+#
+# 	def done(self, form_list, **kwargs):
+# 		return redirect('/login_redirect')
+
+pay_system=Payment()
 def buy_item(request, pk):
+	# return redirect('/store/contact/' + str(pk) + '/')
 	if request.method == 'POST':
 		form = BuyForm(request.POST)
-		if form.is_valid():
+		shipping_form =ShippingForm(request.POST)
+		supply_form = PayForm(request.POST)
+
+		if form.is_valid() and shipping_form.is_valid() and supply_form.is_valid():
+			# transaction_id = 0
+			# if pay_system.handshake():
+			# 	if request.user.is_authenticated:
+			# 		if "store_owners" in request.user.groups.values_list('name',
+			# 		                                                     flat=True) or "store_managers" in request.user.groups.values_list(
+			# 			'name', flat=True):
+			# 			base_template_name = 'store/homepage_store_owner.html'
+			# 		else:
+			# 			base_template_name = 'homepage_member.html'
+			# 	else:
+			# 		base_template_name = 'homepage_guest.html'
+			#
+			# 	pay_form = PayForm()
+			# 	context = {
+			# 		'base_template_name': base_template_name,
+			# 		'text': SearchForm(),
+			# 		'form': pay_form,
+			# 	}
+			#
+			# 	transaction_id = pay_system.pay('2222333344445555', '4', '2021', 'Israel Israelovice', '262',
+			# 	                                '20444444')
+			# else:
+			# 	messages.warning(request, 'can`t connect to pay system!')
+			# 	return redirect('/login_redirect')
+
+
+			#shipping
+			country = shipping_form.cleaned_data.get('country')
+			city = shipping_form.cleaned_data.get('city')
+			zip = shipping_form.cleaned_data.get('zip')
+			address =shipping_form.cleaned_data.get('address')
+			name = shipping_form.cleaned_data.get('name')
+
+			#card
+			card_number =supply_form.cleaned_data.get('card_number')
+			month =supply_form.cleaned_data.get('month')
+			year = supply_form.cleaned_data.get('year')
+			holder =supply_form.cleaned_data.get('holder')
+			ccv =supply_form.cleaned_data.get('ccv')
+			id = supply_form.cleaned_data.get('id')
+			
 
 			_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
 			amount_in_db = _item.quantity
 			if (amount <= amount_in_db):
+				total = amount * _item.price
 				new_q = amount_in_db - amount
 				_item.quantity = new_q
 				_item.save()
 
-				total = amount * _item.price
 				store_of_item = Store.objects.get(items__id__contains=pk)
 				if (store_of_item.discount > 0):
 					total = (100 - store_of_item.discount) / 100 * float(total)
@@ -304,16 +406,20 @@ def buy_item(request, pk):
 
 				store = get_item_store(_item.pk)
 				for owner in store.owners.all():
-					ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(owner.id))
-					if (request.user.is_authenticated):
-						ws.send(json.dumps({'message': 'user : ' + request.user.username + ' BOUGHT AN ITEM FROM YOU'}))
-					else:
-						ws.send(json.dumps({'message': 'Guest BOUGHT AN ITEM FROM YOU'}))
+					try:
+						ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(owner.id))
+						if (request.user.is_authenticated):
+							ws.send(json.dumps({'message': 'user : ' + request.user.username + ' BOUGHT AN ITEM FROM YOU'}))
+						else:
+							ws.send(json.dumps({'message': 'Guest BOUGHT AN ITEM FROM YOU'}))
+					except:
+						messages.warning(request, 'cant connect owner')
 				_item_name = _item.name
 				if (_item.quantity == 0):
 					_item.delete()
 
 				messages.success(request, 'Thank you! you bought ' + _item_name)  # <-
+				# messages.success(request, 'transaction id:  ' + str(transaction_id))  # <-
 				messages.success(request, 'Total : ' + str(total) + ' $')  # <-
 				return redirect('/login_redirect')
 			messages.warning(request, 'there is no such amount ! please try again!')
@@ -321,7 +427,6 @@ def buy_item(request, pk):
 		messages.warning(request, 'error in :  ', form.errors)
 		return redirect('/login_redirect')
 	else:
-		text = SearchForm()
 		form_class = BuyForm
 		curr_item = Item.objects.get(id=pk)
 		context = {
@@ -330,9 +435,12 @@ def buy_item(request, pk):
 			'form': form_class,
 			'price': curr_item.price,
 			'description': curr_item.description,
-			'text': text
+			'text': SearchForm(),
+			'card':PayForm(),
+			'shipping':ShippingForm(),
 		}
 		return render(request, 'store/buy_item.html', context)
+
 
 
 @login_required
@@ -388,9 +496,14 @@ def add_manager_to_store(request, pk):
 			for perm in picked:
 				assign_perm(perm, user_, store_)
 			if (is_owner):
-				my_group = Group.objects.get(name="store_owners")
-				user_.groups.add(my_group)
+				store_owners_group = Group.objects.get(name="store_owners")
+				user_.groups.add(store_owners_group)
 				store_.owners.add(user_)
+			else:
+				store_managers = Group.objects.get_or_create(name="store_managers")
+				store_managers = Group.objects.get(name="store_managers")
+				user_.groups.add(store_managers)
+
 			messages.success(request, user_name + ' is appointed')
 			return redirect('/store/home_page_owner/')
 		messages.warning(request, 'error in :  ', form.errors)
@@ -438,32 +551,32 @@ def add_discount_to_store(request, pk):
 		return render(request, 'store/add_discount_to_store.html', context)
 
 
-def update_item(request, pk):
-	if request.method == "POST":
-
-		form = ItemForm(request.POST or None)
-
-		if form.is_valid():
-			obj = form.save(commit=False)
-
-			obj.save()
-
-			messages.success(request, "You successfully updated the post")
-
-			return redirect(request.META.get('HTTP_REFERER', '/'))
-
-		else:
-			return render(request, 'store/edit_item.html', {'form': form,
-			                                                'error': 'The form was not updated successfully. Please enter in a title and content'})
-	else:
-		return render(request, 'store/edit_item.html', {
-			'store': pk,
-			'form': ItemForm,
-			'store_name': Store.objects.get(id=pk).name,  # TODO
-			'user_name': request.user.username,
-			'text': SearchForm(),
-		})
-
+# def update_item(request, pk):
+# 	if request.method == "POST":
+#
+# 		form = ItemForm(request.POST or None)
+#
+# 		if form.is_valid():
+# 			obj = form.save(commit=False)
+#
+# 			obj.save()
+#
+# 			messages.success(request, "You successfully updated the post")
+#
+# 			return redirect(request.META.get('HTTP_REFERER', '/'))
+#
+# 		else:
+# 			return render(request, 'store/edit_item.html', {'form': form,
+# 			                                                'error': 'The form was not updated successfully. Please enter in a title and content'})
+# 	else:
+# 		return render(request, 'store/edit_item.html', {
+# 			'store': pk,
+# 			'form': ItemForm,
+# 			'store_name': Store.objects.get(id=pk).name,  # TODO
+# 			'user_name': request.user.username,
+# 			'text': SearchForm(),
+# 		})
+#
 
 def owner_feed(request, owner_id):
 	text = SearchForm()
