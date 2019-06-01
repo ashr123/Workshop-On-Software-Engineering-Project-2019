@@ -38,19 +38,41 @@ class Store(models.Model):
 	description = models.CharField(max_length=64)
 	discount = models.PositiveIntegerField(default=0)
 
-	max_quantity = models.PositiveIntegerField(null=True, blank=True)
-	max_op = models.CharField(max_length=3, null=True, blank=True)
-	min_quantity = models.PositiveIntegerField(null=True, blank=True)
-	min_op = models.CharField(max_length=3, null=True, blank=True)
-	registered_only = models.BooleanField(default=False)
-	registered_op = models.CharField(max_length=3, null=True, blank=True)
+
+class BaseRule(models.Model):
+	MAX_QUANTITY = 'MXQ'
+	MIN_QUANTITY = 'MNQ'
+	REGISTERED_ONLY = 'RGO'
+	FORBIDDEN_COUNTRIES = 'FBC'
+	RULE_TYPES = (
+		(MAX_QUANTITY, 'max_quantity'),
+		(MIN_QUANTITY, ''),
+		(REGISTERED_ONLY, 'registered_only'),
+		(FORBIDDEN_COUNTRIES, 'forbidden_countries')
+	)
+	store = models.ForeignKey(Store, on_delete=models.CASCADE)
+	type = models.CharField(max_length=3, choices=RULE_TYPES)
 
 	class Meta:
-		permissions = (
-			('ADD_ITEM', 'add item'),
-			('REMOVE_ITEM', 'delete item'),
-			('EDIT_ITEM', 'update item'),
-			('ADD_MANAGER', 'add manager'),
-			('REMOVE_STORE', 'delete store'),
-			('ADD_DISCOUNT', 'add discount'),
-		)
+	        abstract = True
+
+class RuleInt(BaseRule):
+    parameter = models.PosititveIntegerField()
+
+class RuleBool(BaseRule):
+    parameter = models.BooleanField(default=True)
+
+class RuleChar(BaseRule):
+    parameter = models.CharField()
+
+
+
+class Meta:
+	permissions = (
+		('ADD_ITEM', 'add item'),
+		('REMOVE_ITEM', 'delete item'),
+		('EDIT_ITEM', 'update item'),
+		('ADD_MANAGER', 'add manager'),
+		('REMOVE_STORE', 'delete store'),
+		('ADD_DISCOUNT', 'add discount'),
+	)
