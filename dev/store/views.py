@@ -11,7 +11,6 @@ from django.utils.safestring import mark_safe
 from django.views.generic import DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.views.generic.list import ListView
-from formtools.wizard.views import SessionWizardView
 from guardian.decorators import permission_required_or_403
 from guardian.shortcuts import assign_perm
 from websocket import create_connection
@@ -19,9 +18,10 @@ from websocket import create_connection
 from trading_system.forms import SearchForm
 from . import forms
 from .forms import BuyForm, AddManagerForm, AddDiscountToStore, AddRuleToStore
+from .forms import ShippingForm
 from .models import Item
 from .models import Store
-from .forms import ShippingForm
+
 
 def get_client_ip(request):
 	x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -340,42 +340,61 @@ def buy_item(request, pk):
 	# return redirect('/store/contact/' + str(pk) + '/')
 	if request.method == 'POST':
 		form = BuyForm(request.POST)
+		shipping_form =ShippingForm(request.POST)
+		supply_form = PayForm(request.POST)
 
-		if form.is_valid():
-			transaction_id = 0
-			if pay_system.handshake():
-				if request.user.is_authenticated:
-					if "store_owners" in request.user.groups.values_list('name',
-					                                                     flat=True) or "store_managers" in request.user.groups.values_list(
-						'name', flat=True):
-						base_template_name = 'store/homepage_store_owner.html'
-					else:
-						base_template_name = 'homepage_member.html'
-				else:
-					base_template_name = 'homepage_guest.html'
+		if form.is_valid() and shipping_form.is_valid() and supply_form.is_valid():
+			# transaction_id = 0
+			# if pay_system.handshake():
+			# 	if request.user.is_authenticated:
+			# 		if "store_owners" in request.user.groups.values_list('name',
+			# 		                                                     flat=True) or "store_managers" in request.user.groups.values_list(
+			# 			'name', flat=True):
+			# 			base_template_name = 'store/homepage_store_owner.html'
+			# 		else:
+			# 			base_template_name = 'homepage_member.html'
+			# 	else:
+			# 		base_template_name = 'homepage_guest.html'
+			#
+			# 	pay_form = PayForm()
+			# 	context = {
+			# 		'base_template_name': base_template_name,
+			# 		'text': SearchForm(),
+			# 		'form': pay_form,
+			# 	}
+			#
+			# 	transaction_id = pay_system.pay('2222333344445555', '4', '2021', 'Israel Israelovice', '262',
+			# 	                                '20444444')
+			# else:
+			# 	messages.warning(request, 'can`t connect to pay system!')
+			# 	return redirect('/login_redirect')
 
-				pay_form = PayForm()
-				context = {
-					'base_template_name': base_template_name,
-					'text': SearchForm(),
-					'form': pay_form,
-				}
 
-				transaction_id = pay_system.pay('2222333344445555', '4', '2021', 'Israel Israelovice', '262',
-				                                '20444444')
-			else:
-				messages.warning(request, 'can`t connect to pay system!')
-				return redirect('/login_redirect')
+			#shipping
+			country = shipping_form.cleaned_data.get('country')
+			city = shipping_form.cleaned_data.get('city')
+			zip = shipping_form.cleaned_data.get('zip')
+			address =shipping_form.cleaned_data.get('address')
+			name = shipping_form.cleaned_data.get('name')
+
+			#card
+			card_number =supply_form.cleaned_data.get('card_number')
+			month =supply_form.cleaned_data.get('month')
+			year = supply_form.cleaned_data.get('year')
+			holder =supply_form.cleaned_data.get('holder')
+			ccv =supply_form.cleaned_data.get('ccv')
+			id = supply_form.cleaned_data.get('id')
+			
 
 			_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
 			amount_in_db = _item.quantity
 			if (amount <= amount_in_db):
-
+				total = amount * _item.price
 				new_q = amount_in_db - amount
 				_item.quantity = new_q
 				_item.save()
-				total = amount * _item.price
+
 				store_of_item = Store.objects.get(items__id__contains=pk)
 				if (store_of_item.discount > 0):
 					total = (100 - store_of_item.discount) / 100 * float(total)
@@ -407,21 +426,20 @@ def buy_item(request, pk):
 		messages.warning(request, 'error in :  ', form.errors)
 		return redirect('/login_redirect')
 	else:
-		text = SearchForm()
 		form_class = BuyForm
 		curr_item = Item.objects.get(id=pk)
-		card = PayForm()
 		context = {
 			'name': curr_item.name,
 			'pk': curr_item.id,
 			'form': form_class,
 			'price': curr_item.price,
 			'description': curr_item.description,
-			'text': text,
-			'card':card,
+			'text': SearchForm(),
+			'card':PayForm(),
 			'shipping':ShippingForm(),
 		}
 		return render(request, 'store/buy_item.html', context)
+
 
 
 @login_required

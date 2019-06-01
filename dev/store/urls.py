@@ -1,7 +1,7 @@
 from django.urls import path
 
 from . import views
-from .forms import BuyForm, PayForm
+
 # from .views import ContactWizard,FORMS_
 
 urlpatterns = [

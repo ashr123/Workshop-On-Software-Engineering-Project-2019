@@ -91,8 +91,9 @@ class BuyForm(forms.Form):
 class PayForm(forms.Form):
 	holder = forms.CharField(max_length=50, required=True)
 	id = forms.IntegerField()
-	card_number = CreditCardField(required=True)
-	expiry_date = ExpiryDateField(required=True)
+	card_number = forms.IntegerField(required=True)
+	month = forms.IntegerField(required=True)
+	year = forms.IntegerField(required=True)
 	cvc = forms.CharField(required=True, label='CVV / CVC',
 	widget = forms.TextInput(attrs={'size': '3',
 	'maxlength': '3',
@@ -108,3 +109,4 @@ class ShippingForm(forms.Form):
 	city = forms.CharField(label='City', max_length=25)
 	country = forms.CharField(max_length=25)
 	zip = forms.IntegerField(label='Zip Code')
+
