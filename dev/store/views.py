@@ -184,13 +184,18 @@ class ItemDetailView(DetailView):
 
 
 
+from .forms import UpdateItems,StoreForm,ItemForm
 
 
-# @method_decorator(login_required, name='dispatch')
-# class ItemUpdate(UpdateView):
+
+@method_decorator(login_required, name='dispatch')
+class ItemUpdate(UpdateView):
+	model = Item
+	# fields = ['name', 'owners', 'items', 'description']
+	form_class = ItemForm
+	template_name_suffix = '_update_form'
 
 
-from .forms import UpdateItems,StoreForm
 
 
 @method_decorator(login_required, name='dispatch')
@@ -437,32 +442,32 @@ def add_discount_to_store(request, pk):
 		return render(request, 'store/add_discount_to_store.html', context)
 
 
-def update_item(request, pk):
-	if request.method == "POST":
-
-		form = ItemForm(request.POST or None)
-
-		if form.is_valid():
-			obj = form.save(commit=False)
-
-			obj.save()
-
-			messages.success(request, "You successfully updated the post")
-
-			return redirect(request.META.get('HTTP_REFERER', '/'))
-
-		else:
-			return render(request, 'store/edit_item.html', {'form': form,
-			                                                'error': 'The form was not updated successfully. Please enter in a title and content'})
-	else:
-		return render(request, 'store/edit_item.html', {
-			'store': pk,
-			'form': ItemForm,
-			'store_name': Store.objects.get(id=pk).name,  # TODO
-			'user_name': request.user.username,
-			'text': SearchForm(),
-		})
-
+# def update_item(request, pk):
+# 	if request.method == "POST":
+#
+# 		form = ItemForm(request.POST or None)
+#
+# 		if form.is_valid():
+# 			obj = form.save(commit=False)
+#
+# 			obj.save()
+#
+# 			messages.success(request, "You successfully updated the post")
+#
+# 			return redirect(request.META.get('HTTP_REFERER', '/'))
+#
+# 		else:
+# 			return render(request, 'store/edit_item.html', {'form': form,
+# 			                                                'error': 'The form was not updated successfully. Please enter in a title and content'})
+# 	else:
+# 		return render(request, 'store/edit_item.html', {
+# 			'store': pk,
+# 			'form': ItemForm,
+# 			'store_name': Store.objects.get(id=pk).name,  # TODO
+# 			'user_name': request.user.username,
+# 			'text': SearchForm(),
+# 		})
+#
 
 def owner_feed(request, owner_id):
 	text = SearchForm()

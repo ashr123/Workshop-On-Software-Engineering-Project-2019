@@ -1,7 +1,8 @@
 from django import forms
+from django.utils.safestring import mark_safe
 
 from .models import Item, Store
-from django.utils.safestring import mark_safe
+
 
 class StoreForm(forms.ModelForm):
 	class Meta:
@@ -11,6 +12,7 @@ class StoreForm(forms.ModelForm):
 			'owners': forms.CheckboxSelectMultiple,
 			# 'items': forms.CheckboxSelectMultiple,
 		}
+
 
 # 		def __init__(self, user, list_for_guest, *args, **kwargs):
 # 			super(StoreForm, self).__init__(*args, **kwargs)
@@ -25,11 +27,12 @@ class UpdateItems(forms.Form):
 
 	def __init__(self, items, *args, **kwargs):
 		super(UpdateItems, self).__init__(*args, **kwargs)
-		print('\n kkkk ',items)
+		print('\n kkkk ', items)
 		list_ = items
 		self.fields['items'] = forms.MultipleChoiceField(
 			choices=[(o.id,
-			          mark_safe(' <a id="buy_href" href=' + '/' + 'store/update_item/' + str(o.id) + '  style="color:red"  > ' + o.name + '  :  ' + o.description +  + '</a>')) for o in
+			          mark_safe(' <a id="update_href" href=' + '/' + 'store/update_item/' + str(
+				          o.id) + '>' + o.name + '  :  ' + o.description + '</a>')) for o in
 			         list_]
 			, widget=forms.CheckboxSelectMultiple(),
 
