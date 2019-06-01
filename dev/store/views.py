@@ -491,15 +491,29 @@ def add_rule_to_store(request, pk):
 			rule = form.cleaned_data.get('rules')
 			#operator = form.cleaned_data.get('operator')
 			parameter = form.cleaned_data.get('parameter')
-			BaseRule(store=store, type=rule, parameter=parameter).save()
-			messages.success(request, 'added rule :  ' + rule + 'successfully!')
+			if rule == 'MAX_QUANTITY' or rule == 'MIN_QUANTITY':
+				try:
+					int(parameter)
+					if int(parameter) > 0:
+						BaseRule(store=store, type=rule, parameter=parameter).save()
+						messages.success(request, 'added rule :  ' + str(rule) + ' successfully!')
+				except ValueError:
+					messages.warning(request, 'Enter a number please')
+			else:
+				BaseRule(store=store, type=rule, parameter=parameter).save()
+				messages.success(request, 'added rule :  ' + str(rule) + 'successfully!')
 			return redirect('/store/home_page_owner/')
-		messages.warning(request, 'error in :  ', form.errors)
-		return redirect('/store/home_page_owner/')
+		else:
+			messages.warning(request,  form.errors)
+			return redirect('/store/home_page_owner/')
 
 	else:
 		ruleForm = AddRuleToStore()
+		text = SearchForm()
+		user_name = request.user.username
 		context = {
+			'user_name': user_name,
+			'text': text,
 			'form': ruleForm,
 			'pk': pk,
 		}

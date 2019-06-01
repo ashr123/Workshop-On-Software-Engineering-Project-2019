@@ -2,9 +2,23 @@
 {% block page_content %}
 	<h2 class="title">Add Rule To Store</h2>
 	<div>
-		<form action="/store/add_rule_to_store/{{ pk }}" method='post' >
-			{% csrf_token %}
-			{{ form.as_p }}
+		<form action="/store/add_rule_to_store/{{ pk }}" method='POST'>
+		{% csrf_token %}
+{#			<div>#}
+{#				{% for value, text in form.rules.field.choices %}#}
+{#					<div>#}
+{#						<span><input type="radio" name="type_rule">{{ text }}</span>#}
+{#						{% if value == 'MAX_QUANTITY' or value == 'MIN_QUANTITY' %}#}
+{#							<span>{{ form.parameter_number }}</span>#}
+{#						{% endif %}#}
+{#						{% if value == 'FORBIDDEN_COUNTRY' %}#}
+{#							<span>{{ form.parameter_contry }}</span>#}
+{#						{% endif %}#}
+{#					</div>#}
+{#				{% endfor %}#}
+{#			</div>#}
+
+						{{ form.as_p }}
 			<input type='submit' value='Add'>
 		</form>
 	</div>

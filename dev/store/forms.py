@@ -23,13 +23,14 @@ class StoreForm(forms.ModelForm):
 
 class UpdateItems(forms.Form):
 
-	def __init__(self, items, *args, **kwargs):
-		super(UpdateItems, self).__init__(*args, **kwargs)
-		print('\n kkkk ',items)
+	def _init_(self, items, *args, **kwargs):
+		super(UpdateItems, self)._init_(*args, **kwargs)
+		print('\n kkkk ', items)
 		list_ = items
 		self.fields['items'] = forms.MultipleChoiceField(
 			choices=[(o.id,
-			          mark_safe(' <a id="buy_href" href=' + '/' + 'store/update_item/' + str(o.id) + '  style="color:red"  > ' + o.name + '  :  ' + o.description +  + '</a>')) for o in
+			          mark_safe(' <a id="update_href" href=' + '/' + 'store/update_item/' + str(
+				          o.id) + '>' + o.name + '  :  ' + o.description + '</a>')) for o in
 			         list_]
 			, widget=forms.CheckboxSelectMultiple(),
 
@@ -37,16 +38,18 @@ class UpdateItems(forms.Form):
 
 
 class AddRuleToStore(forms.Form):
-	CHOICES = (('MAX_QUANTITY', 'Max_quantity - restrict max amount of items per order'),
-	           ('MIN_QUANTITY', 'Min_quantity - restrict min amount of items per order'),
-	           ('REGISTERED_ONLY', 'Registered_only - only members will be able to buy from your store'),
-	           ('FORBIDDEN_COUNTRY', 'Forbidden Country - restrict orderes for specific country'),)
-	LOGICS = (('OR', 'or - OR to existing rules of this store'),
-	          ('AND', 'and - AND to existing rules of this store'),
-	          ('XOR', 'xor - XOR to existing rules of this store'))
+	CHOICES = (('MAX_QUANTITY', 'Max quantity - restrict max amount of items per order'),
+	           ('MIN_QUANTITY', 'Min quantity - restrict min amount of items per order'),
+	           ('FORBIDDEN_COUNTRY', 'Forbidden Country - restrict orderes for specific country'),
+	           ('REGISTERED_ONLY', 'Registered only - only members will be able to buy from your store'),)
+	# LOGICS = (('OR', 'or - OR to existing rules of this store'),
+	#           ('AND', 'and - AND to existing rules of this store'),
+	#           ('XOR', 'xor - XOR to existing rules of this store'))
 	#operator = forms.ChoiceField(choices=LOGICS, widget=forms.RadioSelect)
-	rules = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect)
-	parameter = forms.IntegerField(min_value=0)
+	rules = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
+	#parameter_number = forms.IntegerField(min_value=0, required=False)
+	parameter = forms.CharField(max_length=100, required=False)
+
 
 
 class AddDiscountToStore(forms.Form):
