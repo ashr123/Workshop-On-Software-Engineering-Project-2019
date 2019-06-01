@@ -69,6 +69,9 @@ def add_item(request, pk):
 		return render(request, 'store/add_item.html', context)
 
 
+# from ipware.ip import get_ip
+
+
 @login_required
 def add_store(request):
 	user_groups = request.user.groups.values_list('name', flat=True)
@@ -180,25 +183,44 @@ class ItemDetailView(DetailView):
 		return context
 
 
+
+
+
+# @method_decorator(login_required, name='dispatch')
+# class ItemUpdate(UpdateView):
+
+
+from .forms import UpdateItems,StoreForm
+
+
 @method_decorator(login_required, name='dispatch')
 class StoreUpdate(UpdateView):
 	model = Store
-	fields = ['name', 'owners', 'items', 'description']
+	#fields = ['name', 'owners', 'items', 'description']
+	form_class = StoreForm
 	template_name_suffix = '_update_form'
 
 	def get_context_data(self, **kwargs):
+		# if not (self.request.user.has_perm('EDIT_ITEM')):
+		# 	user_name = self.request.user.username
+		# 	text = SearchForm()
+		# 	messages.warning(self.request, 'there is no edit perm!')
+		# 	return render(self.request, 'homepage_member.html', {'text': text, 'user_name': user_name})
 		text = SearchForm()
+		store = Store.objects.get(id=self.object.id)
+		store_items = store.items.all()
 		context = super(StoreUpdate, self).get_context_data(**kwargs)  # get the default context data
 		context['text'] = text
+		context['form_'] = UpdateItems(store_items)
 		return context
 
-	def update(self, request, *args, **kwargs):
-		if not (self.request.user.has_perm('EDIT_ITEM')):
-			messages.warning(request, 'there is no edit perm!')
-			user_name = request.user.username
-			text = SearchForm()
-			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
-		return super().update(request, *args, **kwargs)
+	# def update(self, request, *args, **kwargs):
+	# 	if not (self.request.user.has_perm('EDIT_ITEM')):
+	# 		messages.warning(request, 'there is no edit perm!')
+	# 		user_name = request.user.username
+	# 		text = SearchForm()
+	# 		return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
+	# 	return super().update(request, *args, **kwargs)
 
 
 def have_no_more_stores(user_pk):
@@ -229,7 +251,7 @@ class StoreDelete(DeleteView):
 			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
 
 		owner_name = store.owners.all()[0]  # craetor
-		
+
 		# print('\n id : ', owner_name)
 		for item_ in items_to_delete:
 			# print('\n delete ')
@@ -282,8 +304,8 @@ def buy_item(request, pk):
 				store = get_item_store(_item.pk)
 				for owner in store.owners.all():
 					ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(owner.id))
-					if(request.user.is_authenticated):
-						ws.send(json.dumps({'message': 'user : '+request.user.username+' BOUGHT AN ITEM FROM YOU'}))
+					if (request.user.is_authenticated):
+						ws.send(json.dumps({'message': 'user : ' + request.user.username + ' BOUGHT AN ITEM FROM YOU'}))
 					else:
 						ws.send(json.dumps({'message': 'Guest BOUGHT AN ITEM FROM YOU'}))
 				_item_name = _item.name

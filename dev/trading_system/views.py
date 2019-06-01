@@ -36,7 +36,7 @@ def index(request: Any) -> HttpResponse:
 def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	if request.user.is_authenticated:
 		if request.user.is_superuser:
-			return render(request, 'homepage_member.html', {'text': SearchForm()})
+			return render(request, 'homepage_member.html', {'text': SearchForm(),'user_name': request.user.username})
 		elif "store_owners" in request.user.groups.values_list('name', flat=True):
 			return redirect('/store/home_page_owner/',
 			                {'text': SearchForm(), 'user_name': request.user.username, 'owner_id': request.user.pk, })
