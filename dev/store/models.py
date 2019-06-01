@@ -54,3 +54,6 @@ class Store(models.Model):
 			('REMOVE_STORE', 'delete store'),
 			('ADD_DISCOUNT', 'add discount'),
 		)
+
+
+

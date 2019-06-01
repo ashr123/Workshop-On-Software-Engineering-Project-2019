@@ -16,6 +16,23 @@
 				{{ form.as_p }}
 			</div>
 			<div class="buy_1">Total: <input type="text" id="total" readonly value="" class="readonly"/>$</div>
+
+			<div>
+				<p>Shipping to:</p>
+				{% csrf_token %}
+				{{ shipping.as_p }}
+				{% csrf_token %}
+				{{ country.as_p }}
+
+			</div>
+
+			<div>
+				<p>Card details:</p>
+				{% csrf_token %}
+				{{ card.as_p }}
+
+			</div>
+
 			<div id="buy_button">
 				<input class="buttons" type="submit" value="Buy now!"/>
 			</div>

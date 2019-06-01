@@ -1,3 +1,5 @@
+from multiprocessing.managers import State
+
 from django import forms
 from django.utils.safestring import mark_safe
 
@@ -80,5 +82,29 @@ class ItemForm(forms.ModelForm):
 		fields = ['name', 'description', 'category', 'price', 'quantity']
 
 
+from .fileds import CreditCardField, ExpiryDateField, VerificationValueField
+
 class BuyForm(forms.Form):
 	amount = forms.IntegerField()
+
+
+class PayForm(forms.Form):
+	holder = forms.CharField(max_length=50, required=True)
+	id = forms.IntegerField()
+	card_number = CreditCardField(required=True)
+	expiry_date = ExpiryDateField(required=True)
+	cvc = forms.CharField(required=True, label='CVV / CVC',
+	widget = forms.TextInput(attrs={'size': '3',
+	'maxlength': '3',
+	'placeholder':''}))
+
+
+
+
+
+class ShippingForm(forms.Form):
+	name = forms.CharField(label='Customer', max_length=25, required=True)
+	street = forms.CharField(label='Street', max_length=30)
+	city = forms.CharField(label='City', max_length=25)
+	country = forms.CharField(max_length=25)
+	zip = forms.IntegerField(label='Zip Code')
