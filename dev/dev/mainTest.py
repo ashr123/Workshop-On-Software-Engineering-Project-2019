@@ -24,7 +24,7 @@ class MyUnitTesting(StaticLiveServerTestCase):
 
 	def setUp(self) -> None:
 		super().setUp()
-		self.user = User.objects.create(username=self.default_user, password=make_password(self.default_password))
+		# self.user = User.objects.create(username=self.default_user, password=make_password(self.default_password))
 		self.store = Store.objects.create(name=self.default_store, description="bla bla bla")
 		self.store.owners.add(self.user)
 		assign_perm('ADD_ITEM', self.user, self.store)
