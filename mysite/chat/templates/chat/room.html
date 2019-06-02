@@ -18,6 +18,7 @@
         '/ws/chat/' + roomName + '/');
 
     chatSocket.onmessage = function(e) {
+        alert('hey');
         var data = JSON.parse(e.data);
         var message = data['message'];
         document.querySelector('#chat-log').value += (message + '\n');

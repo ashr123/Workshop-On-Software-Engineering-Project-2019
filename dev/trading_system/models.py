@@ -38,3 +38,21 @@ class AuctionParticipant(models.Model):
 
 	class Meta:
 		unique_together = (("auction", "customer"),)
+
+
+class Notification(models.Model):
+	date = models.DateTimeField(auto_now_add=True, blank=True)
+	msg = models.CharField(max_length=250)
+	users = models.ManyToManyField(User, through='NotificationUser')
+
+class NotificationUser(models.Model):
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	notification = models.ForeignKey(Notification, on_delete=models.CASCADE)
+	been_read =  models.BooleanField(default=False)
+	class Meta:
+		unique_together = (("user", "notification"),)
+
+
+class ObserverUser(models.Model):
+	address = models.URLField(max_length=250)
+	user = models.ForeignKey(User, on_delete=models.CASCADE, unique = True)

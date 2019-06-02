@@ -2,6 +2,9 @@ import json
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+from django.contrib.auth.models import User
+
+from trading_system.models import Notification
 
 
 class StoreOwnerConsumer(WebsocketConsumer):
@@ -27,22 +30,32 @@ class StoreOwnerConsumer(WebsocketConsumer):
 	# Receive message from WebSocket
 	def receive(self, text_data):
 		text_data_json = json.loads(text_data)
-		message = text_data_json['message']
-
-		# Send message to room group
+		ntfcs_ids = extract_ntfcs_ids(text_data_json['message'])
+		for ntfc_id in ntfcs_ids:
+			ntfc = Notification.objects.get(pk = ntfc_id)
+			ntfc.users.add(User.objects.get(pk = self.owner_id))
+		# Send message to WebSocket
 		async_to_sync(self.channel_layer.group_send)(
 			self.owner_group_name,
 			{
 				'type': 'chat_message',
-				'message': message
+				'message': '{}'
 			}
 		)
+		# # Send message to room group
+		# async_to_sync(self.channel_layer.group_send)(
+		# 	self.owner_group_name,
+		# 	{
+		# 		'type': 'chat_message',
+		# 		'message': message
+		# 	}
+		# )
 
 	# Receive message from room group
 	def chat_message(self, event):
-		message = event['message']
-
-		# Send message to WebSocket
 		self.send(text_data=json.dumps({
-			'message': message
+			'message': '{}'
 		}))
+
+def extract_ntfcs_ids(param):
+	return param

@@ -16,6 +16,8 @@ from guardian.shortcuts import assign_perm
 from websocket import create_connection
 
 from trading_system.forms import SearchForm
+from trading_system.models import Notification, ObserverUser, NotificationUser
+from trading_system.observer import ItemSubject
 from . import forms
 from .forms import ItemForm, BuyForm, AddManagerForm, AddDiscountToStore, AddRuleToStore
 from .models import Item
@@ -103,6 +105,7 @@ def submit_open_store(request):
 		messages.success(request, 'Your Store was added successfully!')  # <-
 		my_group = Group.objects.get_or_create(name="store_owners")
 		my_group = Group.objects.get(name="store_owners")
+		ObserverUser.objects.create(user_id=_user.pk,address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(_user.pk)).save()
 		_user.groups.add(my_group)
 		assign_perm('ADD_ITEM', _user, store)
 		assign_perm('REMOVE_ITEM', _user, store)
@@ -183,20 +186,17 @@ class ItemDetailView(DetailView):
 		return context
 
 
-
-
-
 # @method_decorator(login_required, name='dispatch')
 # class ItemUpdate(UpdateView):
 
 
-from .forms import UpdateItems,StoreForm
+from .forms import UpdateItems, StoreForm
 
 
 @method_decorator(login_required, name='dispatch')
 class StoreUpdate(UpdateView):
 	model = Store
-	#fields = ['name', 'owners', 'items', 'description']
+	# fields = ['name', 'owners', 'items', 'description']
 	form_class = StoreForm
 	template_name_suffix = '_update_form'
 
@@ -214,13 +214,14 @@ class StoreUpdate(UpdateView):
 		context['form_'] = UpdateItems(store_items)
 		return context
 
-	# def update(self, request, *args, **kwargs):
-	# 	if not (self.request.user.has_perm('EDIT_ITEM')):
-	# 		messages.warning(request, 'there is no edit perm!')
-	# 		user_name = request.user.username
-	# 		text = SearchForm()
-	# 		return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
-	# 	return super().update(request, *args, **kwargs)
+
+# def update(self, request, *args, **kwargs):
+# 	if not (self.request.user.has_perm('EDIT_ITEM')):
+# 		messages.warning(request, 'there is no edit perm!')
+# 		user_name = request.user.username
+# 		text = SearchForm()
+# 		return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
+# 	return super().update(request, *args, **kwargs)
 
 
 def have_no_more_stores(user_pk):
@@ -302,12 +303,23 @@ def buy_item(request, pk):
 				# messages.success(request, 'total : ' + str(total) + ' $')  # <-
 
 				store = get_item_store(_item.pk)
-				for owner in store.owners.all():
-					ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(owner.id))
-					if (request.user.is_authenticated):
-						ws.send(json.dumps({'message': 'user : ' + request.user.username + ' BOUGHT AN ITEM FROM YOU'}))
-					else:
-						ws.send(json.dumps({'message': 'Guest BOUGHT AN ITEM FROM YOU'}))
+				item_subject = ItemSubject(_item.pk)
+				# for owner in store.owners.all():
+				# 	ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(owner.id))
+				# 	if (request.user.is_authenticated):
+				# 		ws.send(json.dumps({'message': 'user : ' + request.user.username + ' BOUGHT AN ITEM FROM YOU'}))
+				# 	else:
+				# 		ws.send(json.dumps({'message': 'Guest BOUGHT AN ITEM FROM YOU'}))
+				if (request.user.is_authenticated):
+					notification = Notification.objects.create(
+						msg=request.user.username + ' bought ' + str(amount) + ' pieces of ' + _item.name)
+					notification.save()
+					item_subject.subject_state = item_subject.subject_state + [notification.pk]
+				else:
+					notification = Notification.objects.create(
+						msg='A guest bought ' + str(amount) + ' pieces of ' + _item.name)
+					notification.save()
+					item_subject.subject_state = item_subject.subject_state + notification.pk
 				_item_name = _item.name
 				if (_item.quantity == 0):
 					_item.delete()
@@ -338,10 +350,12 @@ def buy_item(request, pk):
 def home_page_owner(request):
 	text = SearchForm()
 	user_name = request.user.username
+	unread_ntfcs = NotificationUser.objects.filter(user=request.user.pk, been_read=False)
 	context = {
 		'user_name': user_name,
 		'text': text,
 		'owner_id': request.user.pk,
+		'unread_notifications': len(unread_ntfcs)
 	}
 	return render(request, 'store/homepage_store_owner.html', context)
 
@@ -560,3 +574,24 @@ def add_rule_to_store(request, pk):
 			'pk': pk,
 		}
 		return render(request, 'store/add_rule_to_store.html', context)
+
+
+class NotificationsListView(ListView):
+	model = Notification
+	template_name = 'store/owner_feed.html'
+
+	def get_queryset(self):
+		user_ntfcs = NotificationUser.objects.filter(user= self.request.user.pk)
+		ntfcs_ids = list(map(lambda n: n.notification_id, user_ntfcs))
+		ntfcs = list(map(lambda pk: Notification.objects.get(id=pk),ntfcs_ids))
+		return ntfcs
+
+	def get_context_data(self, **kwargs):
+		context = super(NotificationsListView, self).get_context_data(**kwargs)  # get the default context data
+		context['owner_id'] = self.request.user.pk
+		context['unread_notifications'] = 0
+		for n in NotificationUser.objects.filter(user= self.request.user.pk):
+			n.been_read= True
+			n.save()
+		return context
+
