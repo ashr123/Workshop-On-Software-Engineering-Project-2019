@@ -34,6 +34,7 @@ class Store(models.Model):
 	name = models.CharField(max_length=30)
 	# owner = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
 	owners = models.ManyToManyField(User)
+	managers = models.ManyToManyField(User,related_name="store_managers")
 	items = models.ManyToManyField(Item)
 	description = models.CharField(max_length=64)
 	discount = models.PositiveIntegerField(default=0)
@@ -83,3 +84,4 @@ class ItemRule(models.Model):
 	item = models.ForeignKey(Item, on_delete=models.CASCADE)
 	type = models.CharField(max_length=3, choices=RULE_TYPES)
 	parameter = models.CharField(max_length=120)
+

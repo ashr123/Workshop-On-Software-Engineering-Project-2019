@@ -151,8 +151,10 @@ class StoreListView(ListView):
 		return context
 
 	def get_queryset(self):
-		# return Store.objects.filter(owner_id=self.request.user.id)
-		return Store.objects.filter(owners__id__in=[self.request.user.id])
+		if ("store_managers" in self.request.user.groups.values_list('name', flat=True)):
+			return Store.objects.filter(managers__id__in=[self.request.user.id])
+		else:
+			return Store.objects.filter(owners__id__in=[self.request.user.id])
 
 
 class ItemListView(ListView):
@@ -363,6 +365,7 @@ def buy_item(request, pk):
 			holder = supply_form.cleaned_data.get('holder')
 			ccv = supply_form.cleaned_data.get('ccv')
 			id = supply_form.cleaned_data.get('id')
+
 			transaction_id = -1
 			supply_transaction_id = -1
 			#########################buy proccss
@@ -371,7 +374,7 @@ def buy_item(request, pk):
 
 					transaction_id = pay_system.pay(str(card_number), str(month), str(year), str(holder), str(ccv),
 					                                str(id))
-					if (transaction_id== -1):
+					if (transaction_id == -1):
 						messages.warning(request, 'can`t pay !')
 						return redirect('/login_redirect')
 				else:
@@ -379,8 +382,9 @@ def buy_item(request, pk):
 					return redirect('/login_redirect')
 
 				if supply_system.handshake():
-					supply_transaction_id= supply_system.supply(str(name),str(address),str(city),str(country),str(zip))
-					if (supply_transaction_id== -1):
+					supply_transaction_id = supply_system.supply(str(name), str(address), str(city), str(country),
+					                                             str(zip))
+					if (supply_transaction_id == -1):
 						chech_cancle = pay_system.cancel_pay(transaction_id)
 						messages.warning(request, 'can`t supply abort payment!')
 						return redirect('/login_redirect')
@@ -429,11 +433,11 @@ def buy_item(request, pk):
 				else:
 					messages.warning(request, 'there is no such amount ! please try again!')
 			except:
-				if not (transaction_id ==-1):
+				if not (transaction_id == -1):
 					chech_cancle = pay_system.cancel_pay(transaction_id)
-					chech_cancle_supply =supply_system.cancel_supply(supply_transaction_id)
+					chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
 				return redirect('/login_redirect')
-			###########################end buy procces
+		###########################end buy procces
 		errors = str(form.errors) + str(shipping_form.errors) + str(supply_form.errors)
 		messages.warning(request, 'error in :  ' + errors)
 		return redirect('/login_redirect')
@@ -513,6 +517,7 @@ def add_manager_to_store(request, pk):
 				store_managers = Group.objects.get_or_create(name="store_managers")
 				store_managers = Group.objects.get(name="store_managers")
 				user_.groups.add(store_managers)
+				store_.managers.add(user_)
 
 			messages.success(request, user_name + ' is appointed')
 			return redirect('/store/home_page_owner/')
