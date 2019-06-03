@@ -54,3 +54,32 @@ class Store(models.Model):
 			('REMOVE_STORE', 'delete store'),
 			('ADD_DISCOUNT', 'add discount'),
 		)
+
+
+
+class BaseRule(models.Model):
+	MAX_QUANTITY = 'MXQ'
+	MIN_QUANTITY = 'MNQ'
+	REGISTERED_ONLY = 'RGO'
+	FORBIDDEN_COUNTRIES = 'FBC'
+	RULE_TYPES = (
+		(MAX_QUANTITY, 'max_quantity'),
+		(MIN_QUANTITY, 'min_quantity'),
+		(REGISTERED_ONLY, 'registered_only'),
+		(FORBIDDEN_COUNTRIES, 'forbidden_countries')
+	)
+	store = models.ForeignKey(Store, on_delete=models.CASCADE)
+	type = models.CharField(max_length=3, choices=RULE_TYPES)
+	parameter = models.CharField(max_length=120)
+
+
+class ItemRule(models.Model):
+	MAX_QUANTITY = 'MXQ'
+	MIN_QUANTITY = 'MNQ'
+	RULE_TYPES = (
+		(MAX_QUANTITY, 'max_quantity'),
+		(MIN_QUANTITY, 'min_quantity'),
+	)
+	item = models.ForeignKey(Item, on_delete=models.CASCADE)
+	type = models.CharField(max_length=3, choices=RULE_TYPES)
+	parameter = models.CharField(max_length=120)

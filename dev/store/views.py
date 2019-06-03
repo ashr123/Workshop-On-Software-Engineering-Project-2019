@@ -19,7 +19,8 @@ from trading_system.forms import SearchForm
 from trading_system.models import Notification, ObserverUser, NotificationUser
 from trading_system.observer import ItemSubject
 from . import forms
-from .forms import ItemForm, BuyForm, AddManagerForm, AddDiscountToStore, AddRuleToStore
+from .forms import BuyForm, AddManagerForm, AddDiscountToStore, AddRuleToStore
+from .forms import ShippingForm
 from .models import Item
 from .models import Store
 
@@ -77,7 +78,7 @@ def add_item(request, pk):
 @login_required
 def add_store(request):
 	user_groups = request.user.groups.values_list('name', flat=True)
-	if "store_owners" in user_groups:
+	if "store_owners" in user_groups or "store_managers" in user_groups:
 		base_template_name = 'store/homepage_store_owner.html'
 	else:
 		base_template_name = 'homepage_member.html'
@@ -185,11 +186,13 @@ class ItemDetailView(DetailView):
 		return context
 
 
-# @method_decorator(login_required, name='dispatch')
-# class ItemUpdate(UpdateView):
-
-
-from .forms import UpdateItems, StoreForm
+from .forms import UpdateItems, StoreForm, ItemForm
+@method_decorator(login_required, name='dispatch')
+class ItemUpdate(UpdateView):
+	model = Item
+	# fields = ['name', 'owners', 'items', 'description']
+	form_class = ItemForm
+	template_name_suffix = '_update_form'
 
 
 @method_decorator(login_required, name='dispatch')
@@ -279,20 +282,119 @@ class StoreDelete(DeleteView):
 		return context
 
 
+from external_systems.money_collector.payment_system import Payment
+
+from .forms import PayForm
+
+# FORMS_ = [('_step1', BuyForm),
+#           ('_step2', PayForm),
+#
+#           ]
+# TEMPLATES_ = {'_step1': 'store/buy_step_1.html',
+#               '_step2': 'store/buy_step_2.html',
+#               }
+#
+# class ContactWizard(SessionWizardView):
+# 	def get_context_data(self, form, **kwargs):
+# 		context = super(ContactWizard, self).get_context_data(form=form, **kwargs)
+# 		if self.steps.current == '_step1':
+# 			pk = self.kwargs['pk']
+# 			text = SearchForm()
+# 			form_class = BuyForm
+# 			curr_item = Item.objects.get(id=pk)
+# 			context.update({
+# 				'name': curr_item.name,
+# 				'pk': curr_item.id,
+# 				'form': form_class,
+# 				'price': curr_item.price,
+# 				'description': curr_item.description,
+# 				'text': text
+# 			})
+# 		if self.steps.current == '_step2':
+# 			if self.request.user.is_authenticated:
+# 				if "store_owners" in self.request.user.groups.values_list('name',
+# 				                                                          flat=True) or "store_managers" in self.request.user.groups.values_list(
+# 					'name', flat=True):
+# 					base_template_name = 'store/homepage_store_owner.html'
+# 				else:
+# 					base_template_name = 'homepage_member.html'
+# 			else:
+# 				base_template_name = 'homepage_guest.html'
+#
+# 			pay_form = PayForm()
+# 			context.update({
+# 				'base_template_name': base_template_name,
+# 				'text': SearchForm(),
+# 				'formset': pay_form,
+# 			})
+# 		return context
+#
+# 	def get_template_names(self):
+# 		return [TEMPLATES_[self.steps.current]]
+#
+# 	def done(self, form_list, **kwargs):
+# 		return redirect('/login_redirect')
+
+pay_system=Payment()
 def buy_item(request, pk):
+	# return redirect('/store/contact/' + str(pk) + '/')
 	if request.method == 'POST':
 		form = BuyForm(request.POST)
-		if form.is_valid():
+		shipping_form =ShippingForm(request.POST)
+		supply_form = PayForm(request.POST)
+
+		if form.is_valid() and shipping_form.is_valid() and supply_form.is_valid():
+			# transaction_id = 0
+			# if pay_system.handshake():
+			# 	if request.user.is_authenticated:
+			# 		if "store_owners" in request.user.groups.values_list('name',
+			# 		                                                     flat=True) or "store_managers" in request.user.groups.values_list(
+			# 			'name', flat=True):
+			# 			base_template_name = 'store/homepage_store_owner.html'
+			# 		else:
+			# 			base_template_name = 'homepage_member.html'
+			# 	else:
+			# 		base_template_name = 'homepage_guest.html'
+			#
+			# 	pay_form = PayForm()
+			# 	context = {
+			# 		'base_template_name': base_template_name,
+			# 		'text': SearchForm(),
+			# 		'form': pay_form,
+			# 	}
+			#
+			# 	transaction_id = pay_system.pay('2222333344445555', '4', '2021', 'Israel Israelovice', '262',
+			# 	                                '20444444')
+			# else:
+			# 	messages.warning(request, 'can`t connect to pay system!')
+			# 	return redirect('/login_redirect')
+
+
+			#shipping
+			country = shipping_form.cleaned_data.get('country')
+			city = shipping_form.cleaned_data.get('city')
+			zip = shipping_form.cleaned_data.get('zip')
+			address =shipping_form.cleaned_data.get('address')
+			name = shipping_form.cleaned_data.get('name')
+
+			#card
+			card_number =supply_form.cleaned_data.get('card_number')
+			month =supply_form.cleaned_data.get('month')
+			year = supply_form.cleaned_data.get('year')
+			holder =supply_form.cleaned_data.get('holder')
+			ccv =supply_form.cleaned_data.get('ccv')
+			id = supply_form.cleaned_data.get('id')
+
 
 			_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
 			amount_in_db = _item.quantity
 			if (amount <= amount_in_db):
+				total = amount * _item.price
 				new_q = amount_in_db - amount
 				_item.quantity = new_q
 				_item.save()
 
-				total = amount * _item.price
 				store_of_item = Store.objects.get(items__id__contains=pk)
 				if (store_of_item.discount > 0):
 					total = (100 - store_of_item.discount) / 100 * float(total)
@@ -324,6 +426,7 @@ def buy_item(request, pk):
 					_item.delete()
 
 				messages.success(request, 'Thank you! you bought ' + _item_name)  # <-
+				# messages.success(request, 'transaction id:  ' + str(transaction_id))  # <-
 				messages.success(request, 'Total : ' + str(total) + ' $')  # <-
 				return redirect('/login_redirect')
 			messages.warning(request, 'there is no such amount ! please try again!')
@@ -331,7 +434,6 @@ def buy_item(request, pk):
 		messages.warning(request, 'error in :  ', form.errors)
 		return redirect('/login_redirect')
 	else:
-		text = SearchForm()
 		form_class = BuyForm
 		curr_item = Item.objects.get(id=pk)
 		context = {
@@ -340,9 +442,12 @@ def buy_item(request, pk):
 			'form': form_class,
 			'price': curr_item.price,
 			'description': curr_item.description,
-			'text': text
+			'text': SearchForm(),
+			'card':PayForm(),
+			'shipping':ShippingForm(),
 		}
 		return render(request, 'store/buy_item.html', context)
+
 
 
 @login_required
@@ -400,9 +505,14 @@ def add_manager_to_store(request, pk):
 			for perm in picked:
 				assign_perm(perm, user_, store_)
 			if (is_owner):
-				my_group = Group.objects.get(name="store_owners")
-				user_.groups.add(my_group)
+				store_owners_group = Group.objects.get(name="store_owners")
+				user_.groups.add(store_owners_group)
 				store_.owners.add(user_)
+			else:
+				store_managers = Group.objects.get_or_create(name="store_managers")
+				store_managers = Group.objects.get(name="store_managers")
+				user_.groups.add(store_managers)
+
 			messages.success(request, user_name + ' is appointed')
 			return redirect('/store/home_page_owner/')
 		messages.warning(request, 'error in :  ', form.errors)
@@ -450,32 +560,32 @@ def add_discount_to_store(request, pk):
 		return render(request, 'store/add_discount_to_store.html', context)
 
 
-def update_item(request, pk):
-	if request.method == "POST":
-
-		form = ItemForm(request.POST or None)
-
-		if form.is_valid():
-			obj = form.save(commit=False)
-
-			obj.save()
-
-			messages.success(request, "You successfully updated the post")
-
-			return redirect(request.META.get('HTTP_REFERER', '/'))
-
-		else:
-			return render(request, 'store/edit_item.html', {'form': form,
-			                                                'error': 'The form was not updated successfully. Please enter in a title and content'})
-	else:
-		return render(request, 'store/edit_item.html', {
-			'store': pk,
-			'form': ItemForm,
-			'store_name': Store.objects.get(id=pk).name,  # TODO
-			'user_name': request.user.username,
-			'text': SearchForm(),
-		})
-
+# def update_item(request, pk):
+# 	if request.method == "POST":
+#
+# 		form = ItemForm(request.POST or None)
+#
+# 		if form.is_valid():
+# 			obj = form.save(commit=False)
+#
+# 			obj.save()
+#
+# 			messages.success(request, "You successfully updated the post")
+#
+# 			return redirect(request.META.get('HTTP_REFERER', '/'))
+#
+# 		else:
+# 			return render(request, 'store/edit_item.html', {'form': form,
+# 			                                                'error': 'The form was not updated successfully. Please enter in a title and content'})
+# 	else:
+# 		return render(request, 'store/edit_item.html', {
+# 			'store': pk,
+# 			'form': ItemForm,
+# 			'store_name': Store.objects.get(id=pk).name,  # TODO
+# 			'user_name': request.user.username,
+# 			'text': SearchForm(),
+# 		})
+#
 
 def owner_feed(request, owner_id):
 	text = SearchForm()
@@ -494,81 +604,38 @@ def get_item_store(item_pk):
 	# Might cause bug. Need to apply the item-in-one-store condition
 	return stores[0]
 
-
+from .models import BaseRule
 def add_rule_to_store(request, pk):
 	if request.method == 'POST':
 		form = AddRuleToStore(request.POST)
 		if form.is_valid():
 			store = Store.objects.get(id=pk)
 			rule = form.cleaned_data.get('rules')
-			operator = form.cleaned_data.get('operator')
+			#operator = form.cleaned_data.get('operator')
 			parameter = form.cleaned_data.get('parameter')
-			if rule == 'MAX_QUANTITY':
-				max_quantity_old = store.max_quantity
-				# new max quantity rule
-				if max_quantity_old is None and (store.min_quantity is None or operator == 'OR'):
-					store.max_quantity = parameter
-					store.max_op = operator
-					store.save()
-				elif max_quantity_old is None and store.min_quantity is not None and operator == 'AND':
-					if store.min_quantity > parameter:
-						messages.warning(request, 'error: min quantity cant be larger than max quantity')
-						return redirect('/store/home_page_owner/')
-					else:
-						store.max_quantity = parameter
-						store.max_op = operator
-						store.save()
-				# there is max quantity rule - error, cant override exsisting rule
-				elif max_quantity_old is not None and operator == 'AND':
-					messages.warning(request, 'error: there is already max quantity rule')
-					return redirect('/store/home_page_owner/')
-				# there is max quantity rule - operator is or, choose higher value
-				else:
-					if store.max_quantity < parameter:
-						store.max_quantity = parameter
-						store.max_op = operator
-						store.save()
-			elif rule == 'MIN_QUANTITY':
-				min_quantity_old = store.min_quantity
-				# new min quantity rule
-				if min_quantity_old is None and (store.max_quantity is None or operator == 'OR'):
-					store.min_quantity = parameter
-					store.min_op = operator
-					store.save()
-				elif min_quantity_old is None and store.max_quantity is not None and operator == 'AND':
-					if store.max_quantity < parameter:
-						messages.warning(request, 'error: min quantity cant be larger than max quantity')
-						return redirect('/store/home_page_owner/')
-					else:
-						store.min_quantity = parameter
-						store.min_op = operator
-						store.save()
-				# there is min quantity rule - error, cant override exsisting rule
-				elif min_quantity_old is not None and operator == 'AND':
-					messages.warning(request, 'error: there is already min quantity rule')
-					return redirect('/store/home_page_owner/')
-				# there is min quantity rule - operator is or, choose lower value
-				else:
-					if store.min_quantity > parameter:
-						store.min_quantity = parameter
-						store.min_op = operator
-						store.save()
-			elif rule == 'REGISTERED_ONLY':
-				if store.registered_only == False:
-					store.registered_only = True
-					store.registered_op = operator
-					store.save()
-				else:
-					messages.warning(request, 'error: exists REGISTERED_ONLY rule for this store')
-					return redirect('/store/home_page_owner/')
-			messages.success(request, 'added rule :  ' + rule + 'successfully! operator ' + operator)
+			if rule == 'MAX_QUANTITY' or rule == 'MIN_QUANTITY':
+				try:
+					int(parameter)
+					if int(parameter) > 0:
+						BaseRule(store=store, type=rule, parameter=parameter).save()
+						messages.success(request, 'added rule :  ' + str(rule) + ' successfully!')
+				except ValueError:
+					messages.warning(request, 'Enter a number please')
+			else:
+				BaseRule(store=store, type=rule, parameter=parameter).save()
+				messages.success(request, 'added rule :  ' + str(rule) + 'successfully!')
 			return redirect('/store/home_page_owner/')
-		messages.warning(request, 'error in :  ', form.errors)
-		return redirect('/store/home_page_owner/')
+		else:
+			messages.warning(request,  form.errors)
+			return redirect('/store/home_page_owner/')
 
 	else:
 		ruleForm = AddRuleToStore()
+		text = SearchForm()
+		user_name = request.user.username
 		context = {
+			'user_name': user_name,
+			'text': text,
 			'form': ruleForm,
 			'pk': pk,
 		}
@@ -593,4 +660,3 @@ class NotificationsListView(ListView):
 			n.been_read= True
 			n.save()
 		return context
-

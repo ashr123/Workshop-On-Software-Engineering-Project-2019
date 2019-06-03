@@ -14,16 +14,13 @@ from django.views.generic import DetailView
 from django.views.generic.list import ListView
 
 from dev.settings import PROJ_IP, PROJ_PORT
-from store.models import Item
-from store.models import Store
+from store.models import Item, Store
 from trading_system.forms import SearchForm, SomeForm, CartForm
 # Create your views here.
-from trading_system.models import Cart, Auction,CartGuest
+from trading_system.models import Cart, Auction, CartGuest
 from trading_system.observer import AuctionSubject
-from store.models import Item,Store
 from .models import AuctionParticipant
 from .routing import AUCTION_PARTICIPANT_URL
-from django.contrib import admin
 
 
 def index(request: Any) -> HttpResponse:
@@ -36,8 +33,10 @@ def index(request: Any) -> HttpResponse:
 def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	if request.user.is_authenticated:
 		if request.user.is_superuser:
-			return render(request, 'homepage_member.html', {'text': SearchForm(),'user_name': request.user.username})
-		elif "store_owners" in request.user.groups.values_list('name', flat=True):
+			return render(request, 'homepage_member.html', {'text': SearchForm(), 'user_name': request.user.username})
+		elif "store_owners" in request.user.groups.values_list('name',
+		                                                       flat=True) or "store_managers" in request.user.groups.values_list(
+				'name', flat=True):
 			return redirect('/store/home_page_owner/',
 			                {'text': SearchForm(), 'user_name': request.user.username, 'owner_id': request.user.pk, })
 		else:
@@ -62,7 +61,7 @@ def item(request: Any, id: int) -> HttpResponse:
 
 def show_cart(request: Any) -> HttpResponse:
 	if request.user.is_authenticated:
-		if "store_owners" in request.user.groups.values_list('name', flat=True):
+		if "store_owners" in request.user.groups.values_list('name', flat=True) or "store_managers" in request.user.groups.values_list('name', flat=True):
 			base_template_name = 'store/homepage_store_owner.html'
 		else:
 			base_template_name = 'homepage_member.html'
@@ -225,8 +224,6 @@ def makeGuestCart(request):
 	return items_
 
 
-
-
 def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	# if not (request.user.is_authenticated):
 	# 	return makeGuestCart(request)
@@ -242,7 +239,7 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 					item.quantity = amount_in_db - 1
 					item.save()
 					items_bought.append(item_id)
-					if(request.user.is_authenticated):
+					if (request.user.is_authenticated):
 						cart = Cart.objects.get(customer=request.user)
 						cart.items.remove(item)
 					else:
@@ -273,7 +270,7 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 				base_template_name = 'store/homepage_store_owner.html'
 			else:
 				base_template_name = 'homepage_member.html'
-		
+
 			list_ = None
 
 		form = CartForm(request.user, list_)
@@ -285,7 +282,7 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			'form': form,
 			'base_template_name': base_template_name
 		}
-		print('\nlist :',list_)
+		print('\nlist :', list_)
 		return render(request, 'trading_system/cart_test.html', context)
 
 
