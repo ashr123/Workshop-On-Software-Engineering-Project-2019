@@ -3,13 +3,13 @@ from multiprocessing.managers import State
 from django import forms
 from django.utils.safestring import mark_safe
 
-from .models import Item, Store
+from .models import Item, Store,DiscountStore
 
 
 class StoreForm(forms.ModelForm):
 	class Meta:
 		model = Store
-		fields = ['name', 'owners', 'description', 'discount']
+		fields = ['name', 'owners', 'description', 'discounts']
 		widgets = {
 			'owners': forms.CheckboxSelectMultiple,
 			# 'items': forms.CheckboxSelectMultiple,
@@ -55,8 +55,10 @@ class AddRuleToStore(forms.Form):
 	parameter = forms.CharField(max_length=100, required=False)
 
 
-class AddDiscountToStore(forms.Form):
-	discount = forms.IntegerField(max_value=100)
+class AddDiscountToStore(forms.ModelForm):
+	class Meta:
+		model = DiscountStore
+		fields = ['end_date', 'percentage']
 
 
 class AddManagerForm(forms.Form):

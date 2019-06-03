@@ -403,11 +403,13 @@ def buy_item(request, pk):
 					_item.save()
 
 					store_of_item = Store.objects.get(items__id__contains=pk)
-					if (store_of_item.discount > 0):
-						total = (100 - store_of_item.discount) / 100 * float(total)
+					if not (store_of_item.discounts.all[0] == None):
+						discount_ = store_of_item.discounts.all[0]
+						percentage = discount_.percentage
+						total = (100 - percentage) / 100 * float(total)
 						messages.success(request,
 						                 'you have discount for this store : ' + str(
-							                 store_of_item.discount) + ' %')  # <-
+							                 percentage) + ' %')  # <-
 					# messages.success(request, 'YES! at the moment you bought  : ' + _item.description)  # <-
 					# messages.success(request, 'total : ' + str(total) + ' $')  # <-
 
@@ -544,13 +546,15 @@ def add_discount_to_store(request, pk):
 	if request.method == 'POST':
 		form = AddDiscountToStore(request.POST)
 		if form.is_valid():
-			discount = form.cleaned_data.get('discount')
+			# discount = form.cleaned_data.get('discount')
+			disc = form.save()
 			store = Store.objects.get(id=pk)
-			store.discount = discount
+			store.discounts.add(disc)
 			store.save()
-			messages.success(request, 'add discount :  ' + str(discount) + '%')
+			percentageStr = form.cleaned_data.get('percentage')
+			messages.success(request, 'add discount :  ' + str(percentageStr) + '%')
 			return redirect('/store/home_page_owner/')
-		messages.warning(request, 'error in :  ', form.errors)
+		messages.warning(request, 'error in :  '+ str(form.errors))
 		return redirect('/store/home_page_owner/')
 
 	else:

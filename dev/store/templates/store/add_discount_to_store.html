@@ -3,9 +3,9 @@
 	<h2 class="title">Add Discount To Store</h2>
 		<form id="add_discount_container" action="/store/add_discount_to_store/{{ pk }}" method="post">
 			{% csrf_token %}
-			<span>{{ form.discount.label_tag }} </span>
-			<span>{{ form.discount }} </span>
-			<span> % </span>
+{#			<span>{{ form.discount.label_tag }} </span>#}
+			<span>{{ form.as_p }} </span>
+{#			<span> % </span>#}
 			<input id="add_button" type="submit" value="Add"/>
 		</form>
 {% endblock %}
