@@ -9,10 +9,20 @@ CategoryChoice = (
 )
 
 
+class Condition(models.Model):
+	pass
+
+
+class MaxMinCondition(Condition):
+	max_amount = models.PositiveIntegerField(default=2147483647)
+	min_amount = models.PositiveIntegerField(default=0)
+
+
 class Discount(models.Model):
 	start_date = models.DateField(auto_now_add=True)
 	end_date = models.DateField(help_text='format: mm/dd/yyyy')
 	percentage = models.PositiveSmallIntegerField()
+	condition = models.ForeignKey(Condition, models.CASCADE)
 
 
 class Item(models.Model):

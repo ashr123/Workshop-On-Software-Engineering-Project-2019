@@ -53,9 +53,11 @@ class AddRuleToStore(forms.Form):
 
 
 class AddDiscountToStore(forms.ModelForm):
+
+
 	class Meta:
 		model = Discount
-		fields = ['end_date', 'percentage']
+		fields = ['end_date', 'percentage',]
 
 
 class AddManagerForm(forms.Form):
