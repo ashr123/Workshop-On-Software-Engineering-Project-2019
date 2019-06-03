@@ -283,6 +283,7 @@ class StoreDelete(DeleteView):
 
 
 from external_systems.money_collector.payment_system import Payment
+from external_systems.supply_system.supply_system import Supply
 
 from .forms import PayForm
 
@@ -335,95 +336,106 @@ from .forms import PayForm
 # 	def done(self, form_list, **kwargs):
 # 		return redirect('/login_redirect')
 
-pay_system=Payment()
+pay_system = Payment()
+supply_system = Supply()
+
+
 def buy_item(request, pk):
 	# return redirect('/store/contact/' + str(pk) + '/')
 	if request.method == 'POST':
 		form = BuyForm(request.POST)
-		shipping_form =ShippingForm(request.POST)
+		shipping_form = ShippingForm(request.POST)
 		supply_form = PayForm(request.POST)
 
 		if form.is_valid() and shipping_form.is_valid() and supply_form.is_valid():
-			# transaction_id = 0
-			# if pay_system.handshake():
-			# 	if request.user.is_authenticated:
-			# 		if "store_owners" in request.user.groups.values_list('name',
-			# 		                                                     flat=True) or "store_managers" in request.user.groups.values_list(
-			# 			'name', flat=True):
-			# 			base_template_name = 'store/homepage_store_owner.html'
-			# 		else:
-			# 			base_template_name = 'homepage_member.html'
-			# 	else:
-			# 		base_template_name = 'homepage_guest.html'
-			#
-			# 	pay_form = PayForm()
-			# 	context = {
-			# 		'base_template_name': base_template_name,
-			# 		'text': SearchForm(),
-			# 		'form': pay_form,
-			# 	}
-			#
-			# 	transaction_id = pay_system.pay('2222333344445555', '4', '2021', 'Israel Israelovice', '262',
-			# 	                                '20444444')
-			# else:
-			# 	messages.warning(request, 'can`t connect to pay system!')
-			# 	return redirect('/login_redirect')
 
-
-			#shipping
+			# shipping
 			country = shipping_form.cleaned_data.get('country')
 			city = shipping_form.cleaned_data.get('city')
 			zip = shipping_form.cleaned_data.get('zip')
-			address =shipping_form.cleaned_data.get('address')
+			address = shipping_form.cleaned_data.get('address')
 			name = shipping_form.cleaned_data.get('name')
 
-			#card
-			card_number =supply_form.cleaned_data.get('card_number')
-			month =supply_form.cleaned_data.get('month')
+			# card
+			card_number = supply_form.cleaned_data.get('card_number')
+			month = supply_form.cleaned_data.get('month')
 			year = supply_form.cleaned_data.get('year')
-			holder =supply_form.cleaned_data.get('holder')
-			ccv =supply_form.cleaned_data.get('ccv')
+			holder = supply_form.cleaned_data.get('holder')
+			ccv = supply_form.cleaned_data.get('ccv')
 			id = supply_form.cleaned_data.get('id')
+			transaction_id = -1
+			supply_transaction_id = -1
+			#########################buy proccss
+			try:
+				if pay_system.handshake():
 
+					transaction_id = pay_system.pay(str(card_number), str(month), str(year), str(holder), str(ccv),
+					                                str(id))
+					if (transaction_id== -1):
+						messages.warning(request, 'can`t pay !')
+						return redirect('/login_redirect')
+				else:
+					messages.warning(request, 'can`t connect to pay system!')
+					return redirect('/login_redirect')
 
-			_item = Item.objects.get(id=pk)
-			amount = form.cleaned_data.get('amount')
-			amount_in_db = _item.quantity
-			if (amount <= amount_in_db):
-				total = amount * _item.price
-				new_q = amount_in_db - amount
-				_item.quantity = new_q
-				_item.save()
+				if supply_system.handshake():
+					supply_transaction_id= supply_system.supply(str(name),str(address),str(city),str(country),str(zip))
+					if (supply_transaction_id== -1):
+						chech_cancle = pay_system.cancel_pay(transaction_id)
+						messages.warning(request, 'can`t supply abort payment!')
+						return redirect('/login_redirect')
+				else:
+					chech_cancle = pay_system.cancel_pay(transaction_id)
+					messages.warning(request, 'can`t connect to supply system abort payment!')
+					return redirect('/login_redirect')
 
-				store_of_item = Store.objects.get(items__id__contains=pk)
-				if (store_of_item.discount > 0):
-					total = (100 - store_of_item.discount) / 100 * float(total)
-					messages.success(request,
-					                 'you have discount for this store : ' + str(store_of_item.discount) + ' %')  # <-
-				# messages.success(request, 'YES! at the moment you bought  : ' + _item.description)  # <-
-				# messages.success(request, 'total : ' + str(total) + ' $')  # <-
+				_item = Item.objects.get(id=pk)
+				amount = form.cleaned_data.get('amount')
+				amount_in_db = _item.quantity
+				if (amount <= amount_in_db):
+					total = amount * _item.price
+					new_q = amount_in_db - amount
+					_item.quantity = new_q
+					_item.save()
 
-				store = get_item_store(_item.pk)
-				for owner in store.owners.all():
-					try:
-						ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(owner.id))
-						if (request.user.is_authenticated):
-							ws.send(json.dumps({'message': 'user : ' + request.user.username + ' BOUGHT AN ITEM FROM YOU'}))
-						else:
-							ws.send(json.dumps({'message': 'Guest BOUGHT AN ITEM FROM YOU'}))
-					except:
-						messages.warning(request, 'cant connect owner')
-				_item_name = _item.name
-				if (_item.quantity == 0):
-					_item.delete()
+					store_of_item = Store.objects.get(items__id__contains=pk)
+					if (store_of_item.discount > 0):
+						total = (100 - store_of_item.discount) / 100 * float(total)
+						messages.success(request,
+						                 'you have discount for this store : ' + str(
+							                 store_of_item.discount) + ' %')  # <-
+					# messages.success(request, 'YES! at the moment you bought  : ' + _item.description)  # <-
+					# messages.success(request, 'total : ' + str(total) + ' $')  # <-
 
-				messages.success(request, 'Thank you! you bought ' + _item_name)  # <-
-				# messages.success(request, 'transaction id:  ' + str(transaction_id))  # <-
-				messages.success(request, 'Total : ' + str(total) + ' $')  # <-
+					store = get_item_store(_item.pk)
+					for owner in store.owners.all():
+						try:
+							ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(owner.id))
+							if (request.user.is_authenticated):
+								ws.send(json.dumps(
+									{'message': 'user : ' + request.user.username + ' BOUGHT AN ITEM FROM YOU'}))
+							else:
+								ws.send(json.dumps({'message': 'Guest BOUGHT AN ITEM FROM YOU'}))
+						except:
+							messages.warning(request, 'cant connect owner')
+					_item_name = _item.name
+					if (_item.quantity == 0):
+						_item.delete()
+
+					messages.success(request, 'Thank you! you bought ' + _item_name)  # <-
+					# messages.success(request, 'transaction id:  ' + str(transaction_id))  # <-
+					messages.success(request, 'Total : ' + str(total) + ' $')  # <-
+					return redirect('/login_redirect')
+				else:
+					messages.warning(request, 'there is no such amount ! please try again!')
+			except:
+				if not (transaction_id ==-1):
+					chech_cancle = pay_system.cancel_pay(transaction_id)
+					chech_cancle_supply =supply_system.cancel_supply(supply_transaction_id)
 				return redirect('/login_redirect')
-			messages.warning(request, 'there is no such amount ! please try again!')
-			return redirect('/login_redirect')
-		messages.warning(request, 'error in :  ', form.errors)
+			###########################end buy procces
+		errors = str(form.errors) + str(shipping_form.errors) + str(supply_form.errors)
+		messages.warning(request, 'error in :  ' + errors)
 		return redirect('/login_redirect')
 	else:
 		form_class = BuyForm
@@ -435,11 +447,10 @@ def buy_item(request, pk):
 			'price': curr_item.price,
 			'description': curr_item.description,
 			'text': SearchForm(),
-			'card':PayForm(),
-			'shipping':ShippingForm(),
+			'card': PayForm(),
+			'shipping': ShippingForm(),
 		}
 		return render(request, 'store/buy_item.html', context)
-
 
 
 @login_required
@@ -594,14 +605,17 @@ def get_item_store(item_pk):
 	# Might cause bug. Need to apply the item-in-one-store condition
 	return stores[0]
 
+
 from .models import BaseRule
+
+
 def add_rule_to_store(request, pk):
 	if request.method == 'POST':
 		form = AddRuleToStore(request.POST)
 		if form.is_valid():
 			store = Store.objects.get(id=pk)
 			rule = form.cleaned_data.get('rules')
-			#operator = form.cleaned_data.get('operator')
+			# operator = form.cleaned_data.get('operator')
 			parameter = form.cleaned_data.get('parameter')
 			if rule == 'MAX_QUANTITY' or rule == 'MIN_QUANTITY':
 				try:
@@ -616,7 +630,7 @@ def add_rule_to_store(request, pk):
 				messages.success(request, 'added rule :  ' + str(rule) + 'successfully!')
 			return redirect('/store/home_page_owner/')
 		else:
-			messages.warning(request,  form.errors)
+			messages.warning(request, form.errors)
 			return redirect('/store/home_page_owner/')
 
 	else:
