@@ -149,7 +149,6 @@ class StoreListView(ListView):
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)  # get the default context data
 		context['text'] = SearchForm()
-		context['user_name'] = self.request.user.username
 		return context
 
 	def get_queryset(self):

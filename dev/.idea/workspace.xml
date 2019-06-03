@@ -3,20 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="7f206d29-0b35-4da3-95c1-1baab1223eb3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/consumers.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/consumers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/routing.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/routing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/homepage_store_owner.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/homepage_store_owner.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/owner_feed.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/owner_feed.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/templates/store/store_list.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/store_list.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/store/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/homepage_member.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/homepage_member.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/observer.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/observer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/easy-install.pth" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/easy-install.pth" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/easy_install-script.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/easy_install-script.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../mysite/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/chat/templates/chat/room.html" beforeDir="false" afterPath="$PROJECT_DIR$/../mysite/chat/templates/chat/room.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -59,8 +47,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/store/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="194">
-              <caret line="27" column="61" selection-start-line="27" selection-start-column="61" selection-end-line="27" selection-end-column="61" />
+            <state relative-caret-position="294">
+              <caret line="19" column="56" selection-start-line="19" selection-start-column="56" selection-end-line="19" selection-end-column="56" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -68,11 +56,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/store/templates/store/homepage_store_owner.html">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/store/templates/store/store_list.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="46">
-              <caret line="8" column="47" selection-start-line="8" selection-start-column="27" selection-end-line="8" selection-end-column="47" />
+            <state relative-caret-position="-605">
+              <caret line="11" column="32" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="32" />
             </state>
           </provider>
         </entry>
@@ -80,8 +68,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/store/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="129">
-              <caret line="594" column="20" selection-start-line="594" selection-start-column="20" selection-end-line="594" selection-end-column="20" />
+            <state relative-caret-position="53">
+              <caret line="150" column="38" selection-start-line="150" selection-start-column="38" selection-end-line="150" selection-end-column="38" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -89,13 +77,40 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/store/consumers.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build/lib/dev/mainTest.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="54" column="20" selection-start-line="54" selection-start-column="8" selection-end-line="54" selection-end-column="20" />
+            <state relative-caret-position="106">
+              <caret line="31" column="30" selection-start-line="31" selection-start-column="21" selection-end-line="31" selection-end-column="30" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build/lib/store/views.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="154">
+              <caret line="14" column="42" selection-start-line="14" selection-start-column="31" selection-end-line="14" selection-end-column="42" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/store/models.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="799">
+              <caret line="49" column="22" selection-start-line="49" selection-start-column="14" selection-end-line="49" selection-end-column="22" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/store/forms.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1003">
+              <caret line="62" column="16" selection-start-line="62" selection-start-column="16" selection-end-line="62" selection-end-column="16" />
               <folding>
-                <element signature="e#0#11#0" expanded="true" />
+                <element signature="e#0#24#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -113,22 +128,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>make</find>
-      <find>home_page</find>
-      <find>open_cart_for_user_in_store(item_stor</find>
-      <find>list</find>
-      <find>print</find>
-      <find>ADD_ITEM</find>
-      <find>get_item_store</find>
-      <find>cart_index_</find>
-      <find>CartForm</find>
-      <find>.get</find>
-      <find>List</find>
-      <find>buy_item</find>
-      <find>open_store</find>
-      <find>ws</find>
-      <find>get_queryset</find>
-      <find>store</find>
       <find>store-lis</find>
       <find>ListView</find>
       <find>def get_queryset(self)</find>
@@ -143,6 +142,22 @@
       <find>unread_ntfcs = NotificationUser.objects.filter(user=request.user.pk, been_read=False)</find>
       <find>homepage_store</find>
       <find>homepage_store_owner</find>
+      <find>view_store</find>
+      <find>add_mana</find>
+      <find>add_manager.h</find>
+      <find>ADD_DISCOUNT</find>
+      <find>perm</find>
+      <find>has_perm</find>
+      <find>de</find>
+      <find>add_manager_to_store</find>
+      <find>assign_perm</find>
+      <find>FlatPage</find>
+      <find>UPDATE</find>
+      <find>assign</find>
+      <find>DELETE</find>
+      <find>MANAGER</find>
+      <find>DISCOUNT</find>
+      <find>RULE</find>
     </findStrings>
     <replaceStrings>
       <replace>UnitTesting.driver</replace>
@@ -184,7 +199,6 @@
         <option value="$PROJECT_DIR$/dev/settings.py" />
         <option value="$PROJECT_DIR$/store/templates/store/guest_cart.html" />
         <option value="$PROJECT_DIR$/store/templates/store/add_rule_to_store.html" />
-        <option value="$PROJECT_DIR$/store/templates/store/store_list.html" />
         <option value="$PROJECT_DIR$/store/models.py" />
         <option value="$PROJECT_DIR$/templates/registration/login.html" />
         <option value="$PROJECT_DIR$/dev/urls.py" />
@@ -206,12 +220,13 @@
         <option value="$PROJECT_DIR$/build/lib/store/views.py" />
         <option value="$PROJECT_DIR$/store/templates/store/homepage_store_owner.html" />
         <option value="$PROJECT_DIR$/store/views.py" />
+        <option value="$PROJECT_DIR$/store/templates/store/store_list.html" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="762" />
-    <option name="width" value="1170" />
+    <option name="x" value="-12" />
+    <option name="width" value="981" />
     <option name="height" value="1032" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -222,7 +237,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -244,12 +258,20 @@
             <path>
               <item name="dev" type="b2602c69:ProjectViewProjectNode" />
               <item name="dev" type="462c0819:PsiDirectoryNode" />
+              <item name="store" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="store" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dev" type="462c0819:PsiDirectoryNode" />
               <item name="trading_system" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -597,7 +619,8 @@
       <workItem from="1559044746475" duration="3727000" />
       <workItem from="1559205110927" duration="3644000" />
       <workItem from="1559377180964" duration="331000" />
-      <workItem from="1559487879856" duration="5373000" />
+      <workItem from="1559487879856" duration="9890000" />
+      <workItem from="1559561201567" duration="2855000" />
     </task>
     <servers />
   </component>
@@ -634,7 +657,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="264492000" />
+    <option name="totallyTimeSpent" value="271864000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -649,13 +672,13 @@
     <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.48010612" visible="true" weight="0.20161943" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.48010612" visible="true" weight="0.2769231" />
       <window_info id="Structure" order="1" sideWeight="0.5198939" side_tool="true" weight="0.1891892" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3286517" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49565217" visible="true" weight="0.35740742" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49851632" weight="0.41111112" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49851632" weight="0.4611111" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3291536" />
@@ -791,63 +814,53 @@
     </expressions>
     <expressions id="evaluateExpression">
       <expression>
-        <expression-string>list(map(lambda pk: Notification.objects.get(id=pk),ntfcs_ids))</expression-string>
+        <expression-string>self.request.user.has_module_perms('trading_system')</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>list(map(lambda n: n.notification_id, user_ntfcs))</expression-string>
+        <expression-string>self.request.user.has_module_perms('Store')</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>len(nt.users.all())</expression-string>
+        <expression-string>self.request.user.has_module_perms('store')</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>nt.users.all()</expression-string>
+        <expression-string>self.request.user.has_module_perms('store').add_store</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>nt.users</expression-string>
+        <expression-string>self.request.user.has_module_perms()</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>list(Notification.objects.all())[0].users</expression-string>
+        <expression-string>self.request.user</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>list(Notification.objects.all())[0].user</expression-string>
+        <expression-string>list(context['object_list'])[0]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>list(Notification.objects.all())[0].user.objects</expression-string>
+        <expression-string>list(context['object_list'])</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>list(Notification.objects.all())[0].users[0]</expression-string>
+        <expression-string>context['object_list']</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/trading_system/templates/trading_system/cart_test_1.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="15" column="23" selection-start-line="15" selection-start-column="8" selection-end-line="15" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/store/templates/store/store_form.html" />
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37/Lib/site-packages/django/forms/models.py" />
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37/Lib/site-packages/django/urls/conf.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37/Lib/importlib/__init__.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37/Lib/site-packages/django/core/checks/urls.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37/Lib/site-packages/django/core/checks/registry.py" />
@@ -896,16 +909,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/store/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="31" column="84" selection-start-line="31" selection-start-column="84" selection-end-line="31" selection-end-column="84" />
-          <folding>
-            <element signature="e#0#24#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/templates/trading_system/auction_feed.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
@@ -938,13 +941,6 @@
         <state relative-caret-position="-51" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/store/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="36" column="4" selection-start-line="36" selection-start-column="4" selection-end-line="36" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/consumers.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-119">
@@ -959,13 +955,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="143">
           <caret line="526" selection-start-line="526" selection-end-line="526" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/Django-2.2.1-py3.7.egg/django/db/models/query.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="101">
-          <caret line="256" selection-start-line="256" selection-end-line="256" />
         </state>
       </provider>
     </entry>
@@ -1000,13 +989,6 @@
           <folding>
             <element signature="e#0#32#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/store/templates/store/store_list.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="38" selection-start-column="18" selection-end-column="38" />
         </state>
       </provider>
     </entry>
@@ -1081,37 +1063,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build/lib/store/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="218">
-          <caret line="353" column="42" lean-forward="true" selection-start-line="353" selection-start-column="42" selection-end-line="353" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/store/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
-          <caret line="27" column="61" selection-start-line="27" selection-start-column="61" selection-end-line="27" selection-end-column="61" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/store/templates/store/homepage_store_owner.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="46">
           <caret line="8" column="47" selection-start-line="8" selection-start-column="27" selection-end-line="8" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/store/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="129">
-          <caret line="594" column="20" selection-start-line="594" selection-start-column="20" selection-end-line="594" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1122,6 +1077,90 @@
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/lib/store/migrations/0002_auto_20190513_1910.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="14" column="127" selection-start-line="14" selection-start-column="127" selection-end-line="14" selection-end-column="127" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/Django-2.2.1-py3.7.egg/django/db/models/query.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="391" column="40" selection-start-line="391" selection-start-column="40" selection-end-line="391" selection-end-column="42" />
+          <caret line="389" column="40" selection-start-line="389" selection-start-column="40" selection-end-line="389" selection-end-column="42" />
+          <caret line="388" column="40" selection-start-line="388" selection-start-column="40" selection-end-line="388" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/store/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="799">
+          <caret line="49" column="22" selection-start-line="49" selection-start-column="14" selection-end-line="49" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/store/forms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1003">
+          <caret line="62" column="16" selection-start-line="62" selection-start-column="16" selection-end-line="62" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#24#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/store/templates/store/add_manager.html">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/store/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="294">
+          <caret line="19" column="56" selection-start-line="19" selection-start-column="56" selection-end-line="19" selection-end-column="56" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/django_guardian-1.5.1-py3.7.egg/guardian/shortcuts.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="24" column="4" selection-start-line="24" selection-start-column="4" selection-end-line="24" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/lib/store/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="154">
+          <caret line="14" column="42" selection-start-line="14" selection-start-column="31" selection-end-line="14" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/lib/dev/mainTest.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="106">
+          <caret line="31" column="30" selection-start-line="31" selection-start-column="21" selection-end-line="31" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/store/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="53">
+          <caret line="150" column="38" selection-start-line="150" selection-start-column="38" selection-end-line="150" selection-end-column="38" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/store/templates/store/store_list.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-605">
+          <caret line="11" column="32" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="32" />
         </state>
       </provider>
     </entry>
