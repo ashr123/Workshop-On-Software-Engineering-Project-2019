@@ -1,17 +1,16 @@
-
 {% extends 'store/homepage_store_owner.html' %}
 {% block content %}
 	<form method="post">{% csrf_token %}
 		{{ form.as_p }}
-	<p>
-		Items:
-	</p>
-		{% csrf_token %}
-		{% for item in form_.items %}
-			<div class="check_item">{{ item }}</div>
-		{% endfor %}
+
 		<input type="submit" value="Update">
 	</form>
+
+	<p>
+		<form action="/store/add_discount_to_item/{{ pk }}" method="GET">
+			<input class="discount_item_button" type="submit" value="Add discount">
+		</form>
+	</p>
 	{#	<div>#}
 	{#	<form id="my_cart" action="/show_cart" method='post'>#}
 	{#	#}

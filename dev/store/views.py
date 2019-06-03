@@ -196,6 +196,43 @@ class ItemUpdate(UpdateView):
 	form_class = ItemForm
 	template_name_suffix = '_update_form'
 
+	def get_context_data(self, **kwargs):
+		# if not (self.request.user.has_perm('EDIT_ITEM')):
+		# 	user_name = self.request.user.username
+		# 	text = SearchForm()
+		# 	messages.warning(self.request, 'there is no edit perm!')
+		# 	return render(self.request, 'homepage_member.html', {'text': text, 'user_name': user_name})
+		text = SearchForm()
+
+		context = super(ItemUpdate, self).get_context_data(**kwargs)  # get the default context data
+		context['text'] = text
+		context['pk'] = self.object.id
+		return context
+
+
+def add_discount_to_item(request, pk):
+	if request.method == 'POST':
+		form = AddDiscountToStore(request.POST)
+		if form.is_valid():
+			# discount = form.cleaned_data.get('discount')
+			disc = form.save()
+			item = Item.objects.get(id=pk)
+			item.discounts.add(disc)
+			item.save()
+			percentageStr = form.cleaned_data.get('percentage')
+			messages.success(request, 'add discount to item . percentage :  ' + str(percentageStr) + '%')
+			return redirect('/store/home_page_owner/')
+		messages.warning(request, 'error in :  ' + str(form.errors))
+		return redirect('/store/home_page_owner/')
+
+	else:
+		context = {
+			'text': SearchForm(),
+			'pk': pk,
+			'form': AddDiscountToStore(),
+		}
+		return render(request, 'store/add_discount_to_item.html', context)
+
 
 @method_decorator(login_required, name='dispatch')
 class StoreUpdate(UpdateView):
@@ -554,7 +591,7 @@ def add_discount_to_store(request, pk):
 			percentageStr = form.cleaned_data.get('percentage')
 			messages.success(request, 'add discount :  ' + str(percentageStr) + '%')
 			return redirect('/store/home_page_owner/')
-		messages.warning(request, 'error in :  '+ str(form.errors))
+		messages.warning(request, 'error in :  ' + str(form.errors))
 		return redirect('/store/home_page_owner/')
 
 	else:

@@ -30,4 +30,6 @@ urlpatterns = [
 	path('store_owner_feed/<slug:owner_id>', views.owner_feed),
 	path('add_rule_to_store/<int:pk>', views.add_rule_to_store),
 	path('add_rule_to_store/<int:pk>/', views.add_rule_to_store),
+	path('add_discount_to_item/<int:pk>/', views.add_discount_to_item),
+	path('add_discount_to_item/<int:pk>/', views.add_discount_to_item),
 ]
