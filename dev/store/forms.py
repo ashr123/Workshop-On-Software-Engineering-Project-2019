@@ -1,9 +1,7 @@
-from multiprocessing.managers import State
-
 from django import forms
 from django.utils.safestring import mark_safe
 
-from .models import Item, Store,DiscountStore
+from .models import Item, Store,Discount
 
 
 class StoreForm(forms.ModelForm):
@@ -26,10 +24,9 @@ class StoreForm(forms.ModelForm):
 #
 
 class UpdateItems(forms.Form):
-
 	def __init__(self, items, *args, **kwargs):
 		super(UpdateItems, self).__init__(*args, **kwargs)
-		print('\n kkkk ', items)
+		# print('\n kkkk ', items)
 		list_ = items
 		self.fields['items'] = forms.MultipleChoiceField(
 			choices=[(o.id,
@@ -57,7 +54,7 @@ class AddRuleToStore(forms.Form):
 
 class AddDiscountToStore(forms.ModelForm):
 	class Meta:
-		model = DiscountStore
+		model = Discount
 		fields = ['end_date', 'percentage']
 
 

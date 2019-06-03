@@ -9,6 +9,12 @@ CategoryChoice = (
 )
 
 
+class Discount(models.Model):
+	start_date = models.DateField(auto_now_add=True)
+	end_date = models.DateField(help_text='format: mm/dd/yyyy')
+	percentage = models.PositiveSmallIntegerField()
+
+
 class Item(models.Model):
 	# itemId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	price = models.DecimalField(max_digits=6, decimal_places=2, default=0)
@@ -16,6 +22,7 @@ class Item(models.Model):
 	description = models.CharField(max_length=64, default=None)
 	category = models.CharField(max_length=30, choices=CategoryChoice, default=1)
 	quantity = models.PositiveIntegerField(default=1)
+	discounts = models.ManyToManyField(Discount)
 
 	def get_absolute_url(self):
 		return reverse('item-detail', kwargs={'id': self.pk})
@@ -23,12 +30,6 @@ class Item(models.Model):
 	def __str__(self):
 		return "Name: " + self.name + ", Category: " + self.get_category_display() + ", Description: " + self.description + ", Price: " + str(
 			self.price) + ", Quantity: " + str(self.quantity)
-
-
-class DiscountStore(models.Model):
-	start_date = models.DateField(auto_now_add=True)
-	end_date = models.DateField(help_text='format : mm/dd/yyyy')
-	percentage = models.PositiveSmallIntegerField()
 
 
 class Store(models.Model):
@@ -39,7 +40,7 @@ class Store(models.Model):
 	items = models.ManyToManyField(Item)
 	description = models.CharField(max_length=64)
 	# discount = models.PositiveIntegerField(default=0)
-	discounts = models.ManyToManyField(DiscountStore)
+	discounts = models.ManyToManyField(Discount)
 
 	max_quantity = models.PositiveIntegerField(null=True, blank=True)
 	max_op = models.CharField(max_length=3, null=True, blank=True)
