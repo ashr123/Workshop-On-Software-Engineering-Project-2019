@@ -17,7 +17,7 @@ from websocket import create_connection
 
 from trading_system.forms import SearchForm
 from . import forms
-from .forms import BuyForm, AddManagerForm, AddDiscountToStore, AddRuleToStore
+from .forms import BuyForm, AddManagerForm, AddDiscountToStore, AddRuleToStore, AddRuleToItem
 from .forms import ShippingForm
 from .models import Item
 from .models import Store
@@ -194,6 +194,16 @@ class ItemUpdate(UpdateView):
 	form_class = ItemForm
 	template_name_suffix = '_update_form'
 
+	def get_context_data(self, **kwargs):
+		itemId = self.kwargs['pk']
+		text = SearchForm()
+		user_name = self.request.user.username
+		context = super(ItemUpdate, self).get_context_data(**kwargs)
+		context['text'] = text
+		context['user_name'] = user_name
+		context['itemId'] = itemId
+		return context
+
 
 @method_decorator(login_required, name='dispatch')
 class StoreUpdate(UpdateView):
@@ -210,10 +220,14 @@ class StoreUpdate(UpdateView):
 		# 	return render(self.request, 'homepage_member.html', {'text': text, 'user_name': user_name})
 		text = SearchForm()
 		store = Store.objects.get(id=self.object.id)
+		store_rules = BaseRule.objects.all().filter(store=store)
 		store_items = store.items.all()
+		user_name = self.request.user.username
 		context = super(StoreUpdate, self).get_context_data(**kwargs)  # get the default context data
 		context['text'] = text
+		context['user_name'] = user_name
 		context['form_'] = UpdateItems(store_items)
+		context['rules'] = store_rules
 		return context
 
 
@@ -335,12 +349,26 @@ from .forms import PayForm
 # 	def done(self, form_list, **kwargs):
 # 		return redirect('/login_redirect')
 
-pay_system=Payment()
+pay_system = Payment()
+
+
 def buy_item(request, pk):
 	# return redirect('/store/contact/' + str(pk) + '/')
+	form_class = BuyForm
+	curr_item = Item.objects.get(id=pk)
+	context = {
+		'name': curr_item.name,
+		'pk': curr_item.id,
+		'form': form_class,
+		'price': curr_item.price,
+		'description': curr_item.description,
+		'text': SearchForm(),
+		'card': PayForm(),
+		'shipping': ShippingForm(),
+	}
 	if request.method == 'POST':
 		form = BuyForm(request.POST)
-		shipping_form =ShippingForm(request.POST)
+		shipping_form = ShippingForm(request.POST)
 		supply_form = PayForm(request.POST)
 
 		if form.is_valid() and shipping_form.is_valid() and supply_form.is_valid():
@@ -369,22 +397,20 @@ def buy_item(request, pk):
 			# 	messages.warning(request, 'can`t connect to pay system!')
 			# 	return redirect('/login_redirect')
 
-
-			#shipping
+			# shipping
 			country = shipping_form.cleaned_data.get('country')
 			city = shipping_form.cleaned_data.get('city')
 			zip = shipping_form.cleaned_data.get('zip')
-			address =shipping_form.cleaned_data.get('address')
+			address = shipping_form.cleaned_data.get('address')
 			name = shipping_form.cleaned_data.get('name')
 
-			#card
-			card_number =supply_form.cleaned_data.get('card_number')
-			month =supply_form.cleaned_data.get('month')
+			# card
+			card_number = supply_form.cleaned_data.get('card_number')
+			month = supply_form.cleaned_data.get('month')
 			year = supply_form.cleaned_data.get('year')
-			holder =supply_form.cleaned_data.get('holder')
-			ccv =supply_form.cleaned_data.get('ccv')
+			holder = supply_form.cleaned_data.get('holder')
+			ccv = supply_form.cleaned_data.get('ccv')
 			id = supply_form.cleaned_data.get('id')
-
 
 			_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
@@ -392,10 +418,33 @@ def buy_item(request, pk):
 			if (amount <= amount_in_db):
 				total = amount * _item.price
 				new_q = amount_in_db - amount
-				_item.quantity = new_q
-				_item.save()
 
 				store_of_item = Store.objects.get(items__id__contains=pk)
+				storeRules = BaseRule.objects.all().filter(store=store_of_item)
+				for rule in storeRules:
+					if rule.type == 'MAX' and amount > int(rule.parameter):
+						messages.warning(request, "you can only buy maximum " + rule.parameter)
+						return render(request, 'store/buy_item.html', context)
+					elif rule.type == 'MIN' and amount < int(rule.parameter):
+						messages.warning(request, "you can only buy minimum " + rule.parameter)
+						return render(request, 'store/buy_item.html', context)
+					elif rule.type == 'FOR' and country is rule.parameter:
+						messages.warning(request, "sorry we cant deliver to " + rule.parameter)
+						return render(request, 'store/buy_item.html', context)
+					elif rule.type == 'REG' and not request.user.is_authenticated:
+						messages.warning(request, "sorry only members can purchase")
+						return render(request, 'store/buy_item.html', context)
+
+					itemRules = ItemRule.objects.all().filter(item=_item)
+					for item_rule in itemRules:
+						if item_rule.type == 'MAX' and amount > int(item_rule.parameter):
+							messages.warning(request, "you can only buy maximum " + item_rule.parameter + " of this item")
+							return render(request, 'store/buy_item.html', context)
+						elif item_rule.type == 'MIN' and amount < int(item_rule.parameter):
+							messages.warning(request, "you can only buy minimum " + item_rule.parameter + " of this item")
+							return render(request, 'store/buy_item.html', context)
+				_item.quantity = new_q
+				_item.save()
 				if (store_of_item.discount > 0):
 					total = (100 - store_of_item.discount) / 100 * float(total)
 					messages.success(request,
@@ -408,7 +457,8 @@ def buy_item(request, pk):
 					try:
 						ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(owner.id))
 						if (request.user.is_authenticated):
-							ws.send(json.dumps({'message': 'user : ' + request.user.username + ' BOUGHT AN ITEM FROM YOU'}))
+							ws.send(
+								json.dumps({'message': 'user : ' + request.user.username + ' BOUGHT AN ITEM FROM YOU'}))
 						else:
 							ws.send(json.dumps({'message': 'Guest BOUGHT AN ITEM FROM YOU'}))
 					except:
@@ -416,7 +466,6 @@ def buy_item(request, pk):
 				_item_name = _item.name
 				if (_item.quantity == 0):
 					_item.delete()
-
 				messages.success(request, 'Thank you! you bought ' + _item_name)  # <-
 				# messages.success(request, 'transaction id:  ' + str(transaction_id))  # <-
 				messages.success(request, 'Total : ' + str(total) + ' $')  # <-
@@ -435,11 +484,10 @@ def buy_item(request, pk):
 			'price': curr_item.price,
 			'description': curr_item.description,
 			'text': SearchForm(),
-			'card':PayForm(),
-			'shipping':ShippingForm(),
+			'card': PayForm(),
+			'shipping': ShippingForm(),
 		}
 		return render(request, 'store/buy_item.html', context)
-
 
 
 @login_required
@@ -594,14 +642,17 @@ def get_item_store(item_pk):
 	# Might cause bug. Need to apply the item-in-one-store condition
 	return stores[0]
 
+
 from .models import BaseRule
+
+
 def add_rule_to_store(request, pk):
 	if request.method == 'POST':
 		form = AddRuleToStore(request.POST)
 		if form.is_valid():
 			store = Store.objects.get(id=pk)
 			rule = form.cleaned_data.get('rules')
-			#operator = form.cleaned_data.get('operator')
+			# operator = form.cleaned_data.get('operator')
 			parameter = form.cleaned_data.get('parameter')
 			if rule == 'MAX_QUANTITY' or rule == 'MIN_QUANTITY':
 				try:
@@ -616,7 +667,7 @@ def add_rule_to_store(request, pk):
 				messages.success(request, 'added rule :  ' + str(rule) + 'successfully!')
 			return redirect('/store/home_page_owner/')
 		else:
-			messages.warning(request,  form.errors)
+			messages.warning(request, form.errors)
 			return redirect('/store/home_page_owner/')
 
 	else:
@@ -630,3 +681,36 @@ def add_rule_to_store(request, pk):
 			'pk': pk,
 		}
 		return render(request, 'store/add_rule_to_store.html', context)
+
+from .models import ItemRule
+def add_rule_to_item(request, pk):
+		if request.method == 'POST':
+			form = AddRuleToStore(request.POST)
+			if form.is_valid():
+				item = Item.objects.get(id=pk)
+				rule = form.cleaned_data.get('rules')
+				# operator = form.cleaned_data.get('operator')
+				parameter = form.cleaned_data.get('parameter')
+				ItemRule(item=item, type=rule, parameter=parameter).save()
+				messages.success(request, 'added rule :  ' + str(rule) + ' successfully!')
+				return redirect('/store/home_page_owner/')
+			else:
+				messages.warning(request, form.errors)
+				return redirect('/store/home_page_owner/')
+
+		else:
+			ruleForm = AddRuleToItem()
+			text = SearchForm()
+			user_name = request.user.username
+			context = {
+				'user_name': user_name,
+				'text': text,
+				'form': ruleForm,
+				'pk': pk,
+			}
+			return render(request, 'store/add_rule_to_item.html', context)
+
+
+def remove_rule_from_store(request, pk):
+	BaseRule.objects.get(id=pk).delete()
+	messages.success(request, 'removed rule successfully!')

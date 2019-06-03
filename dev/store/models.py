@@ -73,6 +73,15 @@ class BaseRule(models.Model):
 	parameter = models.CharField(max_length=120)
 
 
+# class ComplexStoreRule(models.Model):
+# 	LOGICS = (('OR', 'or'),
+# 	          ('AND', 'and'),
+# 	          ('XOR', 'xor'))
+# 	# if rule begins with # it means it is basic, otherwise begins with * - complex
+# 	left = models.CharField(max_length=4)
+# 	right = models.CharField(max_length=4)
+# 	operator = models.CharField(max_length=3, choices=LOGICS)
+
 class ItemRule(models.Model):
 	MAX_QUANTITY = 'MXQ'
 	MIN_QUANTITY = 'MNQ'

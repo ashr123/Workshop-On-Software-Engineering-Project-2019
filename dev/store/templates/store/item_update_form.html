@@ -1,17 +1,20 @@
-
 {% extends 'store/homepage_store_owner.html' %}
-{% block content %}
+{% block page_content %}
 	<form method="post">{% csrf_token %}
 		{{ form.as_p }}
-	<p>
-		Items:
-	</p>
 		{% csrf_token %}
-		{% for item in form_.items %}
-			<div class="check_item">{{ item }}</div>
-		{% endfor %}
+{#		{% for item in form_.items %}#}
+{#			<div class="check_item">item:::{{ item }}</div>#}
+{#			<form action="/store/add_rule_to_item/{{ itemId }}" method="GET">#}
+{#				<button class="store_buttons" type="submit"><i class="fas fa-lightbulb"></i></button>#}
+{#			</form>#}
+{#		{% endfor %}#}
 		<input type="submit" value="Update">
 	</form>
+
+		<form action="/store/add_rule_to_item/{{ itemId }}" method="GET">
+				<button class="store_buttons" type="submit"><i class="fas fa-lightbulb"></i></button>
+			</form>
 	{#	<div>#}
 	{#	<form id="my_cart" action="/show_cart" method='post'>#}
 	{#	#}

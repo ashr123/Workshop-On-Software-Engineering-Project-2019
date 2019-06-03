@@ -2,10 +2,17 @@
 {% block content %}
 	<form method="post">{% csrf_token %}
 		{{ form.as_p }}
-	<p>
-		Items:
-	</p>
 		{% csrf_token %}
+		{% for rule in rules %}
+			<div>
+			<span>{{ rule.type }}: {{ rule.parameter }}</span>
+			<span>
+				<form action="/store/remove_rule_from_store/{{ rule.id }}" method="GET">
+						<button class="store_buttons" type="submit"><i class="fas fa-trash-alt"></i></button>
+				</form>
+			</span>
+			</div>
+		{% endfor %}
 		{% for item in form_.items %}
 			<div class="check_item">{{ item }}</div>
 		{% endfor %}
