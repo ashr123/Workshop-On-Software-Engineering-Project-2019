@@ -451,27 +451,20 @@ def buy_item(request, pk):
 					# messages.success(request, 'total : ' + str(total) + ' $')  # <-
 
 					store = get_item_store(_item.pk)
-				item_subject = ItemSubject(_item.pk)
-				# for owner in store.owners.all():
-				# 	ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(owner.id))
-				# 	if (request.user.is_authenticated):
-				# 		ws.send(json.dumps({'message': 'user : ' + request.user.username + ' BOUGHT AN ITEM FROM YOU'}))
-				# 	else:
-				# 		ws.send(json.dumps({'message': 'Guest BOUGHT AN ITEM FROM YOU'}))
-				if (request.user.is_authenticated):
-					notification = Notification.objects.create(
-						msg=request.user.username + ' bought ' + str(amount) + ' pieces of ' + _item.name)
-					notification.save()
-					item_subject.subject_state = item_subject.subject_state + [notification.pk]
-				else:
-					notification = Notification.objects.create(
-						msg='A guest bought ' + str(amount) + ' pieces of ' + _item.name)
-					notification.save()
-					item_subject.subject_state = item_subject.subject_state + notification.pk
+					item_subject = ItemSubject(_item.pk)
+					if (request.user.is_authenticated):
+						notification = Notification.objects.create(
+							msg=request.user.username + ' bought ' + str(amount) + ' pieces of ' + _item.name)
+						notification.save()
+						item_subject.subject_state = item_subject.subject_state + [notification.pk]
+					else:
+						notification = Notification.objects.create(
+							msg='A guest bought ' + str(amount) + ' pieces of ' + _item.name)
+						notification.save()
+						item_subject.subject_state = item_subject.subject_state + notification.pk
 					_item_name = _item.name
 					if (_item.quantity == 0):
 						_item.delete()
-
 					messages.success(request, 'Thank you! you bought ' + _item_name)  # <-
 					# messages.success(request, 'transaction id:  ' + str(transaction_id))  # <-
 					messages.success(request, 'Total : ' + str(total) + ' $')  # <-

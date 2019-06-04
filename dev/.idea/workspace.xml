@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7f206d29-0b35-4da3-95c1-1baab1223eb3" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dev.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dev.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -81,8 +83,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/store/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="381">
-              <caret line="478" column="18" selection-start-line="478" selection-start-column="18" selection-end-line="478" selection-end-column="18" />
+            <state relative-caret-position="5426">
+              <caret line="454" column="20" selection-start-line="454" selection-start-column="20" selection-end-line="463" selection-end-column="97" />
             </state>
           </provider>
         </entry>
@@ -216,7 +218,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-7" />
     <option name="width" value="974" />
     <option name="height" value="1047" />
@@ -235,11 +237,6 @@
             <path>
               <item name="dev" type="b2602c69:ProjectViewProjectNode" />
               <item name="dev" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dev" type="462c0819:PsiDirectoryNode" />
-              <item name="store" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -524,15 +521,15 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Django tests.Test: accounts.tests" />
+      <item itemvalue="Django server.run" />
       <item itemvalue="Django tests.Test: store.tests.StoreUnitTesting" />
+      <item itemvalue="Django tests.Test: store.tests.StoreUnitTesting.test_add_store" />
+      <item itemvalue="Django tests.unittests" />
+      <item itemvalue="Django tests.Test: accounts.tests" />
       <item itemvalue="Django tests.Test: store.tests.StoreUnitTesting.test_add_item_to_store" />
       <item itemvalue="Django tests.Test: store.tests.StoreUnitTesting.test_add_manager_to_store" />
-      <item itemvalue="Django tests.Test: store.tests.StoreUnitTesting.test_add_store" />
       <item itemvalue="Django tests.Test: store.tests.StoreUnitTesting.test_delete_store" />
       <item itemvalue="Django tests.Test: store.tests.StoreUnitTesting.test_update_store" />
-      <item itemvalue="Django tests.unittests" />
-      <item itemvalue="Django server.run" />
     </list>
     <recent_temporary>
       <list>
@@ -631,7 +628,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="258849000" />
+    <option name="totallyTimeSpent" value="259409000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -643,15 +640,15 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="0" width="974" height="1047" extended-state="0" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.48010612" visible="true" weight="0.12035011" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.48010612" visible="true" weight="0.17643923" />
       <window_info id="Structure" order="1" sideWeight="0.5198939" side_tool="true" weight="0.1891892" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3286517" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49565217" weight="0.36050156" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49449837" visible="true" weight="0.36" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49851632" weight="0.43887147" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -659,9 +656,9 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49253732" visible="true" weight="0.31200898" />
+      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49255663" weight="0.30888888" />
       <window_info anchor="bottom" id="Python Console" order="11" weight="0.4058394" />
-      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.5074627" side_tool="true" weight="0.31200898" />
+      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.5055016" side_tool="true" weight="0.36" />
       <window_info anchor="bottom" id="Database Console" order="13" weight="0.3291536" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -1089,8 +1086,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/store/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="381">
-          <caret line="478" column="18" selection-start-line="478" selection-start-column="18" selection-end-line="478" selection-end-column="18" />
+        <state relative-caret-position="5426">
+          <caret line="454" column="20" selection-start-line="454" selection-start-column="20" selection-end-line="463" selection-end-column="97" />
         </state>
       </provider>
     </entry>
