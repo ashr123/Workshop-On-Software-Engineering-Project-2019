@@ -29,7 +29,10 @@ urlpatterns = [
 	# path('contact/<int:pk>/', ContactWizard.as_view(FORMS_)),
 	path('add_rule_to_store/<int:pk>', views.add_rule_to_store),
 	path('add_rule_to_store/<int:pk>/', views.add_rule_to_store),
+<<<<<<< HEAD
 	path('store_owner_feed/<slug:owner_id>', views.NotificationsListView.as_view(), name='owner-feed'),
+=======
 	path('add_discount_to_item/<int:pk>/', views.add_discount_to_item),
 	path('add_discount_to_item/<int:pk>', views.add_discount_to_item),
+>>>>>>> origin/merge_with_rotem_b
 ]

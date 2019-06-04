@@ -22,12 +22,35 @@ from trading_system.observer import AuctionSubject
 from .models import AuctionParticipant
 from .routing import AUCTION_PARTICIPANT_URL
 
+django.setup()
+
+
+from django.contrib.auth.forms import UserCreationForm
+
+
+def def_super_user(request):
+	if request.method == 'POST':
+		form = UserCreationForm(request.POST)
+		if form.is_valid():
+			u = form.save()
+			u.is_superuser = True
+			u.is_staff = True
+			u.save()
+			messages.success(request, 'add super-user ' + str(u.username))
+			return render(request, 'homepage_guest.html', {'text': SearchForm()})
+
+		else:
+			return redirect('/super_user')
+
+	else:
+		return render(request, 'trading_system/add_super_user.html', {'form': UserCreationForm()})
+
 
 def index(request: Any) -> HttpResponse:
-	# admin.site.register(Cart)
-	# admin.site.register(Item)
-	# admin.site.register(Store)
-	return render(request, 'homepage_guest.html', {'text': SearchForm()})
+
+	return redirect('/super_user')
+
+	# return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
 
 def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
@@ -36,7 +59,7 @@ def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			return render(request, 'homepage_member.html', {'text': SearchForm(), 'user_name': request.user.username})
 		elif "store_owners" in request.user.groups.values_list('name',
 		                                                       flat=True) or "store_managers" in request.user.groups.values_list(
-				'name', flat=True):
+			'name', flat=True):
 			return redirect('/store/home_page_owner/',
 			                {'text': SearchForm(), 'user_name': request.user.username, 'owner_id': request.user.pk, })
 		else:
@@ -61,7 +84,9 @@ def item(request: Any, id: int) -> HttpResponse:
 
 def show_cart(request: Any) -> HttpResponse:
 	if request.user.is_authenticated:
-		if "store_owners" in request.user.groups.values_list('name', flat=True) or "store_managers" in request.user.groups.values_list('name', flat=True):
+		if "store_owners" in request.user.groups.values_list('name',
+		                                                     flat=True) or "store_managers" in request.user.groups.values_list(
+				'name', flat=True):
 			base_template_name = 'store/homepage_store_owner.html'
 		else:
 			base_template_name = 'homepage_member.html'

@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html lang="en">
+	<h2 class="title">Add Discount To Item</h2>
+		<form id="add_super_user" action="/super_user" method="post">
+			{% csrf_token %}
+			{{ form }}
+			<input id="add_button" type="submit" value="Add"/>
+		</form>
+</html>

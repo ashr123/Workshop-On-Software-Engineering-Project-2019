@@ -403,6 +403,51 @@ def buy_item(request, pk):
 			ccv = supply_form.cleaned_data.get('ccv')
 			id = supply_form.cleaned_data.get('id')
 
+<<<<<<< HEAD
+
+			_item = Item.objects.get(id=pk)
+			amount = form.cleaned_data.get('amount')
+			amount_in_db = _item.quantity
+			if (amount <= amount_in_db):
+				total = amount * _item.price
+				new_q = amount_in_db - amount
+				_item.quantity = new_q
+				_item.save()
+
+				store_of_item = Store.objects.get(items__id__contains=pk)
+				if (store_of_item.discount > 0):
+					total = (100 - store_of_item.discount) / 100 * float(total)
+					messages.success(request,
+					                 'you have discount for this store : ' + str(store_of_item.discount) + ' %')  # <-
+				# messages.success(request, 'YES! at the moment you bought  : ' + _item.description)  # <-
+				# messages.success(request, 'total : ' + str(total) + ' $')  # <-
+
+				store = get_item_store(_item.pk)
+				item_subject = ItemSubject(_item.pk)
+				# for owner in store.owners.all():
+				# 	ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(owner.id))
+				# 	if (request.user.is_authenticated):
+				# 		ws.send(json.dumps({'message': 'user : ' + request.user.username + ' BOUGHT AN ITEM FROM YOU'}))
+				# 	else:
+				# 		ws.send(json.dumps({'message': 'Guest BOUGHT AN ITEM FROM YOU'}))
+				if (request.user.is_authenticated):
+					notification = Notification.objects.create(
+						msg=request.user.username + ' bought ' + str(amount) + ' pieces of ' + _item.name)
+					notification.save()
+					item_subject.subject_state = item_subject.subject_state + [notification.pk]
+				else:
+					notification = Notification.objects.create(
+						msg='A guest bought ' + str(amount) + ' pieces of ' + _item.name)
+					notification.save()
+					item_subject.subject_state = item_subject.subject_state + notification.pk
+				_item_name = _item.name
+				if (_item.quantity == 0):
+					_item.delete()
+
+				messages.success(request, 'Thank you! you bought ' + _item_name)  # <-
+				# messages.success(request, 'transaction id:  ' + str(transaction_id))  # <-
+				messages.success(request, 'Total : ' + str(total) + ' $')  # <-
+=======
 			transaction_id = -1
 			supply_transaction_id = -1
 			#########################buy proccss
@@ -451,23 +496,16 @@ def buy_item(request, pk):
 					# messages.success(request, 'total : ' + str(total) + ' $')  # <-
 
 					store = get_item_store(_item.pk)
-				item_subject = ItemSubject(_item.pk)
-				# for owner in store.owners.all():
-				# 	ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(owner.id))
-				# 	if (request.user.is_authenticated):
-				# 		ws.send(json.dumps({'message': 'user : ' + request.user.username + ' BOUGHT AN ITEM FROM YOU'}))
-				# 	else:
-				# 		ws.send(json.dumps({'message': 'Guest BOUGHT AN ITEM FROM YOU'}))
-				if (request.user.is_authenticated):
-					notification = Notification.objects.create(
-						msg=request.user.username + ' bought ' + str(amount) + ' pieces of ' + _item.name)
-					notification.save()
-					item_subject.subject_state = item_subject.subject_state + [notification.pk]
-				else:
-					notification = Notification.objects.create(
-						msg='A guest bought ' + str(amount) + ' pieces of ' + _item.name)
-					notification.save()
-					item_subject.subject_state = item_subject.subject_state + notification.pk
+					for owner in store.owners.all():
+						try:
+							ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(owner.id))
+							if (request.user.is_authenticated):
+								ws.send(json.dumps(
+									{'message': 'user : ' + request.user.username + ' BOUGHT AN ITEM FROM YOU'}))
+							else:
+								ws.send(json.dumps({'message': 'Guest BOUGHT AN ITEM FROM YOU'}))
+						except:
+							messages.warning(request, 'cant connect owner')
 					_item_name = _item.name
 					if (_item.quantity == 0):
 						_item.delete()
@@ -482,6 +520,7 @@ def buy_item(request, pk):
 				if not (transaction_id == -1):
 					chech_cancle = pay_system.cancel_pay(transaction_id)
 					chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
+>>>>>>> origin/merge_with_rotem_b
 				return redirect('/login_redirect')
 		###########################end buy procces
 		errors = str(form.errors) + str(shipping_form.errors) + str(supply_form.errors)
@@ -699,6 +738,7 @@ def add_rule_to_store(request, pk):
 			'pk': pk,
 		}
 		return render(request, 'store/add_rule_to_store.html', context)
+<<<<<<< HEAD
 
 
 class NotificationsListView(ListView):
@@ -719,3 +759,5 @@ class NotificationsListView(ListView):
 			n.been_read= True
 			n.save()
 		return context
+=======
+>>>>>>> origin/merge_with_rotem_b
