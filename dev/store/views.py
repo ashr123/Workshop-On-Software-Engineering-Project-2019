@@ -221,16 +221,16 @@ class StoreUpdate(UpdateView):
 		# 	return render(self.request, 'homepage_member.html', {'text': text, 'user_name': user_name})
 		text = SearchForm()
 		store = Store.objects.get(id=self.object.id)
-		store_rules = BaseRule.objects.all().filter(store=store)
+		# store_rules = BaseRule.objects.all().filter(store=store)
+		rules = store_rules_string(store)
 		store_items = store.items.all()
 		user_name = self.request.user.username
 		context = super(StoreUpdate, self).get_context_data(**kwargs)  # get the default context data
 		context['text'] = text
 		context['user_name'] = user_name
 		context['form_'] = UpdateItems(store_items)
-		context['rules'] = store_rules
+		context['rules'] = rules
 		return context
-
 
 # def update(self, request, *args, **kwargs):
 # 	if not (self.request.user.has_perm('EDIT_ITEM')):
@@ -594,6 +594,51 @@ def check_item_rule(rule, amount, base_arr, complex_arr, context):
 	if rule.operator == "XOR" and ((left == False and right == False) or (left == True and right == True)):
 		return False
 	return True
+
+
+def store_rules_string(store):
+	base_arr = []
+	complex_arr = []
+	base = []
+	complex = []
+	storeRules = ComplexStoreRule.objects.all().filter(store=store)
+	for rule in reversed(storeRules):
+		print('id ' + str(rule.id))
+		if rule.id in complex_arr:
+			continue
+		complex.append(string_store_rule(rule, base_arr, complex_arr))
+	storeBaseRules = BaseRule.objects.all().filter(store=store)
+	for rule in storeBaseRules:
+		if rule.id in base_arr:
+			continue
+		base.append(get_base_rule(rule.id))
+	return complex + base
+
+def string_store_rule(rule, base_arr, complex_arr):
+	curr = '('
+	if rule.left[0] == '_':
+		base_arr.append(int(rule.left[1:]))
+		curr += get_base_rule(int(rule.left[1:]))
+	else:
+		complex_arr.append(int(rule.left))
+		tosend = ComplexStoreRule.objects.get(id=int(rule.left))
+		curr += string_store_rule(tosend, base_arr, complex_arr)
+	curr += ' ' + rule.operator + ' '
+	if rule.right[0] == '_':
+		base_arr.append(int(rule.right[1:]))
+		curr += get_base_rule(int(rule.right[1:]))
+	else:
+		complex_arr.append(int(rule.right))
+		tosend = ComplexStoreRule.objects.get(id=int(rule.right))
+		curr += string_store_rule(tosend, base_arr, complex_arr)
+	curr += ')'
+	return curr
+
+def get_base_rule(rule_id):
+	rule = BaseRule.objects.get(id=rule_id)
+	if rule.type == "REG":
+		return rule.type + ': Only'
+	return rule.type + ': ' + rule.parameter
 
 
 @login_required
