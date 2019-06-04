@@ -17,9 +17,10 @@ from websocket import create_connection
 
 from trading_system.forms import SearchForm
 from . import forms
-from .forms import BuyForm, AddManagerForm, AddDiscountToStore, AddRuleToStore, AddRuleToItem
-from .forms import ShippingForm
-from .models import Item
+from .forms import BuyForm, AddManagerForm, AddDiscountToStore, AddRuleToItem, AddRuleToStore_base, \
+	AddRuleToStore_withop, AddRuleToStore_two
+from .forms import ShippingForm, AddRuleToItem_withop, AddRuleToItem_two
+from .models import Item, ComplexStoreRule, ComplexItemRule
 from .models import Store
 
 
@@ -419,30 +420,24 @@ def buy_item(request, pk):
 				total = amount * _item.price
 				new_q = amount_in_db - amount
 
+				# check item rules
+				if check_item_rules(curr_item, amount, context) is False:
+					messages.warning(request, "you can't buy due to item policies")
+					return render(request, 'store/buy_item.html', context)
 				store_of_item = Store.objects.get(items__id__contains=pk)
-				storeRules = BaseRule.objects.all().filter(store=store_of_item)
-				for rule in storeRules:
-					if rule.type == 'MAX' and amount > int(rule.parameter):
-						messages.warning(request, "you can only buy maximum " + rule.parameter)
-						return render(request, 'store/buy_item.html', context)
-					elif rule.type == 'MIN' and amount < int(rule.parameter):
-						messages.warning(request, "you can only buy minimum " + rule.parameter)
-						return render(request, 'store/buy_item.html', context)
-					elif rule.type == 'FOR' and country is rule.parameter:
-						messages.warning(request, "sorry we cant deliver to " + rule.parameter)
-						return render(request, 'store/buy_item.html', context)
-					elif rule.type == 'REG' and not request.user.is_authenticated:
-						messages.warning(request, "sorry only members can purchase")
-						return render(request, 'store/buy_item.html', context)
+				#check store rules
+				if check_store_rules(store_of_item, amount, country, request, context) is False:
+					messages.warning(request, "you can't buy due to store policies")
+					return render(request, 'store/buy_item.html', context)
 
-					itemRules = ItemRule.objects.all().filter(item=_item)
-					for item_rule in itemRules:
-						if item_rule.type == 'MAX' and amount > int(item_rule.parameter):
-							messages.warning(request, "you can only buy maximum " + item_rule.parameter + " of this item")
-							return render(request, 'store/buy_item.html', context)
-						elif item_rule.type == 'MIN' and amount < int(item_rule.parameter):
-							messages.warning(request, "you can only buy minimum " + item_rule.parameter + " of this item")
-							return render(request, 'store/buy_item.html', context)
+					# itemRules = ItemRule.objects.all().filter(item=_item)
+					# for item_rule in itemRules:
+					# 	if item_rule.type == 'MAX' and amount > int(item_rule.parameter):
+					# 		messages.warning(request, "you can only buy maximum " + item_rule.parameter + " of this item")
+					# 		return render(request, 'store/buy_item.html', context)
+					# 	elif item_rule.type == 'MIN' and amount < int(item_rule.parameter):
+					# 		messages.warning(request, "you can only buy minimum " + item_rule.parameter + " of this item")
+					# 		return render(request, 'store/buy_item.html', context)
 				_item.quantity = new_q
 				_item.save()
 				if (store_of_item.discount > 0):
@@ -488,6 +483,117 @@ def buy_item(request, pk):
 			'shipping': ShippingForm(),
 		}
 		return render(request, 'store/buy_item.html', context)
+
+
+def check_base_rule(rule_id,amount, country, request, context):
+	rule = BaseRule.objects.get(id=rule_id)
+	if rule.type == 'MAX' and amount > int(rule.parameter):
+		return False
+	elif rule.type == 'MIN' and amount < int(rule.parameter):
+		return False
+	elif rule.type == 'FOR' and country == rule.parameter:
+		return False
+	elif rule.type == 'REG' and not request.user.is_authenticated:
+		return False
+	return True
+
+
+def check_base_item_rule(rule_id, amount, context):
+	rule = BaseItemRule.objects.get(id=rule_id)
+	if rule.type == 'MAX' and amount > int(rule.parameter):
+		return False
+	elif rule.type == 'MIN' and amount < int(rule.parameter):
+		return False
+	return True
+
+
+
+
+def check_item_rules(item, amount, context):
+	base_arr = []
+	complex_arr = []
+	itemRules = ComplexItemRule.objects.all().filter(item=item)
+	for rule in itemRules.reverse():
+		if rule.id in complex_arr:
+			continue
+		if check_item_rule(rule, amount, base_arr, complex_arr, context) is False:
+			return False
+	itemBaseRules = BaseItemRule.objects.all().filter(item=item)
+	for rule in itemBaseRules:
+		if rule.id in base_arr:
+			continue
+		if check_base_item_rule(rule.id, amount, context) is False:
+			return False
+	return True
+
+
+def check_store_rules(store_of_item, amount, country, request, context):
+	base_arr = []
+	complex_arr = []
+	storeRules = ComplexStoreRule.objects.all().filter(store=store_of_item)
+	for rule in storeRules.reverse():
+		if rule.id in complex_arr:
+			continue
+		if check_store_rule(rule, amount, country, request, base_arr, complex_arr, context) is False:
+			return False
+	storeBaseRules = BaseRule.objects.all().filter(store=store_of_item)
+	for rule in storeBaseRules:
+		if rule.id in base_arr:
+			continue
+		if check_base_rule(rule.id, amount, country, request, context) is False:
+			return False
+	return True
+
+def check_store_rule(rule, amount, country, request, base_arr, complex_arr, context):
+	if rule.left[0] == '_':
+		base_arr.append(int(rule.left[1:]))
+		left = check_base_rule(int(rule.left[1:]),amount, country, request, context)
+		print('left')
+		print(str(left))
+	else:
+		complex_arr.append(int(rule.left))
+		tosend = ComplexStoreRule.objects.get(id=int(rule.left))
+		left = check_store_rule(tosend, amount, country, request, base_arr, complex_arr, context)
+	if rule.right[0] == '_':
+		base_arr.append(int(rule.right[1:]))
+		right = check_base_rule(int(rule.right[1:]),amount, country, request, context)
+		print('right')
+		print(str(right))
+	else:
+		complex_arr.append(int(rule.right))
+		tosend = ComplexStoreRule.objects.get(id=int(rule.right))
+		right = check_store_rule(tosend, amount, country, request, base_arr, complex_arr, context)
+	if rule.operator == "AND" and (left == False or right == False):
+		return False
+	if rule.operator == "OR" and (left == False and right == False):
+		return False
+	if rule.operator == "XOR" and ((left == False and right == False) or (left == True and right == True)):
+		return False
+	return True
+
+
+def check_item_rule(rule, amount, base_arr, complex_arr, context):
+	if rule.left[0] == '_':
+		base_arr.append(int(rule.left[1:]))
+		left = check_base_item_rule(int(rule.left[1:]),amount, context)
+	else:
+		complex_arr.append(int(rule.left))
+		tosend = ComplexItemRule.objects.get(id=int(rule.left))
+		left = check_item_rule(tosend, amount, base_arr, complex_arr, context)
+	if rule.right[0] == '_':
+		base_arr.append(int(rule.right[1:]))
+		right = check_base_item_rule(int(rule.right[1:]),amount, context)
+	else:
+		complex_arr.append(int(rule.right))
+		tosend = ComplexItemRule.objects.get(id=int(rule.right))
+		right = check_item_rule(tosend, amount, base_arr, complex_arr, context)
+	if rule.operator == "AND" and (left == False or right == False):
+		return False
+	if rule.operator == "OR" and (left == False and right == False):
+		return False
+	if rule.operator == "XOR" and ((left == False and right == False) or (left == True and right == True)):
+		return False
+	return True
 
 
 @login_required
@@ -646,32 +752,41 @@ def get_item_store(item_pk):
 from .models import BaseRule
 
 
-def add_rule_to_store(request, pk):
+def add_base_rule_to_store(request, pk, which_button):
 	if request.method == 'POST':
-		form = AddRuleToStore(request.POST)
+		form = AddRuleToStore_base(request.POST)
 		if form.is_valid():
+			rule_id = -1
 			store = Store.objects.get(id=pk)
-			rule = form.cleaned_data.get('rules')
+			rule = form.cleaned_data.get('rule')
 			# operator = form.cleaned_data.get('operator')
 			parameter = form.cleaned_data.get('parameter')
 			if rule == 'MAX_QUANTITY' or rule == 'MIN_QUANTITY':
 				try:
 					int(parameter)
 					if int(parameter) > 0:
-						BaseRule(store=store, type=rule, parameter=parameter).save()
-						messages.success(request, 'added rule :  ' + str(rule) + ' successfully!')
+						pass
+					else:
+						messages.warning(request, 'Enter a number please')
+						return redirect('/store/home_page_owner/')
 				except ValueError:
 					messages.warning(request, 'Enter a number please')
-			else:
-				BaseRule(store=store, type=rule, parameter=parameter).save()
-				messages.success(request, 'added rule :  ' + str(rule) + 'successfully!')
-			return redirect('/store/home_page_owner/')
+					return redirect('/store/home_page_owner/')
+			brule = BaseRule(store=store, type=rule, parameter=parameter)
+			brule.save()
+			rule_id = brule.id
+			if which_button == 'ok':
+				messages.success(request, 'added rule : ' + str(rule) + ' successfully!')
+				return redirect('/store/home_page_owner/')
+			if which_button == 'complex1':
+				return redirect('/store/add_complex_rule_to_store_1/' + '_' + str(rule_id) + '/' + str(pk) + '/a')
+			if which_button == 'complex2':
+				return redirect('/store/add_complex_rule_to_store_2/' + '_' + str(rule_id) + '/' + str(pk) + '/a')
 		else:
 			messages.warning(request, form.errors)
 			return redirect('/store/home_page_owner/')
-
 	else:
-		ruleForm = AddRuleToStore()
+		ruleForm = AddRuleToStore_base()
 		text = SearchForm()
 		user_name = request.user.username
 		context = {
@@ -679,36 +794,265 @@ def add_rule_to_store(request, pk):
 			'text': text,
 			'form': ruleForm,
 			'pk': pk,
+			'which_button': which_button,
 		}
-		return render(request, 'store/add_rule_to_store.html', context)
+		return render(request, 'store/add_base_rule_to_store.html', context)
 
-from .models import ItemRule
-def add_rule_to_item(request, pk):
-		if request.method == 'POST':
-			form = AddRuleToStore(request.POST)
-			if form.is_valid():
-				item = Item.objects.get(id=pk)
-				rule = form.cleaned_data.get('rules')
-				# operator = form.cleaned_data.get('operator')
-				parameter = form.cleaned_data.get('parameter')
-				ItemRule(item=item, type=rule, parameter=parameter).save()
-				messages.success(request, 'added rule :  ' + str(rule) + ' successfully!')
-				return redirect('/store/home_page_owner/')
-			else:
-				messages.warning(request, form.errors)
-				return redirect('/store/home_page_owner/')
 
+
+def add_complex_rule_to_store_1(request, rule_id1, store_id, which_button):
+	if request.method == 'POST':
+		form = AddRuleToStore_withop(request.POST)
+		if form.is_valid():
+			rule_to_ret = -1
+			store = Store.objects.get(id=store_id)
+			rule = form.cleaned_data.get('rule')
+			operator = form.cleaned_data.get('operator')
+			parameter = form.cleaned_data.get('parameter')
+			if rule == 'MAX_QUANTITY' or rule == 'MIN_QUANTITY':
+				try:
+					int(parameter)
+					if int(parameter) > 0:
+						pass
+					else:
+						messages.warning(request, 'Enter a number please')
+						return redirect('/store/home_page_owner/')
+				except ValueError:
+					messages.warning(request, 'Enter a number please')
+					return redirect('/store/home_page_owner/')
+			baseRule = BaseRule(store=store, type=rule, parameter=parameter)
+			baseRule.save()
+			rule_id2 = baseRule.id
+			rule2_temp = '_' + str(rule_id2)
+			cr = ComplexStoreRule(left=rule_id1, right=rule2_temp, operator=operator, store=store)
+			cr.save()
+			rule_to_ret = cr.id
+			if which_button == 'ok':
+				messages.success(request, 'added rule successfully!')
+				return redirect('/store/home_page_owner/')
+			if which_button == 'complex1':
+				return redirect('/store/add_complex_rule_to_store_1/' + str(rule_to_ret) + '/' + str(store_id) + '/a')
+			if which_button == 'complex2':
+				return redirect('/store/add_complex_rule_to_store_2/' + str(rule_to_ret) + '/' + str(store_id) + '/a')
+			return redirect('/store/home_page_owner/')
 		else:
-			ruleForm = AddRuleToItem()
-			text = SearchForm()
-			user_name = request.user.username
-			context = {
-				'user_name': user_name,
-				'text': text,
-				'form': ruleForm,
-				'pk': pk,
-			}
-			return render(request, 'store/add_rule_to_item.html', context)
+			messages.warning(request, form.errors)
+			return redirect('/store/home_page_owner/')
+	else:
+		ruleForm = AddRuleToStore_withop()
+		text = SearchForm()
+		user_name = request.user.username
+		context = {
+			'user_name': user_name,
+			'text': text,
+			'form': ruleForm,
+			'store_id': store_id,
+			'rule_id1': rule_id1,
+			'which_button': which_button,
+		}
+		return render(request, 'store/add_complex_rule_to_store_1.html', context)
+
+
+def add_complex_rule_to_store_2(request, rule_id_before, store_id, which_button):
+	if request.method == 'POST':
+		form = AddRuleToStore_two(request.POST)
+		if form.is_valid():
+			rule_to_ret = -1
+			store = Store.objects.get(id=store_id)
+			rule1 = form.cleaned_data.get('rule1')
+			rule2 = form.cleaned_data.get('rule2')
+			operator1 = form.cleaned_data.get('operator1')
+			operator2 = form.cleaned_data.get('operator2')
+			parameter1 = form.cleaned_data.get('parameter1')
+			parameter2 = form.cleaned_data.get('parameter2')
+			if rule1 == 'MAX_QUANTITY' or rule1 == 'MIN_QUANTITY':
+				try:
+					int(parameter1)
+					if int(parameter1) > 0:
+						pass
+					else:
+						messages.warning(request, 'Enter a number please')
+						return redirect('/store/home_page_owner/')
+				except ValueError:
+					messages.warning(request, 'Enter a number please')
+					return redirect('/store/home_page_owner/')
+			if rule2 == 'MAX_QUANTITY' or rule2 == 'MIN_QUANTITY':
+				try:
+					int(parameter2)
+					if int(parameter2) > 0:
+						pass
+					else:
+						messages.warning(request, 'Enter a number please')
+						return redirect('/store/home_page_owner/')
+				except ValueError:
+					messages.warning(request, 'Enter a number please')
+					return redirect('/store/home_page_owner/')
+			baseRule1 = BaseRule(store=store, type=rule1, parameter=parameter1)
+			baseRule1.save()
+			rule_id1 = baseRule1.id
+			rule1_temp = '_' + str(rule_id1)
+			baseRule2 = BaseRule(store=store, type=rule2, parameter=parameter2)
+			baseRule2.save()
+			rule_id2 = baseRule2.id
+			rule2_temp = '_' + str(rule_id2)
+			cr = ComplexStoreRule(left=rule1_temp, right=rule2_temp, operator=operator1, store=store)
+			cr.save()
+			cr_id = cr.id
+			cr2 = ComplexStoreRule(left=rule_id_before, right=cr_id, operator=operator2, store=store)
+			cr2.save()
+			cr_id2 = cr2.id
+			if which_button == 'ok':
+				messages.success(request, 'added rule successfully!')
+				return redirect('/store/home_page_owner/')
+			if which_button == 'complex1':
+				return redirect('/store/add_complex_rule_to_store_2/' + str(cr_id2) + '/' + str(store_id) + '/a')
+			if which_button == 'complex2':
+				return redirect('/store/add_complex_rule_to_store_2/' + str(cr_id2) + '/' + str(store_id) + '/a')
+			return redirect('/store/home_page_owner/')
+		else:
+			messages.warning(request, form.errors)
+			return redirect('/store/home_page_owner/')
+	else:
+		ruleForm = AddRuleToStore_two()
+		text = SearchForm()
+		user_name = request.user.username
+		context = {
+			'user_name': user_name,
+			'text': text,
+			'form': ruleForm,
+			'store_id': store_id,
+			'rule_id_before': rule_id_before,
+			'which_button': which_button,
+		}
+		return render(request, 'store/add_complex_rule_to_store_2.html', context)
+
+from .models import BaseItemRule
+def add_base_rule_to_item(request, pk, which_button):
+	if request.method == 'POST':
+		form = AddRuleToItem(request.POST)
+		if form.is_valid():
+			rule_id = -1
+			item = Item.objects.get(id=pk)
+			rule = form.cleaned_data.get('rule')
+			parameter = form.cleaned_data.get('parameter')
+			brule = BaseItemRule(item=item, type=rule, parameter=parameter)
+			brule.save()
+			rule_id = brule.id
+			if which_button == 'ok':
+				messages.success(request, 'added rule : ' + str(rule) + ' successfully!')
+				return redirect('/store/home_page_owner/')
+			if which_button == 'complex1':
+				return redirect('/store/add_complex_rule_to_item_1/' + '_' + str(rule_id) + '/' + str(pk) + '/a')
+			if which_button == 'complex2':
+				return redirect('/store/add_complex_rule_to_item_2/' + '_' + str(rule_id) + '/' + str(pk) + '/a')
+		else:
+			messages.warning(request, form.errors)
+			return redirect('/store/home_page_owner/')
+	else:
+		ruleForm = AddRuleToItem()
+		text = SearchForm()
+		user_name = request.user.username
+		context = {
+			'user_name': user_name,
+			'text': text,
+			'form': ruleForm,
+			'pk': pk,
+			'which_button': which_button,
+		}
+		return render(request, 'store/add_base_rule_to_item.html', context)
+
+def add_complex_rule_to_item_1(request, rule_id1, item_id, which_button):
+	if request.method == 'POST':
+		form = AddRuleToItem_withop(request.POST)
+		if form.is_valid():
+			rule_to_ret = -1
+			item = Item.objects.get(id=item_id)
+			rule = form.cleaned_data.get('rule')
+			operator = form.cleaned_data.get('operator')
+			parameter = form.cleaned_data.get('parameter')
+			baseRule = BaseItemRule(item=item, type=rule, parameter=parameter)
+			baseRule.save()
+			rule_id2 = baseRule.id
+			rule2_temp = '_' + str(rule_id2)
+			cr = ComplexItemRule(left=rule_id1, right=rule2_temp, operator=operator, item=item)
+			cr.save()
+			rule_to_ret = cr.id
+			if which_button == 'ok':
+				messages.success(request, 'added rule successfully!')
+				return redirect('/store/home_page_owner/')
+			if which_button == 'complex1':
+				return redirect('/store/add_complex_rule_to_item_1/' + str(rule_to_ret) + '/' + str(item_id) + '/a')
+			if which_button == 'complex2':
+				return redirect('/store/add_complex_rule_to_item_2/' + str(rule_to_ret) + '/' + str(item_id) + '/a')
+			return redirect('/store/home_page_owner/')
+		else:
+			messages.warning(request, form.errors)
+			return redirect('/store/home_page_owner/')
+	else:
+		ruleForm = AddRuleToItem_withop()
+		text = SearchForm()
+		user_name = request.user.username
+		context = {
+			'user_name': user_name,
+			'text': text,
+			'form': ruleForm,
+			'item_id': item_id,
+			'rule_id1': rule_id1,
+			'which_button': which_button,
+		}
+		return render(request, 'store/add_complex_rule_to_item_1.html', context)
+
+
+def add_complex_rule_to_item_2(request, rule_id_before, item_id, which_button):
+	if request.method == 'POST':
+		form = AddRuleToItem_two(request.POST)
+		if form.is_valid():
+			rule_to_ret = -1
+			item = Item.objects.get(id=item_id)
+			rule1 = form.cleaned_data.get('rule1')
+			rule2 = form.cleaned_data.get('rule2')
+			operator1 = form.cleaned_data.get('operator1')
+			operator2 = form.cleaned_data.get('operator2')
+			parameter1 = form.cleaned_data.get('parameter1')
+			parameter2 = form.cleaned_data.get('parameter2')
+			baseRule1 = BaseItemRule(item=item, type=rule1, parameter=parameter1)
+			baseRule1.save()
+			rule_id1 = baseRule1.id
+			rule1_temp = '_' + str(rule_id1)
+			baseRule2 = BaseItemRule(item=item, type=rule2, parameter=parameter2)
+			baseRule2.save()
+			rule_id2 = baseRule2.id
+			rule2_temp = '_' + str(rule_id2)
+			cr = ComplexItemRule(left=rule1_temp, right=rule2_temp, operator=operator1, item=item)
+			cr.save()
+			cr_id = cr.id
+			cr2 = ComplexItemRule(left=rule_id_before, right=cr_id, operator=operator2, item=item)
+			cr2.save()
+			cr_id2 = cr2.id
+			if which_button == 'ok':
+				messages.success(request, 'added rule successfully!')
+				return redirect('/store/home_page_owner/')
+			if which_button == 'complex1':
+				return redirect('/store/add_complex_rule_to_item_2/' + str(cr_id2) + '/' + str(item_id) + '/a')
+			if which_button == 'complex2':
+				return redirect('/store/add_complex_rule_to_item_2/' + str(cr_id2) + '/' + str(item_id) + '/a')
+			return redirect('/store/home_page_owner/')
+		else:
+			messages.warning(request, form.errors)
+			return redirect('/store/home_page_owner/')
+	else:
+		ruleForm = AddRuleToItem_two()
+		text = SearchForm()
+		user_name = request.user.username
+		context = {
+			'user_name': user_name,
+			'text': text,
+			'form': ruleForm,
+			'item_id': item_id,
+			'rule_id_before': rule_id_before,
+			'which_button': which_button,
+		}
+		return render(request, 'store/add_complex_rule_to_item_2.html', context)
 
 
 def remove_rule_from_store(request, pk):

@@ -40,17 +40,7 @@ class UpdateItems(forms.Form):
 
 		)
 
-class AddRuleToStore(forms.Form):
-	CHOICES = (('MAX_QUANTITY', 'Max quantity - restrict max amount of items per order'),
-	           ('MIN_QUANTITY', 'Min quantity - restrict min amount of items per order'),
-	           ('FORBIDDEN_COUNTRY', 'Forbidden Country - restrict orderes for specific country'),
-	           ('REGISTERED_ONLY', 'Registered only - only members will be able to buy from your store'),)
-	rules = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
-	#parameter_number = forms.IntegerField(min_value=0, required=False)
-	parameter = forms.CharField(max_length=100, required=False)
-
-
-# class AddRuleToStore_base(forms.Form):
+# class AddRuleToStore(forms.Form):
 # 	CHOICES = (('MAX_QUANTITY', 'Max quantity - restrict max amount of items per order'),
 # 	           ('MIN_QUANTITY', 'Min quantity - restrict min amount of items per order'),
 # 	           ('FORBIDDEN_COUNTRY', 'Forbidden Country - restrict orderes for specific country'),
@@ -58,34 +48,45 @@ class AddRuleToStore(forms.Form):
 # 	rules = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
 # 	#parameter_number = forms.IntegerField(min_value=0, required=False)
 # 	parameter = forms.CharField(max_length=100, required=False)
-#
-# class AddRuleToStore_withop(forms.Form):
-# 	CHOICES = (('MAX_QUANTITY', 'Max quantity - restrict max amount of items per order'),
-# 	           ('MIN_QUANTITY', 'Min quantity - restrict min amount of items per order'),
-# 	           ('FORBIDDEN_COUNTRY', 'Forbidden Country - restrict orderes for specific country'),
-# 	           ('REGISTERED_ONLY', 'Registered only - only members will be able to buy from your store'),)
-# 	LOGICS = (('OR', 'or'),
-# 	          ('AND', 'and'),
-# 	          ('XOR', 'xor'))
-# 	operator = forms.ChoiceField(choices=LOGICS, widget=forms.RadioSelect)
-# 	rules = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
-# 	# parameter_number = forms.IntegerField(min_value=0, required=False)
-# 	parameter = forms.CharField(max_length=100, required=False)
-#
-# class AddRuleToStore_two(forms.Form):
-# 	CHOICES = (('MAX_QUANTITY', 'Max quantity - restrict max amount of items per order'),
-# 	           ('MIN_QUANTITY', 'Min quantity - restrict min amount of items per order'),
-# 	           ('FORBIDDEN_COUNTRY', 'Forbidden Country - restrict orderes for specific country'),
-# 	           ('REGISTERED_ONLY', 'Registered only - only members will be able to buy from your store'),)
-# 	LOGICS = (('OR', 'or'),
-# 	          ('AND', 'and'),
-# 	          ('XOR', 'xor'))
-# 	operator = forms.ChoiceField(choices=LOGICS, widget=forms.RadioSelect)
-# 	rule1 = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
-# 	rule2 = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
-# 	# parameter_number = forms.IntegerField(min_value=0, required=False)
-# 	parameter1 = forms.CharField(max_length=100, required=False)
-# 	parameter2 = forms.CharField(max_length=100, required=False)
+
+
+class AddRuleToStore_base(forms.Form):
+	CHOICES = (('MAX_QUANTITY', 'Max quantity - restrict max amount of items per order'),
+	           ('MIN_QUANTITY', 'Min quantity - restrict min amount of items per order'),
+	           ('FORBIDDEN_COUNTRY', 'Forbidden Country - restrict orderes for specific country'),
+	           ('REGISTERED_ONLY', 'Registered only - only members will be able to buy from your store'),)
+	rule = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
+	#parameter_number = forms.IntegerField(min_value=0, required=False)
+	parameter = forms.CharField(max_length=100, required=False)
+
+class AddRuleToStore_withop(forms.Form):
+	CHOICES = (('MAX_QUANTITY', 'Max quantity - restrict max amount of items per order'),
+	           ('MIN_QUANTITY', 'Min quantity - restrict min amount of items per order'),
+	           ('FORBIDDEN_COUNTRY', 'Forbidden Country - restrict orderes for specific country'),
+	           ('REGISTERED_ONLY', 'Registered only - only members will be able to buy from your store'),)
+	LOGICS = (('OR', 'or'),
+	          ('AND', 'and'),
+	          ('XOR', 'xor'))
+	operator = forms.ChoiceField(choices=LOGICS, widget=forms.RadioSelect)
+	rule = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
+	# parameter_number = forms.IntegerField(min_value=0, required=False)
+	parameter = forms.CharField(max_length=100, required=False)
+
+class AddRuleToStore_two(forms.Form):
+	CHOICES = (('MAX_QUANTITY', 'Max quantity - restrict max amount of items per order'),
+	           ('MIN_QUANTITY', 'Min quantity - restrict min amount of items per order'),
+	           ('FORBIDDEN_COUNTRY', 'Forbidden Country - restrict orderes for specific country'),
+	           ('REGISTERED_ONLY', 'Registered only - only members will be able to buy from your store'),)
+	LOGICS = (('OR', 'or'),
+	          ('AND', 'and'),
+	          ('XOR', 'xor'))
+	operator2 = forms.ChoiceField(choices=LOGICS, widget=forms.RadioSelect)
+	rule1 = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
+	parameter1 = forms.CharField(max_length=100, required=False)
+	operator1 = forms.ChoiceField(choices=LOGICS, widget=forms.RadioSelect)
+	rule2 = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
+	# parameter_number = forms.IntegerField(min_value=0, required=False)
+	parameter2 = forms.CharField(max_length=100, required=False)
 
 
 
@@ -93,14 +94,33 @@ class AddRuleToStore(forms.Form):
 class AddRuleToItem(forms.Form):
 	CHOICES = (('MAX_QUANTITY', 'Max quantity - restrict max amount of items per order'),
 	           ('MIN_QUANTITY', 'Min quantity - restrict min amount of items per order'),)
-	# LOGICS = (('OR', 'or - OR to existing rules of this store'),
-	#           ('AND', 'and - AND to existing rules of this store'),
-	#           ('XOR', 'xor - XOR to existing rules of this store'))
-	#operator = forms.ChoiceField(choices=LOGICS, widget=forms.RadioSelect)
-	rules = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
+	rule = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
 	#parameter_number = forms.IntegerField(min_value=0, required=False)
+	parameter = forms.IntegerField(min_value=1)
+
+class AddRuleToItem_withop(forms.Form):
+	CHOICES = (('MAX_QUANTITY', 'Max quantity - restrict max amount of items per order'),
+	           ('MIN_QUANTITY', 'Min quantity - restrict min amount of items per order'),)
+	LOGICS = (('OR', 'or'),
+	          ('AND', 'and'),
+	          ('XOR', 'xor'))
+	operator = forms.ChoiceField(choices=LOGICS, widget=forms.RadioSelect)
+	rule = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
 	parameter = forms.IntegerField(min_value=0)
 
+
+class AddRuleToItem_two(forms.Form):
+	CHOICES = (('MAX_QUANTITY', 'Max quantity - restrict max amount of items per order'),
+	           ('MIN_QUANTITY', 'Min quantity - restrict min amount of items per order'),)
+	LOGICS = (('OR', 'or'),
+	          ('AND', 'and'),
+	          ('XOR', 'xor'))
+	operator2 = forms.ChoiceField(choices=LOGICS, widget=forms.RadioSelect)
+	rule1 = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
+	parameter1 = forms.CharField(max_length=100, required=False)
+	operator1 = forms.ChoiceField(choices=LOGICS, widget=forms.RadioSelect)
+	rule2 = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
+	parameter2 = forms.CharField(max_length=100, required=False)
 
 class AddDiscountToStore(forms.Form):
 	discount = forms.IntegerField(max_value=100)

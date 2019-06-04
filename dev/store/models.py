@@ -73,16 +73,18 @@ class BaseRule(models.Model):
 	parameter = models.CharField(max_length=120)
 
 
-# class ComplexStoreRule(models.Model):
-# 	LOGICS = (('OR', 'or'),
-# 	          ('AND', 'and'),
-# 	          ('XOR', 'xor'))
-# 	# if rule begins with # it means it is basic, otherwise begins with * - complex
-# 	left = models.CharField(max_length=4)
-# 	right = models.CharField(max_length=4)
-# 	operator = models.CharField(max_length=3, choices=LOGICS)
+class ComplexStoreRule(models.Model):
+	LOGICS = (('OR', 'or'),
+	          ('AND', 'and'),
+	          ('XOR', 'xor'))
+	# if rule begins with # it means it is basic, otherwise begins with * - complex
+	left = models.CharField(max_length=4)
+	right = models.CharField(max_length=4)
+	operator = models.CharField(max_length=3, choices=LOGICS)
+	store = models.ForeignKey(Store, on_delete=models.CASCADE)
 
-class ItemRule(models.Model):
+
+class BaseItemRule(models.Model):
 	MAX_QUANTITY = 'MXQ'
 	MIN_QUANTITY = 'MNQ'
 	RULE_TYPES = (
@@ -92,3 +94,13 @@ class ItemRule(models.Model):
 	item = models.ForeignKey(Item, on_delete=models.CASCADE)
 	type = models.CharField(max_length=3, choices=RULE_TYPES)
 	parameter = models.CharField(max_length=120)
+
+
+class ComplexItemRule(models.Model):
+	LOGICS = (('OR', 'or'),
+	          ('AND', 'and'),
+	          ('XOR', 'xor'))
+	left = models.CharField(max_length=4)
+	right = models.CharField(max_length=4)
+	operator = models.CharField(max_length=3, choices=LOGICS)
+	item = models.ForeignKey(Item, on_delete=models.CASCADE)
