@@ -22,42 +22,44 @@ from trading_system.observer import AuctionSubject
 from .models import AuctionParticipant
 from .routing import AUCTION_PARTICIPANT_URL
 
-django.setup()
 
+django.setup()
 
 from django.contrib.auth.forms import UserCreationForm
 
 
 def def_super_user(request):
-	if request.method == 'POST':
-		form = UserCreationForm(request.POST)
-		if form.is_valid():
-			u = form.save()
-			u.is_superuser = True
-			u.is_staff = True
-			u.save()
-			messages.success(request, 'add super-user ' + str(u.username))
-			return render(request, 'homepage_guest.html', {'text': SearchForm()})
+   if request.method == 'POST':
+      form = UserCreationForm(request.POST)
+      if form.is_valid():
+         u = form.save()
+         u.is_superuser = True
+         u.is_staff = True
+         u.save()
+         messages.success(request, 'add super-user ' + str(u.username))
+         return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
-		else:
-			return redirect('/super_user')
+      else:
+         return redirect('/super_user')
 
-	else:
-		return render(request, 'trading_system/add_super_user.html', {'form': UserCreationForm()})
+   else:
+      return render(request, 'trading_system/add_super_user.html', {'form': UserCreationForm()})
+
+
+from django.contrib.auth.models import User
 
 
 def index(request: Any) -> HttpResponse:
-
-	return redirect('/super_user')
-
-	# return render(request, 'homepage_guest.html', {'text': SearchForm()})
-
+   superusers = User.objects.filter(is_superuser=True)
+   print((len(superusers)))
+   if (len(superusers) == 0):
+      return redirect('/super_user')
+   else:
+      return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
 def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	if request.user.is_authenticated:
-		if request.user.is_superuser:
-			return render(request, 'homepage_member.html', {'text': SearchForm(), 'user_name': request.user.username})
-		elif "store_owners" in request.user.groups.values_list('name',
+		if "store_owners" in request.user.groups.values_list('name',
 		                                                       flat=True) or "store_managers" in request.user.groups.values_list(
 			'name', flat=True):
 			return redirect('/store/home_page_owner/',

@@ -4,7 +4,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 	<h2 class="title_2">Buy Item</h2>
 	<div id="buy_item">
-		<form method="post">
+		<form method="post" action="/store/buy_item/{{ pk }}">
 
 			<div id="buy_name">{{ name }}</div>
 			<div id="buy_desc">{{ description }}</div>

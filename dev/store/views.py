@@ -1,4 +1,5 @@
 import json
+import traceback
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -107,7 +108,8 @@ def submit_open_store(request):
 		messages.success(request, 'Your Store was added successfully!')  # <-
 		my_group = Group.objects.get_or_create(name="store_owners")
 		my_group = Group.objects.get(name="store_owners")
-		ObserverUser.objects.create(user_id=_user.pk,address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(_user.pk)).save()
+		ObserverUser.objects.create(user_id=_user.pk,
+		                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(_user.pk)).save()
 		_user.groups.add(my_group)
 		assign_perm('ADD_ITEM', _user, store)
 		assign_perm('REMOVE_ITEM', _user, store)
@@ -190,6 +192,8 @@ class ItemDetailView(DetailView):
 
 
 from .forms import UpdateItems, StoreForm, ItemForm
+
+
 @method_decorator(login_required, name='dispatch')
 class ItemUpdate(UpdateView):
 	model = Item
@@ -263,6 +267,7 @@ class StoreUpdate(UpdateView):
 		context['form_'] = UpdateItems(store_items)
 		context['rules'] = rules
 		return context
+
 
 # def update(self, request, *args, **kwargs):
 # 	if not (self.request.user.has_perm('EDIT_ITEM')):
@@ -389,6 +394,7 @@ supply_system = Supply()
 
 def buy_item(request, pk):
 	# return redirect('/store/contact/' + str(pk) + '/')
+	print('heryyyyyyyyyyyy')
 	form_class = BuyForm
 	curr_item = Item.objects.get(id=pk)
 	context = {
@@ -402,6 +408,7 @@ def buy_item(request, pk):
 		'shipping': ShippingForm(),
 	}
 	if request.method == 'POST':
+		print("post")
 		form = BuyForm(request.POST)
 		shipping_form = ShippingForm(request.POST)
 		supply_form = PayForm(request.POST)
@@ -425,57 +432,54 @@ def buy_item(request, pk):
 			transaction_id = -1
 			supply_transaction_id = -1
 			#########################buy proccss
-			try:
-				if pay_system.handshake():
-
-					transaction_id = pay_system.pay(str(card_number), str(month), str(year), str(holder), str(ccv),
-					                                str(id))
-					if (transaction_id == -1):
-						messages.warning(request, 'can`t pay !')
-						return redirect('/login_redirect')
-				else:
-					messages.warning(request, 'can`t connect to pay system!')
-					return redirect('/login_redirect')
-
-				if supply_system.handshake():
-					supply_transaction_id = supply_system.supply(str(name), str(address), str(city), str(country),
-					                                             str(zip))
-					if (supply_transaction_id == -1):
-						chech_cancle = pay_system.cancel_pay(transaction_id)
-						messages.warning(request, 'can`t supply abort payment!')
-						return redirect('/login_redirect')
-				else:
-					chech_cancle = pay_system.cancel_pay(transaction_id)
-					messages.warning(request, 'can`t connect to supply system abort payment!')
-					return redirect('/login_redirect')
-				_item = Item.objects.get(id=pk)
-				amount = form.cleaned_data.get('amount')
-				amount_in_db = _item.quantity
-				if (amount <= amount_in_db):
-					total = amount * _item.price
-					new_q = amount_in_db - amount
+			_item = Item.objects.get(id=pk)
+			amount = form.cleaned_data.get('amount')
+			amount_in_db = _item.quantity
+			if (amount <= amount_in_db):
+				print("good amount")
+				total = amount * _item.price
+				new_q = amount_in_db - amount
 
 				# check item rules
 				if check_item_rules(curr_item, amount, context) is False:
 					messages.warning(request, "you can't buy due to item policies")
 					return render(request, 'store/buy_item.html', context)
-					store_of_item = Store.objects.get(items__id__contains=pk)
-				#check store rules
+				store_of_item = Store.objects.get(items__id__contains=pk)
+				# check store rules
 				if check_store_rules(store_of_item, amount, country, request, context) is False:
 					messages.warning(request, "you can't buy due to store policies")
 					return render(request, 'store/buy_item.html', context)
-				if not (store_of_item.discounts.all[0] == None):
-					discount_ = store_of_item.discounts.all[0]
-					percentage = discount_.percentage
-					total
-				_item.quantity = new_q
-				_item.save()
-						messages.success(request,
-						                 'you have discount for this store : ' + str(
-							                 percentage) + ' %')  # <-
 
+				try:
+					if pay_system.handshake():
+						print("pay hand shake")
 
-					store = get_item_store(_item.pk)
+						transaction_id = pay_system.pay(str(card_number), str(month), str(year), str(holder), str(ccv),
+						                                str(id))
+						if (transaction_id == -1):
+							messages.warning(request, 'can`t pay !')
+							return redirect('/login_redirect')
+					else:
+						messages.warning(request, 'can`t connect to pay system!')
+						return redirect('/login_redirect')
+
+					if supply_system.handshake():
+						print("supply hand shake")
+						supply_transaction_id = supply_system.supply(str(name), str(address), str(city), str(country),
+						                                             str(zip))
+						if (supply_transaction_id == -1):
+							chech_cancle = pay_system.cancel_pay(transaction_id)
+							messages.warning(request, 'can`t supply abort payment!')
+							return redirect('/login_redirect')
+					else:
+						chech_cancle = pay_system.cancel_pay(transaction_id)
+						messages.warning(request, 'can`t connect to supply system abort payment!')
+						return redirect('/login_redirect')
+
+					_item.quantity = new_q
+					_item.save()
+
+					# store = get_item_store(_item.pk)
 					item_subject = ItemSubject(_item.pk)
 					if (request.user.is_authenticated):
 						notification = Notification.objects.create(
@@ -486,21 +490,28 @@ def buy_item(request, pk):
 						notification = Notification.objects.create(
 							msg='A guest bought ' + str(amount) + ' pieces of ' + _item.name)
 						notification.save()
-						item_subject.subject_state = item_subject.subject_state + notification.pk
+						item_subject.subject_state = item_subject.subject_state + [notification.pk]
 					_item_name = _item.name
+					print("reached herre")
 					if (_item.quantity == 0):
 						_item.delete()
-					messages.success(request, 'Thank you! you bought ' + _item_name)  # <-
-					# messages.success(request, 'transaction id:  ' + str(transaction_id))  # <-
-					messages.success(request, 'Total : ' + str(total) + ' $')  # <-
+					messages.success(request, 'Thank you! you bought ' + _item_name)
+					messages.success(request, 'Total : ' + str(total) + ' $')
+					print("!!!!!!!!!!!!!!!!!!!!")
 					return redirect('/login_redirect')
-				else:
-					messages.warning(request, 'there is no such amount ! please try again!')
-			except:
-				if not (transaction_id == -1):
-					chech_cancle = pay_system.cancel_pay(transaction_id)
-					chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
-				return redirect('/login_redirect')
+				except Exception as a:
+					print(a)
+					print(str(a))
+					traceback.print_exc()
+					if not (transaction_id == -1):
+						messages.warning(request, 'failed and aborted pay! please try again!')
+						_item.quantity = amount_in_db
+						chech_cancle = pay_system.cancel_pay(transaction_id)
+						chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
+					return redirect('/login_redirect')
+			else:
+				messages.warning(request, 'there is no such amount ! please try again!')
+
 		###########################end buy procces
 		errors = str(form.errors) + str(shipping_form.errors) + str(supply_form.errors)
 		messages.warning(request, 'error in :  ' + errors)
@@ -521,7 +532,7 @@ def buy_item(request, pk):
 		return render(request, 'store/buy_item.html', context)
 
 
-def check_base_rule(rule_id,amount, country, request, context):
+def check_base_rule(rule_id, amount, country, request, context):
 	rule = BaseRule.objects.get(id=rule_id)
 	if rule.type == 'MAX' and amount > int(rule.parameter):
 		return False
@@ -543,13 +554,11 @@ def check_base_item_rule(rule_id, amount, context):
 	return True
 
 
-
-
 def check_item_rules(item, amount, context):
 	base_arr = []
 	complex_arr = []
 	itemRules = ComplexItemRule.objects.all().filter(item=item)
-	for rule in itemRules.reverse():
+	for rule in reversed(itemRules):
 		if rule.id in complex_arr:
 			continue
 		if check_item_rule(rule, amount, base_arr, complex_arr, context) is False:
@@ -567,7 +576,7 @@ def check_store_rules(store_of_item, amount, country, request, context):
 	base_arr = []
 	complex_arr = []
 	storeRules = ComplexStoreRule.objects.all().filter(store=store_of_item)
-	for rule in storeRules.reverse():
+	for rule in reversed(storeRules):
 		if rule.id in complex_arr:
 			continue
 		if check_store_rule(rule, amount, country, request, base_arr, complex_arr, context) is False:
@@ -580,10 +589,11 @@ def check_store_rules(store_of_item, amount, country, request, context):
 			return False
 	return True
 
+
 def check_store_rule(rule, amount, country, request, base_arr, complex_arr, context):
 	if rule.left[0] == '_':
 		base_arr.append(int(rule.left[1:]))
-		left = check_base_rule(int(rule.left[1:]),amount, country, request, context)
+		left = check_base_rule(int(rule.left[1:]), amount, country, request, context)
 		print('left')
 		print(str(left))
 	else:
@@ -592,7 +602,7 @@ def check_store_rule(rule, amount, country, request, base_arr, complex_arr, cont
 		left = check_store_rule(tosend, amount, country, request, base_arr, complex_arr, context)
 	if rule.right[0] == '_':
 		base_arr.append(int(rule.right[1:]))
-		right = check_base_rule(int(rule.right[1:]),amount, country, request, context)
+		right = check_base_rule(int(rule.right[1:]), amount, country, request, context)
 		print('right')
 		print(str(right))
 	else:
@@ -611,14 +621,14 @@ def check_store_rule(rule, amount, country, request, base_arr, complex_arr, cont
 def check_item_rule(rule, amount, base_arr, complex_arr, context):
 	if rule.left[0] == '_':
 		base_arr.append(int(rule.left[1:]))
-		left = check_base_item_rule(int(rule.left[1:]),amount, context)
+		left = check_base_item_rule(int(rule.left[1:]), amount, context)
 	else:
 		complex_arr.append(int(rule.left))
 		tosend = ComplexItemRule.objects.get(id=int(rule.left))
 		left = check_item_rule(tosend, amount, base_arr, complex_arr, context)
 	if rule.right[0] == '_':
 		base_arr.append(int(rule.right[1:]))
-		right = check_base_item_rule(int(rule.right[1:]),amount, context)
+		right = check_base_item_rule(int(rule.right[1:]), amount, context)
 	else:
 		complex_arr.append(int(rule.right))
 		tosend = ComplexItemRule.objects.get(id=int(rule.right))
@@ -650,6 +660,7 @@ def store_rules_string(store):
 		base.append(get_base_rule(rule.id))
 	return complex + base
 
+
 def string_store_rule(rule, base_arr, complex_arr):
 	curr = '('
 	if rule.left[0] == '_':
@@ -670,11 +681,13 @@ def string_store_rule(rule, base_arr, complex_arr):
 	curr += ')'
 	return curr
 
+
 def get_base_rule(rule_id):
 	rule = BaseRule.objects.get(id=rule_id)
 	if rule.type == "REG":
 		return rule.type + ': Only'
 	return rule.type + ': ' + rule.parameter
+
 
 @login_required
 def home_page_owner(request):
@@ -734,11 +747,15 @@ def add_manager_to_store(request, pk):
 				store_owners_group = Group.objects.get(name="store_owners")
 				user_.groups.add(store_owners_group)
 				store_.owners.add(user_)
+				ObserverUser.objects.create(user_id=user_.pk,
+				                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(user_.pk)).save()
 			else:
 				store_managers = Group.objects.get_or_create(name="store_managers")
 				store_managers = Group.objects.get(name="store_managers")
 				user_.groups.add(store_managers)
 				store_.managers.add(user_)
+				ObserverUser.objects.create(user_id=user_.pk,
+				                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(user_.pk)).save()
 
 			messages.success(request, user_name + ' is appointed')
 			return redirect('/store/home_page_owner/')
@@ -884,7 +901,6 @@ def add_base_rule_to_store(request, pk, which_button):
 		return render(request, 'store/add_base_rule_to_store.html', context)
 
 
-
 def add_complex_rule_to_store_1(request, rule_id1, store_id, which_button):
 	if request.method == 'POST':
 		form = AddRuleToStore_withop(request.POST)
@@ -1011,7 +1027,10 @@ def add_complex_rule_to_store_2(request, rule_id_before, store_id, which_button)
 		}
 		return render(request, 'store/add_complex_rule_to_store_2.html', context)
 
+
 from .models import BaseItemRule
+
+
 def add_base_rule_to_item(request, pk, which_button):
 	if request.method == 'POST':
 		form = AddRuleToItem(request.POST)
@@ -1045,6 +1064,7 @@ def add_base_rule_to_item(request, pk, which_button):
 			'which_button': which_button,
 		}
 		return render(request, 'store/add_base_rule_to_item.html', context)
+
 
 def add_complex_rule_to_item_1(request, rule_id1, item_id, which_button):
 	if request.method == 'POST':
@@ -1144,21 +1164,23 @@ def remove_rule_from_store(request, pk):
 	BaseRule.objects.get(id=pk).delete()
 	messages.success(request, 'removed rule successfully!')
 
+
 class NotificationsListView(ListView):
-model = Notification
-template_name = 'store/owner_feed.html'
+	model = Notification
+	template_name = 'store/owner_feed.html'
+
 
 def get_queryset(self):
-	user_ntfcs = NotificationUser.objects.filter(user= self.request.user.pk)
+	user_ntfcs = NotificationUser.objects.filter(user=self.request.user.pk)
 	ntfcs_ids = list(map(lambda n: n.notification_id, user_ntfcs))
-	ntfcs = list(map(lambda pk: Notification.objects.get(id=pk),ntfcs_ids))
+	ntfcs = list(map(lambda pk: Notification.objects.get(id=pk), ntfcs_ids))
 	return ntfcs
 
 	def get_context_data(self, **kwargs):
 		context = super(NotificationsListView, self).get_context_data(**kwargs)  # get the default context data
 		context['owner_id'] = self.request.user.pk
 		context['unread_notifications'] = 0
-		for n in NotificationUser.objects.filter(user= self.request.user.pk):
-			n.been_read= True
+		for n in NotificationUser.objects.filter(user=self.request.user.pk):
+			n.been_read = True
 			n.save()
-		
+		return context
