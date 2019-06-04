@@ -17,8 +17,8 @@ class Supply():
 			                  data={'action_type': 'supply', 'name': name, 'address': address, 'city': city,
 			                        'country': country
 				                  , 'zip': zip})
-			print(r.status_code, r.reason)
-			print(r.text)
+			print('supply',r.status_code, r.reason)
+			print('supply',r.text)
 			return r.text
 		except:
 			return -1
@@ -27,8 +27,8 @@ class Supply():
 		try:
 			r = requests.post("https://cs-bgu-wsep.herokuapp.com/",
 			                  data={'action_type': 'cancel_supply', 'transaction_id': transaction_id})
-			print(r.status_code, r.reason)
-			print(r.text)
+			print('cancel_supply',r.status_code, r.reason)
+			print('cancel_supply',r.text)
 			return r.text
 		except:
 			return -1

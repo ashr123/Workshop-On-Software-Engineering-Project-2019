@@ -7,9 +7,14 @@
 	</form>
 
 	<p>
-		<form action="/store/add_discount_to_item/{{ pk }}" method="GET">
-			<input class="discount_item_button" type="submit" value="Add discount">
-		</form>
+	<form action="/store/add_discount_to_item/{{ pk }}" method="GET">
+		<input class="discount_item_button" type="submit" value="Add discount">
+	</form>
+	</p>
+	<p>
+	<form action="/store/delete_item/{{ pk }}" method="GET">
+		<input class="delete_item_button" type="submit" value="Delete this item">
+	</form>
 	</p>
 	{#	<div>#}
 	{#	<form id="my_cart" action="/show_cart" method='post'>#}

@@ -10,7 +10,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.utils.safestring import mark_safe
 # from external_systems.spellChecker import checker
-from django.views.generic import DetailView
+from django.views.generic import DetailView, UpdateView
 from django.views.generic.list import ListView
 
 from dev.settings import PROJ_IP, PROJ_PORT
@@ -23,7 +23,6 @@ from .models import AuctionParticipant
 from .routing import AUCTION_PARTICIPANT_URL
 
 django.setup()
-
 
 from django.contrib.auth.forms import UserCreationForm
 
@@ -46,19 +45,25 @@ def def_super_user(request):
 		return render(request, 'trading_system/add_super_user.html', {'form': UserCreationForm()})
 
 
+from django.contrib.auth.models import User
+
+
 def index(request: Any) -> HttpResponse:
+	superusers = User.objects.filter(is_superuser=True)
+	print((len(superusers)))
+	if (len(superusers) == 0):
+		return redirect('/super_user')
+	else:
+		return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
-	return redirect('/super_user')
 
-	# return render(request, 'homepage_guest.html', {'text': SearchForm()})
+# return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
 
 def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	if request.user.is_authenticated:
-		if request.user.is_superuser:
-			return render(request, 'homepage_member.html', {'text': SearchForm(), 'user_name': request.user.username})
-		elif "store_owners" in request.user.groups.values_list('name',
-		                                                       flat=True) or "store_managers" in request.user.groups.values_list(
+		if "store_owners" in request.user.groups.values_list('name',
+		                                                     flat=True) or "store_managers" in request.user.groups.values_list(
 			'name', flat=True):
 			return redirect('/store/home_page_owner/',
 			                {'text': SearchForm(), 'user_name': request.user.username, 'owner_id': request.user.pk, })
@@ -86,7 +91,7 @@ def show_cart(request: Any) -> HttpResponse:
 	if request.user.is_authenticated:
 		if "store_owners" in request.user.groups.values_list('name',
 		                                                     flat=True) or "store_managers" in request.user.groups.values_list(
-				'name', flat=True):
+			'name', flat=True):
 			base_template_name = 'store/homepage_store_owner.html'
 		else:
 			base_template_name = 'homepage_member.html'
@@ -193,6 +198,18 @@ def get_cart(store_pk, user_pk):
 		return carts[0]
 
 
+class CartUpdate(UpdateView):
+	model = Cart
+	# fields = ['name', 'owners', 'items', 'description']
+	template_name_suffix = '_update_form'
+
+	def get_context_data(self, **kwargs):
+		text = SearchForm()
+		context = super(CartUpdate, self).get_context_data(**kwargs)  # get the default context data
+		context['text'] = text
+		return context
+
+
 class CartDetail(DetailView):
 	model = Cart
 
@@ -208,7 +225,7 @@ class CartDetail(DetailView):
 		items = list(map(lambda i_pk: Item.objects.get(pk=i_pk), item_ids))
 		context = super(CartDetail, self).get_context_data(**kwargs)  # get the default context data
 		context['items'] = items
-
+		context['pk'] = kwargs['object'].pk
 		context['store_name'] = Store.objects.get(pk=cart.store_id).name
 		return context
 
@@ -305,7 +322,7 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			'user_name': user_name,
 			'text': text,
 			'form': form,
-			'base_template_name': base_template_name
+			'base_template_name': base_template_name,
 		}
 		print('\nlist :', list_)
 		return render(request, 'trading_system/cart_test.html', context)

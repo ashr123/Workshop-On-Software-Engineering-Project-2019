@@ -13,11 +13,10 @@ from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.views.generic.list import ListView
 from guardian.decorators import permission_required_or_403
 from guardian.shortcuts import assign_perm
-from websocket import create_connection
 
 from trading_system.forms import SearchForm
 from . import forms
-from .forms import BuyForm, AddManagerForm, AddDiscountToStore, AddRuleToStore
+from .forms import BuyForm, AddManagerForm, AddDiscountForm, AddRuleToStore, MaxMinConditionForm
 from .forms import ShippingForm
 from .models import Item
 from .models import Store
@@ -190,6 +189,22 @@ from .forms import UpdateItems, StoreForm, ItemForm
 
 
 @method_decorator(login_required, name='dispatch')
+class ItemDelete(DeleteView):
+	model = Item
+	# fields = ['name', 'owners', 'items', 'description']
+	form_class = ItemForm
+	template_name_suffix = '_delete_form'
+
+	def get_context_data(self, **kwargs):
+		text = SearchForm()
+		context = super(ItemDelete, self).get_context_data(**kwargs)  # get the default context data
+		context['text'] = text
+		context['pk'] = self.object.id
+		return context
+
+
+
+@method_decorator(login_required, name='dispatch')
 class ItemUpdate(UpdateView):
 	model = Item
 	# fields = ['name', 'owners', 'items', 'description']
@@ -197,13 +212,7 @@ class ItemUpdate(UpdateView):
 	template_name_suffix = '_update_form'
 
 	def get_context_data(self, **kwargs):
-		# if not (self.request.user.has_perm('EDIT_ITEM')):
-		# 	user_name = self.request.user.username
-		# 	text = SearchForm()
-		# 	messages.warning(self.request, 'there is no edit perm!')
-		# 	return render(self.request, 'homepage_member.html', {'text': text, 'user_name': user_name})
 		text = SearchForm()
-
 		context = super(ItemUpdate, self).get_context_data(**kwargs)  # get the default context data
 		context['text'] = text
 		context['pk'] = self.object.id
@@ -212,10 +221,15 @@ class ItemUpdate(UpdateView):
 
 def add_discount_to_item(request, pk):
 	if request.method == 'POST':
-		form = AddDiscountToStore(request.POST)
-		if form.is_valid():
-			# discount = form.cleaned_data.get('discount')
+		form = AddDiscountForm(request.POST)
+		min_max_cond = MaxMinConditionForm(request.POST)
+		if form.is_valid() and min_max_cond.is_valid():
 			disc = form.save()
+			if (min_max_cond.cleaned_data.get('cond_min_max')):
+				cond_1 = min_max_cond.save()
+				disc.conditions.add(cond_1)
+				disc = form.save()
+
 			item = Item.objects.get(id=pk)
 			item.discounts.add(disc)
 			item.save()
@@ -229,7 +243,8 @@ def add_discount_to_item(request, pk):
 		context = {
 			'text': SearchForm(),
 			'pk': pk,
-			'form': AddDiscountToStore(),
+			'form': AddDiscountForm(),
+			'cond_max_min': MaxMinConditionForm(),
 		}
 		return render(request, 'store/add_discount_to_item.html', context)
 
@@ -242,11 +257,6 @@ class StoreUpdate(UpdateView):
 	template_name_suffix = '_update_form'
 
 	def get_context_data(self, **kwargs):
-		# if not (self.request.user.has_perm('EDIT_ITEM')):
-		# 	user_name = self.request.user.username
-		# 	text = SearchForm()
-		# 	messages.warning(self.request, 'there is no edit perm!')
-		# 	return render(self.request, 'homepage_member.html', {'text': text, 'user_name': user_name})
 		text = SearchForm()
 		store = Store.objects.get(id=self.object.id)
 		store_items = store.items.all()
@@ -256,13 +266,7 @@ class StoreUpdate(UpdateView):
 		return context
 
 
-# def update(self, request, *args, **kwargs):
-# 	if not (self.request.user.has_perm('EDIT_ITEM')):
-# 		messages.warning(request, 'there is no edit perm!')
-# 		user_name = request.user.username
-# 		text = SearchForm()
-# 		return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
-# 	return super().update(request, *args, **kwargs)
+
 
 
 def have_no_more_stores(user_pk):
@@ -326,57 +330,34 @@ from external_systems.supply_system.supply_system import Supply
 
 from .forms import PayForm
 
-# FORMS_ = [('_step1', BuyForm),
-#           ('_step2', PayForm),
-#
-#           ]
-# TEMPLATES_ = {'_step1': 'store/buy_step_1.html',
-#               '_step2': 'store/buy_step_2.html',
-#               }
-#
-# class ContactWizard(SessionWizardView):
-# 	def get_context_data(self, form, **kwargs):
-# 		context = super(ContactWizard, self).get_context_data(form=form, **kwargs)
-# 		if self.steps.current == '_step1':
-# 			pk = self.kwargs['pk']
-# 			text = SearchForm()
-# 			form_class = BuyForm
-# 			curr_item = Item.objects.get(id=pk)
-# 			context.update({
-# 				'name': curr_item.name,
-# 				'pk': curr_item.id,
-# 				'form': form_class,
-# 				'price': curr_item.price,
-# 				'description': curr_item.description,
-# 				'text': text
-# 			})
-# 		if self.steps.current == '_step2':
-# 			if self.request.user.is_authenticated:
-# 				if "store_owners" in self.request.user.groups.values_list('name',
-# 				                                                          flat=True) or "store_managers" in self.request.user.groups.values_list(
-# 					'name', flat=True):
-# 					base_template_name = 'store/homepage_store_owner.html'
-# 				else:
-# 					base_template_name = 'homepage_member.html'
-# 			else:
-# 				base_template_name = 'homepage_guest.html'
-#
-# 			pay_form = PayForm()
-# 			context.update({
-# 				'base_template_name': base_template_name,
-# 				'text': SearchForm(),
-# 				'formset': pay_form,
-# 			})
-# 		return context
-#
-# 	def get_template_names(self):
-# 		return [TEMPLATES_[self.steps.current]]
-#
-# 	def done(self, form_list, **kwargs):
-# 		return redirect('/login_redirect')
-
 pay_system = Payment()
 supply_system = Supply()
+
+import datetime
+
+
+def get_discount_for_item(pk,amount,total):
+	store_of_item = Store.objects.get(items__id__contains=pk)
+	if not (len(store_of_item.discounts.all()) == 0):
+		discount_ = store_of_item.discounts.all()[0]
+		now = datetime.datetime.now().date()
+		if (discount_.end_date >= now):
+			conditions = discount_.conditions.all()
+			if (len(conditions) > 0):
+				for cond in conditions:
+					if (amount <= cond.max_amount and amount >= cond.min_amount):
+						percentage = discount_.percentage
+						total = (100 - percentage) / 100 * float(total)
+						str_ret = 'you have discount for this store : ' + str(percentage) + ' %'
+						return [str_ret,total]
+
+			else:
+				percentage = discount_.percentage
+				total = (100 - percentage) / 100 * float(total)
+				str_ret = 'you have discount for this store : ' + str(percentage) + ' %'
+				return [str_ret, total]
+	else:
+		return ['no discount',total]
 
 
 def buy_item(request, pk):
@@ -435,43 +416,24 @@ def buy_item(request, pk):
 				amount_in_db = _item.quantity
 				if (amount <= amount_in_db):
 					total = amount * _item.price
+
+					[str_messages,total_after_discount]=get_discount_for_item(pk, amount, total)
 					new_q = amount_in_db - amount
 					_item.quantity = new_q
 					_item.save()
 
-					store_of_item = Store.objects.get(items__id__contains=pk)
-					if not (store_of_item.discounts.all[0] == None):
-						discount_ = store_of_item.discounts.all[0]
-						percentage = discount_.percentage
-						total = (100 - percentage) / 100 * float(total)
-						messages.success(request,
-						                 'you have discount for this store : ' + str(
-							                 percentage) + ' %')  # <-
-					# messages.success(request, 'YES! at the moment you bought  : ' + _item.description)  # <-
-					# messages.success(request, 'total : ' + str(total) + ' $')  # <-
 
-					store = get_item_store(_item.pk)
-					for owner in store.owners.all():
-						try:
-							ws = create_connection("ws://127.0.0.1:8000/ws/store_owner_feed/{}/".format(owner.id))
-							if (request.user.is_authenticated):
-								ws.send(json.dumps(
-									{'message': 'user : ' + request.user.username + ' BOUGHT AN ITEM FROM YOU'}))
-							else:
-								ws.send(json.dumps({'message': 'Guest BOUGHT AN ITEM FROM YOU'}))
-						except:
-							messages.warning(request, 'cant connect owner')
 					_item_name = _item.name
 					if (_item.quantity == 0):
 						_item.delete()
-
-					messages.success(request, 'Thank you! you bought ' + _item_name)  # <-
-					# messages.success(request, 'transaction id:  ' + str(transaction_id))  # <-
-					messages.success(request, 'Total : ' + str(total) + ' $')  # <-
+					messages.success(request,str_messages)
+					messages.success(request, 'Thank you! you bought ' + _item_name)
+					messages.success(request, 'Total : ' + str(total_after_discount) + ' $')
 					return redirect('/login_redirect')
 				else:
 					messages.warning(request, 'there is no such amount ! please try again!')
-			except:
+			except Exception as e:
+				print(e)
 				if not (transaction_id == -1):
 					chech_cancle = pay_system.cancel_pay(transaction_id)
 					chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
@@ -581,10 +543,14 @@ def add_manager_to_store(request, pk):
 @login_required
 def add_discount_to_store(request, pk):
 	if request.method == 'POST':
-		form = AddDiscountToStore(request.POST)
-		if form.is_valid():
-			# discount = form.cleaned_data.get('discount')
+		form = AddDiscountForm(request.POST)
+		min_max_cond = MaxMinConditionForm(request.POST)
+		if form.is_valid() and min_max_cond.is_valid():
 			disc = form.save()
+			# if (min_max_cond.cleaned_data.get('cond_min_max')):
+			cond_1 = min_max_cond.save()
+			disc.conditions.add(cond_1)
+			disc.save()
 			store = Store.objects.get(id=pk)
 			store.discounts.add(disc)
 			store.save()
@@ -597,42 +563,16 @@ def add_discount_to_store(request, pk):
 	else:
 		text = SearchForm()
 		user_name = request.user.username
-		discountForm = AddDiscountToStore()
+		discountForm = AddDiscountForm()
 		context = {
 			'user_name': user_name,
 			'text': text,
 			'form': discountForm,
 			'pk': pk,
+			'cond_max_min': MaxMinConditionForm(),
 		}
 		return render(request, 'store/add_discount_to_store.html', context)
 
-
-# def update_item(request, pk):
-# 	if request.method == "POST":
-#
-# 		form = ItemForm(request.POST or None)
-#
-# 		if form.is_valid():
-# 			obj = form.save(commit=False)
-#
-# 			obj.save()
-#
-# 			messages.success(request, "You successfully updated the post")
-#
-# 			return redirect(request.META.get('HTTP_REFERER', '/'))
-#
-# 		else:
-# 			return render(request, 'store/edit_item.html', {'form': form,
-# 			                                                'error': 'The form was not updated successfully. Please enter in a title and content'})
-# 	else:
-# 		return render(request, 'store/edit_item.html', {
-# 			'store': pk,
-# 			'form': ItemForm,
-# 			'store_name': Store.objects.get(id=pk).name,  # TODO
-# 			'user_name': request.user.username,
-# 			'text': SearchForm(),
-# 		})
-#
 
 def owner_feed(request, owner_id):
 	text = SearchForm()

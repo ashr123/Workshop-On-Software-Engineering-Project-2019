@@ -26,10 +26,14 @@ urlpatterns = [
 	path('add_discount_to_store/<int:pk>/', views.add_discount_to_store),
 	# path('update_item/<int:pk>/', views.update_item),
 	path('update_item/<int:pk>/', views.ItemUpdate.as_view(success_url="/login_redirect")),
+	path('delete_item/<int:pk>/', views.ItemDelete.as_view(success_url="/login_redirect")),
 	# path('contact/<int:pk>/', ContactWizard.as_view(FORMS_)),
 	path('store_owner_feed/<slug:owner_id>', views.owner_feed),
 	path('add_rule_to_store/<int:pk>', views.add_rule_to_store),
 	path('add_rule_to_store/<int:pk>/', views.add_rule_to_store),
 	path('add_discount_to_item/<int:pk>/', views.add_discount_to_item),
 	path('add_discount_to_item/<int:pk>', views.add_discount_to_item),
+
+
+
 ]

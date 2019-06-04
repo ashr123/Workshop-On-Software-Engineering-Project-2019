@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.safestring import mark_safe
 
-from .models import Item, Store,Discount
+from .models import Item, Store, Discount, MaxMinCondition
 
 
 class StoreForm(forms.ModelForm):
@@ -46,18 +46,23 @@ class AddRuleToStore(forms.Form):
 	# LOGICS = (('OR', 'or - OR to existing rules of this store'),
 	#           ('AND', 'and - AND to existing rules of this store'),
 	#           ('XOR', 'xor - XOR to existing rules of this store'))
-	#operator = forms.ChoiceField(choices=LOGICS, widget=forms.RadioSelect)
+	# operator = forms.ChoiceField(choices=LOGICS, widget=forms.RadioSelect)
 	rules = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
-	#parameter_number = forms.IntegerField(min_value=0, required=False)
+	# parameter_number = forms.IntegerField(min_value=0, required=False)
 	parameter = forms.CharField(max_length=100, required=False)
 
 
-class AddDiscountToStore(forms.ModelForm):
+class MaxMinConditionForm(forms.ModelForm):
+	cond_min_max = forms.BooleanField(required=False)
+	class Meta:
+		model = MaxMinCondition
+		fields = ['min_amount', 'max_amount']
 
 
+class AddDiscountForm(forms.ModelForm):
 	class Meta:
 		model = Discount
-		fields = ['end_date', 'percentage',]
+		fields = ['end_date', 'percentage', ]
 
 
 class AddManagerForm(forms.Form):
@@ -85,8 +90,6 @@ class ItemForm(forms.ModelForm):
 		fields = ['name', 'description', 'category', 'price', 'quantity']
 
 
-from .fileds import CreditCardField, ExpiryDateField, VerificationValueField
-
 class BuyForm(forms.Form):
 	amount = forms.IntegerField()
 
@@ -98,12 +101,9 @@ class PayForm(forms.Form):
 	month = forms.IntegerField(required=True)
 	year = forms.IntegerField(required=True)
 	cvc = forms.CharField(required=True, label='CVV / CVC',
-	widget = forms.TextInput(attrs={'size': '3',
-	'maxlength': '3',
-	'placeholder':''}))
-
-
-
+	                      widget=forms.TextInput(attrs={'size': '3',
+	                                                    'maxlength': '3',
+	                                                    'placeholder': ''}))
 
 
 class ShippingForm(forms.Form):
@@ -112,4 +112,3 @@ class ShippingForm(forms.Form):
 	city = forms.CharField(label='City', max_length=25)
 	country = forms.CharField(max_length=25)
 	zip = forms.IntegerField(label='Zip Code')
-
