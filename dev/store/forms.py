@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.safestring import mark_safe
 
-from .models import Item, Store,Discount
+from .models import Item, Store, Discount, MaxMinCondition
 
 
 class StoreForm(forms.ModelForm):
@@ -119,12 +119,18 @@ class AddRuleToItem_two(forms.Form):
 	rule2 = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
 	parameter2 = forms.CharField(max_length=100, required=False)
 
-class AddDiscountToStore(forms.ModelForm):
-
-
+class AddDiscountForm(forms.ModelForm):
 	class Meta:
 		model = Discount
 		fields = ['end_date', 'percentage',]
+
+
+
+class MaxMinConditionForm(forms.ModelForm):
+   cond_min_max = forms.BooleanField(required=False)
+   class Meta:
+      model = MaxMinCondition
+      fields = ['min_amount', 'max_amount']
 
 
 class AddManagerForm(forms.Form):

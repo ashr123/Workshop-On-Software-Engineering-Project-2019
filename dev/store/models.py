@@ -10,11 +10,7 @@ CategoryChoice = (
 )
 
 
-class Condition(models.Model):
-	pass
-
-
-class MaxMinCondition(Condition):
+class MaxMinCondition(models.Model):
 	max_amount = models.PositiveIntegerField(default=2147483647)
 	min_amount = models.PositiveIntegerField(default=0)
 
@@ -23,11 +19,10 @@ class Discount(models.Model):
 	start_date = models.DateField(auto_now_add=True)
 	end_date = models.DateField(help_text='format: mm/dd/yyyy')
 	percentage = models.PositiveSmallIntegerField()
-	condition = models.ForeignKey(Condition, models.CASCADE)
+	conditions = models.ManyToManyField(MaxMinCondition)
 
 
 class Item(models.Model):
-	# itemId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	price = models.DecimalField(max_digits=6, decimal_places=2, default=0)
 	name = models.CharField(max_length=30, default=None)
 	description = models.CharField(max_length=64, default=None)
@@ -45,12 +40,10 @@ class Item(models.Model):
 
 class Store(models.Model):
 	name = models.CharField(max_length=30)
-	# owner = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
 	owners = models.ManyToManyField(User)
 	managers = models.ManyToManyField(User, related_name="store_managers")
 	items = models.ManyToManyField(Item)
 	description = models.CharField(max_length=64)
-	# discount = models.PositiveIntegerField(default=0)
 	discounts = models.ManyToManyField(Discount)
 
 	max_quantity = models.PositiveIntegerField(null=True, blank=True)
@@ -69,7 +62,6 @@ class Store(models.Model):
 			('REMOVE_STORE', 'delete store'),
 			('ADD_DISCOUNT', 'add discount'),
 		)
-
 
 
 class BaseRule(models.Model):

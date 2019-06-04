@@ -1,3 +1,4 @@
+import datetime
 import json
 import traceback
 
@@ -14,14 +15,13 @@ from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.views.generic.list import ListView
 from guardian.decorators import permission_required_or_403
 from guardian.shortcuts import assign_perm
-from websocket import create_connection
 
 from trading_system.forms import SearchForm
 from trading_system.models import Notification, ObserverUser, NotificationUser
 from trading_system.observer import ItemSubject
 from . import forms
-from .forms import BuyForm, AddManagerForm, AddDiscountToStore, AddRuleToItem, AddRuleToStore_base, \
-	AddRuleToStore_withop, AddRuleToStore_two
+from .forms import BuyForm, AddManagerForm, AddRuleToItem, AddRuleToStore_base, AddRuleToStore_withop, \
+	AddRuleToStore_two, MaxMinConditionForm, AddDiscountForm
 from .forms import ShippingForm, AddRuleToItem_withop, AddRuleToItem_two
 from .models import Item, ComplexStoreRule, ComplexItemRule
 from .models import Store
@@ -215,15 +215,36 @@ class ItemUpdate(UpdateView):
 		context['text'] = text
 		context['user_name'] = user_name
 		context['itemId'] = itemId
+		context['pk'] = itemId
+		return context
+
+
+@method_decorator(login_required, name='dispatch')
+class ItemDelete(DeleteView):
+	model = Item
+	# fields = ['name', 'owners', 'items', 'description']
+	form_class = ItemForm
+	template_name_suffix = '_delete_form'
+
+	def get_context_data(self, **kwargs):
+		text = SearchForm()
+		context = super(ItemDelete, self).get_context_data(**kwargs)  # get the default context data
+		context['text'] = text
+		context['pk'] = self.object.id
 		return context
 
 
 def add_discount_to_item(request, pk):
 	if request.method == 'POST':
-		form = AddDiscountToStore(request.POST)
-		if form.is_valid():
-			# discount = form.cleaned_data.get('discount')
+		form = AddDiscountForm(request.POST)
+		min_max_cond = MaxMinConditionForm(request.POST)
+		if form.is_valid() and min_max_cond.is_valid():
 			disc = form.save()
+			if (min_max_cond.cleaned_data.get('cond_min_max')):
+				cond_1 = min_max_cond.save()
+				disc.conditions.add(cond_1)
+				disc = form.save()
+
 			item = Item.objects.get(id=pk)
 			item.discounts.add(disc)
 			item.save()
@@ -237,7 +258,8 @@ def add_discount_to_item(request, pk):
 		context = {
 			'text': SearchForm(),
 			'pk': pk,
-			'form': AddDiscountToStore(),
+			'form': AddDiscountForm(),
+			'cond_max_min': MaxMinConditionForm(),
 		}
 		return render(request, 'store/add_discount_to_item.html', context)
 
@@ -267,15 +289,6 @@ class StoreUpdate(UpdateView):
 		context['form_'] = UpdateItems(store_items)
 		context['rules'] = rules
 		return context
-
-
-# def update(self, request, *args, **kwargs):
-# 	if not (self.request.user.has_perm('EDIT_ITEM')):
-# 		messages.warning(request, 'there is no edit perm!')
-# 		user_name = request.user.username
-# 		text = SearchForm()
-# 		return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
-# 	return super().update(request, *args, **kwargs)
 
 
 def have_no_more_stores(user_pk):
@@ -339,57 +352,83 @@ from external_systems.supply_system.supply_system import Supply
 
 from .forms import PayForm
 
-# FORMS_ = [('_step1', BuyForm),
-#           ('_step2', PayForm),
-#
-#           ]
-# TEMPLATES_ = {'_step1': 'store/buy_step_1.html',
-#               '_step2': 'store/buy_step_2.html',
-#               }
-#
-# class ContactWizard(SessionWizardView):
-# 	def get_context_data(self, form, **kwargs):
-# 		context = super(ContactWizard, self).get_context_data(form=form, **kwargs)
-# 		if self.steps.current == '_step1':
-# 			pk = self.kwargs['pk']
-# 			text = SearchForm()
-# 			form_class = BuyForm
-# 			curr_item = Item.objects.get(id=pk)
-# 			context.update({
-# 				'name': curr_item.name,
-# 				'pk': curr_item.id,
-# 				'form': form_class,
-# 				'price': curr_item.price,
-# 				'description': curr_item.description,
-# 				'text': text
-# 			})
-# 		if self.steps.current == '_step2':
-# 			if self.request.user.is_authenticated:
-# 				if "store_owners" in self.request.user.groups.values_list('name',
-# 				                                                          flat=True) or "store_managers" in self.request.user.groups.values_list(
-# 					'name', flat=True):
-# 					base_template_name = 'store/homepage_store_owner.html'
-# 				else:
-# 					base_template_name = 'homepage_member.html'
-# 			else:
-# 				base_template_name = 'homepage_guest.html'
-#
-# 			pay_form = PayForm()
-# 			context.update({
-# 				'base_template_name': base_template_name,
-# 				'text': SearchForm(),
-# 				'formset': pay_form,
-# 			})
-# 		return context
-#
-# 	def get_template_names(self):
-# 		return [TEMPLATES_[self.steps.current]]
-#
-# 	def done(self, form_list, **kwargs):
-# 		return redirect('/login_redirect')
-
 pay_system = Payment()
 supply_system = Supply()
+
+
+def get_discount_for_store(pk, amount, total):
+	store_of_item = Store.objects.get(items__id__contains=pk)
+	if not (len(store_of_item.discounts.all()) == 0):
+		discount_ = store_of_item.discounts.all()[0]
+		now = datetime.datetime.now().date()
+		if (discount_.end_date >= now):
+			conditions = discount_.conditions.all()
+			if (len(conditions) > 0):
+				for cond in conditions:
+					if (amount <= cond.max_amount and amount >= cond.min_amount):
+						percentage = discount_.percentage
+						total = (100 - percentage) / 100 * float(total)
+						str_ret = percentage
+						return [str_ret, total]
+			else:
+				percentage = discount_.percentage
+				total = (100 - percentage) / 100 * float(total)
+				str_ret = percentage
+				return [str_ret, total]
+	else:
+		return [0, total]
+
+
+def get_discount_for_item(pk, amount, total):
+	item = Item.objects.get(id=pk)
+	if not (len(item.discounts.all()) == 0):
+		item_discount = item.discounts.all()[0]
+		now = datetime.datetime.now().date()
+		if (item_discount.end_date >= now):
+			conditions_item = item_discount.conditions.all()
+			if (len(conditions_item) > 0):
+				for cond_i in conditions_item:
+					if (amount <= cond_i.max_amount and amount >= cond_i.min_amount):
+						percentage = item_discount.percentage
+						total = (100 - percentage) / 100 * float(total)
+						str_ret = percentage
+						return [str_ret, total]
+			else:
+				percentage = item_discount.percentage
+				total = (100 - percentage) / 100 * float(total)
+				str_ret = percentage
+				return [str_ret, total]
+	else:
+		return [0, total]
+
+
+def buy_logic(item_id, amount, amount_in_db, country, request, context):
+	curr_item = Item.objects.get(id=item_id)
+	if (amount <= amount_in_db):
+		print("good amount")
+		total = amount * curr_item.price
+		new_q = amount_in_db - amount
+		total_after_discount = total
+		# check item rules
+		if check_item_rules(curr_item, amount, context) is False:
+			messages.warning(request, "you can't buy due to item policies")
+			return render(request, 'store/buy_item.html', context)
+		store_of_item = Store.objects.get(items__id__contains=item_id)
+		# check store rules
+		if check_store_rules(store_of_item, amount, country, request, context) is False:
+			messages.warning(request, "you can't buy due to store policies")
+			return render(request, 'store/buy_item.html', context)
+		# check discounts
+		[precentage1, total_after_discount] = get_discount_for_store(item_id, amount, total)
+		[precentage2, total_after_discount] = get_discount_for_item(item_id, amount, total_after_discount)
+		if precentage1 != 0 and precentage2 != 0:
+			discount = str(precentage1) + " + " + str(precentage2)
+		else:
+			discount = str(precentage1+precentage2)
+		messages.success(request, "you have discount for this item: "+ discount +"%")
+		return True ,total, total_after_discount
+	else:
+		return False
 
 
 def buy_item(request, pk):
@@ -435,52 +474,66 @@ def buy_item(request, pk):
 			_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
 			amount_in_db = _item.quantity
-			if (amount <= amount_in_db):
-				print("good amount")
-				total = amount * _item.price
-				new_q = amount_in_db - amount
 
-				# check item rules
-				if check_item_rules(curr_item, amount, context) is False:
-					messages.warning(request, "you can't buy due to item policies")
-					return render(request, 'store/buy_item.html', context)
-				store_of_item = Store.objects.get(items__id__contains=pk)
-				# check store rules
-				if check_store_rules(store_of_item, amount, country, request, context) is False:
-					messages.warning(request, "you can't buy due to store policies")
-					return render(request, 'store/buy_item.html', context)
+			valid, total, total_after_discount = buy_logic(pk, amount, amount_in_db, country, request, context)
+			if valid == False:
+				messages.warning(request, 'there is no such amount ! please try again!')
 
-				try:
-					if pay_system.handshake():
-						print("pay hand shake")
+			# if (amount <= amount_in_db):
+			# 	print("good amount")
+			# 	total = amount * _item.price
+			# 	new_q = amount_in_db - amount
+			# 	total_after_discount = total
+			# 	# check item rules
+			# 	if check_item_rules(curr_item, amount, context) is False:
+			# 		messages.warning(request, "you can't buy due to item policies")
+			# 		return render(request, 'store/buy_item.html', context)
+			# 	store_of_item = Store.objects.get(items__id__contains=pk)
+			# 	# check store rules
+			# 	if check_store_rules(store_of_item, amount, country, request, context) is False:
+			# 		messages.warning(request, "you can't buy due to store policies")
+			# 		return render(request, 'store/buy_item.html', context)
+			# 	# check discounts
+			# 	[precentage1, total_after_discount] = get_discount_for_store(pk, amount, total)
+			# 	[precentage2, total_after_discount] = get_discount_for_item(pk, amount, total_after_discount)
+			# 	if precentage1 != 0 and precentage2 != 0:
+			# 		discount = str(precentage1) + " + " + str(precentage2)
+			# 	else:
+			# 		discount = str(precentage1+precentage2)
+			# 	messages.success(request, "you have discount for this item: "+ discount +"%")
 
-						transaction_id = pay_system.pay(str(card_number), str(month), str(year), str(holder), str(ccv),
-						                                str(id))
-						if (transaction_id == -1):
-							messages.warning(request, 'can`t pay !')
-							return redirect('/login_redirect')
-					else:
-						messages.warning(request, 'can`t connect to pay system!')
+			try:
+				if pay_system.handshake():
+					print("pay hand shake")
+
+					transaction_id = pay_system.pay(str(card_number), str(month), str(year), str(holder), str(ccv),
+					                                str(id))
+					if (transaction_id == -1):
+						messages.warning(request, 'can`t pay !')
 						return redirect('/login_redirect')
+				else:
+					messages.warning(request, 'can`t connect to pay system!')
+					return redirect('/login_redirect')
 
-					if supply_system.handshake():
-						print("supply hand shake")
-						supply_transaction_id = supply_system.supply(str(name), str(address), str(city), str(country),
-						                                             str(zip))
-						if (supply_transaction_id == -1):
-							chech_cancle = pay_system.cancel_pay(transaction_id)
-							messages.warning(request, 'can`t supply abort payment!')
-							return redirect('/login_redirect')
-					else:
+				if supply_system.handshake():
+					print("supply hand shake")
+					supply_transaction_id = supply_system.supply(str(name), str(address), str(city), str(country),
+					                                             str(zip))
+					if (supply_transaction_id == -1):
 						chech_cancle = pay_system.cancel_pay(transaction_id)
-						messages.warning(request, 'can`t connect to supply system abort payment!')
+						messages.warning(request, 'can`t supply abort payment!')
 						return redirect('/login_redirect')
+				else:
+					chech_cancle = pay_system.cancel_pay(transaction_id)
+					messages.warning(request, 'can`t connect to supply system abort payment!')
+					return redirect('/login_redirect')
 
-					_item.quantity = new_q
-					_item.save()
+				_item.quantity = amount_in_db - amount
+				_item.save()
 
-					# store = get_item_store(_item.pk)
-					item_subject = ItemSubject(_item.pk)
+				# store = get_item_store(_item.pk)
+				item_subject = ItemSubject(_item.pk)
+				try:
 					if (request.user.is_authenticated):
 						notification = Notification.objects.create(
 							msg=request.user.username + ' bought ' + str(amount) + ' pieces of ' + _item.name)
@@ -491,27 +544,29 @@ def buy_item(request, pk):
 							msg='A guest bought ' + str(amount) + ' pieces of ' + _item.name)
 						notification.save()
 						item_subject.subject_state = item_subject.subject_state + [notification.pk]
-					_item_name = _item.name
-					print("reached herre")
-					if (_item.quantity == 0):
-						_item.delete()
-					messages.success(request, 'Thank you! you bought ' + _item_name)
-					messages.success(request, 'Total : ' + str(total) + ' $')
-					print("!!!!!!!!!!!!!!!!!!!!")
-					return redirect('/login_redirect')
-				except Exception as a:
-					print(a)
-					print(str(a))
-					traceback.print_exc()
-					if not (transaction_id == -1):
-						messages.warning(request, 'failed and aborted pay! please try again!')
-						_item.quantity = amount_in_db
-						chech_cancle = pay_system.cancel_pay(transaction_id)
-						chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
-					return redirect('/login_redirect')
-			else:
-				messages.warning(request, 'there is no such amount ! please try again!')
+				except Exception as e:
+					messages.warning(request, 'cant connect websocket ' + str(e))
 
+				_item_name = _item.name
+				print("reached herre")
+				if (_item.quantity == 0):
+					_item.delete()
+
+				messages.success(request, 'Thank you! you bought ' + _item_name)
+				messages.success(request, 'Total after discount: ' + str(total_after_discount) + ' $')
+				messages.success(request, 'Total before: ' + str(total) + ' $')
+				print("!!!!!!!!!!!!!!!!!!!!")
+				return redirect('/login_redirect')
+			except Exception as a:
+				print(a)
+				print(str(a))
+				traceback.print_exc()
+				if not (transaction_id == -1):
+					messages.warning(request, 'failed and aborted pay! please try again!')
+					_item.quantity = amount_in_db
+					chech_cancle = pay_system.cancel_pay(transaction_id)
+					chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
+				return redirect('/login_redirect')
 		###########################end buy procces
 		errors = str(form.errors) + str(shipping_form.errors) + str(supply_form.errors)
 		messages.warning(request, 'error in :  ' + errors)
@@ -780,10 +835,14 @@ def add_manager_to_store(request, pk):
 @login_required
 def add_discount_to_store(request, pk):
 	if request.method == 'POST':
-		form = AddDiscountToStore(request.POST)
-		if form.is_valid():
-			# discount = form.cleaned_data.get('discount')
+		form = AddDiscountForm(request.POST)
+		min_max_cond = MaxMinConditionForm(request.POST)
+		if form.is_valid() and min_max_cond.is_valid():
 			disc = form.save()
+			# if (min_max_cond.cleaned_data.get('cond_min_max')):
+			cond_1 = min_max_cond.save()
+			disc.conditions.add(cond_1)
+			disc.save()
 			store = Store.objects.get(id=pk)
 			store.discounts.add(disc)
 			store.save()
@@ -796,12 +855,13 @@ def add_discount_to_store(request, pk):
 	else:
 		text = SearchForm()
 		user_name = request.user.username
-		discountForm = AddDiscountToStore()
+		discountForm = AddDiscountForm()
 		context = {
 			'user_name': user_name,
 			'text': text,
 			'form': discountForm,
 			'pk': pk,
+			'cond_max_min': MaxMinConditionForm(),
 		}
 		return render(request, 'store/add_discount_to_store.html', context)
 

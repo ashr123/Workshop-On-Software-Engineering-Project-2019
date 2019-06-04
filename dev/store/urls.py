@@ -32,10 +32,14 @@ urlpatterns = [
 	path('store_owner_feed/<slug:owner_id>', views.NotificationsListView.as_view(), name='owner-feed'),
 	path('add_discount_to_item/<int:pk>/', views.add_discount_to_item),
 	path('add_discount_to_item/<int:pk>', views.add_discount_to_item),
-	path('add_complex_rule_to_store_1/<slug:rule_id1>/<int:store_id>/<slug:which_button>', views.add_complex_rule_to_store_1),
-	path('add_complex_rule_to_store_1/<slug:rule_id1>/<int:store_id>/<slug:which_button>/', views.add_complex_rule_to_store_1),
-	path('add_complex_rule_to_store_2/<slug:rule_id_before>/<int:store_id>/<slug:which_button>', views.add_complex_rule_to_store_2),
-	path('add_complex_rule_to_store_2/<slug:rule_id_before>/<int:store_id>/<slug:which_button>/', views.add_complex_rule_to_store_2),
+	path('add_complex_rule_to_store_1/<slug:rule_id1>/<int:store_id>/<slug:which_button>',
+	     views.add_complex_rule_to_store_1),
+	path('add_complex_rule_to_store_1/<slug:rule_id1>/<int:store_id>/<slug:which_button>/',
+	     views.add_complex_rule_to_store_1),
+	path('add_complex_rule_to_store_2/<slug:rule_id_before>/<int:store_id>/<slug:which_button>',
+	     views.add_complex_rule_to_store_2),
+	path('add_complex_rule_to_store_2/<slug:rule_id_before>/<int:store_id>/<slug:which_button>/',
+	     views.add_complex_rule_to_store_2),
 
 	path('add_base_rule_to_item/<int:pk>/<slug:which_button>', views.add_base_rule_to_item),
 	path('add_base_rule_to_item/<int:pk>/<slug:which_button>/', views.add_base_rule_to_item),
@@ -49,4 +53,6 @@ urlpatterns = [
 	     views.add_complex_rule_to_item_2),
 
 	path('remove_rule_from_store/<int:pk>', views.remove_rule_from_store),
+	path('delete_item/<int:pk>/', views.ItemDelete.as_view(success_url="/login_redirect")),
+
 ]
