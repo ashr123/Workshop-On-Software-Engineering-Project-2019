@@ -6,8 +6,12 @@
 		<form action="/store/view_item/{{ item.pk }}" method="GET">
 			<input type="submit" value="View">
 		</form>
+
 	{% empty %}
 		<li>No stores yet</li>
 	{% endfor %}
+	<form action="/store/update_cart/{{ pk }}" method="GET">
+		<input type="submit" value="Update">
+	</form>
 	</ul>
 {% endblock %}
