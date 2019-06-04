@@ -2,6 +2,17 @@
 {% block page_content %}
 	<form method="post">{% csrf_token %}
 		{{ form.as_p }}
+<<<<<<< HEAD
+
+		<input type="submit" value="Update">
+	</form>
+
+	<p>
+		<form action="/store/add_discount_to_item/{{ pk }}" method="GET">
+			<input class="discount_item_button" type="submit" value="Add discount">
+		</form>
+	</p>
+=======
 		{% csrf_token %}
 {#		{% for item in form_.items %}#}
 {#			<div class="check_item">item:::{{ item }}</div>#}
@@ -15,10 +26,7 @@
 		<form action="/store/add_base_rule_to_item/{{ itemId }}/a" method="GET">
 				<button class="store_buttons" type="submit"><i class="fas fa-lightbulb"></i></button>
 			</form>
-			
-			<form action="/store/add_discount_to_item/{{ pk }}" method="GET">
-			<input class="discount_item_button" type="submit" value="Add discount">
-		</form>
+>>>>>>> origin/nnooaa
 	{#	<div>#}
 	{#	<form id="my_cart" action="/show_cart" method='post'>#}
 	{#	#}

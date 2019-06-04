@@ -15,6 +15,7 @@
 						<input class="store_name_button" type="submit" value="{{ store.name }}">
 					</form>
 				</td>
+<<<<<<< HEAD
 
 				{% if "ADD_ITEM" in user_store_perms %}
 					<td>
@@ -53,11 +54,43 @@
 				{% endif %}
 				{% if "עוד אין שם לפרמישן הזה. רותם ב." in user_store_perms %}
 					<td>
-					<form action="/store/add_base_rule_to_store/{{ store.pk }}/a" method="GET">
+						<form action="/store/add_rule_to_store/{{ store.pk }}" method="GET">
 							<button class="store_buttons" type="submit"><i class="fas fa-lightbulb"></i></button>
 						</form>
 					</td>
 				{% endif %}
+=======
+				<td>
+					<form action="/store/add_item_to_store/{{ store.pk }}" method="GET">
+						<button class="store_buttons" type="submit"><i class="fas fa-folder-plus"></i></button>
+					</form>
+				</td>
+				<td>
+					<form action="/store/update/{{ store.pk }}" method="GET">
+						<button class="store_buttons" type="submit"><i class="fas fa-edit"></i></button>
+					</form>
+				</td>
+				<td>
+					<form action="/store/delete/{{ store.pk }}" method="GET">
+						<button class="store_buttons" type="submit"><i class="fas fa-trash-alt"></i></button>
+					</form>
+				</td>
+				<td>
+					<form action="/store/add_manager_to_store/{{ store.pk }}" method="GET">
+						<button class="store_buttons" type="submit"><i class="fas fa-user-plus"></i></button>
+					</form>
+				</td>
+				<td>
+					<form action="/store/add_discount_to_store/{{ store.pk }}" method="GET">
+						<button class="store_buttons" type="submit"><i class="fas fa-tags"></i></button>
+					</form>
+				</td>
+				<td>
+					<form action="/store/add_base_rule_to_store/{{ store.pk }}/a" method="GET">
+						<button class="store_buttons" type="submit"><i class="fas fa-lightbulb"></i></button>
+					</form>
+				</td>
+>>>>>>> origin/nnooaa
 
 			</tr>
 		{% empty %}
