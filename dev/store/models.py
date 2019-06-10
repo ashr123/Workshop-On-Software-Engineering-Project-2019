@@ -56,8 +56,12 @@ class Store(models.Model):
 		)
 
 
+class FatherRule(models.Model):
+	class Meta:
+		abstract = True
 
-class BaseRule(models.Model):
+
+class BaseRule(FatherRule):
 	MAX_QUANTITY = 'MXQ'
 	MIN_QUANTITY = 'MNQ'
 	REGISTERED_ONLY = 'RGO'
@@ -73,7 +77,7 @@ class BaseRule(models.Model):
 	parameter = models.CharField(max_length=120)
 
 
-class ComplexStoreRule(models.Model):
+class ComplexStoreRule(FatherRule):
 	LOGICS = (('OR', 'or'),
 	          ('AND', 'and'),
 	          ('XOR', 'xor'))

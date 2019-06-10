@@ -20,7 +20,7 @@ from . import forms
 from .forms import BuyForm, AddManagerForm, AddDiscountToStore, AddRuleToItem, AddRuleToStore_base, \
 	AddRuleToStore_withop, AddRuleToStore_two
 from .forms import ShippingForm, AddRuleToItem_withop, AddRuleToItem_two
-from .models import Item, ComplexStoreRule, ComplexItemRule
+from .models import Item, ComplexStoreRule, ComplexItemRule, BaseRule, FatherRule
 from .models import Store
 
 
@@ -189,6 +189,44 @@ from .forms import UpdateItems, StoreForm, ItemForm
 
 
 @method_decorator(login_required, name='dispatch')
+class RuleDelete(DeleteView):
+	model = BaseRule
+
+	# fields = ['name', 'owners', 'items', 'description']
+	template_name_suffix = '_delete_form'
+	#
+	# def delete(self, request, *args, **kwargs):
+	# 	print("!!!!!!!!!!!!!!!")
+	# 	rule = FatherRule.objects.get(id=kwargs['pk'])
+	# 	complex = ComplexStoreRule.objects.get(id=rule.id)
+	# 	if complex.exists():
+	# 		delete_complex(complex.id)
+	# 	base = BaseRule.objects.get(id=rule.id)
+	# 	if base.exists():
+	# 		delete_base(base.id)
+	# 	response = super(StoreDelete, self).delete(request, *args, **kwargs)
+	# 	return response
+
+
+def delete_complex(rule_id):
+	rule = ComplexStoreRule.objects.get(id=rule_id)
+	if rule.left[0] == '_':
+		BaseRule.objects.get(id=int(rule.left[1:])).delete()
+	else:
+		delete_complex(int(rule.left))
+	if rule.right[0] == '_':
+		BaseRule.objects.get(id=int(rule.right[1:])).delete()
+	else:
+		delete_complex(int(rule.right))
+	rule.delete()
+
+
+def delete_base(rule_id):
+	rule = BaseRule.objects.get(id=rule_id)
+	rule.delete()
+
+
+@method_decorator(login_required, name='dispatch')
 class ItemUpdate(UpdateView):
 	model = Item
 	# fields = ['name', 'owners', 'items', 'description']
@@ -223,6 +261,7 @@ class StoreUpdate(UpdateView):
 		store = Store.objects.get(id=self.object.id)
 		# store_rules = BaseRule.objects.all().filter(store=store)
 		rules = store_rules_string(store)
+		rulesObjects = BaseRule.objects.all().filter(store=store)
 		store_items = store.items.all()
 		user_name = self.request.user.username
 		context = super(StoreUpdate, self).get_context_data(**kwargs)  # get the default context data
@@ -230,7 +269,9 @@ class StoreUpdate(UpdateView):
 		context['user_name'] = user_name
 		context['form_'] = UpdateItems(store_items)
 		context['rules'] = rules
+		context['rulesObjects'] = rulesObjects
 		return context
+
 
 # def update(self, request, *args, **kwargs):
 # 	if not (self.request.user.has_perm('EDIT_ITEM')):
@@ -425,19 +466,19 @@ def buy_item(request, pk):
 					messages.warning(request, "you can't buy due to item policies")
 					return render(request, 'store/buy_item.html', context)
 				store_of_item = Store.objects.get(items__id__contains=pk)
-				#check store rules
+				# check store rules
 				if check_store_rules(store_of_item, amount, country, request, context) is False:
 					messages.warning(request, "you can't buy due to store policies")
 					return render(request, 'store/buy_item.html', context)
 
-					# itemRules = ItemRule.objects.all().filter(item=_item)
-					# for item_rule in itemRules:
-					# 	if item_rule.type == 'MAX' and amount > int(item_rule.parameter):
-					# 		messages.warning(request, "you can only buy maximum " + item_rule.parameter + " of this item")
-					# 		return render(request, 'store/buy_item.html', context)
-					# 	elif item_rule.type == 'MIN' and amount < int(item_rule.parameter):
-					# 		messages.warning(request, "you can only buy minimum " + item_rule.parameter + " of this item")
-					# 		return render(request, 'store/buy_item.html', context)
+				# itemRules = ItemRule.objects.all().filter(item=_item)
+				# for item_rule in itemRules:
+				# 	if item_rule.type == 'MAX' and amount > int(item_rule.parameter):
+				# 		messages.warning(request, "you can only buy maximum " + item_rule.parameter + " of this item")
+				# 		return render(request, 'store/buy_item.html', context)
+				# 	elif item_rule.type == 'MIN' and amount < int(item_rule.parameter):
+				# 		messages.warning(request, "you can only buy minimum " + item_rule.parameter + " of this item")
+				# 		return render(request, 'store/buy_item.html', context)
 				_item.quantity = new_q
 				_item.save()
 				if (store_of_item.discount > 0):
@@ -485,7 +526,7 @@ def buy_item(request, pk):
 		return render(request, 'store/buy_item.html', context)
 
 
-def check_base_rule(rule_id,amount, country, request, context):
+def check_base_rule(rule_id, amount, country, request, context):
 	rule = BaseRule.objects.get(id=rule_id)
 	if rule.type == 'MAX' and amount > int(rule.parameter):
 		return False
@@ -507,13 +548,11 @@ def check_base_item_rule(rule_id, amount, context):
 	return True
 
 
-
-
 def check_item_rules(item, amount, context):
 	base_arr = []
 	complex_arr = []
 	itemRules = ComplexItemRule.objects.all().filter(item=item)
-	for rule in itemRules.reverse():
+	for rule in reversed(itemRules):
 		if rule.id in complex_arr:
 			continue
 		if check_item_rule(rule, amount, base_arr, complex_arr, context) is False:
@@ -531,7 +570,7 @@ def check_store_rules(store_of_item, amount, country, request, context):
 	base_arr = []
 	complex_arr = []
 	storeRules = ComplexStoreRule.objects.all().filter(store=store_of_item)
-	for rule in storeRules.reverse():
+	for rule in reversed(storeRules):
 		if rule.id in complex_arr:
 			continue
 		if check_store_rule(rule, amount, country, request, base_arr, complex_arr, context) is False:
@@ -544,10 +583,11 @@ def check_store_rules(store_of_item, amount, country, request, context):
 			return False
 	return True
 
+
 def check_store_rule(rule, amount, country, request, base_arr, complex_arr, context):
 	if rule.left[0] == '_':
 		base_arr.append(int(rule.left[1:]))
-		left = check_base_rule(int(rule.left[1:]),amount, country, request, context)
+		left = check_base_rule(int(rule.left[1:]), amount, country, request, context)
 		print('left')
 		print(str(left))
 	else:
@@ -556,7 +596,7 @@ def check_store_rule(rule, amount, country, request, base_arr, complex_arr, cont
 		left = check_store_rule(tosend, amount, country, request, base_arr, complex_arr, context)
 	if rule.right[0] == '_':
 		base_arr.append(int(rule.right[1:]))
-		right = check_base_rule(int(rule.right[1:]),amount, country, request, context)
+		right = check_base_rule(int(rule.right[1:]), amount, country, request, context)
 		print('right')
 		print(str(right))
 	else:
@@ -575,14 +615,14 @@ def check_store_rule(rule, amount, country, request, base_arr, complex_arr, cont
 def check_item_rule(rule, amount, base_arr, complex_arr, context):
 	if rule.left[0] == '_':
 		base_arr.append(int(rule.left[1:]))
-		left = check_base_item_rule(int(rule.left[1:]),amount, context)
+		left = check_base_item_rule(int(rule.left[1:]), amount, context)
 	else:
 		complex_arr.append(int(rule.left))
 		tosend = ComplexItemRule.objects.get(id=int(rule.left))
 		left = check_item_rule(tosend, amount, base_arr, complex_arr, context)
 	if rule.right[0] == '_':
 		base_arr.append(int(rule.right[1:]))
-		right = check_base_item_rule(int(rule.right[1:]),amount, context)
+		right = check_base_item_rule(int(rule.right[1:]), amount, context)
 	else:
 		complex_arr.append(int(rule.right))
 		tosend = ComplexItemRule.objects.get(id=int(rule.right))
@@ -603,16 +643,18 @@ def store_rules_string(store):
 	complex = []
 	storeRules = ComplexStoreRule.objects.all().filter(store=store)
 	for rule in reversed(storeRules):
-		print('id ' + str(rule.id))
 		if rule.id in complex_arr:
 			continue
-		complex.append(string_store_rule(rule, base_arr, complex_arr))
+		res = {"id": rule.id, "name": string_store_rule(rule, base_arr, complex_arr)}
+		complex.append(res)
 	storeBaseRules = BaseRule.objects.all().filter(store=store)
 	for rule in storeBaseRules:
 		if rule.id in base_arr:
 			continue
-		base.append(get_base_rule(rule.id))
+		res = {"id": rule.id, "name": get_base_rule(rule.id)}
+		base.append(res)
 	return complex + base
+
 
 def string_store_rule(rule, base_arr, complex_arr):
 	curr = '('
@@ -633,6 +675,7 @@ def string_store_rule(rule, base_arr, complex_arr):
 		curr += string_store_rule(tosend, base_arr, complex_arr)
 	curr += ')'
 	return curr
+
 
 def get_base_rule(rule_id):
 	rule = BaseRule.objects.get(id=rule_id)
@@ -844,7 +887,6 @@ def add_base_rule_to_store(request, pk, which_button):
 		return render(request, 'store/add_base_rule_to_store.html', context)
 
 
-
 def add_complex_rule_to_store_1(request, rule_id1, store_id, which_button):
 	if request.method == 'POST':
 		form = AddRuleToStore_withop(request.POST)
@@ -971,7 +1013,10 @@ def add_complex_rule_to_store_2(request, rule_id_before, store_id, which_button)
 		}
 		return render(request, 'store/add_complex_rule_to_store_2.html', context)
 
+
 from .models import BaseItemRule
+
+
 def add_base_rule_to_item(request, pk, which_button):
 	if request.method == 'POST':
 		form = AddRuleToItem(request.POST)
@@ -1005,6 +1050,7 @@ def add_base_rule_to_item(request, pk, which_button):
 			'which_button': which_button,
 		}
 		return render(request, 'store/add_base_rule_to_item.html', context)
+
 
 def add_complex_rule_to_item_1(request, rule_id1, item_id, which_button):
 	if request.method == 'POST':

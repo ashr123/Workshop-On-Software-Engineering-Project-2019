@@ -1,12 +1,12 @@
 {% extends 'store/homepage_store_owner.html' %}
 {% block page_content %}
-	<form method="post">{% csrf_token %}
+	<form method="post">
+	{% csrf_token %}
 		{{ form.as_p }}
-		{% csrf_token %}
 	<div>Rules:</div>
 		{% for rule in rules %}
 			<div>
-			<span>{{ rule }}</span>
+			<span>{{ rule.name }}</span>
 			<span>
 				<form action="/store/remove_rule_from_store/{{ rule.id }}" method="GET">
 						<button class="store_buttons" type="submit"><i class="fas fa-trash-alt"></i></button>
@@ -15,6 +15,7 @@
 			</div>
 			<hr>
 		{% endfor %}
+
 	<div>Items:</div>
 		{% for item in form_.items %}
 			<div class="check_item">{{ item }}</div>
