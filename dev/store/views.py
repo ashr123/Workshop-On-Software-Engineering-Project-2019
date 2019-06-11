@@ -508,7 +508,7 @@ def buy_item(request, pk):
 
 					transaction_id = pay_system.pay(str(card_number), str(month), str(year), str(holder), str(ccv),
 					                                str(id))
-					if (transaction_id == -1):
+					if (transaction_id == '-1'):
 						messages.warning(request, 'can`t pay !')
 						return redirect('/login_redirect')
 				else:
@@ -519,7 +519,7 @@ def buy_item(request, pk):
 					print("supply hand shake")
 					supply_transaction_id = supply_system.supply(str(name), str(address), str(city), str(country),
 					                                             str(zip))
-					if (supply_transaction_id == -1):
+					if (supply_transaction_id == '-1'):
 						chech_cancle = pay_system.cancel_pay(transaction_id)
 						messages.warning(request, 'can`t supply abort payment!')
 						return redirect('/login_redirect')

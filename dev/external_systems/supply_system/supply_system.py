@@ -14,14 +14,14 @@ class Supply():
 	def supply(self, name, address, city, country, zip):
 		try:
 			r = requests.post("https://cs-bgu-wsep.herokuapp.com/",
-			                  data={'action_type': 'supply', 'name': name, 'address': address, 'city': city,
+			                  data={'action_type': 'fail', 'name': name, 'address': address, 'city': city,
 			                        'country': country
 				                  , 'zip': zip})
 			print(r.status_code, r.reason)
 			print(r.text)
 			return r.text
 		except:
-			return -1
+			return '-1'
 
 	def cancel_supply(self, transaction_id):
 		try:
@@ -31,7 +31,7 @@ class Supply():
 			print(r.text)
 			return r.text
 		except:
-			return -1
+			return '-1'
 #
 #
 # class Supply:
