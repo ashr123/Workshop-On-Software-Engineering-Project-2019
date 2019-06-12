@@ -874,32 +874,6 @@ def add_discount_to_store(request, pk):
 		return render(request, 'store/add_discount_to_store.html', context)
 
 
-# def update_item(request, pk):
-# 	if request.method == "POST":
-#
-# 		form = ItemForm(request.POST or None)
-#
-# 		if form.is_valid():
-# 			obj = form.save(commit=False)
-#
-# 			obj.save()
-#
-# 			messages.success(request, "You successfully updated the post")
-#
-# 			return redirect(request.META.get('HTTP_REFERER', '/'))
-#
-# 		else:
-# 			return render(request, 'store/edit_item.html', {'form': form,
-# 			                                                'error': 'The form was not updated successfully. Please enter in a title and content'})
-# 	else:
-# 		return render(request, 'store/edit_item.html', {
-# 			'store': pk,
-# 			'form': ItemForm,
-# 			'store_name': Store.objects.get(id=pk).name,  # TODO
-# 			'user_name': request.user.username,
-# 			'text': SearchForm(),
-# 		})
-#
 
 def owner_feed(request, owner_id):
 	text = SearchForm()

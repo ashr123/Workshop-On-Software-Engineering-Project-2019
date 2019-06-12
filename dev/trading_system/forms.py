@@ -16,6 +16,26 @@ class SearchForm(forms.Form):
 	search = forms.CharField()
 
 
+
+
+class QForm(forms.Form):
+	def __init__(self, user, list_for_guest, *args, **kwargs, ):
+		# quantity = kwargs.pop('quantity')
+		super(QForm, self).__init__(*args, **kwargs)
+
+		if (user.is_anonymous):
+			list_ = list_for_guest
+			for x in list_:
+				self.fields['quantity' + str(x.id)] = forms.IntegerField(required=False, label='quantity ')
+		else:
+			list_ = []
+			carts = Cart.objects.filter(customer=user)
+			for cart in carts:
+				list_ += list(cart.items.all())
+			for x in list_:
+				self.fields['quantity' + str(x.id)] = forms.IntegerField(required=False, label='quantity: ')
+
+
 class CartForm(forms.Form):
 
 	def __init__(self, user, list_for_guest, *args, **kwargs):
@@ -36,7 +56,6 @@ class CartForm(forms.Form):
 		else:
 			carts = Cart.objects.filter(customer=user)
 			list_ = []
-			print('\nan 2 ', user.is_anonymous)
 			for cart in carts:
 				list_ += list(cart.items.all())
 			self.fields['items'] = forms.MultipleChoiceField(

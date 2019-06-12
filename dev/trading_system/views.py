@@ -22,45 +22,44 @@ from trading_system.observer import AuctionSubject
 from .models import AuctionParticipant
 from .routing import AUCTION_PARTICIPANT_URL
 
-
 django.setup()
 
 from django.contrib.auth.forms import UserCreationForm
 
 
 def def_super_user(request):
-   if request.method == 'POST':
-      form = UserCreationForm(request.POST)
-      if form.is_valid():
-         u = form.save()
-         u.is_superuser = True
-         u.is_staff = True
-         u.save()
-         messages.success(request, 'add super-user ' + str(u.username))
-         return render(request, 'homepage_guest.html', {'text': SearchForm()})
+	if request.method == 'POST':
+		form = UserCreationForm(request.POST)
+		if form.is_valid():
+			u = form.save()
+			u.is_superuser = True
+			u.is_staff = True
+			u.save()
+			messages.success(request, 'add super-user ' + str(u.username))
+			return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
-      else:
-         return redirect('/super_user')
+		else:
+			return redirect('/super_user')
 
-   else:
-      return render(request, 'trading_system/add_super_user.html', {'form': UserCreationForm()})
+	else:
+		return render(request, 'trading_system/add_super_user.html', {'form': UserCreationForm()})
 
 
 from django.contrib.auth.models import User
 
 
 def index(request: Any) -> HttpResponse:
-   superusers = User.objects.filter(is_superuser=True)
-   print((len(superusers)))
-   if (len(superusers) == 0):
-      return redirect('/super_user')
-   else:
-      return render(request, 'homepage_guest.html', {'text': SearchForm()})
+	superusers = User.objects.filter(is_superuser=True)
+	if (len(superusers) == 0):
+		return redirect('/super_user')
+	else:
+		return render(request, 'homepage_guest.html', {'text': SearchForm()})
+
 
 def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	if request.user.is_authenticated:
 		if "store_owners" in request.user.groups.values_list('name',
-		                                                       flat=True) or "store_managers" in request.user.groups.values_list(
+		                                                     flat=True) or "store_managers" in request.user.groups.values_list(
 			'name', flat=True):
 			return redirect('/store/home_page_owner/',
 			                {'text': SearchForm(), 'user_name': request.user.username, 'owner_id': request.user.pk, })
@@ -88,7 +87,7 @@ def show_cart(request: Any) -> HttpResponse:
 	if request.user.is_authenticated:
 		if "store_owners" in request.user.groups.values_list('name',
 		                                                     flat=True) or "store_managers" in request.user.groups.values_list(
-				'name', flat=True):
+			'name', flat=True):
 			base_template_name = 'store/homepage_store_owner.html'
 		else:
 			base_template_name = 'homepage_member.html'
@@ -251,18 +250,29 @@ def makeGuestCart(request):
 	return items_
 
 
+from django.forms import formset_factory
+from .forms import  QForm
+
+
 def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	# if not (request.user.is_authenticated):
 	# 	return makeGuestCart(request)
 	items_bought = []
 	if request.method == 'POST':
 		form = CartForm(request.user, makeGuestCart(request), request.POST)
+
 		if form.is_valid():
 
 			for item_id in form.cleaned_data.get('items'):
+
 				amount_in_db = Item.objects.get(id=item_id).quantity
 				if (amount_in_db > 0):
 					item = Item.objects.get(id=item_id)
+					try:
+						quantity_to_buy = request.POST.get('quantity' + str(item.id))
+						print('q----------------id:----' + str(item.id) + '------------'+quantity_to_buy)
+					except:
+						messages.warning(request, 'problem with quantity ')
 					item.quantity = amount_in_db - 1
 					item.save()
 					items_bought.append(item_id)
@@ -284,7 +294,8 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 
 			return redirect('/login_redirect')
 
-		messages.warning(request, 'error in :  ', form.errors)
+		err = '' + str(form.errors) + str(q.errors)
+		messages.warning(request, 'error in :  ' + err)
 		return redirect('/login_redirect')
 
 	else:
@@ -301,15 +312,26 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			list_ = None
 
 		form = CartForm(request.user, list_)
+		q_list = QForm(request.user, list_)
 		text = SearchForm()
 		user_name = request.user.username
+		size_ = 0
+		if (request.user.is_authenticated):
+			carts = Cart.objects.filter(customer=request.user)
+			items_of_user = []
+			for cart in carts:
+				items_of_user += list(cart.items.all())
+
+			size_ = len(items_of_user)
+		else:
+			size_ = len(list_)
 		context = {
 			'user_name': user_name,
 			'text': text,
 			'form': form,
-			'base_template_name': base_template_name
+			'base_template_name': base_template_name,
+			'qua': q_list,
 		}
-		print('\nlist :', list_)
 		return render(request, 'trading_system/cart_test.html', context)
 
 
