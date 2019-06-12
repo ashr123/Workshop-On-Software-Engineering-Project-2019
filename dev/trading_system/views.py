@@ -123,7 +123,7 @@ class SearchListView(ListView):
 		return context
 
 
-##ELHANANA - note that search returns the filtered items list
+
 def search(request: Any) -> QuerySet:
 	text = SearchForm(request.GET)
 	if text.is_valid():
@@ -172,14 +172,6 @@ def get_item_store(item_pk):
 
 	# Might cause bug. Need to apply the item-in-one-store condition
 	return list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))[0]
-
-
-def user_has_cart_for_store(store_pk, user_pk):
-	return len(Cart.objects.filter(customer_id=user_pk, store_id=store_pk)) > 0
-
-
-def user_has_cart_for_store(store_pk: int, user_pk: int) -> bool:
-	return len(Cart.objects.filter(customer_id=user_pk, store_id=store_pk)) > 0
 
 
 def open_cart_for_user_in_store(store_pk: int, user_pk: int) -> None:
@@ -294,7 +286,7 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 
 			return redirect('/login_redirect')
 
-		err = '' + str(form.errors) + str(q.errors)
+		err = '' + str(form.errors)
 		messages.warning(request, 'error in :  ' + err)
 		return redirect('/login_redirect')
 

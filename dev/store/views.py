@@ -815,6 +815,7 @@ def add_manager_to_store(request, pk):
 		if form.is_valid():
 			user_name = form.cleaned_data.get('user_name')
 			picked = form.cleaned_data.get('permissions')
+			print('picked:   ',picked)
 			is_owner = form.cleaned_data.get('is_owner')
 			[fail, message_] = add_manager_domain(user_name, picked, is_owner, pk, request.user.username)
 			if (fail):
