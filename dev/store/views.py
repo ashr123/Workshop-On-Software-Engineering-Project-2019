@@ -874,7 +874,6 @@ def add_discount_to_store(request, pk):
 		return render(request, 'store/add_discount_to_store.html', context)
 
 
-
 def owner_feed(request, owner_id):
 	text = SearchForm()
 	user_name = request.user.username
