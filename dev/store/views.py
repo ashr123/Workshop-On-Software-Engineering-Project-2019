@@ -424,9 +424,9 @@ def buy_logic(item_id, amount, amount_in_db, country, request, context):
 		if precentage1 != 0 and precentage2 != 0:
 			discount = str(precentage1) + " + " + str(precentage2)
 		else:
-			discount = str(precentage1+precentage2)
-		messages.success(request, "you have discount for this item: "+ discount +"%")
-		return True ,total, total_after_discount
+			discount = str(precentage1 + precentage2)
+		messages.success(request, "you have discount for this item: " + discount + "%")
+		return True, total, total_after_discount
 	else:
 		return False
 
@@ -485,7 +485,7 @@ def buy_item(request, pk):
 
 					transaction_id = pay_system.pay(str(card_number), str(month), str(year), str(holder), str(ccv),
 					                                str(id))
-					if (transaction_id == -1):
+					if (transaction_id == '-1'):
 						messages.warning(request, 'can`t pay !')
 						return redirect('/login_redirect')
 				else:
@@ -496,7 +496,7 @@ def buy_item(request, pk):
 					print("supply hand shake")
 					supply_transaction_id = supply_system.supply(str(name), str(address), str(city), str(country),
 					                                             str(zip))
-					if (supply_transaction_id == -1):
+					if (supply_transaction_id == '-1'):
 						chech_cancle = pay_system.cancel_pay(transaction_id)
 						messages.warning(request, 'can`t supply abort payment!')
 						return redirect('/login_redirect')
@@ -745,6 +745,68 @@ def itemAddedSucceffuly(request, store_id, id):
 	return render(request, 'store/item_detail.html')
 
 
+def add_manager_domain(user_name, picked, is_owner, pk, request_user_name):
+	messages_ = ''
+	try:
+		user_ = User.objects.get(username=user_name)
+	except:
+		fail = True
+		messages_ += 'no such user'
+		return [fail, messages_]
+	# messages.warning(request, 'no such user')
+	# return redirect('/store/add_manager_to_store/' + str(pk) + '/')
+	store_ = Store.objects.get(id=pk)
+	if user_name == request_user_name:
+		fail = True
+		messages_ += 'can`t add yourself as a manager!'
+		return [fail, messages_]
+	# messages.warning(request, 'can`t add yourself as a manager!')
+	# return redirect('/store/home_page_owner/')
+	pre_store_owners = store_.owners.all()
+	# print('\n owners: ' ,pre_store_owners)
+	for owner in pre_store_owners:
+		if (owner.username == user_name):
+			fail = True
+			messages_ += 'allready owner'
+			return [fail, messages_]
+		# messages.warning(request, 'allready owner')
+		# return redirect('/store/home_page_owner/')
+
+	if (user_ == None):
+		fail = True
+		messages_ += 'No such user'
+		return [fail, messages_]
+	# messages.warning(request, 'No such user')
+	# return redirect('/store/home_page_owner/')
+	for perm in picked:
+		assign_perm(perm, user_, store_)
+	if (is_owner):
+		try:
+			if store_.owners.get(id=user_.pk):
+				print('hhhhhhhhhhhhhhh')
+			store_owners_group = Group.objects.get(name="store_owners")
+			user_.groups.add(store_owners_group)
+			store_.owners.add(user_)
+			ObserverUser.objects.create(user_id=user_.pk,
+			                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(user_.pk)).save()
+		except:
+			return [True, 'allready manager']
+	else:
+		try:
+			if store_.managers.get(id=user_.pk):
+				print('hhhhhhhhhhhhhhh')
+			store_managers = Group.objects.get_or_create(name="store_managers")
+			store_managers = Group.objects.get(name="store_managers")
+			user_.groups.add(store_managers)
+			store_.managers.add(user_)
+			ObserverUser.objects.create(user_id=user_.pk,
+			                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(user_.pk)).save()
+		except:
+			return [True, 'allready manager ']
+
+	return [False, '']
+
+
 @permission_required_or_403('ADD_MANAGER', (Store, 'id', 'pk'))
 @login_required
 def add_manager_to_store(request, pk):
@@ -754,41 +816,10 @@ def add_manager_to_store(request, pk):
 			user_name = form.cleaned_data.get('user_name')
 			picked = form.cleaned_data.get('permissions')
 			is_owner = form.cleaned_data.get('is_owner')
-			try:
-				user_ = User.objects.get(username=user_name)
-			except:
-				messages.warning(request, 'no such user')
-				return redirect('/store/add_manager_to_store/' + str(pk) + '/')
-			store_ = Store.objects.get(id=pk)
-			if user_name == request.user.username:
-				messages.warning(request, 'can`t add yourself as a manager!')
+			[fail, message_] = add_manager_domain(user_name, picked, is_owner, pk, request.user.username)
+			if (fail):
+				messages.warning(request, message_)
 				return redirect('/store/home_page_owner/')
-			pre_store_owners = store_.owners.all()
-			# print('\n owners: ' ,pre_store_owners)
-			for owner in pre_store_owners:
-				if (owner.username == user_name):
-					messages.warning(request, 'allready owner')
-					return redirect('/store/home_page_owner/')
-
-			if (user_ == None):
-				messages.warning(request, 'No such user')
-				return redirect('/store/home_page_owner/')
-			for perm in picked:
-				assign_perm(perm, user_, store_)
-			if (is_owner):
-				store_owners_group = Group.objects.get(name="store_owners")
-				user_.groups.add(store_owners_group)
-				store_.owners.add(user_)
-				ObserverUser.objects.create(user_id=user_.pk,
-				                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(user_.pk)).save()
-			else:
-				store_managers = Group.objects.get_or_create(name="store_managers")
-				store_managers = Group.objects.get(name="store_managers")
-				user_.groups.add(store_managers)
-				store_.managers.add(user_)
-				ObserverUser.objects.create(user_id=user_.pk,
-				                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(user_.pk)).save()
-
 			messages.success(request, user_name + ' is appointed')
 			return redirect('/store/home_page_owner/')
 		messages.warning(request, 'error in :  ', form.errors)
@@ -842,33 +873,6 @@ def add_discount_to_store(request, pk):
 		}
 		return render(request, 'store/add_discount_to_store.html', context)
 
-
-# def update_item(request, pk):
-# 	if request.method == "POST":
-#
-# 		form = ItemForm(request.POST or None)
-#
-# 		if form.is_valid():
-# 			obj = form.save(commit=False)
-#
-# 			obj.save()
-#
-# 			messages.success(request, "You successfully updated the post")
-#
-# 			return redirect(request.META.get('HTTP_REFERER', '/'))
-#
-# 		else:
-# 			return render(request, 'store/edit_item.html', {'form': form,
-# 			                                                'error': 'The form was not updated successfully. Please enter in a title and content'})
-# 	else:
-# 		return render(request, 'store/edit_item.html', {
-# 			'store': pk,
-# 			'form': ItemForm,
-# 			'store_name': Store.objects.get(id=pk).name,  # TODO
-# 			'user_name': request.user.username,
-# 			'text': SearchForm(),
-# 		})
-#
 
 def owner_feed(request, owner_id):
 	text = SearchForm()

@@ -1,11 +1,42 @@
+<style>
+	.row {
+		display: flex;
+	}
+
+	.column {
+		float: left;
+		width: 150%;
+		padding: 10px;
+		height: 300px; /* Should be removed. Only for demonstration */
+	}
+</style>
+
+
 {% extends base_template_name %}
 {% block page_content %}
 	<h2 class="title">My Cart</h2>
+
 	<form id="my_cart" action="/show_cart" method='post'>
-		{% csrf_token %}
-		{% for item in form.items %}
-			<div class="check_item">{{ item }}</div>
-		{% endfor %}
-	<div id="buy_button_1"><input class="buttons" type="submit" value="Buy now!"/></div>
+		<div class="row">
+
+			<div class="column">
+				{% csrf_token %}
+			
+				{% for item in form.items %}
+					<div class="check_item">{{ item.}}</div>
+				{% endfor %}
+			</div>
+			<div class="column">
+				{% csrf_token %}
+{#				{% for c in int_ %}#}
+{#					<div class="check_item">{{ c }}</div>#}
+{#				{% endfor %}#}
+				{{ qua.as_ul }}
+
+			</div>
+		</div>
+
+
+		<div id="buy_button_1"><input class="buttons" type="submit" value="Buy now!"/></div>
 	</form>
 {% endblock %}

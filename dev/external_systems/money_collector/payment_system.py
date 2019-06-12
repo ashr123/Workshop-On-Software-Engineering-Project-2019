@@ -21,7 +21,7 @@ class Payment():
 			print(r.text)
 			return r.text
 		except:
-			return -1
+			return '-1'
 
 	def cancel_pay(self, transaction_id):
 		try:
@@ -31,4 +31,4 @@ class Payment():
 			print(r.text)
 			return r.text
 		except:
-			return -1
+			return '-1'
