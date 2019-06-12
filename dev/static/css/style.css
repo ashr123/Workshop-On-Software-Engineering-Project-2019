@@ -535,3 +535,10 @@
 #feed {
     margin-left: 30px;
 }
+
+#noa {
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+}

@@ -479,29 +479,6 @@ def buy_item(request, pk):
 			if valid == False:
 				messages.warning(request, 'there is no such amount ! please try again!')
 
-			# if (amount <= amount_in_db):
-			# 	print("good amount")
-			# 	total = amount * _item.price
-			# 	new_q = amount_in_db - amount
-			# 	total_after_discount = total
-			# 	# check item rules
-			# 	if check_item_rules(curr_item, amount, context) is False:
-			# 		messages.warning(request, "you can't buy due to item policies")
-			# 		return render(request, 'store/buy_item.html', context)
-			# 	store_of_item = Store.objects.get(items__id__contains=pk)
-			# 	# check store rules
-			# 	if check_store_rules(store_of_item, amount, country, request, context) is False:
-			# 		messages.warning(request, "you can't buy due to store policies")
-			# 		return render(request, 'store/buy_item.html', context)
-			# 	# check discounts
-			# 	[precentage1, total_after_discount] = get_discount_for_store(pk, amount, total)
-			# 	[precentage2, total_after_discount] = get_discount_for_item(pk, amount, total_after_discount)
-			# 	if precentage1 != 0 and precentage2 != 0:
-			# 		discount = str(precentage1) + " + " + str(precentage2)
-			# 	else:
-			# 		discount = str(precentage1+precentage2)
-			# 	messages.success(request, "you have discount for this item: "+ discount +"%")
-
 			try:
 				if pay_system.handshake():
 					print("pay hand shake")
@@ -1230,11 +1207,11 @@ class NotificationsListView(ListView):
 	template_name = 'store/owner_feed.html'
 
 
-def get_queryset(self):
-	user_ntfcs = NotificationUser.objects.filter(user=self.request.user.pk)
-	ntfcs_ids = list(map(lambda n: n.notification_id, user_ntfcs))
-	ntfcs = list(map(lambda pk: Notification.objects.get(id=pk), ntfcs_ids))
-	return ntfcs
+	def get_queryset(self):
+		user_ntfcs = NotificationUser.objects.filter(user=self.request.user.pk)
+		ntfcs_ids = list(map(lambda n: n.notification_id, user_ntfcs))
+		ntfcs = list(map(lambda pk: Notification.objects.get(id=pk), ntfcs_ids))
+		return ntfcs
 
 	def get_context_data(self, **kwargs):
 		context = super(NotificationsListView, self).get_context_data(**kwargs)  # get the default context data
