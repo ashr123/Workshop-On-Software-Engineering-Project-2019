@@ -21,4 +21,5 @@ urlpatterns = [
 	path('view_auctions', views.AuctionsListView.as_view()),
 	path('view_auction/<int:auction_pk>', views.view_auction),
 
+
 ]

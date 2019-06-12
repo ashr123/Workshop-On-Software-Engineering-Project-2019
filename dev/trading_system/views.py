@@ -15,6 +15,7 @@ from django.views.generic.list import ListView
 
 from dev.settings import PROJ_IP, PROJ_PORT
 from store.models import Item, Store
+from trading_system import service
 from trading_system.forms import SearchForm, SomeForm, CartForm
 # Create your views here.
 from trading_system.models import Cart, Auction, CartGuest
@@ -109,7 +110,12 @@ class SearchListView(ListView):
 	template_name = 'trading_system/search_results.html'
 
 	def get_queryset(self):
-		return search(self.request)
+		text = SearchForm(self.request.GET)
+		if text.is_valid():
+			# spell checker
+			# correct_word = checker.Spellchecker(text)
+			# items = Item.objects.filter(name=correct_word)
+			return service.search(text.cleaned_data.get('search'))
 
 	def get_context_data(self, **kwargs) -> Dict[str, Any]:
 		context = super().get_context_data(**kwargs)  # get the default context data

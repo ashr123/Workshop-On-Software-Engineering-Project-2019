@@ -15,10 +15,10 @@ from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.views.generic.list import ListView
 from guardian.decorators import permission_required_or_403
 from guardian.shortcuts import assign_perm
-
 from trading_system.forms import SearchForm
 from trading_system.models import Notification, ObserverUser, NotificationUser
 from trading_system.observer import ItemSubject
+from trading_system import service
 from . import forms
 from .forms import BuyForm, AddManagerForm, AddRuleToItem, AddRuleToStore_base, AddRuleToStore_withop, \
 	AddRuleToStore_two, MaxMinConditionForm, AddDiscountForm
@@ -100,23 +100,10 @@ def add_store(request):
 def submit_open_store(request):
 	open_store_form = forms.OpenStoreForm(request.GET)
 	if open_store_form.is_valid():
-		store = Store.objects.create(name=open_store_form.cleaned_data.get('name'),
-		                             description=open_store_form.cleaned_data.get('description'))
-		store.owners.add(request.user)
-		store.save()
-		_user = request.user
-		messages.success(request, 'Your Store was added successfully!')  # <-
-		my_group = Group.objects.get_or_create(name="store_owners")
-		my_group = Group.objects.get(name="store_owners")
-		ObserverUser.objects.create(user_id=_user.pk,
-		                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(_user.pk)).save()
-		_user.groups.add(my_group)
-		assign_perm('ADD_ITEM', _user, store)
-		assign_perm('REMOVE_ITEM', _user, store)
-		assign_perm('EDIT_ITEM', _user, store)
-		assign_perm('ADD_MANAGER', _user, store)
-		assign_perm('REMOVE_STORE', _user, store)
-		assign_perm('ADD_DISCOUNT', _user, store)
+		msg = service.open_store(store_name=open_store_form.cleaned_data.get('name'),
+		                         desc=open_store_form.cleaned_data.get('description'),
+		                         user_id=request.user.pk)
+		messages.success(request, msg)
 		return redirect('/store/home_page_owner')
 	else:
 		messages.warning(request, 'Please correct the error and try again.')  # <-
@@ -745,68 +732,6 @@ def itemAddedSucceffuly(request, store_id, id):
 	return render(request, 'store/item_detail.html')
 
 
-def add_manager_domain(user_name, picked, is_owner, pk, request_user_name):
-	messages_ = ''
-	try:
-		user_ = User.objects.get(username=user_name)
-	except:
-		fail = True
-		messages_ += 'no such user'
-		return [fail, messages_]
-	# messages.warning(request, 'no such user')
-	# return redirect('/store/add_manager_to_store/' + str(pk) + '/')
-	store_ = Store.objects.get(id=pk)
-	if user_name == request_user_name:
-		fail = True
-		messages_ += 'can`t add yourself as a manager!'
-		return [fail, messages_]
-	# messages.warning(request, 'can`t add yourself as a manager!')
-	# return redirect('/store/home_page_owner/')
-	pre_store_owners = store_.owners.all()
-	# print('\n owners: ' ,pre_store_owners)
-	for owner in pre_store_owners:
-		if (owner.username == user_name):
-			fail = True
-			messages_ += 'allready owner'
-			return [fail, messages_]
-		# messages.warning(request, 'allready owner')
-		# return redirect('/store/home_page_owner/')
-
-	if (user_ == None):
-		fail = True
-		messages_ += 'No such user'
-		return [fail, messages_]
-	# messages.warning(request, 'No such user')
-	# return redirect('/store/home_page_owner/')
-	for perm in picked:
-		assign_perm(perm, user_, store_)
-	if (is_owner):
-		try:
-			if store_.owners.get(id=user_.pk):
-				print('hhhhhhhhhhhhhhh')
-			store_owners_group = Group.objects.get(name="store_owners")
-			user_.groups.add(store_owners_group)
-			store_.owners.add(user_)
-			ObserverUser.objects.create(user_id=user_.pk,
-			                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(user_.pk)).save()
-		except:
-			return [True, 'allready manager']
-	else:
-		try:
-			if store_.managers.get(id=user_.pk):
-				print('hhhhhhhhhhhhhhh')
-			store_managers = Group.objects.get_or_create(name="store_managers")
-			store_managers = Group.objects.get(name="store_managers")
-			user_.groups.add(store_managers)
-			store_.managers.add(user_)
-			ObserverUser.objects.create(user_id=user_.pk,
-			                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(user_.pk)).save()
-		except:
-			return [True, 'allready manager ']
-
-	return [False, '']
-
-
 @permission_required_or_403('ADD_MANAGER', (Store, 'id', 'pk'))
 @login_required
 def add_manager_to_store(request, pk):
@@ -816,7 +741,7 @@ def add_manager_to_store(request, pk):
 			user_name = form.cleaned_data.get('user_name')
 			picked = form.cleaned_data.get('permissions')
 			is_owner = form.cleaned_data.get('is_owner')
-			[fail, message_] = add_manager_domain(user_name, picked, is_owner, pk, request.user.username)
+			[fail, message_] = service.add_manager(user_name, picked, is_owner, pk, request.user.username)
 			if (fail):
 				messages.warning(request, message_)
 				return redirect('/store/home_page_owner/')
@@ -1209,7 +1134,6 @@ def remove_rule_from_store(request, pk):
 class NotificationsListView(ListView):
 	model = Notification
 	template_name = 'store/owner_feed.html'
-
 
 	def get_queryset(self):
 		user_ntfcs = NotificationUser.objects.filter(user=self.request.user.pk)
