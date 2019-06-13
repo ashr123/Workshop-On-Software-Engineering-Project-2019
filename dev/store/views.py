@@ -25,7 +25,7 @@ from .forms import BuyForm, AddManagerForm, AddRuleToItem, AddRuleToStore_base, 
 from .forms import ShippingForm, AddRuleToItem_withop, AddRuleToItem_two
 from .models import Item, ComplexStoreRule, ComplexItemRule
 from .models import Store
-import simplejson as s_json
+#import simplejson as s_json
 
 
 def get_client_ip(request):

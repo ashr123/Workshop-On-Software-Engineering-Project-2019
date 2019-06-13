@@ -235,6 +235,13 @@ def have_no_more_stores(user_pk):
 	tmp = Store.objects.filter(owners__username__contains=user_pk)
 	return len(tmp) == 0
 
+<<<<<<< HEAD
+def get_store_details(store_id):
+	store = Store.objects.get(pk=store_id)
+	items = list(map(lambda i: str(i),store.items.all()))
+	owners = list(map(lambda o: User.objects.get(pk=o.id).username,store.owners.all()))
+	managers = list(map(lambda m: (User.objects.get(pk=m.id).username).name,store.managers.all()))
+	return {"name": store.name, "description": store.description, "owners": owners, "managers": managers, "items": items}
 
 
 def get_user_store_list(user_id):
@@ -254,6 +261,8 @@ def get_item_details(item_id):
 	        "description": item.description,
 	        "price": item.price,
 	        "quantity": item.quantity}
+=======
+
 def get_item_store(item_pk):
 	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
 	# Might cause bug. Need to apply the item-in-one-store condition
@@ -328,3 +337,4 @@ def user_has_cart_for_store(store_pk, user_pk):
 
 def user_has_cart_for_store(store_pk: int, user_pk: int) -> bool:
 	return len(Cart.objects.filter(customer_id=user_pk, store_id=store_pk)) > 0
+>>>>>>> origin/noa_delete_rule
