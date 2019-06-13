@@ -92,7 +92,7 @@ def open_store(store_name, desc, user_id):
 	assign_perm('ADD_DISCOUNT', _user, store)
 	return 'Your Store was added successfully!'
 
-def add_base_rule_to_store(rule_type, store_id,operator, parameter):
+def add_base_rule_to_store(rule_type, store_id, parameter):
 	if rule_type == 'MAX_QUANTITY' or rule_type == 'MIN_QUANTITY':
 		try:
 			int(parameter)
