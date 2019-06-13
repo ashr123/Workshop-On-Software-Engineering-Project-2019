@@ -25,7 +25,7 @@ from .forms import BuyForm, AddManagerForm, AddRuleToItem, AddRuleToStore_base, 
 from .forms import ShippingForm, AddRuleToItem_withop, AddRuleToItem_two
 from .models import Item, ComplexStoreRule, ComplexItemRule
 from .models import Store
-#import simplejson as s_json
+import simplejson as s_json
 
 
 def get_client_ip(request):
@@ -206,6 +206,16 @@ class ItemUpdate(UpdateView):
 		context['pk'] = itemId
 		context['rules'] = rules
 		return context
+
+	def get_object(self, queryset=None):
+		item_details = service.get_item_details(item_id= self.kwargs['pk'])
+		return Item.objects.create(
+			name=item_details['name'],
+			description=item_details['description'],
+			category= item_details['category'],
+			price= item_details['price'],
+			quantity= item_details['quantity']
+		)
 
 def item_rules_string(itemId):
 	base_arr = []
