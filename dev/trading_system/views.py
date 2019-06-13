@@ -145,6 +145,26 @@ def get_item_store(item_pk):
 	return stores[0]
 
 
+
+def delete_item_from_cart(request, item_pk):
+	if (request.user.is_authenticated):
+		item_store = get_item_store(item_pk)
+		cart = get_cart(item_store, request.user.pk)
+		cart.items.remove(item_pk)
+		messages.success(request, 'remove to cart successfully')
+		return redirect('/login_redirect')
+	else:
+
+		cartG = request.session['cart']
+		cartG['items_id'].remove(item_pk)
+
+		request.session['cart'] = cartG
+
+		messages.success(request, 'remove to cart successfully')
+		return redirect('/login_redirect')
+
+
+
 def add_item_to_cart(request, item_pk):
 	if (request.user.is_authenticated):
 		item_store = get_item_store(item_pk)
