@@ -2,7 +2,7 @@ from django.contrib.auth.models import User, Group
 from django.db.models import Q
 from guardian.shortcuts import assign_perm
 
-from store.models import Store, Item
+from store.models import Store, Item, BaseRule, ComplexStoreRule
 from trading_system.models import ObserverUser
 
 
@@ -91,3 +91,39 @@ def open_store(store_name, desc, user_id):
 	assign_perm('REMOVE_STORE', _user, store)
 	assign_perm('ADD_DISCOUNT', _user, store)
 	return 'Your Store was added successfully!'
+
+def add_base_rule_to_store(rule_type, store_id,operator, parameter):
+	if rule_type == 'MAX_QUANTITY' or rule_type == 'MIN_QUANTITY':
+		try:
+			int(parameter)
+			if int(parameter) > 0:
+				pass
+			else:
+				# messages.warning(request, 'Enter a number please')
+				return [False, 'Enter a positive number please']
+		except ValueError:
+			# messages.warning(request, 'Enter a number please')
+			return [False, 'Enter a number please']
+			# return redirect('/store/home_page_owner/')
+	brule = BaseRule(store=Store.objects.get(id=store_id), type=rule_type, parameter=parameter)
+	brule.save()
+	return [True, brule.id]
+
+def add_complex_rule_to_store_1(rule_type,prev_rule, store_id, operator,  parameter):
+	if rule_type == 'MAX_QUANTITY' or rule_type == 'MIN_QUANTITY':
+		try:
+			int(parameter)
+			if int(parameter) > 0:
+				pass
+			else:
+				return [False, 'Enter a positive number please']
+		except ValueError:
+			return [False, 'Enter a number please']
+	store = Store.objects.get(id=store_id)
+	baseRule = BaseRule(store=store, type=rule_type, parameter=parameter)
+	baseRule.save()
+	rule_id2 = baseRule.id
+	rule2_temp = '_' + str(rule_id2)
+	cr = ComplexStoreRule(left=prev_rule, right=rule2_temp, operator=operator, store=store)
+	cr.save()
+	return [True, cr.id]

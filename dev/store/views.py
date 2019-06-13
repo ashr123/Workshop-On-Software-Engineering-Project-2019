@@ -825,31 +825,23 @@ def add_base_rule_to_store(request, pk, which_button):
 		form = AddRuleToStore_base(request.POST)
 		if form.is_valid():
 			rule_id = -1
-			store = Store.objects.get(id=pk)
+			# store = Store.objects.get(id=pk)
 			rule = form.cleaned_data.get('rule')
 			# operator = form.cleaned_data.get('operator')
 			parameter = form.cleaned_data.get('parameter')
-			if rule == 'MAX_QUANTITY' or rule == 'MIN_QUANTITY':
-				try:
-					int(parameter)
-					if int(parameter) > 0:
-						pass
-					else:
-						messages.warning(request, 'Enter a number please')
-						return redirect('/store/home_page_owner/')
-				except ValueError:
-					messages.warning(request, 'Enter a number please')
+			ans = service.add_base_rule_to_store(rule_type=rule,store_id= pk, parameter=parameter)
+			if ans[0] ==True:
+				rule_id = ans[1]
+				if which_button == 'ok':
+					messages.success(request, 'added rule : ' + str(rule) + ' successfully!')
 					return redirect('/store/home_page_owner/')
-			brule = BaseRule(store=store, type=rule, parameter=parameter)
-			brule.save()
-			rule_id = brule.id
-			if which_button == 'ok':
-				messages.success(request, 'added rule : ' + str(rule) + ' successfully!')
+				if which_button == 'complex1':
+					return redirect('/store/add_complex_rule_to_store_1/' + '_' + str(rule_id) + '/' + str(pk) + '/a')
+				if which_button == 'complex2':
+					return redirect('/store/add_complex_rule_to_store_2/' + '_' + str(rule_id) + '/' + str(pk) + '/a')
+			else:
+				messages.warning(request, ans[1])
 				return redirect('/store/home_page_owner/')
-			if which_button == 'complex1':
-				return redirect('/store/add_complex_rule_to_store_1/' + '_' + str(rule_id) + '/' + str(pk) + '/a')
-			if which_button == 'complex2':
-				return redirect('/store/add_complex_rule_to_store_2/' + '_' + str(rule_id) + '/' + str(pk) + '/a')
 		else:
 			messages.warning(request, form.errors)
 			return redirect('/store/home_page_owner/')
@@ -876,24 +868,25 @@ def add_complex_rule_to_store_1(request, rule_id1, store_id, which_button):
 			rule = form.cleaned_data.get('rule')
 			operator = form.cleaned_data.get('operator')
 			parameter = form.cleaned_data.get('parameter')
-			if rule == 'MAX_QUANTITY' or rule == 'MIN_QUANTITY':
-				try:
-					int(parameter)
-					if int(parameter) > 0:
-						pass
-					else:
-						messages.warning(request, 'Enter a number please')
-						return redirect('/store/home_page_owner/')
-				except ValueError:
-					messages.warning(request, 'Enter a number please')
-					return redirect('/store/home_page_owner/')
-			baseRule = BaseRule(store=store, type=rule, parameter=parameter)
-			baseRule.save()
-			rule_id2 = baseRule.id
-			rule2_temp = '_' + str(rule_id2)
-			cr = ComplexStoreRule(left=rule_id1, right=rule2_temp, operator=operator, store=store)
-			cr.save()
-			rule_to_ret = cr.id
+			# if rule == 'MAX_QUANTITY' or rule == 'MIN_QUANTITY':
+			# 	try:
+			# 		int(parameter)
+			# 		if int(parameter) > 0:
+			# 			pass
+			# 		else:
+			# 			messages.warning(request, 'Enter a number please')
+			# 			return redirect('/store/home_page_owner/')
+			# 	except ValueError:
+			# 		messages.warning(request, 'Enter a number please')
+			# 		return redirect('/store/home_page_owner/')
+			# baseRule = BaseRule(store=store, type=rule, parameter=parameter)
+			# baseRule.save()
+			# rule_id2 = baseRule.id
+			# rule2_temp = '_' + str(rule_id2)
+			# cr = ComplexStoreRule(left=rule_id1, right=rule2_temp, operator=operator, store=store)
+			# cr.save()
+			# rule_to_ret = cr.id
+			ans = service.add_complex_rule_to_store_1(rule_type=rule, prev_rule=rule_id1, store_id=store_id, operator=operator, parameter=parameter)
 			if which_button == 'ok':
 				messages.success(request, 'added rule successfully!')
 				return redirect('/store/home_page_owner/')
