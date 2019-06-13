@@ -6,7 +6,7 @@ class Payment():
 	def handshake(self):
 		try:
 			r = requests.post("https://cs-bgu-wsep.herokuapp.com/", data={'action_type': 'handshake'})
-			print(r.status_code, r.reason)
+			print('pay_____________________________'+r.status_code, r.reason)
 			return r.reason == 'OK'
 		except:
 			return False

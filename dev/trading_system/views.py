@@ -14,6 +14,7 @@ from django.views.generic import DetailView
 from django.views.generic.list import ListView
 
 from dev.settings import PROJ_IP, PROJ_PORT
+from store.forms import PayForm, ShippingForm
 from store.models import Item, Store
 from trading_system.forms import SearchForm, SomeForm, CartForm
 # Create your views here.
@@ -252,6 +253,34 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	items_bought = []
 	if request.method == 'POST':
 		form = CartForm(request.user, makeGuestCart(request), request.POST)
+		shipping_form = ShippingForm(request.POST)
+		supply_form = PayForm(request.POST)
+
+		if shipping_form.is_valid() and supply_form.is_valid():
+			# shipping
+			country = shipping_form.cleaned_data.get('country')
+			city = shipping_form.cleaned_data.get('city')
+			zip = shipping_form.cleaned_data.get('zip')
+			address = shipping_form.cleaned_data.get('address')
+			name = shipping_form.cleaned_data.get('name')
+
+			shipping_details = {'country': country, 'city': city, 'zip': zip, 'address': address, 'name': name}
+
+			# card
+
+			card_number = supply_form.cleaned_data.get('card_number')
+			month = supply_form.cleaned_data.get('month')
+			year = supply_form.cleaned_data.get('year')
+			holder = supply_form.cleaned_data.get('holder')
+			ccv = supply_form.cleaned_data.get('ccv')
+			id = supply_form.cleaned_data.get('id')
+
+			card_details = {'card_number': card_number, 'month': month, 'year': year, 'holder': holder, 'ccv': ccv,
+			                'id': id}
+		else:
+			err = '' + str(shipping_form.errors) +str(supply_form.errors)
+			messages.warning(request, 'error in :  ' + err)
+			return redirect('/login_redirect')
 
 		if form.is_valid():
 
@@ -260,35 +289,42 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 				amount_in_db = Item.objects.get(id=item_id).quantity
 				if (amount_in_db > 0):
 					item = Item.objects.get(id=item_id)
+					quantity_to_buy = 1
 					try:
 						quantity_to_buy = request.POST.get('quantity' + str(item.id))
 						print('q----------------id:----' + str(item.id) + '------------'+quantity_to_buy)
 					except:
 						messages.warning(request, 'problem with quantity ')
-					item.quantity = amount_in_db - 1
-					item.save()
-					items_bought.append(item_id)
-					if (request.user.is_authenticated):
-						cart = Cart.objects.get(customer=request.user)
-						cart.items.remove(item)
+					# item.quantity = amount_in_db - 1
+					# item.save()
+					from store.views import buy_logic
+					valid, total, total_after_discount, messages_ = buy_logic(item_id, int(quantity_to_buy), amount_in_db,
+					                                                          request.user, shipping_details,
+					                                                          card_details)
+					if valid == False:
+						messages.warning(request, 'can`t buy item : '+str(item_id))
+						messages.warning(request, 'reason : ' + str(messages_))
 					else:
-						cartG = request.session['cart']
-						cartG['items_id'].remove(Decimal(item_id))
-						request.session['cart'] = cartG
+						messages.success(request, ' buy item : '+str(item_id))
+						items_bought.append(item_id)
+						if (request.user.is_authenticated):
+							cart = Cart.objects.get(customer=request.user)
+							cart.items.remove(item)
+						else:
+							cartG = request.session['cart']
+							cartG['items_id'].remove(Decimal(item_id))
+							request.session['cart'] = cartG
 
-					if (item.quantity == 0):
-						item.delete()
 
-				else:
-					messages.warning(request, 'not enough amount of this item ')
-					return redirect('/login_redirect')
-			messages.success(request, 'Thank you! you just bought items from cart')
+
+
+
 
 			return redirect('/login_redirect')
-
-		err = '' + str(form.errors)
-		messages.warning(request, 'error in :  ' + err)
-		return redirect('/login_redirect')
+		else:
+			err = '' + str(form.errors)
+			messages.warning(request, 'error in :  ' + err)
+			return redirect('/login_redirect')
 
 	else:
 		list_ = []
@@ -323,6 +359,8 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			'form': form,
 			'base_template_name': base_template_name,
 			'qua': q_list,
+			'card': PayForm(),
+			'shipping': ShippingForm(),
 		}
 		return render(request, 'trading_system/cart_test.html', context)
 
