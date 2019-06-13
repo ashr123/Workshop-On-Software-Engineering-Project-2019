@@ -3,24 +3,25 @@
 	<form method="post">{% csrf_token %}
 		{{ form.as_p }}
 		{% csrf_token %}
-	<div>Rules:</div>
-		{% for rule in rules %}
-			<div>
-			<span>{{ rule }}</span>
-			<span>
-				<form action="/store/remove_rule_from_store/{{ rule.id }}" method="GET">
-						<button class="store_buttons" type="submit"><i class="fas fa-trash-alt"></i></button>
-				</form>
-			</span>
-			</div>
-			<hr>
-		{% endfor %}
-	<div>Items:</div>
+		<div>Items:</div>
 		{% for item in form_.items %}
 			<div class="check_item">{{ item }}</div>
 		{% endfor %}
 		<input type="submit" value="Update">
 	</form>
+	<div>Rules:</div>
+	{% for rule in rules %}
+		<div>
+			<span>{{ rule.name }}</span>
+			<span>
+				<form action="/store/remove_rule_from_store/{{ rule.id }}/{{ rule.type }}/{{ rule.store }}"
+				      method="GET">
+						<button type="submit">Delete</button>
+				</form>
+			</span>
+		</div>
+		<hr>
+	{% endfor %}
 	{#	<div>#}
 	{#	<form id="my_cart" action="/show_cart" method='post'>#}
 	{#	#}
