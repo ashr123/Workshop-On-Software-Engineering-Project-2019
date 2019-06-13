@@ -74,8 +74,7 @@ def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
 
-def register(request: Any) -> HttpResponse:
-	return render(request, 'trading_system/register.html')
+
 
 
 def item(request: Any, id: int) -> HttpResponse:
@@ -101,8 +100,7 @@ def show_cart(request: Any) -> HttpResponse:
 		base_template_name = 'homepage_guest.html'
 
 
-def home_button(request: Any) -> HttpResponseRedirect:
-	return redirect('/login_redirect')
+
 
 
 class SearchListView(ListView):
@@ -144,60 +142,7 @@ def search(request: Any) -> QuerySet:
 cart_index = 0
 
 
-def get_item_store(item_pk):
-	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
-	# Might cause bug. Need to apply the item-in-one-store condition
-	return stores[0]
 
-
-def add_item_to_cart(request, item_pk):
-	if (request.user.is_authenticated):
-		item_store = get_item_store(item_pk)
-		cart = get_cart(item_store, request.user.pk)
-		if cart is None:
-			open_cart_for_user_in_store(item_store.pk, request.user.pk)  # TODO
-			cart = get_cart(item_store, request.user.pk)
-		cart.items.add(item_pk)
-		messages.success(request, 'add to cart successfully')
-		return redirect('/login_redirect')
-	else:
-		if 'cart' in request.session:
-			cartG = request.session['cart']
-			cartG['items_id'].append(item_pk)
-		else:
-			cartG = CartGuest([item_pk]).serialize()
-
-		request.session['cart'] = cartG
-
-		messages.success(request, 'add to cart successfully')
-		return redirect('/login_redirect')
-
-
-def get_item_store(item_pk):
-	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
-
-	# Might cause bug. Need to apply the item-in-one-store condition
-	return list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))[0]
-
-
-def user_has_cart_for_store(store_pk, user_pk):
-	return len(Cart.objects.filter(customer_id=user_pk, store_id=store_pk)) > 0
-
-
-def user_has_cart_for_store(store_pk: int, user_pk: int) -> bool:
-	return len(Cart.objects.filter(customer_id=user_pk, store_id=store_pk)) > 0
-
-
-def open_cart_for_user_in_store(store_pk: int, user_pk: int) -> None:
-	Cart(customer_id=user_pk, store_id=store_pk).save()
-
-
-def get_cart(store_pk, user_pk):
-	carts = Cart.objects.filter(customer_id=user_pk, store_id=store_pk)
-	if len(carts) == 0:
-		return None
-	else:
-		return carts[0]
 
 
 class CartDetail(DetailView):
@@ -228,6 +173,30 @@ class CartsListView(ListView):
 		return Cart.objects.filter(customer_id=self.request.user.pk)
 
 
+
+
+
+
+
+
+
+
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+
+
+def register(request: Any) -> HttpResponse:
+	return render(request, 'trading_system/register.html')
+
+def home_button(request: Any) -> HttpResponseRedirect:
+	return redirect('/login_redirect')
+
+
 def approve_event(request: Any) -> HttpResponse:
 	if request.method == 'POST':
 		form = SomeForm(request.POST)
@@ -240,25 +209,10 @@ def approve_event(request: Any) -> HttpResponse:
 		form = SomeForm
 	return render(request, 'check_box_items.html', {'form': form})
 
-
 from decimal import Decimal
 
-
-def makeGuestCart(request):
-	if (request.user.is_authenticated):
-		return []
-	items_ = []
-	cartG = request.session['cart']
-	id_list = cartG['items_id']
-	for id in id_list:
-		items_ += list([Item.objects.get(id=id)])
-
-	return items_
-
-
 from django.forms import formset_factory
-from .forms import  QForm
-
+from .forms import QForm
 
 def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	# if not (request.user.is_authenticated):
@@ -266,32 +220,31 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	items_bought = []
 	if request.method == 'POST':
 		form = CartForm(request.user, makeGuestCart(request), request.POST)
-
 		if form.is_valid():
-
 			for item_id in form.cleaned_data.get('items'):
-
-				amount_in_db = Item.objects.get(id=item_id).quantity
-				if (amount_in_db > 0):
-					item = Item.objects.get(id=item_id)
+				# amount_in_db = Item.objects.get(id=item_id).quantity
+				# if (amount_in_db > 0):
+				if service.amount_in_db(item_id):
 					try:
-						quantity_to_buy = request.POST.get('quantity' + str(item.id))
-						print('q----------------id:----' + str(item.id) + '------------'+quantity_to_buy)
+						quantity_to_buy = request.POST.get('quantity' + str(item_id))
+						print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
 					except:
 						messages.warning(request, 'problem with quantity ')
-					item.quantity = amount_in_db - 1
-					item.save()
+					# item = Item.objects.get(id=item_id)
+					# item.quantity = amount_in_db - 1
+					# item.save()
 					items_bought.append(item_id)
-					if (request.user.is_authenticated):
-						cart = Cart.objects.get(customer=request.user)
-						cart.items.remove(item)
+					if service.is_authenticated(request.user.pk):
+						# cart = Cart.objects.get(customer=request.user)
+						# cart.items.remove(item)
+						service.remove_item_from_cart(request.user.pk, item_id)
 					else:
 						cartG = request.session['cart']
 						cartG['items_id'].remove(Decimal(item_id))
 						request.session['cart'] = cartG
 
-					if (item.quantity == 0):
-						item.delete()
+					# if (item.quantity == 0):
+					# 	item.delete()
 
 				else:
 					messages.warning(request, 'not enough amount of this item ')
@@ -383,3 +336,77 @@ def view_auction(request, auction_pk):
 		'url': AUCTION_PARTICIPANT_URL
 	}
 	return render(request, 'trading_system/auction_feed.html', context)
+
+
+# def get_item_store(item_pk):
+# 	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
+# 	# Might cause bug. Need to apply the item-in-one-store condition
+# 	return stores[0]
+
+
+def add_item_to_cart(request, item_pk):
+	ans = service.add_item_to_cart(request.user.pk, item_pk)
+	if ans is True:
+		messages.success(request, 'add to cart successfully')
+		return redirect('/login_redirect')
+	else:
+		if 'cart' in request.session:
+			cartG = request.session['cart']
+			cartG['items_id'].append(item_pk)
+		else:
+			cartG = CartGuest([item_pk]).serialize()
+
+		request.session['cart'] = cartG
+		messages.success(request, 'add to cart successfully')
+		return redirect('/login_redirect')
+
+
+# if (request.user.is_authenticated):
+# 	item_store = get_item_store(item_pk)
+# 	cart = get_cart(item_store, request.user.pk)
+# 	if cart is None:
+# 		open_cart_for_user_in_store(item_store.pk, request.user.pk)  # TODO
+# 		cart = get_cart(item_store, request.user.pk)
+# 	cart.items.add(item_pk)
+# 	messages.success(request, 'add to cart successfully')
+# 	return redirect('/login_redirect')
+# else:
+# 	if 'cart' in request.session:
+# 		cartG = request.session['cart']
+# 		cartG['items_id'].append(item_pk)
+# 	else:
+# 		cartG = CartGuest([item_pk]).serialize()
+#
+# 	request.session['cart'] = cartG
+#
+# 	messages.success(request, 'add to cart successfully')
+# 	return redirect('/login_redirect')
+
+
+# def get_item_store(item_pk):
+# 	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
+#
+# 	# Might cause bug. Need to apply the item-in-one-store condition
+# 	return list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))[0]
+
+
+# def open_cart_for_user_in_store(store_pk: int, user_pk: int) -> None:
+# 	Cart(customer_id=user_pk, store_id=store_pk).save()
+
+
+# def get_cart(store_pk, user_pk):
+# 	carts = Cart.objects.filter(customer_id=user_pk, store_id=store_pk)
+# 	if len(carts) == 0:
+# 		return None
+# 	else:
+# 		return carts[0]
+
+def makeGuestCart(request):
+	if (service.is_authenticated(request.user.pk)):
+		return []
+	items_ = []
+	cartG = request.session['cart']
+	id_list = cartG['items_id']
+	for id in id_list:
+		items_ += list([service.get_item(id)])
+	return items_

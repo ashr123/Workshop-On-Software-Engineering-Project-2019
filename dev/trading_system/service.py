@@ -66,3 +66,23 @@ def have_no_more_stores(owner_name):
 
 def delete_store(store_id):
 	return domain.delete_store(store_id=store_id)
+
+
+def add_item_to_cart(user_id, item_id):
+	return domain.add_item_to_cart(user_id, item_id)
+
+
+def is_authenticated(user_id):
+	return domain.is_authenticated(user_id)
+
+
+def get_item(id):
+	return domain.get_item(id)
+
+
+def amount_in_db(item_id):
+	return domain.amount_in_db(item_id)
+
+
+def remove_item_from_cart(user_id, item_id):
+	return domain.remove_item_from_cart(user_id, item_id)

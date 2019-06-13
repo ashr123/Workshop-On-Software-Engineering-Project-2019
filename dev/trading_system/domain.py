@@ -3,7 +3,7 @@ from django.db.models import Q
 from guardian.shortcuts import assign_perm
 
 from store.models import Store, Item, BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule
-from trading_system.models import ObserverUser
+from trading_system.models import ObserverUser, Cart
 
 
 def add_manager(user_name, picked, is_owner, pk, request_user_name):
@@ -95,110 +95,113 @@ def open_store(store_name, desc, user_id):
 
 
 def add_base_rule_to_store(rule_type, store_id, parameter):
-    if rule_type == 'MAX_QUANTITY' or rule_type == 'MIN_QUANTITY':
-        try:
-            int(parameter)
-            if int(parameter) > 0:
-                pass
-            else:
-                # messages.warning(request, 'Enter a number please')
-                return [False, 'Enter a positive number please']
-        except ValueError:
-            # messages.warning(request, 'Enter a number please')
-            return [False, 'Enter a number please']
-        # return redirect('/store/home_page_owner/')
-    brule = BaseRule(store=Store.objects.get(id=store_id), type=rule_type, parameter=parameter)
-    brule.save()
-    return [True, brule.id]
+	if rule_type == 'MAX_QUANTITY' or rule_type == 'MIN_QUANTITY':
+		try:
+			int(parameter)
+			if int(parameter) > 0:
+				pass
+			else:
+				# messages.warning(request, 'Enter a number please')
+				return [False, 'Enter a positive number please']
+		except ValueError:
+			# messages.warning(request, 'Enter a number please')
+			return [False, 'Enter a number please']
+	# return redirect('/store/home_page_owner/')
+	brule = BaseRule(store=Store.objects.get(id=store_id), type=rule_type, parameter=parameter)
+	brule.save()
+	return [True, brule.id]
 
 
 def add_complex_rule_to_store_1(rule_type, prev_rule, store_id, operator, parameter):
-    if rule_type == 'MAX_QUANTITY' or rule_type == 'MIN_QUANTITY':
-        try:
-            int(parameter)
-            if int(parameter) > 0:
-                pass
-            else:
-                return [False, 'Enter a positive number please']
-        except ValueError:
-            return [False, 'Enter a number please']
-    store = Store.objects.get(id=store_id)
-    baseRule = BaseRule(store=store, type=rule_type, parameter=parameter)
-    baseRule.save()
-    rule_id2 = baseRule.id
-    rule2_temp = '_' + str(rule_id2)
-    cr = ComplexStoreRule(left=prev_rule, right=rule2_temp, operator=operator, store=store)
-    cr.save()
-    return [True, cr.id]
+	if rule_type == 'MAX_QUANTITY' or rule_type == 'MIN_QUANTITY':
+		try:
+			int(parameter)
+			if int(parameter) > 0:
+				pass
+			else:
+				return [False, 'Enter a positive number please']
+		except ValueError:
+			return [False, 'Enter a number please']
+	store = Store.objects.get(id=store_id)
+	baseRule = BaseRule(store=store, type=rule_type, parameter=parameter)
+	baseRule.save()
+	rule_id2 = baseRule.id
+	rule2_temp = '_' + str(rule_id2)
+	cr = ComplexStoreRule(left=prev_rule, right=rule2_temp, operator=operator, store=store)
+	cr.save()
+	return [True, cr.id]
+
 
 def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2, prev_rule):
-    store = Store.objects.get(id=store_id)
-    if rule1 == 'MAX_QUANTITY' or rule1 == 'MIN_QUANTITY':
-        try:
-            int(parameter1)
-            if int(parameter1) > 0:
-                pass
-            else:
-                return [False, 'Enter a positive number please for first parameter']
-        except ValueError:
-            return [False, 'Enter a number please for first parameter']
-    if rule2 == 'MAX_QUANTITY' or rule2 == 'MIN_QUANTITY':
-        try:
-            int(parameter2)
-            if int(parameter2) > 0:
-                pass
-            else:
-                return [False, 'Enter a positive number please for second parameter']
-        except ValueError:
-            return [False, 'Enter a number please for second parameter']
-    baseRule1 = BaseRule(store=store, type=rule1, parameter=parameter1)
-    baseRule1.save()
-    rule_id1 = baseRule1.id
-    rule1_temp = '_' + str(rule_id1)
-    baseRule2 = BaseRule(store=store, type=rule2, parameter=parameter2)
-    baseRule2.save()
-    rule_id2 = baseRule2.id
-    rule2_temp = '_' + str(rule_id2)
-    cr = ComplexStoreRule(left=rule1_temp, right=rule2_temp, operator=operator1, store=store)
-    cr.save()
-    cr_id = cr.id
-    cr2 = ComplexStoreRule(left=prev_rule, right=cr_id, operator=operator2, store=store)
-    cr2.save()
-    return [True, cr2.id]
+	store = Store.objects.get(id=store_id)
+	if rule1 == 'MAX_QUANTITY' or rule1 == 'MIN_QUANTITY':
+		try:
+			int(parameter1)
+			if int(parameter1) > 0:
+				pass
+			else:
+				return [False, 'Enter a positive number please for first parameter']
+		except ValueError:
+			return [False, 'Enter a number please for first parameter']
+	if rule2 == 'MAX_QUANTITY' or rule2 == 'MIN_QUANTITY':
+		try:
+			int(parameter2)
+			if int(parameter2) > 0:
+				pass
+			else:
+				return [False, 'Enter a positive number please for second parameter']
+		except ValueError:
+			return [False, 'Enter a number please for second parameter']
+	baseRule1 = BaseRule(store=store, type=rule1, parameter=parameter1)
+	baseRule1.save()
+	rule_id1 = baseRule1.id
+	rule1_temp = '_' + str(rule_id1)
+	baseRule2 = BaseRule(store=store, type=rule2, parameter=parameter2)
+	baseRule2.save()
+	rule_id2 = baseRule2.id
+	rule2_temp = '_' + str(rule_id2)
+	cr = ComplexStoreRule(left=rule1_temp, right=rule2_temp, operator=operator1, store=store)
+	cr.save()
+	cr_id = cr.id
+	cr2 = ComplexStoreRule(left=prev_rule, right=cr_id, operator=operator2, store=store)
+	cr2.save()
+	return [True, cr2.id]
+
 
 def add_base_rule_to_item(item_id, rule, parameter):
-    item = Item.objects.get(id=item_id)
-    brule = BaseItemRule(item=item, type=rule, parameter=parameter)
-    brule.save()
-    return [True, brule.id]
+	item = Item.objects.get(id=item_id)
+	brule = BaseItemRule(item=item, type=rule, parameter=parameter)
+	brule.save()
+	return [True, brule.id]
+
 
 def add_complex_rule_to_item_1(item_id, prev_rule, rule, operator, parameter):
-    item = Item.objects.get(id=item_id)
-    baseRule = BaseItemRule(item=item, type=rule, parameter=parameter)
-    baseRule.save()
-    rule_id2 = baseRule.id
-    rule2_temp = '_' + str(rule_id2)
-    cr = ComplexItemRule(left=prev_rule, right=rule2_temp, operator=operator, item=item)
-    cr.save()
-    return [True, cr.id]
+	item = Item.objects.get(id=item_id)
+	baseRule = BaseItemRule(item=item, type=rule, parameter=parameter)
+	baseRule.save()
+	rule_id2 = baseRule.id
+	rule2_temp = '_' + str(rule_id2)
+	cr = ComplexItemRule(left=prev_rule, right=rule2_temp, operator=operator, item=item)
+	cr.save()
+	return [True, cr.id]
 
-def add_complex_rule_to_item_2(item_id, prev_rule, rule1, parameter1, rule2, parameter2, operator1, operator2 ):
-    item = Item.objects.get(id=item_id)
-    baseRule1 = BaseItemRule(item=item, type=rule1, parameter=parameter1)
-    baseRule1.save()
-    rule_id1 = baseRule1.id
-    rule1_temp = '_' + str(rule_id1)
-    baseRule2 = BaseItemRule(item=item, type=rule2, parameter=parameter2)
-    baseRule2.save()
-    rule_id2 = baseRule2.id
-    rule2_temp = '_' + str(rule_id2)
-    cr = ComplexItemRule(left=rule1_temp, right=rule2_temp, operator=operator1, item=item)
-    cr.save()
-    cr_id = cr.id
-    cr2 = ComplexItemRule(left=prev_rule, right=cr_id, operator=operator2, item=item)
-    cr2.save()
-    return [True, cr2.id]
 
+def add_complex_rule_to_item_2(item_id, prev_rule, rule1, parameter1, rule2, parameter2, operator1, operator2):
+	item = Item.objects.get(id=item_id)
+	baseRule1 = BaseItemRule(item=item, type=rule1, parameter=parameter1)
+	baseRule1.save()
+	rule_id1 = baseRule1.id
+	rule1_temp = '_' + str(rule_id1)
+	baseRule2 = BaseItemRule(item=item, type=rule2, parameter=parameter2)
+	baseRule2.save()
+	rule_id2 = baseRule2.id
+	rule2_temp = '_' + str(rule_id2)
+	cr = ComplexItemRule(left=rule1_temp, right=rule2_temp, operator=operator1, item=item)
+	cr.save()
+	cr_id = cr.id
+	cr2 = ComplexItemRule(left=prev_rule, right=cr_id, operator=operator2, item=item)
+	cr2.save()
+	return [True, cr2.id]
 
 
 def add_item_to_store(price, name, description, category, quantity, store_id):
@@ -214,6 +217,7 @@ def can_remove_store(store_id, user_id):
 	store = Store.objects.get(pk=store_id)
 	return user.has_perm('REMOVE_STORE', store)
 
+
 def delete_store(store_id):
 	store = Store.objects.get(id=store_id)
 	items_to_delete = store.items.all()
@@ -224,8 +228,85 @@ def delete_store(store_id):
 		owners_group = Group.objects.get(name="store_owners")
 		user = User.objects.get(username=owner_name)
 		owners_group.user_set.remove(user)
-	return [True, 'store was deleted : '+store.name]
+	return [True, 'store was deleted : ' + store.name]
+
 
 def have_no_more_stores(user_pk):
 	tmp = Store.objects.filter(owners__username__contains=user_pk)
 	return len(tmp) == 0
+
+
+def get_item_store(item_pk):
+	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
+	# Might cause bug. Need to apply the item-in-one-store condition
+	return stores[0]
+
+
+def get_cart(store_pk, user_pk):
+	carts = Cart.objects.filter(customer_id=user_pk, store_id=store_pk)
+	if len(carts) == 0:
+		return None
+	else:
+		return carts[0]
+
+
+def open_cart_for_user_in_store(store_pk: int, user_pk: int) -> None:
+	Cart(customer_id=user_pk, store_id=store_pk).save()
+
+
+def add_item_to_cart(user_id, item_id):
+	user = User.objects.get(pk=user_id)
+	if (user.is_authenticated):
+		item_store = get_item_store(item_id)
+		cart = get_cart(item_store, user_id)
+		if cart is None:
+			open_cart_for_user_in_store(item_store.pk, user.pk)  # TODO
+			cart = get_cart(item_store, user.pk)
+		cart.items.add(item_id)
+		return True
+	return False
+
+
+def get_item_store(item_pk):
+	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
+
+	# Might cause bug. Need to apply the item-in-one-store condition
+	return list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))[0]
+
+
+def is_authenticated(user_id):
+	return User.objects.get(pk=user_id).is_authenticated
+
+
+def get_item(id):
+	return Item.objects.get(id=id)
+
+
+def amount_in_db(item_id):
+	amount_in_db = Item.objects.get(id=item_id).quantity
+	if (amount_in_db > 0):
+		return True
+	return False
+
+
+def make_cart_2(item_id):
+	item = Item.objects.get(id=item_id)
+	amount_in_db = Item.objects.get(id=item_id).quantity
+	item.quantity = amount_in_db - 1
+	item.save()
+
+
+def remove_item_from_cart(user_id, item_id):
+	item = Item.objects.get(id=item_id)
+	cart = Cart.objects.get(customer=User.objects.get(pk=user_id))
+	cart.items.remove(item)
+	if (item.quantity == 0):
+		item.delete()
+
+
+def user_has_cart_for_store(store_pk, user_pk):
+	return len(Cart.objects.filter(customer_id=user_pk, store_id=store_pk)) > 0
+
+
+def user_has_cart_for_store(store_pk: int, user_pk: int) -> bool:
+	return len(Cart.objects.filter(customer_id=user_pk, store_id=store_pk)) > 0
