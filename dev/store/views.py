@@ -196,12 +196,60 @@ class ItemUpdate(UpdateView):
 		context = super(ItemUpdate, self).get_context_data(**kwargs)  # get the default context data
 		itemId = self.kwargs['pk']
 		text = SearchForm()
+		rules = item_rules_string(itemId)
 		user_name = self.request.user.username
 		context['text'] = text
 		context['user_name'] = user_name
 		context['itemId'] = itemId
 		context['pk'] = itemId
+		context['rules'] = rules
 		return context
+
+def item_rules_string(itemId):
+	base_arr = []
+	complex_arr = []
+	base = []
+	complex = []
+	item = Item.objects.get(id=itemId)
+	itemRules = ComplexItemRule.objects.all().filter(item=item)
+	for rule in reversed(itemRules):
+		if rule.id in complex_arr:
+			continue
+		res = {"id": rule.id, "type": 2, "item": itemId, "name": string_item_rule(rule, base_arr, complex_arr)}
+		complex.append(res)
+	itemBaseRules = BaseItemRule.objects.all().filter(item=item)
+	for rule in itemBaseRules:
+		if rule.id in base_arr:
+			continue
+		res = {"id": rule.id, "type": 1, "item": itemId, "name": get_base_rule_item(rule.id)}
+		base.append(res)
+	return complex + base
+
+
+def string_item_rule(rule, base_arr, complex_arr):
+	curr = '('
+	if rule.left[0] == '_':
+		base_arr.append(int(rule.left[1:]))
+		curr += get_base_rule_item(int(rule.left[1:]))
+	else:
+		complex_arr.append(int(rule.left))
+		tosend = ComplexItemRule.objects.get(id=int(rule.left))
+		curr += string_item_rule(tosend, base_arr, complex_arr)
+	curr += ' ' + rule.operator + ' '
+	if rule.right[0] == '_':
+		base_arr.append(int(rule.right[1:]))
+		curr += get_base_rule_item(int(rule.right[1:]))
+	else:
+		complex_arr.append(int(rule.right))
+		tosend = ComplexItemRule.objects.get(id=int(rule.right))
+		curr += string_item_rule(tosend, base_arr, complex_arr)
+	curr += ')'
+	return curr
+
+
+def get_base_rule_item(rule_id):
+	rule = BaseItemRule.objects.get(id=rule_id)
+	return rule.type + ': ' + rule.parameter
 
 
 @method_decorator(login_required, name='dispatch')
@@ -649,15 +697,16 @@ def store_rules_string(store):
 	complex = []
 	storeRules = ComplexStoreRule.objects.all().filter(store=store)
 	for rule in reversed(storeRules):
-		print('id ' + str(rule.id))
 		if rule.id in complex_arr:
 			continue
-		complex.append(string_store_rule(rule, base_arr, complex_arr))
+		res = {"id": rule.id, "type": 2, "store": store.id, "name": string_store_rule(rule, base_arr, complex_arr)}
+		complex.append(res)
 	storeBaseRules = BaseRule.objects.all().filter(store=store)
 	for rule in storeBaseRules:
 		if rule.id in base_arr:
 			continue
-		base.append(get_base_rule(rule.id))
+		res = {"id": rule.id, "type": 1, "store": store.id, "name": get_base_rule(rule.id)}
+		base.append(res)
 	return complex + base
 
 
@@ -1061,9 +1110,74 @@ def add_complex_rule_to_item_2(request, rule_id_before, item_id, which_button):
 
 
 
-def remove_rule_from_store(request, pk):
-	BaseRule.objects.get(id=pk).delete()
-	messages.success(request, 'removed rule successfully!')
+def remove_rule_from_store(request, pk, type, store):
+	if type == 2:
+		complexRule = ComplexStoreRule.objects.get(id=pk)
+		delete_complex(complexRule.id)
+	else:
+		baseRule = BaseRule.objects.get(id=pk)
+		delete_base(baseRule.id)
+	messages.success(request, 'remove rule successfully!')
+	text = SearchForm()
+	user_name = request.user.username
+	context = {
+		'user_name': user_name,
+		'text': text,
+	}
+	return redirect('/store/update/' + str(store))
+
+
+def delete_complex(rule_id):
+	rule = ComplexStoreRule.objects.get(id=rule_id)
+	if rule.left[0] == '_':
+		BaseRule.objects.get(id=int(rule.left[1:])).delete()
+	else:
+		delete_complex(int(rule.left))
+	if rule.right[0] == '_':
+		BaseRule.objects.get(id=int(rule.right[1:])).delete()
+	else:
+		delete_complex(int(rule.right))
+	rule.delete()
+
+
+def delete_base(rule_id):
+	rule = BaseRule.objects.get(id=rule_id)
+	rule.delete()
+
+
+def remove_rule_from_item(request, pk, type, item):
+	if type == 2:
+		complexRule = ComplexItemRule.objects.get(id=pk)
+		delete_complex_item(complexRule.id)
+	else:
+		baseRule = BaseItemRule.objects.get(id=pk)
+		delete_base_item(baseRule.id)
+	messages.success(request, 'remove rule successfully!')
+	text = SearchForm()
+	user_name = request.user.username
+	context = {
+		'user_name': user_name,
+		'text': text,
+	}
+	return redirect('/store/update_item/' + str(item))
+
+
+def delete_complex_item(rule_id):
+	rule = ComplexItemRule.objects.get(id=rule_id)
+	if rule.left[0] == '_':
+		BaseItemRule.objects.get(id=int(rule.left[1:])).delete()
+	else:
+		delete_complex_item(int(rule.left))
+	if rule.right[0] == '_':
+		BaseItemRule.objects.get(id=int(rule.right[1:])).delete()
+	else:
+		delete_complex_item(int(rule.right))
+	rule.delete()
+
+
+def delete_base_item(rule_id):
+	rule = BaseItemRule.objects.get(id=rule_id)
+	rule.delete()
 
 
 class NotificationsListView(ListView):

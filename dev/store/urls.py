@@ -51,8 +51,8 @@ urlpatterns = [
 	     views.add_complex_rule_to_item_2),
 	path('add_complex_rule_to_item_2/<slug:rule_id_before>/<int:item_id>/<slug:which_button>/',
 	     views.add_complex_rule_to_item_2),
-
-	path('remove_rule_from_store/<int:pk>', views.remove_rule_from_store),
+	path('remove_rule_from_store/<int:pk>/<int:type>/<int:store>', views.remove_rule_from_store),
+	path('remove_rule_from_item/<int:pk>/<int:type>/<int:item>', views.remove_rule_from_item),
 	path('delete_item/<int:pk>/', views.ItemDelete.as_view(success_url="/login_redirect")),
 
 ]
