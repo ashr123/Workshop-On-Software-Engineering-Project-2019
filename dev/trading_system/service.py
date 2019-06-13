@@ -78,4 +78,7 @@ def get_user_store_list(user_id):
 
 
 def get_item_details(item_id):
-	return domain.get_item_details(item_id = item_id)
+	return domain.get_item_details(item_id=item_id)
+
+def len_of_super():
+	return domain.len_of_super()

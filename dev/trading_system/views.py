@@ -49,12 +49,7 @@ def def_super_user(request):
 from django.contrib.auth.models import User
 
 
-def index(request: Any) -> HttpResponse:
-	superusers = User.objects.filter(is_superuser=True)
-	if (len(superusers) == 0):
-		return redirect('/super_user')
-	else:
-		return render(request, 'homepage_guest.html', {'text': SearchForm()})
+
 
 
 def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
@@ -83,6 +78,87 @@ def item(request: Any, id: int) -> HttpResponse:
 	})
 
 
+
+
+
+
+class CartsListView(ListView):
+	model = Cart
+	template_name = 'trading_system/user_carts.html'
+
+	def get_queryset(self) -> List[Cart]:
+		return Cart.objects.filter(customer_id=self.request.user.pk)
+
+
+
+
+
+##ELHANANA - note that search returns the filtered items list
+def search(request: Any) -> QuerySet:
+	text = SearchForm(request.GET)
+	if text.is_valid():
+		# spell checker
+		# correct_word = checker.Spellchecker(text)
+		# items = Item.objects.filter(name=correct_word)
+		return Item.objects.filter(Q(name__contains=text.cleaned_data.get('search')) | Q(
+			description__contains=text.cleaned_data.get('search')) | Q(
+			category__contains=text.cleaned_data.get('search')))
+
+
+
+
+
+
+
+########## Need to check with elhanan
+class CartDetail(DetailView):
+	model = Cart
+
+	def get_context_data(self, **kwargs) -> Dict[str, Any]:
+		print('!!!!!!!!!!!!!!!!!!!!!!!!!\n')
+		cart = Cart.objects.get(pk=kwargs['object'].pk)
+		item_ids = list(map(lambda i: i.pk, cart.items.all()))
+		context = super().get_context_data(**kwargs)  # get the default context data
+		context['items'] = list(map(lambda i_pk: Item.objects.get(pk=i_pk), item_ids))
+
+	def get_context_data(self, **kwargs):
+		print('???????????????????????????\n')
+		cart = Cart.objects.get(pk=kwargs['object'].pk)
+		item_ids = list(map(lambda i: i.pk, cart.items.all()))
+		items = list(map(lambda i_pk: Item.objects.get(pk=i_pk), item_ids))
+		context = super(CartDetail, self).get_context_data(**kwargs)  # get the default context data
+		context['items'] = items
+
+		context['store_name'] = Store.objects.get(pk=cart.store_id).name
+		return context
+
+
+
+
+
+
+
+
+
+
+
+
+
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+
+def index(request: Any) -> HttpResponse:
+	if (service.len_of_super() == 0):
+		return redirect('/super_user')
+	else:
+		return render(request, 'homepage_guest.html', {'text': SearchForm()})
+
+
 def show_cart(request: Any) -> HttpResponse:
 	if request.user.is_authenticated:
 		if "store_owners" in request.user.groups.values_list('name',
@@ -100,8 +176,7 @@ def show_cart(request: Any) -> HttpResponse:
 		base_template_name = 'homepage_guest.html'
 
 
-
-
+cart_index = 0
 
 class SearchListView(ListView):
 	model = Item
@@ -125,69 +200,6 @@ class SearchListView(ListView):
 		context['text'] = text
 
 		return context
-
-
-##ELHANANA - note that search returns the filtered items list
-def search(request: Any) -> QuerySet:
-	text = SearchForm(request.GET)
-	if text.is_valid():
-		# spell checker
-		# correct_word = checker.Spellchecker(text)
-		# items = Item.objects.filter(name=correct_word)
-		return Item.objects.filter(Q(name__contains=text.cleaned_data.get('search')) | Q(
-			description__contains=text.cleaned_data.get('search')) | Q(
-			category__contains=text.cleaned_data.get('search')))
-
-
-cart_index = 0
-
-
-
-
-
-class CartDetail(DetailView):
-	model = Cart
-
-	def get_context_data(self, **kwargs) -> Dict[str, Any]:
-		cart = Cart.objects.get(pk=kwargs['object'].pk)
-		item_ids = list(map(lambda i: i.pk, cart.items.all()))
-		context = super().get_context_data(**kwargs)  # get the default context data
-		context['items'] = list(map(lambda i_pk: Item.objects.get(pk=i_pk), item_ids))
-
-	def get_context_data(self, **kwargs):
-		cart = Cart.objects.get(pk=kwargs['object'].pk)
-		item_ids = list(map(lambda i: i.pk, cart.items.all()))
-		items = list(map(lambda i_pk: Item.objects.get(pk=i_pk), item_ids))
-		context = super(CartDetail, self).get_context_data(**kwargs)  # get the default context data
-		context['items'] = items
-
-		context['store_name'] = Store.objects.get(pk=cart.store_id).name
-		return context
-
-
-class CartsListView(ListView):
-	model = Cart
-	template_name = 'trading_system/user_carts.html'
-
-	def get_queryset(self) -> List[Cart]:
-		return Cart.objects.filter(customer_id=self.request.user.pk)
-
-
-
-
-
-
-
-
-
-
-########################################################################################################################
-########################################################################################################################
-########################################################################################################################
-########################################################################################################################
-########################################################################################################################
-########################################################################################################################
-########################################################################################################################
 
 
 def register(request: Any) -> HttpResponse:

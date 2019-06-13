@@ -328,3 +328,7 @@ def user_has_cart_for_store(store_pk, user_pk):
 
 def user_has_cart_for_store(store_pk: int, user_pk: int) -> bool:
 	return len(Cart.objects.filter(customer_id=user_pk, store_id=store_pk)) > 0
+
+
+def len_of_super():
+	return len(User.objects.filter(is_superuser=True))
