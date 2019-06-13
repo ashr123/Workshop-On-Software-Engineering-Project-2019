@@ -25,6 +25,7 @@ from .forms import BuyForm, AddManagerForm, AddRuleToItem, AddRuleToStore_base, 
 from .forms import ShippingForm, AddRuleToItem_withop, AddRuleToItem_two
 from .models import Item, ComplexStoreRule, ComplexItemRule
 from .models import Store
+import simplejson as s_json
 
 
 def get_client_ip(request):
@@ -49,10 +50,11 @@ def add_item(request, pk):
 	if request.method == 'POST':
 		form = ItemForm(request.POST)
 		if form.is_valid():
-			item = form.save()
-			curr_store = Store.objects.get(id=pk)
-			curr_store.items.add(item)
-			messages.success(request, 'Your Item was added successfully!')  # <-
+			ans = service.add_item_to_store(
+				item_json=s_json.dumps(form.cleaned_data),
+				store_id=pk
+			)
+			messages.success(request, ans[1])  # <-
 			return redirect('/store/home_page_owner/')
 		else:
 			messages.warning(request, 'Problem with filed : ', form.errors, 'please try again!')  # <-
@@ -125,10 +127,6 @@ class StoreDetailView(DetailView):
 		context['text'] = text
 		context['user_name'] = user_name
 		return context
-
-
-# def get_queryset(self):
-# 	return Store.objects.get(id=self.kwargs['pk']).items.all()
 
 
 @method_decorator(login_required, name='dispatch')
@@ -278,10 +276,6 @@ class StoreUpdate(UpdateView):
 		return context
 
 
-def have_no_more_stores(user_pk):
-	tmp = Store.objects.filter(owners__username__contains=user_pk)
-	return len(tmp) == 0
-
 
 @login_required
 def change_store_owner_to_member(user_name_):
@@ -297,30 +291,17 @@ class StoreDelete(DeleteView):
 
 	def delete(self, request, *args, **kwargs):
 		store = Store.objects.get(id=kwargs['pk'])
-		items_to_delete = store.items.all()
-		# print('\n h    hhhhhhh', items_to_delete)
-		if not (self.request.user.has_perm('REMOVE_STORE', store)):
+		if not service.can_remove_store(store_id=store.pk, user_id=self.request.user.pk):
 			messages.warning(request, 'there is no delete perm!')
 			user_name = request.user.username
 			text = SearchForm()
 			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
 
-		owner_name = store.owners.all()[0]  # craetor
-
-		# print('\n id : ', owner_name)
-		for item_ in items_to_delete:
-			# print('\n delete ')
-			item_.delete()
-
+		owner_name = store.owners.all()[0]  # creator
+		ans = service.delete_store(store_id = kwargs['pk'])
 		response = super(StoreDelete, self).delete(request, *args, **kwargs)
-
-		messages.success(request, 'store was deleted : ', store.name)
-		if have_no_more_stores(owner_name):
-
-			owners_group = Group.objects.get(name="store_owners")
-			user = User.objects.get(username=owner_name)
-			owners_group.user_set.remove(user)
-
+		messages.success(request, ans[1])
+		if service.have_no_more_stores(owner_name=owner_name):
 			user_name = request.user.username
 			text = SearchForm()
 			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
@@ -829,8 +810,8 @@ def add_base_rule_to_store(request, pk, which_button):
 			rule = form.cleaned_data.get('rule')
 			# operator = form.cleaned_data.get('operator')
 			parameter = form.cleaned_data.get('parameter')
-			ans = service.add_base_rule_to_store(rule_type=rule,store_id= pk, parameter=parameter)
-			if ans[0] ==True:
+			ans = service.add_base_rule_to_store(rule_type=rule, store_id=pk, parameter=parameter)
+			if ans[0] == True:
 				rule_id = ans[1]
 				if which_button == 'ok':
 					messages.success(request, 'added rule : ' + str(rule) + ' successfully!')
@@ -886,7 +867,8 @@ def add_complex_rule_to_store_1(request, rule_id1, store_id, which_button):
 			# cr = ComplexStoreRule(left=rule_id1, right=rule2_temp, operator=operator, store=store)
 			# cr.save()
 			# rule_to_ret = cr.id
-			ans = service.add_complex_rule_to_store_1(rule_type=rule, prev_rule=rule_id1, store_id=store_id, operator=operator, parameter=parameter)
+			ans = service.add_complex_rule_to_store_1(rule_type=rule, prev_rule=rule_id1, store_id=store_id,
+			                                          operator=operator, parameter=parameter)
 			if which_button == 'ok':
 				messages.success(request, 'added rule successfully!')
 				return redirect('/store/home_page_owner/')
