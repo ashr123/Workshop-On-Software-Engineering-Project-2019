@@ -841,264 +841,224 @@ def add_base_rule_to_store(request, pk, which_button):
 
 
 def add_complex_rule_to_store_1(request, rule_id1, store_id, which_button):
-	if request.method == 'POST':
-		form = AddRuleToStore_withop(request.POST)
-		if form.is_valid():
-			rule_to_ret = -1
-			store = Store.objects.get(id=store_id)
-			rule = form.cleaned_data.get('rule')
-			operator = form.cleaned_data.get('operator')
-			parameter = form.cleaned_data.get('parameter')
-			# if rule == 'MAX_QUANTITY' or rule == 'MIN_QUANTITY':
-			# 	try:
-			# 		int(parameter)
-			# 		if int(parameter) > 0:
-			# 			pass
-			# 		else:
-			# 			messages.warning(request, 'Enter a number please')
-			# 			return redirect('/store/home_page_owner/')
-			# 	except ValueError:
-			# 		messages.warning(request, 'Enter a number please')
-			# 		return redirect('/store/home_page_owner/')
-			# baseRule = BaseRule(store=store, type=rule, parameter=parameter)
-			# baseRule.save()
-			# rule_id2 = baseRule.id
-			# rule2_temp = '_' + str(rule_id2)
-			# cr = ComplexStoreRule(left=rule_id1, right=rule2_temp, operator=operator, store=store)
-			# cr.save()
-			# rule_to_ret = cr.id
-			ans = service.add_complex_rule_to_store_1(rule_type=rule, prev_rule=rule_id1, store_id=store_id,
-			                                          operator=operator, parameter=parameter)
-			if which_button == 'ok':
-				messages.success(request, 'added rule successfully!')
-				return redirect('/store/home_page_owner/')
-			if which_button == 'complex1':
-				return redirect('/store/add_complex_rule_to_store_1/' + str(rule_to_ret) + '/' + str(store_id) + '/a')
-			if which_button == 'complex2':
-				return redirect('/store/add_complex_rule_to_store_2/' + str(rule_to_ret) + '/' + str(store_id) + '/a')
-			return redirect('/store/home_page_owner/')
-		else:
-			messages.warning(request, form.errors)
-			return redirect('/store/home_page_owner/')
-	else:
-		ruleForm = AddRuleToStore_withop()
-		text = SearchForm()
-		user_name = request.user.username
-		context = {
-			'user_name': user_name,
-			'text': text,
-			'form': ruleForm,
-			'store_id': store_id,
-			'rule_id1': rule_id1,
-			'which_button': which_button,
-		}
-		return render(request, 'store/add_complex_rule_to_store_1.html', context)
+   if request.method == 'POST':
+      form = AddRuleToStore_withop(request.POST)
+      if form.is_valid():
+         rule_to_ret = -1
+         store = Store.objects.get(id=store_id)
+         rule = form.cleaned_data.get('rule')
+         operator = form.cleaned_data.get('operator')
+         parameter = form.cleaned_data.get('parameter')
+         ans = service.add_complex_rule_to_store_1(rule_type=rule, prev_rule=rule_id1, store_id=store_id, operator=operator, parameter=parameter)
+         if ans[0] ==True:
+            rule_to_ret = ans[1]
+            if which_button == 'ok':
+               messages.success(request, 'added rule successfully!')
+               return redirect('/store/home_page_owner/')
+            if which_button == 'complex1':
+               return redirect('/store/add_complex_rule_to_store_1/' + str(rule_to_ret) + '/' + str(store_id) + '/a')
+            if which_button == 'complex2':
+               return redirect('/store/add_complex_rule_to_store_2/' + str(rule_to_ret) + '/' + str(store_id) + '/a')
+         else:
+            messages.warning(request, ans[1])
+            return redirect('/store/home_page_owner/')
+         #return redirect('/store/home_page_owner/')
+      else:
+         messages.warning(request, form.errors)
+         return redirect('/store/home_page_owner/')
+   else:
+      ruleForm = AddRuleToStore_withop()
+      text = SearchForm()
+      user_name = request.user.username
+      context = {
+         'user_name': user_name,
+         'text': text,
+         'form': ruleForm,
+         'store_id': store_id,
+         'rule_id1': rule_id1,
+         'which_button': which_button,
+      }
+      return render(request, 'store/add_complex_rule_to_store_1.html', context)
+
 
 
 def add_complex_rule_to_store_2(request, rule_id_before, store_id, which_button):
-	if request.method == 'POST':
-		form = AddRuleToStore_two(request.POST)
-		if form.is_valid():
-			rule_to_ret = -1
-			store = Store.objects.get(id=store_id)
-			rule1 = form.cleaned_data.get('rule1')
-			rule2 = form.cleaned_data.get('rule2')
-			operator1 = form.cleaned_data.get('operator1')
-			operator2 = form.cleaned_data.get('operator2')
-			parameter1 = form.cleaned_data.get('parameter1')
-			parameter2 = form.cleaned_data.get('parameter2')
-			if rule1 == 'MAX_QUANTITY' or rule1 == 'MIN_QUANTITY':
-				try:
-					int(parameter1)
-					if int(parameter1) > 0:
-						pass
-					else:
-						messages.warning(request, 'Enter a number please')
-						return redirect('/store/home_page_owner/')
-				except ValueError:
-					messages.warning(request, 'Enter a number please')
-					return redirect('/store/home_page_owner/')
-			if rule2 == 'MAX_QUANTITY' or rule2 == 'MIN_QUANTITY':
-				try:
-					int(parameter2)
-					if int(parameter2) > 0:
-						pass
-					else:
-						messages.warning(request, 'Enter a number please')
-						return redirect('/store/home_page_owner/')
-				except ValueError:
-					messages.warning(request, 'Enter a number please')
-					return redirect('/store/home_page_owner/')
-			baseRule1 = BaseRule(store=store, type=rule1, parameter=parameter1)
-			baseRule1.save()
-			rule_id1 = baseRule1.id
-			rule1_temp = '_' + str(rule_id1)
-			baseRule2 = BaseRule(store=store, type=rule2, parameter=parameter2)
-			baseRule2.save()
-			rule_id2 = baseRule2.id
-			rule2_temp = '_' + str(rule_id2)
-			cr = ComplexStoreRule(left=rule1_temp, right=rule2_temp, operator=operator1, store=store)
-			cr.save()
-			cr_id = cr.id
-			cr2 = ComplexStoreRule(left=rule_id_before, right=cr_id, operator=operator2, store=store)
-			cr2.save()
-			cr_id2 = cr2.id
-			if which_button == 'ok':
-				messages.success(request, 'added rule successfully!')
-				return redirect('/store/home_page_owner/')
-			if which_button == 'complex1':
-				return redirect('/store/add_complex_rule_to_store_2/' + str(cr_id2) + '/' + str(store_id) + '/a')
-			if which_button == 'complex2':
-				return redirect('/store/add_complex_rule_to_store_2/' + str(cr_id2) + '/' + str(store_id) + '/a')
-			return redirect('/store/home_page_owner/')
-		else:
-			messages.warning(request, form.errors)
-			return redirect('/store/home_page_owner/')
-	else:
-		ruleForm = AddRuleToStore_two()
-		text = SearchForm()
-		user_name = request.user.username
-		context = {
-			'user_name': user_name,
-			'text': text,
-			'form': ruleForm,
-			'store_id': store_id,
-			'rule_id_before': rule_id_before,
-			'which_button': which_button,
-		}
-		return render(request, 'store/add_complex_rule_to_store_2.html', context)
+   if request.method == 'POST':
+      form = AddRuleToStore_two(request.POST)
+      if form.is_valid():
+         rule_to_ret = -1
+         store = Store.objects.get(id=store_id)
+         rule1 = form.cleaned_data.get('rule1')
+         rule2 = form.cleaned_data.get('rule2')
+         operator1 = form.cleaned_data.get('operator1')
+         operator2 = form.cleaned_data.get('operator2')
+         parameter1 = form.cleaned_data.get('parameter1')
+         parameter2 = form.cleaned_data.get('parameter2')
+         ans = service.add_complex_rule_to_store_2(rule1=rule1, parameter1=parameter1, rule2=rule2, parameter2=parameter2, store_id=store_id, operator1=operator1, operator2=operator2, prev_rule=rule_id_before)
+         if ans[0] == True:
+            if which_button == 'ok':
+               messages.success(request, 'added rule successfully!')
+               return redirect('/store/home_page_owner/')
+            if which_button == 'complex1':
+               return redirect('/store/add_complex_rule_to_store_2/' + str(ans[1]) + '/' + str(store_id) + '/a')
+            if which_button == 'complex2':
+               return redirect('/store/add_complex_rule_to_store_2/' + str(ans[1]) + '/' + str(store_id) + '/a')
+         else:
+            messages.warning(request, ans[1])
+            return redirect('/store/home_page_owner/')
+         #return redirect('/store/home_page_owner/')
+      else:
+         messages.warning(request, form.errors)
+         return redirect('/store/home_page_owner/')
+   else:
+      ruleForm = AddRuleToStore_two()
+      text = SearchForm()
+      user_name = request.user.username
+      context = {
+         'user_name': user_name,
+         'text': text,
+         'form': ruleForm,
+         'store_id': store_id,
+         'rule_id_before': rule_id_before,
+         'which_button': which_button,
+      }
+      return render(request, 'store/add_complex_rule_to_store_2.html', context)
 
 
 from .models import BaseItemRule
 
 
 def add_base_rule_to_item(request, pk, which_button):
-	if request.method == 'POST':
-		form = AddRuleToItem(request.POST)
-		if form.is_valid():
-			rule_id = -1
-			item = Item.objects.get(id=pk)
-			rule = form.cleaned_data.get('rule')
-			parameter = form.cleaned_data.get('parameter')
-			brule = BaseItemRule(item=item, type=rule, parameter=parameter)
-			brule.save()
-			rule_id = brule.id
-			if which_button == 'ok':
-				messages.success(request, 'added rule : ' + str(rule) + ' successfully!')
-				return redirect('/store/home_page_owner/')
-			if which_button == 'complex1':
-				return redirect('/store/add_complex_rule_to_item_1/' + '_' + str(rule_id) + '/' + str(pk) + '/a')
-			if which_button == 'complex2':
-				return redirect('/store/add_complex_rule_to_item_2/' + '_' + str(rule_id) + '/' + str(pk) + '/a')
-		else:
-			messages.warning(request, form.errors)
-			return redirect('/store/home_page_owner/')
-	else:
-		ruleForm = AddRuleToItem()
-		text = SearchForm()
-		user_name = request.user.username
-		context = {
-			'user_name': user_name,
-			'text': text,
-			'form': ruleForm,
-			'pk': pk,
-			'which_button': which_button,
-		}
-		return render(request, 'store/add_base_rule_to_item.html', context)
+   if request.method == 'POST':
+      form = AddRuleToItem(request.POST)
+      if form.is_valid():
+         #rule_id = -1
+         #item = Item.objects.get(id=pk)
+         rule = form.cleaned_data.get('rule')
+         parameter = form.cleaned_data.get('parameter')
+         # brule = BaseItemRule(item=item, type=rule, parameter=parameter)
+         # brule.save()
+         # rule_id = brule.id
+         ans = service.add_base_rule_to_item(item_id=pk, rule=rule, parameter=parameter)
+         if which_button == 'ok':
+            messages.success(request, 'added rule : ' + str(rule) + ' successfully!')
+            return redirect('/store/home_page_owner/')
+         if which_button == 'complex1':
+            return redirect('/store/add_complex_rule_to_item_1/' + '_' + str(ans[1]) + '/' + str(pk) + '/a')
+         if which_button == 'complex2':
+            return redirect('/store/add_complex_rule_to_item_2/' + '_' + str(ans[1]) + '/' + str(pk) + '/a')
+      else:
+         messages.warning(request, form.errors)
+         return redirect('/store/home_page_owner/')
+   else:
+      ruleForm = AddRuleToItem()
+      text = SearchForm()
+      user_name = request.user.username
+      context = {
+         'user_name': user_name,
+         'text': text,
+         'form': ruleForm,
+         'pk': pk,
+         'which_button': which_button,
+      }
+      return render(request, 'store/add_base_rule_to_item.html', context)
 
 
 def add_complex_rule_to_item_1(request, rule_id1, item_id, which_button):
-	if request.method == 'POST':
-		form = AddRuleToItem_withop(request.POST)
-		if form.is_valid():
-			rule_to_ret = -1
-			item = Item.objects.get(id=item_id)
-			rule = form.cleaned_data.get('rule')
-			operator = form.cleaned_data.get('operator')
-			parameter = form.cleaned_data.get('parameter')
-			baseRule = BaseItemRule(item=item, type=rule, parameter=parameter)
-			baseRule.save()
-			rule_id2 = baseRule.id
-			rule2_temp = '_' + str(rule_id2)
-			cr = ComplexItemRule(left=rule_id1, right=rule2_temp, operator=operator, item=item)
-			cr.save()
-			rule_to_ret = cr.id
-			if which_button == 'ok':
-				messages.success(request, 'added rule successfully!')
-				return redirect('/store/home_page_owner/')
-			if which_button == 'complex1':
-				return redirect('/store/add_complex_rule_to_item_1/' + str(rule_to_ret) + '/' + str(item_id) + '/a')
-			if which_button == 'complex2':
-				return redirect('/store/add_complex_rule_to_item_2/' + str(rule_to_ret) + '/' + str(item_id) + '/a')
-			return redirect('/store/home_page_owner/')
-		else:
-			messages.warning(request, form.errors)
-			return redirect('/store/home_page_owner/')
-	else:
-		ruleForm = AddRuleToItem_withop()
-		text = SearchForm()
-		user_name = request.user.username
-		context = {
-			'user_name': user_name,
-			'text': text,
-			'form': ruleForm,
-			'item_id': item_id,
-			'rule_id1': rule_id1,
-			'which_button': which_button,
-		}
-		return render(request, 'store/add_complex_rule_to_item_1.html', context)
+   if request.method == 'POST':
+      form = AddRuleToItem_withop(request.POST)
+      if form.is_valid():
+         rule_to_ret = -1
+         item = Item.objects.get(id=item_id)
+         rule = form.cleaned_data.get('rule')
+         operator = form.cleaned_data.get('operator')
+         parameter = form.cleaned_data.get('parameter')
+         # baseRule = BaseItemRule(item=item, type=rule, parameter=parameter)
+         # baseRule.save()
+         # rule_id2 = baseRule.id
+         # rule2_temp = '_' + str(rule_id2)
+         # cr = ComplexItemRule(left=rule_id1, right=rule2_temp, operator=operator, item=item)
+         # cr.save()
+         # rule_to_ret = cr.id
+         ans = service.add_complex_rule_to_item_1(item_id=item_id, prev_rule=rule_id1, rule=rule, operator=operator, parameter=parameter)
+         if which_button == 'ok':
+            messages.success(request, 'added rule successfully!')
+            return redirect('/store/home_page_owner/')
+         if which_button == 'complex1':
+            return redirect('/store/add_complex_rule_to_item_1/' + str(ans[1]) + '/' + str(item_id) + '/a')
+         if which_button == 'complex2':
+            return redirect('/store/add_complex_rule_to_item_2/' + str(ans[1]) + '/' + str(item_id) + '/a')
+         return redirect('/store/home_page_owner/')
+      else:
+         messages.warning(request, form.errors)
+         return redirect('/store/home_page_owner/')
+   else:
+      ruleForm = AddRuleToItem_withop()
+      text = SearchForm()
+      user_name = request.user.username
+      context = {
+         'user_name': user_name,
+         'text': text,
+         'form': ruleForm,
+         'item_id': item_id,
+         'rule_id1': rule_id1,
+         'which_button': which_button,
+      }
+      return render(request, 'store/add_complex_rule_to_item_1.html', context)
 
 
 def add_complex_rule_to_item_2(request, rule_id_before, item_id, which_button):
-	if request.method == 'POST':
-		form = AddRuleToItem_two(request.POST)
-		if form.is_valid():
-			rule_to_ret = -1
-			item = Item.objects.get(id=item_id)
-			rule1 = form.cleaned_data.get('rule1')
-			rule2 = form.cleaned_data.get('rule2')
-			operator1 = form.cleaned_data.get('operator1')
-			operator2 = form.cleaned_data.get('operator2')
-			parameter1 = form.cleaned_data.get('parameter1')
-			parameter2 = form.cleaned_data.get('parameter2')
-			baseRule1 = BaseItemRule(item=item, type=rule1, parameter=parameter1)
-			baseRule1.save()
-			rule_id1 = baseRule1.id
-			rule1_temp = '_' + str(rule_id1)
-			baseRule2 = BaseItemRule(item=item, type=rule2, parameter=parameter2)
-			baseRule2.save()
-			rule_id2 = baseRule2.id
-			rule2_temp = '_' + str(rule_id2)
-			cr = ComplexItemRule(left=rule1_temp, right=rule2_temp, operator=operator1, item=item)
-			cr.save()
-			cr_id = cr.id
-			cr2 = ComplexItemRule(left=rule_id_before, right=cr_id, operator=operator2, item=item)
-			cr2.save()
-			cr_id2 = cr2.id
-			if which_button == 'ok':
-				messages.success(request, 'added rule successfully!')
-				return redirect('/store/home_page_owner/')
-			if which_button == 'complex1':
-				return redirect('/store/add_complex_rule_to_item_2/' + str(cr_id2) + '/' + str(item_id) + '/a')
-			if which_button == 'complex2':
-				return redirect('/store/add_complex_rule_to_item_2/' + str(cr_id2) + '/' + str(item_id) + '/a')
-			return redirect('/store/home_page_owner/')
-		else:
-			messages.warning(request, form.errors)
-			return redirect('/store/home_page_owner/')
-	else:
-		ruleForm = AddRuleToItem_two()
-		text = SearchForm()
-		user_name = request.user.username
-		context = {
-			'user_name': user_name,
-			'text': text,
-			'form': ruleForm,
-			'item_id': item_id,
-			'rule_id_before': rule_id_before,
-			'which_button': which_button,
-		}
-		return render(request, 'store/add_complex_rule_to_item_2.html', context)
+   if request.method == 'POST':
+      form = AddRuleToItem_two(request.POST)
+      if form.is_valid():
+         rule_to_ret = -1
+         item = Item.objects.get(id=item_id)
+         rule1 = form.cleaned_data.get('rule1')
+         rule2 = form.cleaned_data.get('rule2')
+         operator1 = form.cleaned_data.get('operator1')
+         operator2 = form.cleaned_data.get('operator2')
+         parameter1 = form.cleaned_data.get('parameter1')
+         parameter2 = form.cleaned_data.get('parameter2')
+         # baseRule1 = BaseItemRule(item=item, type=rule1, parameter=parameter1)
+         # baseRule1.save()
+         # rule_id1 = baseRule1.id
+         # rule1_temp = '_' + str(rule_id1)
+         # baseRule2 = BaseItemRule(item=item, type=rule2, parameter=parameter2)
+         # baseRule2.save()
+         # rule_id2 = baseRule2.id
+         # rule2_temp = '_' + str(rule_id2)
+         # cr = ComplexItemRule(left=rule1_temp, right=rule2_temp, operator=operator1, item=item)
+         # cr.save()
+         # cr_id = cr.id
+         # cr2 = ComplexItemRule(left=rule_id_before, right=cr_id, operator=operator2, item=item)
+         # cr2.save()
+         # cr_id2 = cr2.id
+         ans = service.add_complex_rule_to_item_2(item_id=item_id, prev_rule=rule_id_before, rule1=rule1, parameter1=parameter1, rule2=rule2, parameter2=parameter2, operator1=operator1, operator2=operator2)
+         if which_button == 'ok':
+            messages.success(request, 'added rule successfully!')
+            return redirect('/store/home_page_owner/')
+         if which_button == 'complex1':
+            return redirect('/store/add_complex_rule_to_item_2/' + str(ans[1]) + '/' + str(item_id) + '/a')
+         if which_button == 'complex2':
+            return redirect('/store/add_complex_rule_to_item_2/' + str(ans[1]) + '/' + str(item_id) + '/a')
+         return redirect('/store/home_page_owner/')
+      else:
+         messages.warning(request, form.errors)
+         return redirect('/store/home_page_owner/')
+   else:
+      ruleForm = AddRuleToItem_two()
+      text = SearchForm()
+      user_name = request.user.username
+      context = {
+         'user_name': user_name,
+         'text': text,
+         'form': ruleForm,
+         'item_id': item_id,
+         'rule_id_before': rule_id_before,
+         'which_button': which_button,
+      }
+      return render(request, 'store/add_complex_rule_to_item_2.html', context)
+
 
 
 def remove_rule_from_store(request, pk):
