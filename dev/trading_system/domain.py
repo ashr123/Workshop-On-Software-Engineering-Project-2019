@@ -229,3 +229,29 @@ def delete_store(store_id):
 def have_no_more_stores(user_pk):
 	tmp = Store.objects.filter(owners__username__contains=user_pk)
 	return len(tmp) == 0
+
+def get_store_details(store_id):
+	store = Store.objects.get(pk=store_id)
+	items = list(map(lambda i: str(i),store.items.all()))
+	owners = list(map(lambda o: User.objects.get(pk=o.id).username,store.owners.all()))
+	managers = list(map(lambda m: (User.objects.get(pk=m.id).username).name,store.managers.all()))
+	return {"name": store.name, "description": store.description, "owners": owners, "managers": managers, "items": items}
+
+
+def get_user_store_list(user_id):
+	user = User.objects.get(pk=user_id)
+	user_stores = None
+	if ("store_managers" in user.groups.values_list('name', flat=True)):
+		user_stores = Store.objects.filter(managers__id__in=[user_id])
+	else:
+		user_stores = Store.objects.filter(owners__id__in=[user_id])
+	return list(map(lambda s: {'id': s.pk, 'name': s.name}, user_stores))
+
+
+def get_item_details(item_id):
+	item = Item.objects.get(pk = item_id)
+	return {"name": item.name,
+	        "category": item.get_category_display,
+	        "description": item.description,
+	        "price": item.price,
+	        "quantity": item.quantity}

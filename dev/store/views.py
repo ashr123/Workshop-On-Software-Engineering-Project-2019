@@ -123,10 +123,16 @@ class StoreDetailView(DetailView):
 	def get_context_data(self, **kwargs):
 		text = SearchForm()
 		user_name = self.request.user.username
-		context = super(StoreDetailView, self).get_context_data(**kwargs)  # get the default context data
+		# context = super(StoreDetailView, self).get_context_data(**kwargs)  # get the default context data
+		context = {}
+		details = service.get_store_details(kwargs['object'].pk)
 		context['text'] = text
 		context['user_name'] = user_name
+		context['store'] = details
 		return context
+
+
+
 
 
 @method_decorator(login_required, name='dispatch')
@@ -147,6 +153,7 @@ class StoreListView(ListView):
 			return Store.objects.filter(owners__id__in=[self.request.user.id])
 
 
+
 class ItemListView(ListView):
 	model = Item
 	paginate_by = 100  # if pagination is desired
@@ -162,8 +169,6 @@ class ItemListView(ListView):
 		items = store.items.all()
 
 
-# return Item.objects.filter(owners__id__in=[self.request.user.id])
-
 
 class ItemDetailView(DetailView):
 	model = Item
@@ -171,8 +176,11 @@ class ItemDetailView(DetailView):
 
 	def get_context_data(self, **kwargs):
 		text = SearchForm()
-		context = super(ItemDetailView, self).get_context_data(**kwargs)  # get the default context data
-		context['text'] = text
+		#context = super(ItemDetailView, self).get_context_data(**kwargs)  # get the default context data
+		context = {
+			'text': text,
+			'item': service.get_item_details(item_id = kwargs['object'].pk)
+		}
 		return context
 
 
@@ -187,12 +195,6 @@ class ItemUpdate(UpdateView):
 	template_name_suffix = '_update_form'
 
 	def get_context_data(self, **kwargs):
-		# if not (self.request.user.has_perm('EDIT_ITEM')):
-		# 	user_name = self.request.user.username
-		# 	text = SearchForm()
-		# 	messages.warning(self.request, 'there is no edit perm!')
-		# 	return render(self.request, 'homepage_member.html', {'text': text, 'user_name': user_name})
-
 		context = super(ItemUpdate, self).get_context_data(**kwargs)  # get the default context data
 		itemId = self.kwargs['pk']
 		text = SearchForm()
@@ -1022,13 +1024,6 @@ def add_complex_rule_to_item_1(request, rule_id1, item_id, which_button):
          rule = form.cleaned_data.get('rule')
          operator = form.cleaned_data.get('operator')
          parameter = form.cleaned_data.get('parameter')
-         # baseRule = BaseItemRule(item=item, type=rule, parameter=parameter)
-         # baseRule.save()
-         # rule_id2 = baseRule.id
-         # rule2_temp = '_' + str(rule_id2)
-         # cr = ComplexItemRule(left=rule_id1, right=rule2_temp, operator=operator, item=item)
-         # cr.save()
-         # rule_to_ret = cr.id
          ans = service.add_complex_rule_to_item_1(item_id=item_id, prev_rule=rule_id1, rule=rule, operator=operator, parameter=parameter)
          if which_button == 'ok':
             messages.success(request, 'added rule successfully!')

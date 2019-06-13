@@ -66,3 +66,14 @@ def have_no_more_stores(owner_name):
 
 def delete_store(store_id):
 	return domain.delete_store(store_id=store_id)
+
+def get_store_details(store_id):
+	return domain.get_store_details(store_id=store_id)
+
+
+def get_user_store_list(user_id):
+	return domain.get_user_store_list(user_id=user_id)
+
+
+def get_item_details(item_id):
+	return domain.get_item_details(item_id = item_id)
