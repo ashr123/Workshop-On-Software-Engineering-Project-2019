@@ -188,10 +188,12 @@ class TestTradingSystem(MyUnitTesting):
 	def test_edit_an_existing_item(self):  # 4.1.3-1...
 		pass
 
-	@skip("not completed")
 	def test_add_owner_to_store(self):  # 4.3-1
+		# res = service.get_user_store_list(self.user.pk)
 		new_user = User.objects.create(username="new_user", password=make_password(self.default_password))
-		self.assertTrue(service.add_manager(new_user.username, [], True, self.store.pk, self.default_user)[0])
+		self.assertFalse(service.get_user_store_list(new_user.pk))
+		self.assertFalse(service.add_manager(new_user.username, [], True, self.store.pk, self.default_user)[0])
+		self.assertTrue(service.get_user_store_list(new_user.pk))
 
 	def test_add_manager(self):
 		store_pk = service.open_store("bla", "blabla", self.user.pk)

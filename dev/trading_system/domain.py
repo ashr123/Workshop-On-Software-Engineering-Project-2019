@@ -43,8 +43,9 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 		assign_perm(perm, user_, store_)
 	if is_owner:
 		try:
-			if store_.owners.get(id=user_.pk):
-				print('hhhhhhhhhhhhhhh')
+			if store_.owners.filter(id=user_.pk).exists():
+			# if store_.owners.get(user__id=user_.pk):
+				return [True, 'allready manager']
 			store_owners_group = Group.objects.get(name="store_owners")
 			user_.groups.add(store_owners_group)
 			store_.owners.add(user_)
@@ -238,12 +239,13 @@ def have_no_more_stores(user_pk):
 
 
 def get_user_store_list(user_id):
-	user = User.objects.get(pk=user_id)
-	if "store_managers" in user.groups.values_list('name', flat=True):
-		user_stores = Store.objects.filter(managers__id__in=[user_id])
-	else:
-		user_stores = Store.objects.filter(owners__id__in=[user_id])
-	return list(map(lambda s: {'id': s.pk, 'name': s.name}, user_stores))
+	# user = User.objects.get(pk=user_id)
+	# if "store_managers" in user.groups.values_list('name', flat=True):
+	# 	user_stores = Store.objects.filter(managers__id__in=[user_id])
+	# else:
+	# 	user_stores = Store.objects.filter(owners__id__in=[user_id])
+	return list(map(lambda s: {'id': s.pk, 'name': s.name},
+	                Store.objects.filter(Q(managers__id__in=[user_id]) | Q(owners__id__in=[user_id]))))
 
 
 def get_item_details(item_id):

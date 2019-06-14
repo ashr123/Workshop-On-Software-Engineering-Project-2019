@@ -17,6 +17,7 @@
           <option value="trading_system.models.Store" />
           <option value="dev.mainTest.MyUnitTesting.driver" />
           <option value="django.contrib.*" />
+          <option value="tests.mainTest.MyUnitTesting.driver" />
         </list>
       </option>
     </inspection_tool>
