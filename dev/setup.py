@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-install_requires = ['django', 'mysqlclient', 'channels', 'channels_redis', 'daphne','django-formtools','django_countries', 'websocket-client','pypiwin32', 'simplejson',
+install_requires = ['django', 'mysqlclient', 'channels', 'channels_redis', 'daphne','django-formtools','django_countries', 'websocket-client','pypiwin32', 'selenium','simplejson',
                     'django-guardian', 'GeoIP2', 'selenium']
 
 

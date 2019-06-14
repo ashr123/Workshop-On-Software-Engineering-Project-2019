@@ -1,17 +1,22 @@
+from datetime import timezone
+
 from django import forms
 from django.utils.safestring import mark_safe
 
-from .models import Item, Store, Discount, MaxMinCondition
+from .models import Item, Store #, Discount, MaxMinCondition
+
 
 
 class StoreForm(forms.ModelForm):
 	class Meta:
 		model = Store
-		fields = ['name', 'owners', 'description', 'discounts']
-		widgets = {
-			'owners': forms.CheckboxSelectMultiple,
-			# 'items': forms.CheckboxSelectMultiple,
-		}
+		# fields = ['name', 'owners', 'description', 'discounts']
+
+		fields = ['name', 'description']
+		# widgets = {
+		# 	'owners': forms.CheckboxSelectMultiple,
+		# 	# 'items': forms.CheckboxSelectMultiple,
+		# }
 
 
 # 		def __init__(self, user, list_for_guest, *args, **kwargs):
@@ -26,12 +31,11 @@ class StoreForm(forms.ModelForm):
 class UpdateItems(forms.Form):
 	def __init__(self, items, *args, **kwargs):
 		super(UpdateItems, self).__init__(*args, **kwargs)
-		# print('\n kkkk ', items)
 		list_ = items
 		self.fields['items'] = forms.MultipleChoiceField(
-			choices=[(o.id,
+			choices=[(o['id'],
 			          mark_safe(' <a id="update_href" href=' + '/' + 'store/update_item/' + str(
-				          o.id) + '>' + o.name + '  :  ' + o.description + '</a>')) for o in
+				          o['id']) + '>' + o['name']+ '  :  ' + o['description'] + '</a>')) for o in
 			         list_]
 			, widget=forms.CheckboxSelectMultiple(),
 
@@ -102,8 +106,24 @@ class AddRuleToItem_withop(forms.Form):
 	          ('AND', 'and'),
 	          ('XOR', 'xor'))
 	operator = forms.ChoiceField(choices=LOGICS, widget=forms.RadioSelect)
-	rule = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
+	rule = forms.BooleanField()
 	parameter = forms.IntegerField(min_value=0)
+
+
+class AddDiscountForm(forms.Form):
+	def __init__(self, store_id, *args, **kwargs):
+		super(AddDiscountForm, self).__init__(*args, **kwargs)
+		self.store_id = store_id
+		CHOICES = (('MAX_QUANTITY', 'Max quantity - restrict max amount of items per order'),
+		           ('MIN_QUANTITY', 'Min quantity - restrict min amount of items per order'),)
+		self.fields['percentage'] = forms.IntegerField(min_value=0, max_value=100)
+		self.fields['end_date'] = forms.DateField(help_text='format: mm/dd/yyyy')
+		self.fields['condition'] = forms.BooleanField(initial=False, required=False)
+		self.fields['type'] = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
+		self.fields['amount'] = forms.IntegerField(min_value=0, required=False)
+		self.fields['add_item'] = forms.BooleanField(initial=False, required=False)
+		self.fields['item'] = forms.ModelChoiceField(queryset=Item.objects.filter(id=self.store_id), required=False)
+
 
 
 class AddRuleToItem_two(forms.Form):
@@ -119,18 +139,13 @@ class AddRuleToItem_two(forms.Form):
 	rule2 = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
 	parameter2 = forms.CharField(max_length=100, required=False)
 
-class AddDiscountForm(forms.ModelForm):
-	class Meta:
-		model = Discount
-		fields = ['end_date', 'percentage',]
 
 
-
-class MaxMinConditionForm(forms.ModelForm):
-   cond_min_max = forms.BooleanField(required=False)
-   class Meta:
-      model = MaxMinCondition
-      fields = ['min_amount', 'max_amount']
+# class MaxMinConditionForm(forms.ModelForm):
+#    cond_min_max = forms.BooleanField(required=False)
+#    class Meta:
+#       model = MaxMinCondition
+#       fields = ['min_amount', 'max_amount']
 
 
 class AddManagerForm(forms.Form):

@@ -2,10 +2,32 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7f206d29-0b35-4da3-95c1-1baab1223eb3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/store/forms.py.orig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/store/views.py.orig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/trading_system/domain.py.orig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/trading_system/service.py.orig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/trading_system/views.py.orig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dev.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dev.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/templates/store/add_discount_to_store.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/add_discount_to_store.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/templates/store/store_list.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/store_list.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/acceptanceTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/acceptanceTests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/mainTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/mainTest.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/trading_system/domain.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/trading_system/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/trading_system/service.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/trading_system/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/easy-install.pth" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/easy-install.pth" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Scripts/easy_install-3.7.exe" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/easy_install-3.7.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Scripts/easy_install-script.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/easy_install-script.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Scripts/easy_install.exe" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/easy_install.exe" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -62,8 +84,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/domain.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="138">
-              <caret line="46" column="27" selection-start-line="46" selection-start-column="27" selection-end-line="46" selection-end-column="27" />
+            <state relative-caret-position="298">
+              <caret line="59" column="49" selection-start-line="59" selection-start-column="49" selection-end-line="59" selection-end-column="49" />
             </state>
           </provider>
         </entry>
@@ -93,8 +115,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="179">
-              <caret line="14" column="27" lean-forward="true" selection-start-line="14" selection-start-column="27" selection-end-line="14" selection-end-column="27" />
+            <state relative-caret-position="-55">
+              <caret line="77" column="4" selection-start-line="77" selection-start-column="4" selection-end-line="77" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -102,8 +124,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/tests/acceptanceTests.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="194" column="25" selection-start-line="194" selection-start-column="25" selection-end-line="194" selection-end-column="25" />
+            <state relative-caret-position="555">
+              <caret line="209" column="44" selection-start-line="209" selection-start-column="44" selection-end-line="209" selection-end-column="44" />
             </state>
           </provider>
         </entry>
@@ -120,8 +142,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tests/mainTest.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="250">
-              <caret line="36" column="47" lean-forward="true" selection-start-line="36" selection-start-column="47" selection-end-line="36" selection-end-column="47" />
+            <state relative-caret-position="110">
+              <caret line="5" column="5" selection-start-line="5" selection-start-column="5" selection-end-line="5" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -147,7 +169,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>add</find>
       <find>add_base</find>
       <find>redirect</find>
       <find>check_ba</find>
@@ -166,10 +187,8 @@
       <find>update_form</find>
       <find>detailView</find>
       <find>open_cart</find>
-      <find>get_item_store</find>
       <find>quantity_to_buy</find>
       <find>get_queryset</find>
-      <find>user_has_cart_for_store</find>
       <find>add_base_rule_to_store</find>
       <find>cart_index</find>
       <find>add_ma</find>
@@ -177,6 +196,9 @@
       <find>json</find>
       <find>user</find>
       <find>add_m</find>
+      <find>get_item_store(item_pk)</find>
+      <find>get_item_store</find>
+      <find>user_has_cart_for_store</find>
     </findStrings>
     <replaceStrings>
       <replace>UnitTesting.driver</replace>
@@ -237,9 +259,9 @@
         <option value="$PROJECT_DIR$/trading_system/views.py" />
         <option value="$PROJECT_DIR$/store/views.py" />
         <option value="$PROJECT_DIR$/trading_system/service.py" />
-        <option value="$PROJECT_DIR$/tests/mainTest.py" />
-        <option value="$PROJECT_DIR$/tests/acceptanceTests.py" />
         <option value="$PROJECT_DIR$/trading_system/domain.py" />
+        <option value="$PROJECT_DIR$/tests/acceptanceTests.py" />
+        <option value="$PROJECT_DIR$/tests/mainTest.py" />
       </list>
     </option>
   </component>
@@ -282,194 +304,6 @@
               <item name="dev" type="b2602c69:ProjectViewProjectNode" />
               <item name="dev" type="462c0819:PsiDirectoryNode" />
               <item name="trading_system" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="2068767379" type="70582d5e:PySkeletonsNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="python3.7" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="python3.7" type="462c0819:PsiDirectoryNode" />
-              <item name="json" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="python3.7" type="462c0819:PsiDirectoryNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="python3.7" type="462c0819:PsiDirectoryNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-              <item name="django" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="python3.7" type="462c0819:PsiDirectoryNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-              <item name="django" type="462c0819:PsiDirectoryNode" />
-              <item name="contrib" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="python3.7" type="462c0819:PsiDirectoryNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-              <item name="django" type="462c0819:PsiDirectoryNode" />
-              <item name="contrib" type="462c0819:PsiDirectoryNode" />
-              <item name="auth" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="python3.7" type="462c0819:PsiDirectoryNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-              <item name="django" type="462c0819:PsiDirectoryNode" />
-              <item name="db" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="python3.7" type="462c0819:PsiDirectoryNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-              <item name="django" type="462c0819:PsiDirectoryNode" />
-              <item name="db" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="python3.7" type="462c0819:PsiDirectoryNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-              <item name="django" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="python3.7" type="462c0819:PsiDirectoryNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-              <item name="simplejson" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="python3.7" type="462c0819:PsiDirectoryNode" />
-              <item name="unittest" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-              <item name="django" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-              <item name="django" type="462c0819:PsiDirectoryNode" />
-              <item name="contrib" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-              <item name="django" type="462c0819:PsiDirectoryNode" />
-              <item name="contrib" type="462c0819:PsiDirectoryNode" />
-              <item name="auth" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-              <item name="django" type="462c0819:PsiDirectoryNode" />
-              <item name="db" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-              <item name="django" type="462c0819:PsiDirectoryNode" />
-              <item name="db" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-              <item name="django" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-              <item name="simplejson" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="Typeshed Stubs" type="9c07c3ae:PyTypeShedNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="Typeshed Stubs" type="9c07c3ae:PyTypeShedNode" />
-              <item name="3" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (2) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="Typeshed Stubs" type="9c07c3ae:PyTypeShedNode" />
-              <item name="3" type="462c0819:PsiDirectoryNode" />
-              <item name="unittest" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -522,7 +356,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_add_owner_to_store">
+  <component name="RunManager" selected="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_add_manager">
     <configuration name="Test: store.tests.StoreUnitTesting" type="DjangoTestsConfigurationType">
       <module name="dev" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -561,6 +395,46 @@
       <option name="CUSTOM_SETTINGS" value="false" />
       <option name="USE_OPTIONS" value="false" />
       <option name="OPTIONS" value="--parallel" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_add_guest_to_store_by_store_owner" type="DjangoTestsConfigurationType" temporary="true">
+      <module name="dev" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="TARGET" value="tests.acceptanceTests.TestTradingSystem.test_add_guest_to_store_by_store_owner" />
+      <option name="SETTINGS_FILE" value="" />
+      <option name="CUSTOM_SETTINGS" value="false" />
+      <option name="USE_OPTIONS" value="false" />
+      <option name="OPTIONS" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_add_manager" type="DjangoTestsConfigurationType" temporary="true">
+      <module name="dev" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="TARGET" value="tests.acceptanceTests.TestTradingSystem.test_add_manager" />
+      <option name="SETTINGS_FILE" value="" />
+      <option name="CUSTOM_SETTINGS" value="false" />
+      <option name="USE_OPTIONS" value="false" />
+      <option name="OPTIONS" value="" />
       <method v="2" />
     </configuration>
     <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_add_owner_to_store" type="DjangoTestsConfigurationType" temporary="true">
@@ -603,7 +477,7 @@
       <option name="OPTIONS" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_adding_item_with_negative_quantity" type="DjangoTestsConfigurationType" temporary="true">
+    <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_make_reflexive_ownership" type="DjangoTestsConfigurationType" temporary="true">
       <module name="dev" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -616,47 +490,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="TARGET" value="tests.acceptanceTests.TestTradingSystem.test_adding_item_with_negative_quantity" />
-      <option name="SETTINGS_FILE" value="" />
-      <option name="CUSTOM_SETTINGS" value="false" />
-      <option name="USE_OPTIONS" value="false" />
-      <option name="OPTIONS" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_not_store_owner_adds_item_to_store" type="DjangoTestsConfigurationType" temporary="true">
-      <module name="dev" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="TARGET" value="tests.acceptanceTests.TestTradingSystem.test_not_store_owner_adds_item_to_store" />
-      <option name="SETTINGS_FILE" value="" />
-      <option name="CUSTOM_SETTINGS" value="false" />
-      <option name="USE_OPTIONS" value="false" />
-      <option name="OPTIONS" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_store_owner_adds_already_existing_item_to_store" type="DjangoTestsConfigurationType" temporary="true">
-      <module name="dev" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="TARGET" value="tests.acceptanceTests.TestTradingSystem.test_store_owner_adds_already_existing_item_to_store" />
+      <option name="TARGET" value="tests.acceptanceTests.TestTradingSystem.test_make_reflexive_ownership" />
       <option name="SETTINGS_FILE" value="" />
       <option name="CUSTOM_SETTINGS" value="false" />
       <option name="USE_OPTIONS" value="false" />
@@ -757,19 +591,19 @@
       <item itemvalue="Django tests.Test: store.tests.StoreUnitTesting" />
       <item itemvalue="Django tests.Test: store.tests.StoreUnitTesting.test_add_store" />
       <item itemvalue="Django tests.unittests" />
-      <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_not_store_owner_adds_item_to_store" />
-      <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_store_owner_adds_already_existing_item_to_store" />
-      <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_adding_item_with_negative_quantity" />
       <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_adding_item_with_float_quantity" />
       <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_add_owner_to_store" />
+      <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_add_guest_to_store_by_store_owner" />
+      <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_make_reflexive_ownership" />
+      <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_add_manager" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_add_manager" />
+        <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_make_reflexive_ownership" />
+        <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_add_guest_to_store_by_store_owner" />
         <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_add_owner_to_store" />
         <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_adding_item_with_float_quantity" />
-        <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_adding_item_with_negative_quantity" />
-        <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_store_owner_adds_already_existing_item_to_store" />
-        <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_not_store_owner_adds_item_to_store" />
       </list>
     </recent_temporary>
   </component>
@@ -826,32 +660,11 @@
       <workItem from="1559659362025" duration="7030000" />
       <workItem from="1560422699647" duration="2470000" />
       <workItem from="1560433382263" duration="14645000" />
-      <workItem from="1560509378775" duration="20267000" />
+      <workItem from="1560509378775" duration="23069000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Test__tests_acceptanceTests_TestTradingSystem_test_adding_item_with_float_quantity - 2019.06.14 at 18h 03m 45s.xml">
-      <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_adding_item_with_float_quantity" configurationId="DjangoTestsConfigurationType" />
-    </history-entry>
-    <history-entry file="Test__tests_acceptanceTests_TestTradingSystem_test_adding_item_with_float_quantity - 2019.06.14 at 18h 05m 20s.xml">
-      <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_adding_item_with_float_quantity" configurationId="DjangoTestsConfigurationType" />
-    </history-entry>
-    <history-entry file="Test__tests_acceptanceTests_TestTradingSystem_test_adding_item_with_float_quantity - 2019.06.14 at 18h 32m 19s.xml">
-      <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_adding_item_with_float_quantity" configurationId="DjangoTestsConfigurationType" />
-    </history-entry>
-    <history-entry file="Test__tests_acceptanceTests_TestTradingSystem_test_add_owner_to_store - 2019.06.14 at 19h 31m 14s.xml">
-      <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_add_owner_to_store" configurationId="DjangoTestsConfigurationType" />
-    </history-entry>
-    <history-entry file="Test__tests_acceptanceTests_TestTradingSystem_test_add_owner_to_store - 2019.06.14 at 19h 31m 59s.xml">
-      <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_add_owner_to_store" configurationId="DjangoTestsConfigurationType" />
-    </history-entry>
-    <history-entry file="Test__tests_acceptanceTests_TestTradingSystem_test_add_owner_to_store - 2019.06.14 at 19h 33m 52s.xml">
-      <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_add_owner_to_store" configurationId="DjangoTestsConfigurationType" />
-    </history-entry>
-    <history-entry file="Test__tests_acceptanceTests_TestTradingSystem_test_add_owner_to_store - 2019.06.14 at 19h 41m 45s.xml">
-      <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_add_owner_to_store" configurationId="DjangoTestsConfigurationType" />
-    </history-entry>
     <history-entry file="Test__tests_acceptanceTests_TestTradingSystem_test_add_owner_to_store - 2019.06.14 at 19h 42m 22s.xml">
       <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_add_owner_to_store" configurationId="DjangoTestsConfigurationType" />
     </history-entry>
@@ -861,9 +674,30 @@
     <history-entry file="Test__tests_acceptanceTests_TestTradingSystem_test_add_owner_to_store - 2019.06.14 at 20h 08m 22s.xml">
       <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_add_owner_to_store" configurationId="DjangoTestsConfigurationType" />
     </history-entry>
+    <history-entry file="Test__tests_acceptanceTests_TestTradingSystem_test_add_owner_to_store - 2019.06.14 at 20h 09m 23s.xml">
+      <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_add_owner_to_store" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
+    <history-entry file="Test__tests_acceptanceTests_TestTradingSystem_test_add_guest_to_store_by_store_owner - 2019.06.14 at 20h 27m 21s.xml">
+      <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_add_guest_to_store_by_store_owner" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
+    <history-entry file="Test__tests_acceptanceTests_TestTradingSystem_test_add_guest_to_store_by_store_owner - 2019.06.14 at 20h 28m 45s.xml">
+      <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_add_guest_to_store_by_store_owner" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
+    <history-entry file="Test__tests_acceptanceTests_TestTradingSystem_test_make_reflexive_ownership - 2019.06.14 at 20h 41m 42s.xml">
+      <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_make_reflexive_ownership" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
+    <history-entry file="Test__tests_acceptanceTests_TestTradingSystem_test_make_reflexive_ownership - 2019.06.14 at 20h 42m 16s.xml">
+      <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_make_reflexive_ownership" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
+    <history-entry file="Test__tests_acceptanceTests_TestTradingSystem_test_add_manager - 2019.06.14 at 20h 43m 12s.xml">
+      <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_add_manager" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
+    <history-entry file="Test__tests_acceptanceTests_TestTradingSystem_test_add_manager - 2019.06.14 at 20h 43m 32s.xml">
+      <configuration name="Test: tests.acceptanceTests.TestTradingSystem.test_add_manager" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="356467000" />
+    <option name="totallyTimeSpent" value="359269000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -883,7 +717,7 @@
       <window_info id="Favorites" order="2" sideWeight="0.5120167" side_tool="true" weight="0.22100122" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3286517" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.7855918" visible="true" weight="0.37722048" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.7855918" weight="0.37722048" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49571183" weight="0.4535005" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -892,7 +726,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49255663" weight="0.24346918" />
-      <window_info anchor="bottom" id="Python Console" order="11" weight="0.56296295" />
+      <window_info anchor="bottom" id="Python Console" order="11" weight="0.5621735" />
       <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.21440823" side_tool="true" weight="0.359147" />
       <window_info anchor="bottom" id="Database Console" order="13" weight="0.3291536" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -914,11 +748,6 @@
           <url>file:///opt/local/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages/django/db/models/manager.py</url>
           <line>175</line>
           <option name="timeStamp" value="12" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/trading_system/domain.py</url>
-          <line>51</line>
-          <option name="timeStamp" value="21" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -942,14 +771,17 @@
     <SUITE FILE_PATH="coverage/dev$Test__store_tests_StoreUnitTesting_test_add_item_to_store.coverage" NAME="Test: store.tests.StoreUnitTesting.test_add_item_to_store Coverage Results" MODIFIED="1557510134327" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$Test__tests_acceptanceTests_TestTradingSystem_test_not_store_owner_adds_item_to_store.coverage" NAME="Test: tests.acceptanceTests.TestTradingSystem.test_not_store_owner_adds_item_to_store Coverage Results" MODIFIED="1560522715884" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$Test__tests_acceptanceTests_TestTradingSystem_test_adding_item_with_negative_quantity.coverage" NAME="Test: tests.acceptanceTests.TestTradingSystem.test_adding_item_with_negative_quantity Coverage Results" MODIFIED="1560523929895" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/dev$Test__tests_acceptanceTests_TestTradingSystem_test_make_reflexive_ownership.coverage" NAME="Test: tests.acceptanceTests.TestTradingSystem.test_make_reflexive_ownership Coverage Results" MODIFIED="1560534123768" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$Test__store_tests_StoreUnitTesting_test_add_manager_to_store.coverage" NAME="Test: store.tests.StoreUnitTesting.test_add_manager_to_store Coverage Results" MODIFIED="1557764637982" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$unittests.coverage" NAME="unittests Coverage Results" MODIFIED="1557573434883" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$Test__store_tests_StoreUnitTesting.coverage" NAME="Test: store.tests.StoreUnitTesting Coverage Results" MODIFIED="1557081936653" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/dev$Test__tests_acceptanceTests_TestTradingSystem_test_add_manager.coverage" NAME="Test: tests.acceptanceTests.TestTradingSystem.test_add_manager Coverage Results" MODIFIED="1560534199966" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$Test__store_tests_StoreUnitTesting_test_update_store.coverage" NAME="Test: store.tests.StoreUnitTesting.test_update_store Coverage Results" MODIFIED="1557236049397" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$Test__accounts_tests.coverage" NAME="Test: accounts.tests Coverage Results" MODIFIED="1557081401397" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$Test__tests_acceptanceTests_TestTradingSystem_test_adding_item_with_float_quantity.coverage" NAME="Test: tests.acceptanceTests.TestTradingSystem.test_adding_item_with_float_quantity Coverage Results" MODIFIED="1560526324478" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$Test__tests_acceptanceTests_TestTradingSystem_test_search_none_existing_item.coverage" NAME="Test: tests.acceptanceTests.TestTradingSystem.test_search_none_existing_item Coverage Results" MODIFIED="1560515781833" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$Test__tests_acceptanceTests_TestTradingSystem_test_member_logout.coverage" NAME="Test: tests.acceptanceTests.TestTradingSystem.test_member_logout Coverage Results" MODIFIED="1560518079263" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/dev$Test__tests_acceptanceTests_TestTradingSystem_test_add_guest_to_store_by_store_owner.coverage" NAME="Test: tests.acceptanceTests.TestTradingSystem.test_add_guest_to_store_by_store_owner Coverage Results" MODIFIED="1560533308521" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$Test__store_tests_StoreUnitTesting_test_delete_store.coverage" NAME="Test: store.tests.StoreUnitTesting.test_delete_store Coverage Results" MODIFIED="1557757822840" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$Test__store_tests_StoreUnitTesting_test_add_store.coverage" NAME="Test: store.tests.StoreUnitTesting.test_add_store Coverage Results" MODIFIED="1557578531039" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$Test__tests_acceptanceTests_TestTradingSystem.coverage" NAME="Test: tests.acceptanceTests.TestTradingSystem Coverage Results" MODIFIED="1560511863985" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
@@ -1309,13 +1141,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tests/mainTest.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="36" column="47" lean-forward="true" selection-start-line="36" selection-start-column="47" selection-end-line="36" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
     <entry file="das://9543916a-b981-4f31-addf-9bbf27bfa5fe/schema/test_tradingsystem/table/store_item">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state projectRestartId="120f1cb6-0d86-4b71-a20b-a1b1a8f8afed">
@@ -1348,20 +1173,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/trading_system/service.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="179">
-          <caret line="14" column="27" lean-forward="true" selection-start-line="14" selection-start-column="27" selection-end-line="14" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/trading_system/domain.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="46" column="27" selection-start-line="46" selection-start-column="27" selection-end-line="46" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
     <entry file="das://9543916a-b981-4f31-addf-9bbf27bfa5fe/schema/test_tradingsystem/table/store_store_owners">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state projectRestartId="120f1cb6-0d86-4b71-a20b-a1b1a8f8afed">
@@ -1380,10 +1191,31 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/trading_system/service.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-55">
+          <caret line="77" column="4" selection-start-line="77" selection-start-column="4" selection-end-line="77" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/mainTest.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="110">
+          <caret line="5" column="5" selection-start-line="5" selection-start-column="5" selection-end-line="5" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/trading_system/domain.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="298">
+          <caret line="59" column="49" selection-start-line="59" selection-start-column="49" selection-end-line="59" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/tests/acceptanceTests.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="194" column="25" selection-start-line="194" selection-start-column="25" selection-end-line="194" selection-end-column="25" />
+        <state relative-caret-position="555">
+          <caret line="209" column="44" selection-start-line="209" selection-start-column="44" selection-end-line="209" selection-end-column="44" />
         </state>
       </provider>
     </entry>

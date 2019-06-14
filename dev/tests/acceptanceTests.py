@@ -189,15 +189,31 @@ class TestTradingSystem(MyUnitTesting):
 		pass
 
 	def test_add_owner_to_store(self):  # 4.3-1
-		# res = service.get_user_store_list(self.user.pk)
 		new_user = User.objects.create(username="new_user", password=make_password(self.default_password))
 		self.assertFalse(service.get_user_store_list(new_user.pk))
 		self.assertFalse(service.add_manager(new_user.username, [], True, self.store.pk, self.default_user)[0])
 		self.assertTrue(service.get_user_store_list(new_user.pk))
 
+	def test_add_owner_to_store_by_none_owner(self):  # 4.3-2
+		new_user = User.objects.create(username="new_user2", password=make_password(self.default_password))
+		new_user2 = User.objects.create(username="new_user3", password=make_password(self.default_password))
+		self.assertFalse(service.get_user_store_list(new_user.pk))
+		self.assertTrue(service.add_manager(new_user.username, [], True, self.store.pk, new_user2.username)[0])
+		self.assertFalse(service.get_user_store_list(new_user.pk))
+
+	def test_add_guest_to_store_by_store_owner(self):  # 4.3-3
+		self.assertTrue(service.add_manager("Moshe", [], True, self.store.pk, self.default_user)[0])
+
+	def test_make_reflexive_ownership(self):  # 4.3-2
+		new_user = User.objects.create(username="new_user4", password=make_password(self.default_password))
+		self.assertFalse(service.get_user_store_list(new_user.pk))
+		self.assertFalse(service.add_manager(new_user.username, [], True, self.store.pk, self.user.username)[0])
+		self.assertTrue(service.get_user_store_list(new_user.pk))
+		self.assertTrue(service.add_manager(self.user.username, [], True, self.store.pk, new_user.username)[0])
+
 	def test_add_manager(self):
 		store_pk = service.open_store("bla", "blabla", self.user.pk)
 		User.objects.create(username="new_user", password=make_password(self.default_password))
-		self.assertTrue(
+		self.assertFalse(
 			service.add_manager("new_user", [self.Perms.ADD_ITEM.value, self.Perms.EDIT_ITEM.value], False, store_pk,
 			                    self.default_user)[0])

@@ -3,8 +3,8 @@ from enum import Enum
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from guardian.shortcuts import assign_perm
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 
 from store.models import Store
 from trading_system.service import open_store
@@ -24,7 +24,7 @@ class MyUnitTesting(StaticLiveServerTestCase):
 	@classmethod
 	def setUpClass(cls) -> None:
 		super().setUpClass()
-		cls.driver = webdriver.Chrome()
+		cls.driver = webdriver.Chrome(ChromeDriverManager().install())
 
 	@classmethod
 	def tearDownClass(cls) -> None:
@@ -43,4 +43,3 @@ class MyUnitTesting(StaticLiveServerTestCase):
 		element = cls.driver.find_element_by_name("password")
 		element.send_keys(password)
 		element.submit()
-

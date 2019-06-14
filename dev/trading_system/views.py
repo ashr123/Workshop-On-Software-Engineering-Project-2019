@@ -3,6 +3,7 @@ from typing import Any, Dict, List, Union
 
 import django
 from django.contrib import messages
+from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q, QuerySet
 from django.http import HttpResponse
