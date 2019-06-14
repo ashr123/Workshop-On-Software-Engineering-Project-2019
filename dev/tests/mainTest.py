@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from guardian.shortcuts import assign_perm
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+
 
 from store.models import Store
 from trading_system.service import open_store
@@ -24,7 +26,7 @@ class MyUnitTesting(StaticLiveServerTestCase):
 	@classmethod
 	def setUpClass(cls) -> None:
 		super().setUpClass()
-		cls.driver = webdriver.Chrome()
+		cls.driver = webdriver.Chrome(ChromeDriverManager().install())
 
 	@classmethod
 	def tearDownClass(cls) -> None:

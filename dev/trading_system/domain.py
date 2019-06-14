@@ -275,7 +275,7 @@ def get_cart(store_pk, user_pk):
 		return carts[0]
 
 
-def open_cart_for_user_in_store(store_pk: int, user_pk: int) -> None:
+def open_cart_for_user_in_store(store_pk, user_pk):
 	Cart(customer_id=user_pk, store_id=store_pk).save()
 
 
@@ -333,7 +333,7 @@ def user_has_cart_for_store(store_pk, user_pk):
 	return len(Cart.objects.filter(customer_id=user_pk, store_id=store_pk)) > 0
 
 
-def user_has_cart_for_store(store_pk: int, user_pk: int) -> bool:
+def user_has_cart_for_store(store_pk, user_pk):
 	return len(Cart.objects.filter(customer_id=user_pk, store_id=store_pk)) > 0
 
 
