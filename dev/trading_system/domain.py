@@ -33,7 +33,7 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 	# messages.warning(request, 'allready owner')
 	# return redirect('/store/home_page_owner/')
 
-	if (user_ == None):
+	if user_ is None:
 		fail = True
 		messages_ += 'No such user'
 		return [fail, messages_]
@@ -41,7 +41,7 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 	# return redirect('/store/home_page_owner/')
 	for perm in picked:
 		assign_perm(perm, user_, store_)
-	if (is_owner):
+	if is_owner:
 		try:
 			if store_.owners.get(id=user_.pk):
 				print('hhhhhhhhhhhhhhh')
@@ -205,7 +205,7 @@ def add_complex_rule_to_item_2(item_id, prev_rule, rule1, parameter1, rule2, par
 
 
 def add_item_to_store(price, name, description, category, quantity, store_id):
-	item = Item.objects.create(price=price, name=name, description=description, quantity=quantity)
+	item = Item.objects.create(price=price, name=name, category=category, description=description, quantity=quantity)
 	item.save()
 	curr_store = Store.objects.get(id=store_id)
 	curr_store.items.add(item)
@@ -239,8 +239,7 @@ def have_no_more_stores(user_pk):
 
 def get_user_store_list(user_id):
 	user = User.objects.get(pk=user_id)
-	user_stores = None
-	if ("store_managers" in user.groups.values_list('name', flat=True)):
+	if "store_managers" in user.groups.values_list('name', flat=True):
 		user_stores = Store.objects.filter(managers__id__in=[user_id])
 	else:
 		user_stores = Store.objects.filter(owners__id__in=[user_id])

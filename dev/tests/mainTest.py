@@ -7,6 +7,7 @@ from guardian.shortcuts import assign_perm
 from selenium import webdriver
 
 from store.models import Store
+from trading_system.service import open_store
 
 
 class MyUnitTesting(StaticLiveServerTestCase):
@@ -21,30 +22,22 @@ class MyUnitTesting(StaticLiveServerTestCase):
 		ADD_MANAGER = "ADD_MANAGER"
 
 	@classmethod
-	def setUpClass(cls):
+	def setUpClass(cls) -> None:
 		super().setUpClass()
 		cls.driver = webdriver.Chrome()
 
 	@classmethod
-	def tearDownClass(cls):
+	def tearDownClass(cls) -> None:
 		cls.driver.close()
 		super().tearDownClass()
 
 	def setUp(self) -> None:
 		super().setUp()
 		self.user = User.objects.create(username=self.default_user, password=make_password(self.default_password))
-		self.store = Store.objects.create(name=self.default_store, description="bla bla bla")
-		self.store.owners.add(self.user)
-		assign_perm('ADD_ITEM', self.user, self.store)
-		assign_perm('REMOVE_ITEM', self.user, self.store)
-		assign_perm('EDIT_ITEM', self.user, self.store)
-		assign_perm('ADD_MANAGER', self.user, self.store)
-
-	# def tearDown(self) -> None:
-	# 	self.driver.close()
+		self.store = Store.objects.get(pk=open_store(self.default_store, "bla bla bla", self.user.pk))
 
 	@classmethod
-	def login(cls, user, password):
+	def login(cls, user: str, password: str) -> None:
 		cls.driver.get(cls.live_server_url + "/accounts/login/")
 		cls.driver.find_element_by_name("username").send_keys(user)
 		element = cls.driver.find_element_by_name("password")
