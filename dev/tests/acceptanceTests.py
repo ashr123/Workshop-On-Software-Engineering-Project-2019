@@ -8,6 +8,5 @@ from trading_system import service
 class TestTradingSystem(MyUnitTesting):
 	def test_add_manager(self):
 		store_pk = service.open_store("bla", "blabla", self.user.pk)
-		self.user = User.objects.create(username="new_user", password=make_password(self.default_password))
-		ans = service.add_manager("new_user", [self.Perms.ADD_ITEM.value, self.Perms.EDIT_ITEM.value], False, store_pk, self.default_user)
-		self.assertTrue(ans[0])
+		User.objects.create(username="new_user", password=make_password(self.default_password))
+		self.assertTrue(service.add_manager("new_user", [self.Perms.ADD_ITEM.value, self.Perms.EDIT_ITEM.value], False, store_pk, self.default_user)[0])
