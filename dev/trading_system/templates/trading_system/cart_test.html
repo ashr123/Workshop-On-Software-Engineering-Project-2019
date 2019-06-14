@@ -24,7 +24,7 @@
 				{% csrf_token %}
 
 				{% for item in form.items %}
-					<div class="check_item">{{ item }}</div>
+					<p><div class="check_item">{{ item }}</div></p>
 				{% endfor %}
 			</div>
 			<div class="column">
@@ -32,7 +32,7 @@
 				{#				{% for c in int_ %}#}
 				{#					<div class="check_item">{{ c }}</div>#}
 				{#				{% endfor %}#}
-				{{ qua.as_ul }}
+				{{ qua.as_p }}
 
 			</div>
 
