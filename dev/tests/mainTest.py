@@ -1,3 +1,5 @@
+from enum import Enum
+
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
@@ -11,6 +13,12 @@ class MyUnitTesting(StaticLiveServerTestCase):
 	default_password = "q2w44r32c1"
 	default_user = "qqq"
 	default_store = "rrr"
+
+	class Perms(Enum):
+		ADD_ITEM = 'ADD_ITEM'
+		REMOVE_ITEM = 'REMOVE_ITEM'
+		EDIT_ITEM = "EDIT_ITEM"
+		ADD_MANAGER = "ADD_MANAGER"
 
 	@classmethod
 	def setUpClass(cls):
@@ -42,3 +50,4 @@ class MyUnitTesting(StaticLiveServerTestCase):
 		element = cls.driver.find_element_by_name("password")
 		element.send_keys(password)
 		element.submit()
+

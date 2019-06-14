@@ -1,7 +1,7 @@
 # Create your tests here.
 from django.contrib.auth.models import User
 
-from dev.mainTest import MyUnitTesting
+from tests.mainTest import MyUnitTesting
 
 
 class AccountUnitTesting(MyUnitTesting):

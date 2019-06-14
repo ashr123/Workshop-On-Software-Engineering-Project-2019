@@ -6,18 +6,18 @@ from store.models import Store, Item, BaseRule, ComplexStoreRule, BaseItemRule, 
 from trading_system.models import ObserverUser, Cart
 
 
-def add_manager(user_name, picked, is_owner, pk, request_user_name):
+def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 	messages_ = ''
 	try:
-		user_ = User.objects.get(username=user_name)
+		user_ = User.objects.get(username=wanna_be_manager)
 	except:
 		fail = True
 		messages_ += 'no such user'
 		return [fail, messages_]
 	# messages.warning(request, 'no such user')
-	# return redirect('/store/add_manager_to_store/' + str(pk) + '/')
-	store_ = Store.objects.get(id=pk)
-	if user_name == request_user_name:
+	# return redirect('/store/add_manager_to_store/' + str(store_pk) + '/')
+	store_ = Store.objects.get(id=store_pk)
+	if wanna_be_manager == store_manager:
 		fail = True
 		messages_ += 'can`t add yourself as a manager!'
 		return [fail, messages_]
@@ -26,7 +26,7 @@ def add_manager(user_name, picked, is_owner, pk, request_user_name):
 	pre_store_owners = store_.owners.all()
 	# print('\n owners: ' ,pre_store_owners)
 	for owner in pre_store_owners:
-		if (owner.username == user_name):
+		if owner.username == wanna_be_manager:
 			fail = True
 			messages_ += 'allready owner'
 			return [fail, messages_]
@@ -91,7 +91,7 @@ def open_store(store_name, desc, user_id):
 	assign_perm('ADD_MANAGER', _user, store)
 	assign_perm('REMOVE_STORE', _user, store)
 	assign_perm('ADD_DISCOUNT', _user, store)
-	return 'Your Store was added successfully!'
+	return store.pk
 
 
 def add_base_rule_to_store(rule_type, store_id, parameter):
