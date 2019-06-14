@@ -71,6 +71,8 @@ def delete_store(store_id):
 def get_store_details(store_id):
 	return domain.get_store_details(store_id=store_id)
 
+def get_store_items(store_id):
+	return domain.get_store_items(store_id=store_id)
 
 def get_user_store_list(user_id):
 	return domain.get_user_store_list(user_id=user_id)
@@ -89,3 +91,38 @@ def add_item_to_cart(user_id,item_id):
 def is_authenticated(user_id):
 	return domain.is_authenticated(user_id)
 
+
+def update_item(item_id, item_dict):
+	return domain.update_item(item_id = item_id, item_dict = item_dict)
+
+def item_rules_string(itemId):
+	return domain.item_rules_string(itemId)
+
+def store_rules_string(store_id):
+	return domain.store_rules_string(store_id)
+
+
+def update_store(store_id, store_dict):
+	return domain.update_store(store_id, store_dict)
+
+def get_discount_for_store(pk, amount, total):
+	return domain.get_discount_for_store(pk, amount, total)
+
+def get_discount_for_item(pk, amount, total):
+	return domain.get_discount_for_item(pk, amount, total)
+
+
+def delete_item(item_id):
+	return domain.delete_item(item_id)
+
+
+def get_store_creator(store_id):
+	return domain.get_store_creator(store_id)
+
+
+def get_user_notifications(user_id):
+	return domain.get_user_notifications(user_id)
+
+
+def mark_notification_read(user_id):
+	return domain.mark_notification_read(user_id)

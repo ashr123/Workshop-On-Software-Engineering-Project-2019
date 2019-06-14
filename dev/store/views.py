@@ -123,7 +123,6 @@ class StoreDetailView(DetailView):
 	def get_context_data(self, **kwargs):
 		text = SearchForm()
 		user_name = self.request.user.username
-		# context = super(StoreDetailView, self).get_context_data(**kwargs)  # get the default context data
 		context = {}
 		details = service.get_store_details(kwargs['object'].pk)
 		context['text'] = text
@@ -164,9 +163,8 @@ class ItemListView(ListView):
 		context['user_name'] = self.request.user.username
 		return context
 
-	def get_queryset(self, **kwargs):
-		store = Store.objects.get(id=kwargs['store_pk'])
-		items = store.items.all()
+	def get_queryset(self):
+		return service.get_store_items(store_id=self.kwargs['store_pk'])
 
 
 
@@ -176,7 +174,6 @@ class ItemDetailView(DetailView):
 
 	def get_context_data(self, **kwargs):
 		text = SearchForm()
-		#context = super(ItemDetailView, self).get_context_data(**kwargs)  # get the default context data
 		context = {
 			'text': text,
 			'item': service.get_item_details(item_id = kwargs['object'].pk)
@@ -198,7 +195,7 @@ class ItemUpdate(UpdateView):
 		context = super(ItemUpdate, self).get_context_data(**kwargs)  # get the default context data
 		itemId = self.kwargs['pk']
 		text = SearchForm()
-		rules = item_rules_string(itemId)
+		rules = service.item_rules_string(itemId)
 		user_name = self.request.user.username
 		context['text'] = text
 		context['user_name'] = user_name
@@ -217,51 +214,10 @@ class ItemUpdate(UpdateView):
 			quantity= item_details['quantity']
 		)
 
-def item_rules_string(itemId):
-	base_arr = []
-	complex_arr = []
-	base = []
-	complex = []
-	item = Item.objects.get(id=itemId)
-	itemRules = ComplexItemRule.objects.all().filter(item=item)
-	for rule in reversed(itemRules):
-		if rule.id in complex_arr:
-			continue
-		res = {"id": rule.id, "type": 2, "item": itemId, "name": string_item_rule(rule, base_arr, complex_arr)}
-		complex.append(res)
-	itemBaseRules = BaseItemRule.objects.all().filter(item=item)
-	for rule in itemBaseRules:
-		if rule.id in base_arr:
-			continue
-		res = {"id": rule.id, "type": 1, "item": itemId, "name": get_base_rule_item(rule.id)}
-		base.append(res)
-	return complex + base
+	def form_valid(self, form):
+		service.update_item(item_id = self.kwargs['pk'], item_dict =form.cleaned_data)
+		return super().form_valid(form)
 
-
-def string_item_rule(rule, base_arr, complex_arr):
-	curr = '('
-	if rule.left[0] == '_':
-		base_arr.append(int(rule.left[1:]))
-		curr += get_base_rule_item(int(rule.left[1:]))
-	else:
-		complex_arr.append(int(rule.left))
-		tosend = ComplexItemRule.objects.get(id=int(rule.left))
-		curr += string_item_rule(tosend, base_arr, complex_arr)
-	curr += ' ' + rule.operator + ' '
-	if rule.right[0] == '_':
-		base_arr.append(int(rule.right[1:]))
-		curr += get_base_rule_item(int(rule.right[1:]))
-	else:
-		complex_arr.append(int(rule.right))
-		tosend = ComplexItemRule.objects.get(id=int(rule.right))
-		curr += string_item_rule(tosend, base_arr, complex_arr)
-	curr += ')'
-	return curr
-
-
-def get_base_rule_item(rule_id):
-	rule = BaseItemRule.objects.get(id=rule_id)
-	return rule.type + ': ' + rule.parameter
 
 
 @method_decorator(login_required, name='dispatch')
@@ -277,6 +233,19 @@ class ItemDelete(DeleteView):
 		context['text'] = text
 		context['pk'] = self.object.id
 		return context
+
+	def get_object(self, queryset=None):
+		item_details = service.get_item_details(item_id= self.kwargs['pk'])
+		return Item.objects.create(
+			name=item_details['name'],
+			description=item_details['description'],
+			category= item_details['category'],
+			price= item_details['price'],
+			quantity= item_details['quantity']
+		)
+	def delete(self, request, *args, **kwargs):
+		service.delete_item(item_id = kwargs['pk'])
+		return super(ItemDelete, self).delete(request, *args, **kwargs)
 
 
 def add_discount_to_item(request, pk):
@@ -317,23 +286,27 @@ class StoreUpdate(UpdateView):
 	template_name_suffix = '_update_form'
 
 	def get_context_data(self, **kwargs):
-		# if not (self.request.user.has_perm('EDIT_ITEM')):
-		# 	user_name = self.request.user.username
-		# 	text = SearchForm()
-		# 	messages.warning(self.request, 'there is no edit perm!')
-		# 	return render(self.request, 'homepage_member.html', {'text': text, 'user_name': user_name})
-		text = SearchForm()
-		store = Store.objects.get(id=self.object.id)
-		# store_rules = BaseRule.objects.all().filter(store=store)
-		rules = store_rules_string(store)
-		store_items = store.items.all()
-		user_name = self.request.user.username
 		context = super(StoreUpdate, self).get_context_data(**kwargs)  # get the default context data
+		text = SearchForm()
+		rules = service.store_rules_string(store_id=self.kwargs['pk'])
+		store_items = service.get_store_items(store_id=self.kwargs['pk'])
+		user_name = self.request.user.username
 		context['text'] = text
 		context['user_name'] = user_name
 		context['form_'] = UpdateItems(store_items)
 		context['rules'] = rules
 		return context
+
+	def get_object(self, queryset=None):
+		store_details = service.get_store_details(store_id= self.kwargs['pk'])
+		return Store.objects.create(
+			name=store_details['name'],
+			description=store_details['description']
+		)
+
+	def form_valid(self, form):
+		service.update_store(store_id = self.kwargs['pk'], store_dict =form.cleaned_data)
+		return super().form_valid(form)
 
 
 
@@ -350,14 +323,14 @@ class StoreDelete(DeleteView):
 	template_name_suffix = '_delete_form'
 
 	def delete(self, request, *args, **kwargs):
-		store = Store.objects.get(id=kwargs['pk'])
-		if not service.can_remove_store(store_id=store.pk, user_id=self.request.user.pk):
+		store_id = kwargs['pk']
+		if not service.can_remove_store(store_id=store_id, user_id=self.request.user.pk):
 			messages.warning(request, 'there is no delete perm!')
 			user_name = request.user.username
 			text = SearchForm()
 			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
 
-		owner_name = store.owners.all()[0]  # creator
+		owner_name = service.get_store_creator(store_id = kwargs['pk'])
 		ans = service.delete_store(store_id = kwargs['pk'])
 		response = super(StoreDelete, self).delete(request, *args, **kwargs)
 		messages.success(request, ans[1])
@@ -382,52 +355,6 @@ from .forms import PayForm
 
 pay_system = Payment()
 supply_system = Supply()
-
-
-def get_discount_for_store(pk, amount, total):
-	store_of_item = Store.objects.get(items__id__contains=pk)
-	if not (len(store_of_item.discounts.all()) == 0):
-		discount_ = store_of_item.discounts.all()[0]
-		now = datetime.datetime.now().date()
-		if (discount_.end_date >= now):
-			conditions = discount_.conditions.all()
-			if (len(conditions) > 0):
-				for cond in conditions:
-					if (amount <= cond.max_amount and amount >= cond.min_amount):
-						percentage = discount_.percentage
-						total = (100 - percentage) / 100 * float(total)
-						str_ret = percentage
-						return [str_ret, total]
-			else:
-				percentage = discount_.percentage
-				total = (100 - percentage) / 100 * float(total)
-				str_ret = percentage
-				return [str_ret, total]
-	else:
-		return [0, total]
-
-
-def get_discount_for_item(pk, amount, total):
-	item = Item.objects.get(id=pk)
-	if not (len(item.discounts.all()) == 0):
-		item_discount = item.discounts.all()[0]
-		now = datetime.datetime.now().date()
-		if (item_discount.end_date >= now):
-			conditions_item = item_discount.conditions.all()
-			if (len(conditions_item) > 0):
-				for cond_i in conditions_item:
-					if (amount <= cond_i.max_amount and amount >= cond_i.min_amount):
-						percentage = item_discount.percentage
-						total = (100 - percentage) / 100 * float(total)
-						str_ret = percentage
-						return [str_ret, total]
-			else:
-				percentage = item_discount.percentage
-				total = (100 - percentage) / 100 * float(total)
-				str_ret = percentage
-				return [str_ret, total]
-	else:
-		return [0, total]
 
 
 def get_store_of_item(item_id):
@@ -460,8 +387,8 @@ def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details)
 			messages_ = "you can't buy due to store policies"
 			return False, 0, 0, messages_
 		# check discounts
-		[precentage1, total_after_discount] = get_discount_for_store(item_id, amount, total)
-		[precentage2, total_after_discount] = get_discount_for_item(item_id, amount, total_after_discount)
+		[precentage1, total_after_discount] = service.get_discount_for_store(item_id, amount, total)
+		[precentage2, total_after_discount] = service.get_discount_for_item(item_id, amount, total_after_discount)
 
 		if precentage1 != 0 :
 			discount = str(precentage1)
@@ -777,54 +704,6 @@ def check_item_rule(rule, amount, base_arr, complex_arr, user):
 	if rule.operator == "XOR" and ((left == False and right == False) or (left == True and right == True)):
 		return False
 	return True
-
-
-def store_rules_string(store):
-	base_arr = []
-	complex_arr = []
-	base = []
-	complex = []
-	storeRules = ComplexStoreRule.objects.all().filter(store=store)
-	for rule in reversed(storeRules):
-		if rule.id in complex_arr:
-			continue
-		res = {"id": rule.id, "type": 2, "store": store.id, "name": string_store_rule(rule, base_arr, complex_arr)}
-		complex.append(res)
-	storeBaseRules = BaseRule.objects.all().filter(store=store)
-	for rule in storeBaseRules:
-		if rule.id in base_arr:
-			continue
-		res = {"id": rule.id, "type": 1, "store": store.id, "name": get_base_rule(rule.id)}
-		base.append(res)
-	return complex + base
-
-
-def string_store_rule(rule, base_arr, complex_arr):
-	curr = '('
-	if rule.left[0] == '_':
-		base_arr.append(int(rule.left[1:]))
-		curr += get_base_rule(int(rule.left[1:]))
-	else:
-		complex_arr.append(int(rule.left))
-		tosend = ComplexStoreRule.objects.get(id=int(rule.left))
-		curr += string_store_rule(tosend, base_arr, complex_arr)
-	curr += ' ' + rule.operator + ' '
-	if rule.right[0] == '_':
-		base_arr.append(int(rule.right[1:]))
-		curr += get_base_rule(int(rule.right[1:]))
-	else:
-		complex_arr.append(int(rule.right))
-		tosend = ComplexStoreRule.objects.get(id=int(rule.right))
-		curr += string_store_rule(tosend, base_arr, complex_arr)
-	curr += ')'
-	return curr
-
-
-def get_base_rule(rule_id):
-	rule = BaseRule.objects.get(id=rule_id)
-	if rule.type == "REG":
-		return rule.type + ': Only'
-	return rule.type + ': ' + rule.parameter
 
 
 @login_required
@@ -1267,16 +1146,11 @@ class NotificationsListView(ListView):
 	template_name = 'store/owner_feed.html'
 
 	def get_queryset(self):
-		user_ntfcs = NotificationUser.objects.filter(user=self.request.user.pk)
-		ntfcs_ids = list(map(lambda n: n.notification_id, user_ntfcs))
-		ntfcs = list(map(lambda pk: Notification.objects.get(id=pk), ntfcs_ids))
-		return ntfcs
+		return service.get_user_notifications(user_id = self.request.user.pk)
 
 	def get_context_data(self, **kwargs):
 		context = super(NotificationsListView, self).get_context_data(**kwargs)  # get the default context data
 		context['owner_id'] = self.request.user.pk
 		context['unread_notifications'] = 0
-		for n in NotificationUser.objects.filter(user=self.request.user.pk):
-			n.been_read = True
-			n.save()
+		service.mark_notification_read(user_id = self.request.user.pk)
 		return context

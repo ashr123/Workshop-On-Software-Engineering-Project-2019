@@ -7,11 +7,13 @@ from .models import Item, Store, Discount, MaxMinCondition
 class StoreForm(forms.ModelForm):
 	class Meta:
 		model = Store
-		fields = ['name', 'owners', 'description', 'discounts']
-		widgets = {
-			'owners': forms.CheckboxSelectMultiple,
-			# 'items': forms.CheckboxSelectMultiple,
-		}
+		# fields = ['name', 'owners', 'description', 'discounts']
+
+		fields = ['name', 'description']
+		# widgets = {
+		# 	'owners': forms.CheckboxSelectMultiple,
+		# 	# 'items': forms.CheckboxSelectMultiple,
+		# }
 
 
 # 		def __init__(self, user, list_for_guest, *args, **kwargs):
@@ -26,12 +28,11 @@ class StoreForm(forms.ModelForm):
 class UpdateItems(forms.Form):
 	def __init__(self, items, *args, **kwargs):
 		super(UpdateItems, self).__init__(*args, **kwargs)
-		# print('\n kkkk ', items)
 		list_ = items
 		self.fields['items'] = forms.MultipleChoiceField(
-			choices=[(o.id,
+			choices=[(o['id'],
 			          mark_safe(' <a id="update_href" href=' + '/' + 'store/update_item/' + str(
-				          o.id) + '>' + o.name + '  :  ' + o.description + '</a>')) for o in
+				          o['id']) + '>' + o['name']+ '  :  ' + o['description'] + '</a>')) for o in
 			         list_]
 			, widget=forms.CheckboxSelectMultiple(),
 
