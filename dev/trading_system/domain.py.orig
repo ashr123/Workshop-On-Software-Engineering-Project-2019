@@ -4,8 +4,13 @@ from django.contrib.auth.models import User, Group
 from django.db.models import Q
 from guardian.shortcuts import assign_perm
 
-from store.models import Store, Item, BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount
+<<<<<<< HEAD
+from store.models import Store, Item, BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule
 from trading_system.models import ObserverUser, Cart, NotificationUser, Notification
+=======
+from store.models import Store, Item, BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount
+from trading_system.models import ObserverUser, Cart
+>>>>>>> origin/noa_delete_rule
 
 
 def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
@@ -340,11 +345,7 @@ def user_has_cart_for_store(store_pk, user_pk):
 def len_of_super():
 	return len(User.objects.filter(is_superuser=True))
 
-def add_discount(store_id,  percentage,  end_date, type=None, amount=None, item=None):
-	store = Store.objects.get(id=store_id)
-	discount = Discount(store=store, type=type, percentage=percentage, amount=amount, end_date=end_date, item=item)
-	discount.save()
-	return [True, discount.id]
+<<<<<<< HEAD
 
 def update_item(item_id, item_dict):
 	item = Item.objects.get(pk = item_id)
@@ -526,3 +527,10 @@ def mark_notification_read(user_id):
 		n.been_read = True
 		n.save()
 	return True
+=======
+def add_discount(store_id,  percentage,  end_date, type=None, amount=None, item=None):
+	store = Store.objects.get(id=store_id)
+	discount = Discount(store=store, type=type, percentage=percentage, amount=amount, end_date=end_date, item=item)
+	discount.save()
+	return [True, discount.id]
+>>>>>>> origin/noa_delete_rule

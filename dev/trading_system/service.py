@@ -92,6 +92,8 @@ def is_authenticated(user_id):
 
 def update_item(item_id, item_dict):
 	return domain.update_item(item_id = item_id, item_dict = item_dict)
+def add_discount(store_id, percentage, end_date, item=None, type=None, amount=None):
+	return domain.add_discount(store_id=store_id, type=type, percentage=percentage, amount=amount, end_date=end_date, ite
 
 def item_rules_string(itemId):
 	return domain.item_rules_string(itemId)
