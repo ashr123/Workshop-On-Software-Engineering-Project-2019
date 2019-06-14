@@ -54,5 +54,8 @@ urlpatterns = [
 
 	path('remove_rule_from_store/<int:pk>', views.remove_rule_from_store),
 	path('delete_item/<int:pk>/', views.ItemDelete.as_view(success_url="/login_redirect")),
+	path('add_item/<int:pk>', views.add_item),
 
 ]
+
+delete_owner

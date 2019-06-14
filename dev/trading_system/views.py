@@ -335,11 +335,6 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 							cartG['items_id'].remove(Decimal(item_id))
 							request.session['cart'] = cartG
 
-
-
-
-
-
 			return redirect('/login_redirect')
 		else:
 			err = '' + str(form.errors)

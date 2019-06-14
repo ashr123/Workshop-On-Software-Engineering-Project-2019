@@ -7,7 +7,7 @@ from .models import Item, Store, Discount, MaxMinCondition
 class StoreForm(forms.ModelForm):
 	class Meta:
 		model = Store
-		fields = ['name', 'owners', 'description', 'discounts']
+		fields = ['name', 'description', 'discounts']
 		widgets = {
 			'owners': forms.CheckboxSelectMultiple,
 			# 'items': forms.CheckboxSelectMultiple,
@@ -23,6 +23,22 @@ class StoreForm(forms.ModelForm):
 # 				         ]
 #
 
+
+class UpdateOwners(forms.Form):
+	def __init__(self, owners, *args, **kwargs):
+		super(UpdateItems, self).__init__(*args, **kwargs)
+		# print('\n kkkk ', items)
+		list_ = owners
+		self.fields['owners_delete'] = forms.MultipleChoiceField(
+			choices=[(o.id,
+			          mark_safe(o.name + ' <a id="deleteOwners" href=' + '/' + 'store/delete_owner/' + str(
+				          o.id) + '>' + 'Delete This Owner ' + '</a>')) for o in
+			         list_]
+			, widget=forms.CheckboxSelectMultiple(),
+
+		)
+
+
 class UpdateItems(forms.Form):
 	def __init__(self, items, *args, **kwargs):
 		super(UpdateItems, self).__init__(*args, **kwargs)
@@ -36,6 +52,7 @@ class UpdateItems(forms.Form):
 			, widget=forms.CheckboxSelectMultiple(),
 
 		)
+
 
 # class AddRuleToStore(forms.Form):
 # 	CHOICES = (('MAX_QUANTITY', 'Max quantity - restrict max amount of items per order'),
@@ -53,8 +70,9 @@ class AddRuleToStore_base(forms.Form):
 	           ('FORBIDDEN_COUNTRY', 'Forbidden Country - restrict orderes for specific country'),
 	           ('REGISTERED_ONLY', 'Registered only - only members will be able to buy from your store'),)
 	rule = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
-	#parameter_number = forms.IntegerField(min_value=0, required=False)
+	# parameter_number = forms.IntegerField(min_value=0, required=False)
 	parameter = forms.CharField(max_length=100, required=False)
+
 
 class AddRuleToStore_withop(forms.Form):
 	CHOICES = (('MAX_QUANTITY', 'Max quantity - restrict max amount of items per order'),
@@ -68,6 +86,7 @@ class AddRuleToStore_withop(forms.Form):
 	rule = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
 	# parameter_number = forms.IntegerField(min_value=0, required=False)
 	parameter = forms.CharField(max_length=100, required=False)
+
 
 class AddRuleToStore_two(forms.Form):
 	CHOICES = (('MAX_QUANTITY', 'Max quantity - restrict max amount of items per order'),
@@ -86,14 +105,13 @@ class AddRuleToStore_two(forms.Form):
 	parameter2 = forms.CharField(max_length=100, required=False)
 
 
-
-
 class AddRuleToItem(forms.Form):
 	CHOICES = (('MAX_QUANTITY', 'Max quantity - restrict max amount of items per order'),
 	           ('MIN_QUANTITY', 'Min quantity - restrict min amount of items per order'),)
 	rule = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
-	#parameter_number = forms.IntegerField(min_value=0, required=False)
+	# parameter_number = forms.IntegerField(min_value=0, required=False)
 	parameter = forms.IntegerField(min_value=1)
+
 
 class AddRuleToItem_withop(forms.Form):
 	CHOICES = (('MAX_QUANTITY', 'Max quantity - restrict max amount of items per order'),
@@ -119,18 +137,19 @@ class AddRuleToItem_two(forms.Form):
 	rule2 = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
 	parameter2 = forms.CharField(max_length=100, required=False)
 
+
 class AddDiscountForm(forms.ModelForm):
 	class Meta:
 		model = Discount
-		fields = ['end_date', 'percentage',]
-
+		fields = ['end_date', 'percentage', ]
 
 
 class MaxMinConditionForm(forms.ModelForm):
-   cond_min_max = forms.BooleanField(required=False)
-   class Meta:
-      model = MaxMinCondition
-      fields = ['min_amount', 'max_amount']
+	cond_min_max = forms.BooleanField(required=False)
+
+	class Meta:
+		model = MaxMinCondition
+		fields = ['min_amount', 'max_amount']
 
 
 class AddManagerForm(forms.Form):
@@ -158,8 +177,6 @@ class ItemForm(forms.ModelForm):
 		fields = ['name', 'description', 'category', 'price', 'quantity']
 
 
-from .fileds import CreditCardField, ExpiryDateField, VerificationValueField
-
 class BuyForm(forms.Form):
 	amount = forms.IntegerField()
 
@@ -171,12 +188,9 @@ class PayForm(forms.Form):
 	month = forms.IntegerField(required=True)
 	year = forms.IntegerField(required=True)
 	cvc = forms.CharField(required=True, label='CVV / CVC',
-	widget = forms.TextInput(attrs={'size': '3',
-	'maxlength': '3',
-	'placeholder':''}))
-
-
-
+	                      widget=forms.TextInput(attrs={'size': '3',
+	                                                    'maxlength': '3',
+	                                                    'placeholder': ''}))
 
 
 class ShippingForm(forms.Form):
@@ -185,4 +199,3 @@ class ShippingForm(forms.Form):
 	city = forms.CharField(label='City', max_length=25)
 	country = forms.CharField(max_length=25)
 	zip = forms.IntegerField(label='Zip Code')
-

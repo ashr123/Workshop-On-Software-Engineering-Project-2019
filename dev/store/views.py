@@ -263,7 +263,7 @@ def add_discount_to_item(request, pk):
 		}
 		return render(request, 'store/add_discount_to_item.html', context)
 
-
+from .forms import UpdateOwners
 @method_decorator(login_required, name='dispatch')
 class StoreUpdate(UpdateView):
 	model = Store
@@ -282,6 +282,10 @@ class StoreUpdate(UpdateView):
 		# store_rules = BaseRule.objects.all().filter(store=store)
 		rules = store_rules_string(store)
 		store_items = store.items.all()
+		store_owners = store.owners.all()
+		store_managaers = store.owners.all()
+
+
 		user_name = self.request.user.username
 		context = super(StoreUpdate, self).get_context_data(**kwargs)  # get the default context data
 		context['text'] = text
@@ -659,7 +663,7 @@ def check_store_rules(store_of_item, amount, country, user):
 			return False
 	return True
 
-
+#
 def check_store_rule(rule, amount, country, base_arr, complex_arr, user):
 	if rule.left[0] == '_':
 		base_arr.append(int(rule.left[1:]))
@@ -687,7 +691,7 @@ def check_store_rule(rule, amount, country, base_arr, complex_arr, user):
 		return False
 	return True
 
-
+#
 def check_item_rule(rule, amount, base_arr, complex_arr, user):
 	if rule.left[0] == '_':
 		base_arr.append(int(rule.left[1:]))
@@ -820,15 +824,15 @@ def add_manager_domain(user_name, picked, is_owner, pk, request_user_name):
 		assign_perm(perm, user_, store_)
 	if (is_owner):
 		try:
-			if store_.owners.get(id=user_.pk):
-				print('hhhhhhhhhhhhhhh')
+			# if store_.owners.get(id=user_.pk):
+			# 	print('hhhhhhhhhhhhhhh')
 			store_owners_group = Group.objects.get(name="store_owners")
 			user_.groups.add(store_owners_group)
 			store_.owners.add(user_)
 			ObserverUser.objects.create(user_id=user_.pk,
 			                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(user_.pk)).save()
 		except:
-			return [True, 'allready manager']
+			return [True, 'allready owner']
 	else:
 		try:
 			if store_.managers.get(id=user_.pk):
