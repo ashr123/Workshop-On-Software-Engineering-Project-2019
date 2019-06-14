@@ -86,3 +86,6 @@ def len_of_super():
 def add_item_to_cart(user_id,item_id):
 	return domain.add_item_to_cart(user_id,item_id)
 
+def is_authenticated(user_id):
+	return domain.is_authenticated(user_id)
+

@@ -430,12 +430,11 @@ def get_discount_for_item(pk, amount, total):
 		return [0, total]
 
 
+def get_store_of_item(item_id):
+	return Store.objects.filter(items__id__contains=item_id)[0]
 
 
 def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details):
-
-
-
 	transaction_id = -1
 	supply_transaction_id = -1
 
@@ -454,7 +453,7 @@ def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details)
 			# return render(request, 'store/buy_item.html', context)
 			messages_ = "you can't buy due to item policies"
 			return False, 0, 0, messages_
-		store_of_item = Store.objects.get(items_id_contains=item_id)
+		store_of_item = get_store_of_item(item_id)
 		# check store rules
 		if check_store_rules(store_of_item, amount,shipping_details['country'], user) is False:
 			# messages.warning(request, "you can't buy due to store policies")
@@ -470,41 +469,84 @@ def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details)
 		if precentage2 != 0:
 			discount = str(precentage2)
 			messages_ += '\n' + 'you have discount for item ' + discount
+		# try:
+		# 	if pay_system.handshake():
+		# 		print("pay hand shake")
+		#
+		# 		transaction_id = pay_system.pay(str(card_details.card_number), str(card_details.month), str(card_details.year), str(card_details.holder), str(card_details.ccv),
+		# 		                                str(id))
+		# 		if (transaction_id == '-1'):
+		# 			# messages.warning(request, 'can`t pay !')
+		# 			messages_ += '\n' + 'can`t pay !'
+		# 			return False, 0, 0, messages_
+		# 			# return redirect('/login_redirect')
+		# 	else:
+		# 		# messages.warning(request, 'can`t connect to pay system!')
+		# 		messages_ += '\n' + 'can`t connect to pay system!'
+		# 		return False, 0, 0, messages_
+		# 		# return redirect('/login_redirect')
+		#
+		# 	if supply_system.handshake():
+		# 		# print("supply hand shake")
+		# 		supply_transaction_id = supply_system.supply(str(shipping_details.name), str(shipping_details.address), str(shipping_details.city), str(shipping_details.country),
+		# 		                                             str(zip))
+		# 		if (supply_transaction_id == '-1'):
+		# 			chech_cancle = pay_system.cancel_pay(transaction_id)
+		# 			messages_ += '\n' +'can`t supply abort payment!'
+		# 			return False, 0, 0, messages_
+		# 			# messages.warning(request, 'can`t supply abort payment!')
+		# 			# return redirect('/login_redirect')
+		# 	else:
+		# 		chech_cancle = pay_system.cancel_pay(transaction_id)
+		# 		messages_ += '\n' +'can`t connect to supply system abort payment!'
+		# 		return False, 0, 0, messages_
+		# 		# messages.warning(request, 'can`t connect to supply system abort payment!')
+		# 		# return redirect('/login_redirect')
+		#
+		# 	_item.quantity = amount_in_db - amount
+		# 	_item.save()
+		#
+		# 	# store = get_item_store(_item.pk)
+		# 	item_subject = ItemSubject(_item.pk)
+		# 	try:
+		# 		if (user.is_authenticated):
+		# 			notification = Notification.objects.create(
+		# 				msg=user.username + ' bought ' + str(amount) + ' pieces of ' + _item.name)
+		# 			notification.save()
+		# 			item_subject.subject_state = item_subject.subject_state + [notification.pk]
+		# 		else:
+		# 			notification = Notification.objects.create(
+		# 				msg='A guest bought ' + str(amount) + ' pieces of ' + _item.name)
+		# 			notification.save()
+		# 			item_subject.subject_state = item_subject.subject_state + [notification.pk]
+		# 	except Exception as e:
+		# 		messages_ += 'cant connect websocket ' + str(e)
+		#
+		# 	_item_name = _item.name
+		# 	# print("reached herre")
+		# 	if (_item.quantity == 0):
+		# 		_item.delete()
+		#
+		# 	messages_ += '\n'+ 'Thank you! you bought ' + _item_name +'\n'+'Total after discount: ' + str(total_after_discount) + ' $'+'\n'+'Total before: ' + str(total) + ' $'
+		# 	#
+		# 	# messages.success(request, 'Thank you! you bought ' + _item_name)
+		# 	# messages.success(request, 'Total after discount: ' + str(total_after_discount) + ' $')
+		# 	# messages.success(request, 'Total before: ' + str(total) + ' $')
+		# 	# print("!!!!!!!!!!!!!!!!!!!!")
+		# 	return redirect('/login_redirect')
+		# except Exception as a:
+		# 	print(a)
+		# 	print(str(a))
+		# 	traceback.print_exc()
+		# 	if not (transaction_id == -1):
+		# 		messages_ += '\n' +'failed and aborted pay! please try again!'
+		# 		# messages.warning(request, 'failed and aborted pay! please try again!')
+		# 		_item.quantity = amount_in_db
+		# 		chech_cancle = pay_system.cancel_pay(transaction_id)
+		# 		chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
+		# 	return redirect('/login_redirect')
 
 		try:
-			if pay_system.handshake():
-				print("pay hand shake")
-
-				transaction_id = pay_system.pay(str(card_details.card_number), str(card_details.month), str(card_details.year), str(card_details.holder), str(card_details.ccv),
-				                                str(id))
-				if (transaction_id == '-1'):
-					# messages.warning(request, 'can`t pay !')
-					messages_ += '\n' + 'can`t pay !'
-					return False, 0, 0, messages_
-					# return redirect('/login_redirect')
-			else:
-				# messages.warning(request, 'can`t connect to pay system!')
-				messages_ += '\n' + 'can`t connect to pay system!'
-				return False, 0, 0, messages_
-				# return redirect('/login_redirect')
-
-			if supply_system.handshake():
-				# print("supply hand shake")
-				supply_transaction_id = supply_system.supply(str(shipping_details.name), str(shipping_details.address), str(shipping_details.city), str(shipping_details.country),
-				                                             str(zip))
-				if (supply_transaction_id == '-1'):
-					chech_cancle = pay_system.cancel_pay(transaction_id)
-					messages_ += '\n' +'can`t supply abort payment!'
-					return False, 0, 0, messages_
-					# messages.warning(request, 'can`t supply abort payment!')
-					# return redirect('/login_redirect')
-			else:
-				chech_cancle = pay_system.cancel_pay(transaction_id)
-				messages_ += '\n' +'can`t connect to supply system abort payment!'
-				return False, 0, 0, messages_
-				# messages.warning(request, 'can`t connect to supply system abort payment!')
-				# return redirect('/login_redirect')
-
 			_item.quantity = amount_in_db - amount
 			_item.save()
 
@@ -530,12 +572,7 @@ def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details)
 				_item.delete()
 
 			messages_ += '\n'+ 'Thank you! you bought ' + _item_name +'\n'+'Total after discount: ' + str(total_after_discount) + ' $'+'\n'+'Total before: ' + str(total) + ' $'
-			#
-			# messages.success(request, 'Thank you! you bought ' + _item_name)
-			# messages.success(request, 'Total after discount: ' + str(total_after_discount) + ' $')
-			# messages.success(request, 'Total before: ' + str(total) + ' $')
-			# print("!!!!!!!!!!!!!!!!!!!!")
-			return redirect('/login_redirect')
+			return False, 0, 0, messages_
 		except Exception as a:
 			print(a)
 			print(str(a))
@@ -546,7 +583,7 @@ def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details)
 				_item.quantity = amount_in_db
 				chech_cancle = pay_system.cancel_pay(transaction_id)
 				chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
-			return redirect('/login_redirect')
+			return False, 0, 0, messages_
 
 		messages_ = "you have discount for this item: " + discount + "%"
 		return True, total, total_after_discount, messages_
