@@ -20,6 +20,6 @@ urlpatterns = [
 	path('join_auction/<int:item_pk>', views.join_auction),
 	path('view_auctions', views.AuctionsListView.as_view()),
 	path('view_auction/<int:auction_pk>', views.view_auction),
-
+	path('delete_item_from_cart/<int:item_pk>', views.delete_item_from_cart),
 
 ]

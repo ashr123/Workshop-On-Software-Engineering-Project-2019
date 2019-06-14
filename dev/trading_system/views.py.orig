@@ -108,7 +108,13 @@ def search(request: Any) -> QuerySet:
 
 
 
+<<<<<<< HEAD
+
+
+
 ########## Need to check with elhanan
+=======
+>>>>>>> origin/domain_service_refactoring
 class CartDetail(DetailView):
 	model = Cart
 
