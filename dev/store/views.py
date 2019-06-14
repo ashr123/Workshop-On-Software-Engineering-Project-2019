@@ -21,6 +21,7 @@ from .forms import BuyForm, AddManagerForm, AddDiscountToStore, AddRuleToStore
 from .forms import ShippingForm
 from .models import Item
 from .models import Store
+from django import forms as forms2
 
 
 def get_client_ip(request):
@@ -210,6 +211,8 @@ class ItemUpdate(UpdateView):
 		return context
 
 
+@permission_required_or_403('ADD_DISCOUNT', (Store, 'id', 'pk'))
+@login_required
 def add_discount_to_item(request, pk):
 	if request.method == 'POST':
 		form = AddDiscountToStore(request.POST)
@@ -232,6 +235,13 @@ def add_discount_to_item(request, pk):
 			'form': AddDiscountToStore(),
 		}
 		return render(request, 'store/add_discount_to_item.html', context)
+
+
+# def update_discount_view(request):
+# 	rule_mode = request.GET.get('rule_mode')
+# 	if rule_mode == AddDiscountToStore.rule_mode[0]:
+# 		return render(request, 'store/add_discount_to_item.html', {'min value': forms2.NumberInput(),
+# 		                                                           'max value': forms2.NumberInput()})
 
 
 @method_decorator(login_required, name='dispatch')

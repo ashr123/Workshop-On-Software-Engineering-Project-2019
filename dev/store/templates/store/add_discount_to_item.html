@@ -4,8 +4,26 @@
 		<form id="add_discount_container" action="/store/add_discount_to_item/{{ pk }}" method="post">
 			{% csrf_token %}
 {#			<span>{{ form.discount.label_tag }} </span>#}
-			<span>{{ form.as_p }} </span>
+			{{ form.as_p }}
 {#			<span> % </span>#}
 			<input id="add_button" type="submit" value="Add"/>
 		</form>
+
+{#	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>#}
+{#	<script>#}
+{#		$("#rule_mode").change(() => {#}
+{#			const url = 'update_discount_to_item/';  // get the url of the `load_cities` view#}
+{#			const rule_mode = $(this).val();  // get the selected country ID from the HTML input#}
+{##}
+{#			$.ajax({                       // initialize an AJAX request#}
+{#				url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)#}
+{#				data: {#}
+{#					'rule_mode': rule_mode       // add the country id to the GET parameters#}
+{#				},#}
+{#				success: (data) => {   // `data` is the return of the `load_cities` view function#}
+{#					$("#add_discount_container").html(data);  // replace the contents of the city input with the data that came from the server#}
+{#				}#}
+{#			});#}
+{#		});#}
+{#	</script>#}
 {% endblock %}
