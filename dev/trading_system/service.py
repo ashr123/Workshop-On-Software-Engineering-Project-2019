@@ -89,3 +89,5 @@ def add_item_to_cart(user_id,item_id):
 def is_authenticated(user_id):
 	return domain.is_authenticated(user_id)
 
+def add_discount(store_id, percentage, end_date, item=None, type=None, amount=None):
+	return domain.add_discount(store_id=store_id, type=type, percentage=percentage, amount=amount, end_date=end_date, item=item)

@@ -2,7 +2,7 @@ from django.contrib.auth.models import User, Group
 from django.db.models import Q
 from guardian.shortcuts import assign_perm
 
-from store.models import Store, Item, BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule
+from store.models import Store, Item, BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount
 from trading_system.models import ObserverUser, Cart
 
 
@@ -332,3 +332,9 @@ def user_has_cart_for_store(store_pk: int, user_pk: int) -> bool:
 
 def len_of_super():
 	return len(User.objects.filter(is_superuser=True))
+
+def add_discount(store_id,  percentage,  end_date, type=None, amount=None, item=None):
+	store = Store.objects.get(id=store_id)
+	discount = Discount(store=store, type=type, percentage=percentage, amount=amount, end_date=end_date, item=item)
+	discount.save()
+	return [True, discount.id]
