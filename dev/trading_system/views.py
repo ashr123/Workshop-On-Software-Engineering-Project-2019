@@ -47,17 +47,6 @@ def def_super_user(request):
 		return render(request, 'trading_system/add_super_user.html', {'form': UserCreationForm()})
 
 
-from django.contrib.auth.models import User
-
-
-def index(request: Any) -> HttpResponse:
-	superusers = User.objects.filter(is_superuser=True)
-	if (len(superusers) == 0):
-		return redirect('/super_user')
-	else:
-		return render(request, 'homepage_guest.html', {'text': SearchForm()})
-
-
 def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	if request.user.is_authenticated:
 		if "store_owners" in request.user.groups.values_list('name',
@@ -75,13 +64,68 @@ def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
 
-
-
-
 def item(request: Any, id: int) -> HttpResponse:
 	return render(request, 'trading_system/item_page.html', {
 		'item': Item.objects.get(name=id)
 	})
+
+
+class CartsListView(ListView):
+	model = Cart
+	template_name = 'trading_system/user_carts.html'
+
+	def get_queryset(self) -> List[Cart]:
+		return Cart.objects.filter(customer_id=self.request.user.pk)
+
+
+##ELHANANA - note that search returns the filtered items list
+def search(request: Any) -> QuerySet:
+	text = SearchForm(request.GET)
+	if text.is_valid():
+		# spell checker
+		# correct_word = checker.Spellchecker(text)
+		# items = Item.objects.filter(name=correct_word)
+		return Item.objects.filter(Q(name__contains=text.cleaned_data.get('search')) | Q(
+			description__contains=text.cleaned_data.get('search')) | Q(
+			category__contains=text.cleaned_data.get('search')))
+
+
+########## Need to check with elhanan
+class CartDetail(DetailView):
+	model = Cart
+
+	def get_context_data(self, **kwargs) -> Dict[str, Any]:
+		print('!!!!!!!!!!!!!!!!!!!!!!!!!\n')
+		cart = Cart.objects.get(pk=kwargs['object'].pk)
+		item_ids = list(map(lambda i: i.pk, cart.items.all()))
+		context = super().get_context_data(**kwargs)  # get the default context data
+		context['items'] = list(map(lambda i_pk: Item.objects.get(pk=i_pk), item_ids))
+
+	def get_context_data(self, **kwargs):
+		print('???????????????????????????\n')
+		cart = Cart.objects.get(pk=kwargs['object'].pk)
+		item_ids = list(map(lambda i: i.pk, cart.items.all()))
+		items = list(map(lambda i_pk: Item.objects.get(pk=i_pk), item_ids))
+		context = super(CartDetail, self).get_context_data(**kwargs)  # get the default context data
+		context['items'] = items
+
+		context['store_name'] = Store.objects.get(pk=cart.store_id).name
+		return context
+
+
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+
+def index(request: Any) -> HttpResponse:
+	if (service.len_of_super() == 0):
+		return redirect('/super_user')
+	else:
+		return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
 
 def show_cart(request: Any) -> HttpResponse:
@@ -101,7 +145,7 @@ def show_cart(request: Any) -> HttpResponse:
 		base_template_name = 'homepage_guest.html'
 
 
-
+cart_index = 0
 
 
 class SearchListView(ListView):
@@ -128,68 +172,9 @@ class SearchListView(ListView):
 		return context
 
 
-##ELHANANA - note that search returns the filtered items list
-def search(request: Any) -> QuerySet:
-	text = SearchForm(request.GET)
-	if text.is_valid():
-		# spell checker
-		# correct_word = checker.Spellchecker(text)
-		# items = Item.objects.filter(name=correct_word)
-		return Item.objects.filter(Q(name__contains=text.cleaned_data.get('search')) | Q(
-			description__contains=text.cleaned_data.get('search')) | Q(
-			category__contains=text.cleaned_data.get('search')))
-
-
-cart_index = 0
-
-
-class CartDetail(DetailView):
-	model = Cart
-
-	def get_context_data(self, **kwargs) -> Dict[str, Any]:
-		cart = Cart.objects.get(pk=kwargs['object'].pk)
-		item_ids = list(map(lambda i: i.pk, cart.items.all()))
-		context = super().get_context_data(**kwargs)  # get the default context data
-		context['items'] = list(map(lambda i_pk: Item.objects.get(pk=i_pk), item_ids))
-
-	def get_context_data(self, **kwargs):
-		cart = Cart.objects.get(pk=kwargs['object'].pk)
-		item_ids = list(map(lambda i: i.pk, cart.items.all()))
-		items = list(map(lambda i_pk: Item.objects.get(pk=i_pk), item_ids))
-		context = super(CartDetail, self).get_context_data(**kwargs)  # get the default context data
-		context['items'] = items
-
-		context['store_name'] = Store.objects.get(pk=cart.store_id).name
-		return context
-
-
-class CartsListView(ListView):
-	model = Cart
-	template_name = 'trading_system/user_carts.html'
-
-	def get_queryset(self) -> List[Cart]:
-		return Cart.objects.filter(customer_id=self.request.user.pk)
-
-
-
-
-
-
-
-
-
-
-########################################################################################################################
-########################################################################################################################
-########################################################################################################################
-########################################################################################################################
-########################################################################################################################
-########################################################################################################################
-########################################################################################################################
-
-
 def register(request: Any) -> HttpResponse:
 	return render(request, 'trading_system/register.html')
+
 
 def home_button(request: Any) -> HttpResponseRedirect:
 	return redirect('/login_redirect')
@@ -207,9 +192,9 @@ def approve_event(request: Any) -> HttpResponse:
 		form = SomeForm
 	return render(request, 'check_box_items.html', {'form': form})
 
+
 from decimal import Decimal
 
-from django.forms import formset_factory
 from .forms import QForm
 
 
@@ -280,8 +265,6 @@ def add_item_to_cart(request, item_pk):
 		return redirect('/login_redirect')
 
 
-
-
 def makeGuestCart(request):
 	if (service.is_authenticated(request.user.pk)):
 		return []
@@ -291,6 +274,7 @@ def makeGuestCart(request):
 	for id in id_list:
 		items_ += list([service.get_item(id)])
 	return items_
+
 
 def delete_item_from_cart(request, item_pk):
 	if (request.user.is_authenticated):
@@ -309,19 +293,22 @@ def delete_item_from_cart(request, item_pk):
 		messages.success(request, 'remove to cart successfully')
 		return redirect('/login_redirect')
 
-#TODO move to domain
+
+# TODO move to domain
 def get_item_store(item_pk):
 	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
 	# Might cause bug. Need to apply the item-in-one-store condition
 	return list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))[0]
 
-#TODO move to domain
+
+# TODO move to domain
 def get_cart(store_pk, user_pk):
 	carts = Cart.objects.filter(customer_id=user_pk, store_id=store_pk)
 	if len(carts) == 0:
 		return None
 	else:
 		return carts[0]
+
 
 def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	# if not (request.user.is_authenticated):
@@ -354,7 +341,7 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			card_details = {'card_number': card_number, 'month': month, 'year': year, 'holder': holder, 'ccv': ccv,
 			                'id': id}
 		else:
-			err = '' + str(shipping_form.errors) +str(supply_form.errors)
+			err = '' + str(shipping_form.errors) + str(supply_form.errors)
 			messages.warning(request, 'error in :  ' + err)
 			return redirect('/login_redirect')
 
@@ -368,20 +355,21 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 					quantity_to_buy = 1
 					try:
 						quantity_to_buy = request.POST.get('quantity' + str(item.id))
-						print('q----------------id:----' + str(item.id) + '------------'+quantity_to_buy)
+						print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
 					except:
 						messages.warning(request, 'problem with quantity ')
 					# item.quantity = amount_in_db - 1
 					# item.save()
 					from store.views import buy_logic
-					valid, total, total_after_discount, messages_ = buy_logic(item_id, int(quantity_to_buy), amount_in_db,
+					valid, total, total_after_discount, messages_ = buy_logic(item_id, int(quantity_to_buy),
+					                                                          amount_in_db,
 					                                                          request.user, shipping_details,
 					                                                          card_details)
 					if valid == False:
-						messages.warning(request, 'can`t buy item : '+str(item_id))
+						messages.warning(request, 'can`t buy item : ' + str(item_id))
 						messages.warning(request, 'reason : ' + str(messages_))
 					else:
-						messages.success(request, ' buy item : '+str(item_id))
+						messages.success(request, ' buy item : ' + str(item_id))
 						items_bought.append(item_id)
 						if (request.user.is_authenticated):
 							cart = Cart.objects.get(customer=request.user)
