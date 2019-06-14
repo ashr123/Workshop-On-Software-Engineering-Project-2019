@@ -47,13 +47,12 @@ def add_complex_rule_to_item_2(item_id, prev_rule, rule1, parameter1, rule2, par
 
 def add_item_to_store(item_json, store_id):
 	item_dict = json.loads(item_json)
-	return domain.add_item_to_store(
-		price=item_dict['price'],
-		name=item_dict['name'],
-		description=item_dict['description'],
-		category=item_dict['category'],
-		quantity=item_dict['quantity'],
-		store_id=store_id)
+	return domain.add_item_to_store(price=item_dict['price'],
+	                                name=item_dict['name'],
+	                                description=item_dict['description'],
+	                                category=item_dict['category'],
+	                                quantity=item_dict['quantity'],
+	                                store_id=store_id)
 
 
 def can_remove_store(store_id, user_id):
@@ -81,12 +80,11 @@ def get_user_store_list(user_id):
 def get_item_details(item_id):
 	return domain.get_item_details(item_id=item_id)	
 
+
 	
 def len_of_super():
 	return domain.len_of_super()	
 	
-def add_item_to_cart(user_id,item_id):
-	return domain.add_item_to_cart(user_id,item_id)
 
 def is_authenticated(user_id):
 	return domain.is_authenticated(user_id)
