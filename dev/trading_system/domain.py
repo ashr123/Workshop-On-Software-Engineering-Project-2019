@@ -280,7 +280,10 @@ def open_cart_for_user_in_store(store_pk, user_pk):
 
 
 def add_item_to_cart(user_id, item_id):
-	user = User.objects.get(pk=user_id)
+	if user_id ==None:
+		user = User.objects.filter(username='AnonymousUser')[0]
+	else:
+		user = User.objects.get(pk=user_id)
 	if (user.is_authenticated):
 		item_store = get_item_store(item_id)
 		cart = get_cart(item_store, user_id)
