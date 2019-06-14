@@ -47,11 +47,17 @@ class CartForm(forms.Form):
 			self.fields['items'] = forms.MultipleChoiceField(
 				choices=[(o.id,
 				          mark_safe(' <a id="buy_href" href=' + '/' + 'store/view_item/' + str(
-					          o.id) + '>' + o.name + '  :  ' + o.description + '</a>')) for o in
+					          o.id) + '>' + o.name + '  :  ' + o.description + '</a>'+
+				                    '<a href= "/delete_item_from_cart/' + str(o.id) + '"> delete </a>    '
+				                    # +
+				                    # ' <form action="/delete_item_from_cart/' + str(o.id) + '" method="post">  '
+				                    #                                                        '{% csrf_token %} {{pk}}	<input type="submit" value="Remove"> </form>'
+				                    )) for o in
 				         list_]
 				, widget=forms.CheckboxSelectMultiple(),
 
 			)
+
 
 		else:
 			carts = Cart.objects.filter(customer=user)
@@ -61,7 +67,12 @@ class CartForm(forms.Form):
 			self.fields['items'] = forms.MultipleChoiceField(
 				choices=[(o.id,
 				          mark_safe(' <a id="buy_href" href=' + '/' + 'store/view_item/' + str(
-					          o.id) + '>' + o.name + '  :  ' + o.description + '</a>')) for o in
+					          o.id) + '>' + o.name + '  :  ' + o.description + '</a>'+
+				                    '<a href= "/delete_item_from_cart/' + str(o.id) + '"> delete </a>    '
+				                    # +
+				                    # ' <form action="/delete_item_from_cart/' +  str(o.id) + ' " method="post"> '
+				                    #                                                         ' {% csrf_token %} {{pk}}	<input type="submit" value="Remove"> </form>'
+				                    )) for o in
 				         list_]
 				, widget=forms.CheckboxSelectMultiple(),
 

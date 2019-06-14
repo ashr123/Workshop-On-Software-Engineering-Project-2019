@@ -430,36 +430,132 @@ def get_discount_for_item(pk, amount, total):
 		return [0, total]
 
 
-def buy_logic(item_id, amount, amount_in_db, country, request, context):
+
+
+def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details):
+
+
+
+	transaction_id = -1
+	supply_transaction_id = -1
+
+	_item = Item.objects.get(id=item_id)
+
+	messages_ = ''
 	curr_item = Item.objects.get(id=item_id)
 	if (amount <= amount_in_db):
-		print("good amount")
+		# print("good amount")
 		total = amount * curr_item.price
 		new_q = amount_in_db - amount
 		total_after_discount = total
 		# check item rules
-		if check_item_rules(curr_item, amount, context) is False:
-			messages.warning(request, "you can't buy due to item policies")
-			return render(request, 'store/buy_item.html', context)
-		store_of_item = Store.objects.get(items__id__contains=item_id)
+		if check_item_rules(curr_item, amount, user) is False:
+			# messages.warning(request, "you can't buy due to item policies")
+			# return render(request, 'store/buy_item.html', context)
+			messages_ = "you can't buy due to item policies"
+			return False, 0, 0, messages_
+		store_of_item = Store.objects.get(items_id_contains=item_id)
 		# check store rules
-		if check_store_rules(store_of_item, amount, country, request, context) is False:
-			messages.warning(request, "you can't buy due to store policies")
-			return render(request, 'store/buy_item.html', context)
+		if check_store_rules(store_of_item, amount,shipping_details['country'], user) is False:
+			# messages.warning(request, "you can't buy due to store policies")
+			messages_ = "you can't buy due to store policies"
+			return False, 0, 0, messages_
 		# check discounts
 		[precentage1, total_after_discount] = get_discount_for_store(item_id, amount, total)
 		[precentage2, total_after_discount] = get_discount_for_item(item_id, amount, total_after_discount)
-		if precentage1 != 0 and precentage2 != 0:
-			discount = str(precentage1) + " + " + str(precentage2)
-		else:
-			discount = str(precentage1 + precentage2)
-		messages.success(request, "you have discount for this item: " + discount + "%")
-		return True, total, total_after_discount
+
+		if precentage1 != 0 :
+			discount = str(precentage1)
+			messages_ += '\n' + 'you have discount for store '+discount
+		if precentage2 != 0:
+			discount = str(precentage2)
+			messages_ += '\n' + 'you have discount for item ' + discount
+
+		try:
+			if pay_system.handshake():
+				print("pay hand shake")
+
+				transaction_id = pay_system.pay(str(card_details.card_number), str(card_details.month), str(card_details.year), str(card_details.holder), str(card_details.ccv),
+				                                str(id))
+				if (transaction_id == '-1'):
+					# messages.warning(request, 'can`t pay !')
+					messages_ += '\n' + 'can`t pay !'
+					return False, 0, 0, messages_
+					# return redirect('/login_redirect')
+			else:
+				# messages.warning(request, 'can`t connect to pay system!')
+				messages_ += '\n' + 'can`t connect to pay system!'
+				return False, 0, 0, messages_
+				# return redirect('/login_redirect')
+
+			if supply_system.handshake():
+				# print("supply hand shake")
+				supply_transaction_id = supply_system.supply(str(shipping_details.name), str(shipping_details.address), str(shipping_details.city), str(shipping_details.country),
+				                                             str(zip))
+				if (supply_transaction_id == '-1'):
+					chech_cancle = pay_system.cancel_pay(transaction_id)
+					messages_ += '\n' +'can`t supply abort payment!'
+					return False, 0, 0, messages_
+					# messages.warning(request, 'can`t supply abort payment!')
+					# return redirect('/login_redirect')
+			else:
+				chech_cancle = pay_system.cancel_pay(transaction_id)
+				messages_ += '\n' +'can`t connect to supply system abort payment!'
+				return False, 0, 0, messages_
+				# messages.warning(request, 'can`t connect to supply system abort payment!')
+				# return redirect('/login_redirect')
+
+			_item.quantity = amount_in_db - amount
+			_item.save()
+
+			# store = get_item_store(_item.pk)
+			item_subject = ItemSubject(_item.pk)
+			try:
+				if (user.is_authenticated):
+					notification = Notification.objects.create(
+						msg=user.username + ' bought ' + str(amount) + ' pieces of ' + _item.name)
+					notification.save()
+					item_subject.subject_state = item_subject.subject_state + [notification.pk]
+				else:
+					notification = Notification.objects.create(
+						msg='A guest bought ' + str(amount) + ' pieces of ' + _item.name)
+					notification.save()
+					item_subject.subject_state = item_subject.subject_state + [notification.pk]
+			except Exception as e:
+				messages_ += 'cant connect websocket ' + str(e)
+
+			_item_name = _item.name
+			# print("reached herre")
+			if (_item.quantity == 0):
+				_item.delete()
+
+			messages_ += '\n'+ 'Thank you! you bought ' + _item_name +'\n'+'Total after discount: ' + str(total_after_discount) + ' $'+'\n'+'Total before: ' + str(total) + ' $'
+			#
+			# messages.success(request, 'Thank you! you bought ' + _item_name)
+			# messages.success(request, 'Total after discount: ' + str(total_after_discount) + ' $')
+			# messages.success(request, 'Total before: ' + str(total) + ' $')
+			# print("!!!!!!!!!!!!!!!!!!!!")
+			return redirect('/login_redirect')
+		except Exception as a:
+			print(a)
+			print(str(a))
+			traceback.print_exc()
+			if not (transaction_id == -1):
+				messages_ += '\n' +'failed and aborted pay! please try again!'
+				# messages.warning(request, 'failed and aborted pay! please try again!')
+				_item.quantity = amount_in_db
+				chech_cancle = pay_system.cancel_pay(transaction_id)
+				chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
+			return redirect('/login_redirect')
+
+		messages_ = "you have discount for this item: " + discount + "%"
+		return True, total, total_after_discount, messages_
 	else:
-		return False
+		return False, 0, 0, messages_
 
 
 def buy_item(request, pk):
+
 	# return redirect('/store/contact/' + str(pk) + '/')
 	print('heryyyyyyyyyyyy')
 	form_class = BuyForm
@@ -488,7 +584,10 @@ def buy_item(request, pk):
 			address = shipping_form.cleaned_data.get('address')
 			name = shipping_form.cleaned_data.get('name')
 
+			shipping_details = {'country':country,'city':city,'zip':zip,'address':address,'name':name}
+
 			# card
+
 			card_number = supply_form.cleaned_data.get('card_number')
 			month = supply_form.cleaned_data.get('month')
 			year = supply_form.cleaned_data.get('year')
@@ -496,82 +595,23 @@ def buy_item(request, pk):
 			ccv = supply_form.cleaned_data.get('ccv')
 			id = supply_form.cleaned_data.get('id')
 
-			transaction_id = -1
-			supply_transaction_id = -1
+			card_details = {'card_number':card_number,'month':month,'year':year,'holder':holder,'ccv':ccv,'id':id}
+
+
 			#########################buy proccss
 			_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
 			amount_in_db = _item.quantity
 
-			valid, total, total_after_discount = buy_logic(pk, amount, amount_in_db, country, request, context)
+			valid, total, total_after_discount, messages_ = buy_logic(pk, amount, amount_in_db, request.user,shipping_details,card_details)
 			if valid == False:
-				messages.warning(request, 'there is no such amount ! please try again!')
-
-			try:
-				if pay_system.handshake():
-					print("pay hand shake")
-
-					transaction_id = pay_system.pay(str(card_number), str(month), str(year), str(holder), str(ccv),
-					                                str(id))
-					if (transaction_id == '-1'):
-						messages.warning(request, 'can`t pay !')
-						return redirect('/login_redirect')
-				else:
-					messages.warning(request, 'can`t connect to pay system!')
-					return redirect('/login_redirect')
-
-				if supply_system.handshake():
-					print("supply hand shake")
-					supply_transaction_id = supply_system.supply(str(name), str(address), str(city), str(country),
-					                                             str(zip))
-					if (supply_transaction_id == '-1'):
-						chech_cancle = pay_system.cancel_pay(transaction_id)
-						messages.warning(request, 'can`t supply abort payment!')
-						return redirect('/login_redirect')
-				else:
-					chech_cancle = pay_system.cancel_pay(transaction_id)
-					messages.warning(request, 'can`t connect to supply system abort payment!')
-					return redirect('/login_redirect')
-
-				_item.quantity = amount_in_db - amount
-				_item.save()
-
-				# store = get_item_store(_item.pk)
-				item_subject = ItemSubject(_item.pk)
-				try:
-					if (request.user.is_authenticated):
-						notification = Notification.objects.create(
-							msg=request.user.username + ' bought ' + str(amount) + ' pieces of ' + _item.name)
-						notification.save()
-						item_subject.subject_state = item_subject.subject_state + [notification.pk]
-					else:
-						notification = Notification.objects.create(
-							msg='A guest bought ' + str(amount) + ' pieces of ' + _item.name)
-						notification.save()
-						item_subject.subject_state = item_subject.subject_state + [notification.pk]
-				except Exception as e:
-					messages.warning(request, 'cant connect websocket ' + str(e))
-
-				_item_name = _item.name
-				print("reached herre")
-				if (_item.quantity == 0):
-					_item.delete()
-
-				messages.success(request, 'Thank you! you bought ' + _item_name)
-				messages.success(request, 'Total after discount: ' + str(total_after_discount) + ' $')
-				messages.success(request, 'Total before: ' + str(total) + ' $')
-				print("!!!!!!!!!!!!!!!!!!!!")
+				messages.warning(request, messages_)
 				return redirect('/login_redirect')
-			except Exception as a:
-				print(a)
-				print(str(a))
-				traceback.print_exc()
-				if not (transaction_id == -1):
-					messages.warning(request, 'failed and aborted pay! please try again!')
-					_item.quantity = amount_in_db
-					chech_cancle = pay_system.cancel_pay(transaction_id)
-					chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
+			else:
+				messages.success(request,messages_)
 				return redirect('/login_redirect')
+
+
 		###########################end buy procces
 		errors = str(form.errors) + str(shipping_form.errors) + str(supply_form.errors)
 		messages.warning(request, 'error in :  ' + errors)
@@ -592,7 +632,7 @@ def buy_item(request, pk):
 		return render(request, 'store/buy_item.html', context)
 
 
-def check_base_rule(rule_id, amount, country, request, context):
+def check_base_rule(rule_id, amount, country, user):
 	rule = BaseRule.objects.get(id=rule_id)
 	if rule.type == 'MAX' and amount > int(rule.parameter):
 		return False
@@ -600,12 +640,12 @@ def check_base_rule(rule_id, amount, country, request, context):
 		return False
 	elif rule.type == 'FOR' and country == rule.parameter:
 		return False
-	elif rule.type == 'REG' and not request.user.is_authenticated:
+	elif rule.type == 'REG' and not user.is_authenticated:
 		return False
 	return True
 
 
-def check_base_item_rule(rule_id, amount, context):
+def check_base_item_rule(rule_id, amount, user):
 	rule = BaseItemRule.objects.get(id=rule_id)
 	if rule.type == 'MAX' and amount > int(rule.parameter):
 		return False
@@ -614,61 +654,61 @@ def check_base_item_rule(rule_id, amount, context):
 	return True
 
 
-def check_item_rules(item, amount, context):
+def check_item_rules(item, amount, user):
 	base_arr = []
 	complex_arr = []
 	itemRules = ComplexItemRule.objects.all().filter(item=item)
 	for rule in reversed(itemRules):
 		if rule.id in complex_arr:
 			continue
-		if check_item_rule(rule, amount, base_arr, complex_arr, context) is False:
+		if check_item_rule(rule, amount, base_arr, complex_arr, user) is False:
 			return False
 	itemBaseRules = BaseItemRule.objects.all().filter(item=item)
 	for rule in itemBaseRules:
 		if rule.id in base_arr:
 			continue
-		if check_base_item_rule(rule.id, amount, context) is False:
+		if check_base_item_rule(rule.id, amount, user) is False:
 			return False
 	return True
 
 
-def check_store_rules(store_of_item, amount, country, request, context):
+def check_store_rules(store_of_item, amount, country, user):
 	base_arr = []
 	complex_arr = []
 	storeRules = ComplexStoreRule.objects.all().filter(store=store_of_item)
 	for rule in reversed(storeRules):
 		if rule.id in complex_arr:
 			continue
-		if check_store_rule(rule, amount, country, request, base_arr, complex_arr, context) is False:
+		if check_store_rule(rule, amount, country, base_arr, complex_arr, user) is False:
 			return False
 	storeBaseRules = BaseRule.objects.all().filter(store=store_of_item)
 	for rule in storeBaseRules:
 		if rule.id in base_arr:
 			continue
-		if check_base_rule(rule.id, amount, country, request, context) is False:
+		if check_base_rule(rule.id, amount, country, user) is False:
 			return False
 	return True
 
-
-def check_store_rule(rule, amount, country, request, base_arr, complex_arr, context):
+#
+def check_store_rule(rule, amount, country, base_arr, complex_arr, user):
 	if rule.left[0] == '_':
 		base_arr.append(int(rule.left[1:]))
-		left = check_base_rule(int(rule.left[1:]), amount, country, request, context)
+		left = check_base_rule(int(rule.left[1:]), amount, country, user)
 		print('left')
 		print(str(left))
 	else:
 		complex_arr.append(int(rule.left))
 		tosend = ComplexStoreRule.objects.get(id=int(rule.left))
-		left = check_store_rule(tosend, amount, country, request, base_arr, complex_arr, context)
+		left = check_store_rule(tosend, amount, country, base_arr, complex_arr, user)
 	if rule.right[0] == '_':
 		base_arr.append(int(rule.right[1:]))
-		right = check_base_rule(int(rule.right[1:]), amount, country, request, context)
+		right = check_base_rule(int(rule.right[1:]), amount, country, user)
 		print('right')
 		print(str(right))
 	else:
 		complex_arr.append(int(rule.right))
 		tosend = ComplexStoreRule.objects.get(id=int(rule.right))
-		right = check_store_rule(tosend, amount, country, request, base_arr, complex_arr, context)
+		right = check_store_rule(tosend, amount, country, base_arr, complex_arr, user)
 	if rule.operator == "AND" and (left == False or right == False):
 		return False
 	if rule.operator == "OR" and (left == False and right == False):
@@ -677,22 +717,22 @@ def check_store_rule(rule, amount, country, request, base_arr, complex_arr, cont
 		return False
 	return True
 
-
-def check_item_rule(rule, amount, base_arr, complex_arr, context):
+#
+def check_item_rule(rule, amount, base_arr, complex_arr, user):
 	if rule.left[0] == '_':
 		base_arr.append(int(rule.left[1:]))
-		left = check_base_item_rule(int(rule.left[1:]), amount, context)
+		left = check_base_item_rule(int(rule.left[1:]), amount, user)
 	else:
 		complex_arr.append(int(rule.left))
 		tosend = ComplexItemRule.objects.get(id=int(rule.left))
-		left = check_item_rule(tosend, amount, base_arr, complex_arr, context)
+		left = check_item_rule(tosend, amount, base_arr, complex_arr, user)
 	if rule.right[0] == '_':
 		base_arr.append(int(rule.right[1:]))
-		right = check_base_item_rule(int(rule.right[1:]), amount, context)
+		right = check_base_item_rule(int(rule.right[1:]), amount, user)
 	else:
 		complex_arr.append(int(rule.right))
 		tosend = ComplexItemRule.objects.get(id=int(rule.right))
-		right = check_item_rule(tosend, amount, base_arr, complex_arr, context)
+		right = check_item_rule(tosend, amount, base_arr, complex_arr, user)
 	if rule.operator == "AND" and (left == False or right == False):
 		return False
 	if rule.operator == "OR" and (left == False and right == False):

@@ -14,6 +14,7 @@ from django.views.generic import DetailView
 from django.views.generic.list import ListView
 
 from dev.settings import PROJ_IP, PROJ_PORT
+from store.forms import ShippingForm, PayForm
 from store.models import Item, Store
 from trading_system import service
 from trading_system.forms import SearchForm, SomeForm, CartForm
@@ -142,9 +143,6 @@ def search(request: Any) -> QuerySet:
 cart_index = 0
 
 
-
-
-
 class CartDetail(DetailView):
 	model = Cart
 
@@ -214,85 +212,6 @@ from decimal import Decimal
 from django.forms import formset_factory
 from .forms import QForm
 
-def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
-	# if not (request.user.is_authenticated):
-	# 	return makeGuestCart(request)
-	items_bought = []
-	if request.method == 'POST':
-		form = CartForm(request.user, makeGuestCart(request), request.POST)
-		if form.is_valid():
-			for item_id in form.cleaned_data.get('items'):
-				# amount_in_db = Item.objects.get(id=item_id).quantity
-				# if (amount_in_db > 0):
-				if service.amount_in_db(item_id):
-					try:
-						quantity_to_buy = request.POST.get('quantity' + str(item_id))
-						print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
-					except:
-						messages.warning(request, 'problem with quantity ')
-					# item = Item.objects.get(id=item_id)
-					# item.quantity = amount_in_db - 1
-					# item.save()
-					items_bought.append(item_id)
-					if service.is_authenticated(request.user.pk):
-						# cart = Cart.objects.get(customer=request.user)
-						# cart.items.remove(item)
-						service.remove_item_from_cart(request.user.pk, item_id)
-					else:
-						cartG = request.session['cart']
-						cartG['items_id'].remove(Decimal(item_id))
-						request.session['cart'] = cartG
-
-					# if (item.quantity == 0):
-					# 	item.delete()
-
-				else:
-					messages.warning(request, 'not enough amount of this item ')
-					return redirect('/login_redirect')
-			messages.success(request, 'Thank you! you just bought items from cart')
-
-			return redirect('/login_redirect')
-
-		err = '' + str(form.errors) + str(q.errors)
-		messages.warning(request, 'error in :  ' + err)
-		return redirect('/login_redirect')
-
-	else:
-		list_ = []
-		if not (request.user.is_authenticated):
-			base_template_name = 'homepage_guest.html'
-			list_ = makeGuestCart(request)
-		else:
-			if "store_owners" in request.user.groups.values_list('name', flat=True):
-				base_template_name = 'store/homepage_store_owner.html'
-			else:
-				base_template_name = 'homepage_member.html'
-
-			list_ = None
-
-		form = CartForm(request.user, list_)
-		q_list = QForm(request.user, list_)
-		text = SearchForm()
-		user_name = request.user.username
-		size_ = 0
-		if (request.user.is_authenticated):
-			carts = Cart.objects.filter(customer=request.user)
-			items_of_user = []
-			for cart in carts:
-				items_of_user += list(cart.items.all())
-
-			size_ = len(items_of_user)
-		else:
-			size_ = len(list_)
-		context = {
-			'user_name': user_name,
-			'text': text,
-			'form': form,
-			'base_template_name': base_template_name,
-			'qua': q_list,
-		}
-		return render(request, 'trading_system/cart_test.html', context)
-
 
 def get_queryset(self):
 	return Cart.objects.filter(customer_id=self.request.user.pk)
@@ -361,45 +280,7 @@ def add_item_to_cart(request, item_pk):
 		return redirect('/login_redirect')
 
 
-# if (request.user.is_authenticated):
-# 	item_store = get_item_store(item_pk)
-# 	cart = get_cart(item_store, request.user.pk)
-# 	if cart is None:
-# 		open_cart_for_user_in_store(item_store.pk, request.user.pk)  # TODO
-# 		cart = get_cart(item_store, request.user.pk)
-# 	cart.items.add(item_pk)
-# 	messages.success(request, 'add to cart successfully')
-# 	return redirect('/login_redirect')
-# else:
-# 	if 'cart' in request.session:
-# 		cartG = request.session['cart']
-# 		cartG['items_id'].append(item_pk)
-# 	else:
-# 		cartG = CartGuest([item_pk]).serialize()
-#
-# 	request.session['cart'] = cartG
-#
-# 	messages.success(request, 'add to cart successfully')
-# 	return redirect('/login_redirect')
 
-
-# def get_item_store(item_pk):
-# 	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
-#
-# 	# Might cause bug. Need to apply the item-in-one-store condition
-# 	return list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))[0]
-
-
-# def open_cart_for_user_in_store(store_pk: int, user_pk: int) -> None:
-# 	Cart(customer_id=user_pk, store_id=store_pk).save()
-
-
-# def get_cart(store_pk, user_pk):
-# 	carts = Cart.objects.filter(customer_id=user_pk, store_id=store_pk)
-# 	if len(carts) == 0:
-# 		return None
-# 	else:
-# 		return carts[0]
 
 def makeGuestCart(request):
 	if (service.is_authenticated(request.user.pk)):
@@ -410,3 +291,146 @@ def makeGuestCart(request):
 	for id in id_list:
 		items_ += list([service.get_item(id)])
 	return items_
+
+def delete_item_from_cart(request, item_pk):
+	if (request.user.is_authenticated):
+		item_store = get_item_store(item_pk)
+		cart = get_cart(item_store, request.user.pk)
+		cart.items.remove(item_pk)
+		messages.success(request, 'remove to cart successfully')
+		return redirect('/login_redirect')
+	else:
+
+		cartG = request.session['cart']
+		cartG['items_id'].remove(item_pk)
+
+		request.session['cart'] = cartG
+
+		messages.success(request, 'remove to cart successfully')
+		return redirect('/login_redirect')
+
+#TODO move to domain
+def get_item_store(item_pk):
+	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
+	# Might cause bug. Need to apply the item-in-one-store condition
+	return list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))[0]
+
+#TODO move to domain
+def get_cart(store_pk, user_pk):
+	carts = Cart.objects.filter(customer_id=user_pk, store_id=store_pk)
+	if len(carts) == 0:
+		return None
+	else:
+		return carts[0]
+
+def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
+	# if not (request.user.is_authenticated):
+	# 	return makeGuestCart(request)
+	items_bought = []
+	if request.method == 'POST':
+		form = CartForm(request.user, makeGuestCart(request), request.POST)
+		shipping_form = ShippingForm(request.POST)
+		supply_form = PayForm(request.POST)
+
+		if shipping_form.is_valid() and supply_form.is_valid():
+			# shipping
+			country = shipping_form.cleaned_data.get('country')
+			city = shipping_form.cleaned_data.get('city')
+			zip = shipping_form.cleaned_data.get('zip')
+			address = shipping_form.cleaned_data.get('address')
+			name = shipping_form.cleaned_data.get('name')
+
+			shipping_details = {'country': country, 'city': city, 'zip': zip, 'address': address, 'name': name}
+
+			# card
+
+			card_number = supply_form.cleaned_data.get('card_number')
+			month = supply_form.cleaned_data.get('month')
+			year = supply_form.cleaned_data.get('year')
+			holder = supply_form.cleaned_data.get('holder')
+			ccv = supply_form.cleaned_data.get('ccv')
+			id = supply_form.cleaned_data.get('id')
+
+			card_details = {'card_number': card_number, 'month': month, 'year': year, 'holder': holder, 'ccv': ccv,
+			                'id': id}
+		else:
+			err = '' + str(shipping_form.errors) +str(supply_form.errors)
+			messages.warning(request, 'error in :  ' + err)
+			return redirect('/login_redirect')
+
+		if form.is_valid():
+
+			for item_id in form.cleaned_data.get('items'):
+
+				amount_in_db = Item.objects.get(id=item_id).quantity
+				if (amount_in_db > 0):
+					item = Item.objects.get(id=item_id)
+					quantity_to_buy = 1
+					try:
+						quantity_to_buy = request.POST.get('quantity' + str(item.id))
+						print('q----------------id:----' + str(item.id) + '------------'+quantity_to_buy)
+					except:
+						messages.warning(request, 'problem with quantity ')
+					# item.quantity = amount_in_db - 1
+					# item.save()
+					from store.views import buy_logic
+					valid, total, total_after_discount, messages_ = buy_logic(item_id, int(quantity_to_buy), amount_in_db,
+					                                                          request.user, shipping_details,
+					                                                          card_details)
+					if valid == False:
+						messages.warning(request, 'can`t buy item : '+str(item_id))
+						messages.warning(request, 'reason : ' + str(messages_))
+					else:
+						messages.success(request, ' buy item : '+str(item_id))
+						items_bought.append(item_id)
+						if (request.user.is_authenticated):
+							cart = Cart.objects.get(customer=request.user)
+							cart.items.remove(item)
+						else:
+							cartG = request.session['cart']
+							cartG['items_id'].remove(Decimal(item_id))
+							request.session['cart'] = cartG
+
+			return redirect('/login_redirect')
+		else:
+			err = '' + str(form.errors)
+			messages.warning(request, 'error in :  ' + err)
+			return redirect('/login_redirect')
+
+	else:
+		list_ = []
+		if not (request.user.is_authenticated):
+			base_template_name = 'homepage_guest.html'
+			list_ = makeGuestCart(request)
+		else:
+			if "store_owners" in request.user.groups.values_list('name', flat=True):
+				base_template_name = 'store/homepage_store_owner.html'
+			else:
+				base_template_name = 'homepage_member.html'
+
+			list_ = None
+
+		form = CartForm(request.user, list_)
+		q_list = QForm(request.user, list_)
+		text = SearchForm()
+		user_name = request.user.username
+		size_ = 0
+		if (request.user.is_authenticated):
+			carts = Cart.objects.filter(customer=request.user)
+			items_of_user = []
+			for cart in carts:
+				items_of_user += list(cart.items.all())
+
+			size_ = len(items_of_user)
+		else:
+			size_ = len(list_)
+		context = {
+			'user_name': user_name,
+			'text': text,
+			'form': form,
+			'base_template_name': base_template_name,
+			'qua': q_list,
+			'card': PayForm(),
+			'shipping': ShippingForm(),
+		}
+		return render(request, 'trading_system/cart_test.html', context)
