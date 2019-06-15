@@ -1,4 +1,4 @@
-import datetime
+import json
 import json
 import traceback
 
@@ -205,9 +205,8 @@ class ItemUpdate(UpdateView):
 		)
 
 	def form_valid(self, form):
-		service.update_item(item_id = self.kwargs['pk'], item_dict =form.cleaned_data)
+		service.update_item(item_id=self.kwargs['pk'], item_dict=form.cleaned_data)
 		return super().form_valid(form)
-
 
 
 @method_decorator(login_required, name='dispatch')
@@ -225,16 +224,15 @@ class ItemDelete(DeleteView):
 		return context
 
 	def get_object(self, queryset=None):
-		item_details = service.get_item_details(item_id= self.kwargs['pk'])
-		return Item.objects.create(
-			name=item_details['name'],
-			description=item_details['description'],
-			category= item_details['category'],
-			price= item_details['price'],
-			quantity= item_details['quantity']
-		)
+		item_details = service.get_item_details(item_id=self.kwargs['pk'])
+		return Item.objects.create(name=item_details['name'],
+		                           description=item_details['description'],
+		                           category=item_details['category'],
+		                           price=item_details['price'],
+		                           quantity=item_details['quantity'])
+
 	def delete(self, request, *args, **kwargs):
-		service.delete_item(item_id = kwargs['pk'])
+		service.delete_item(item_id=kwargs['pk'])
 		return super(ItemDelete, self).delete(request, *args, **kwargs)
 
 
@@ -267,6 +265,8 @@ class ItemDelete(DeleteView):
 # 		}
 # 		return render(request, 'store/add_discount_to_item.html', context)
 
+from .forms import DeleteOwners
+
 
 @method_decorator(login_required, name='dispatch')
 class StoreUpdate(UpdateView):
@@ -280,22 +280,28 @@ class StoreUpdate(UpdateView):
 		text = SearchForm()
 		rules = service.store_rules_string(store_id=self.kwargs['pk'])
 		store_items = service.get_store_items(store_id=self.kwargs['pk'])
-		user_name = self.request.user.username
+
+		store_managers = service.get_store_managers(store_id=self.kwargs['pk'])
+		store_owners = service.get_store_owners(store_id=self.kwargs['pk'])
+		del store_owners[0]
+		all_managers = store_owners + store_managers
+		# print(store_owners)
 		context['text'] = text
-		context['user_name'] = user_name
+		context['user_name'] = self.request.user.username
 		context['form_'] = UpdateItems(store_items)
 		context['rules'] = rules
+		context['delete_owners'] = DeleteOwners(all_managers, self.kwargs['pk'])
 		return context
 
 	def get_object(self, queryset=None):
-		store_details = service.get_store_details(store_id= self.kwargs['pk'])
+		store_details = service.get_store_details(store_id=self.kwargs['pk'])
 		return Store.objects.create(
 			name=store_details['name'],
 			description=store_details['description']
 		)
 
 	def form_valid(self, form):
-		service.update_store(store_id = self.kwargs['pk'], store_dict =form.cleaned_data)
+		service.update_store(store_id=self.kwargs['pk'], store_dict=form.cleaned_data)
 		return super().form_valid(form)
 
 
@@ -319,7 +325,7 @@ class StoreDelete(DeleteView):
 			text = SearchForm()
 			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
 
-		owner_name = service.get_store_creator(store_id = kwargs['pk'])
+		owner_name = service.get_store_creator(store_id=kwargs['pk'])
 		ans = service.delete_store(store_id=kwargs['pk'])
 		response = super(StoreDelete, self).delete(request, *args, **kwargs)
 		messages.success(request, ans[1])
@@ -346,7 +352,7 @@ pay_system = Payment()
 supply_system = Supply()
 
 
-#def get_discount_for_store(pk, amount, total):
+# def get_discount_for_store(pk, amount, total):
 # 	store_of_item = Store.objects.get(items__id__contains=pk)
 # 	if not (len(store_of_item.discounts.all()) == 0):
 # 		discount_ = store_of_item.discounts.all()[0]
@@ -392,6 +398,8 @@ supply_system = Supply()
 # 		return [0, total]
 def get_store_of_item(item_id):
 	return Store.objects.filter(items__id__contains=item_id)[0]
+
+
 def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_details):
 	transaction_id = -1
 	supply_transaction_id = -1
@@ -400,10 +408,9 @@ def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_detail
 
 	messages_ = ''
 	curr_item = Item.objects.get(id=item_id)
-	if (amount <= amount_in_db):
+	if amount <= amount_in_db:
 		# print("good amount")
 		total = amount * curr_item.price
-		new_q = amount_in_db - amount
 		total_after_discount = total
 		# check item rules
 		if check_item_rules(curr_item, amount, user) is False:
@@ -421,9 +428,9 @@ def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_detail
 		# [precentage1, total_after_discount] = get_discount_for_store(item_id, amount, total)
 		# [precentage2, total_after_discount] = get_discount_for_item(item_id, amount, total_after_discount)
 
-		precentage1=0
-		precentage2=0
-		total_after_discount=0
+		precentage1 = 0
+		precentage2 = 0
+		total_after_discount = 0
 		if precentage1 != 0:
 			discount = str(precentage1)
 			messages_ += '\n' + 'you have discount for store ' + discount
@@ -442,12 +449,12 @@ def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_detail
 		# 			return False, 0, 0, messages_
 		# 			# return redirect('/login_redirect')
 		# 	else:
-			# return redirect('/login_redirect')
+		# return redirect('/login_redirect')
 		# 		messages_ += '\n' + 'can`t connect to pay system!'
 		# 		return False, 0, 0, messages_
 		# 		# return redirect('/login_redirect')
 		#
-			# return redirect('/login_redirect')
+		# return redirect('/login_redirect')
 		# 		# print("supply hand shake")
 		# 		supply_transaction_id = supply_system.supply(str(shipping_details.name), str(shipping_details.address), str(shipping_details.city), str(shipping_details.country),
 		# 		                                             str(zip))
@@ -458,7 +465,7 @@ def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_detail
 		# 			# messages.warning(request, 'can`t supply abort payment!')
 		# 			messages_ += '\n' + 'can`t supply abort payment!'
 		# 	else:
-			# messages.warning(request, 'can`t supply abort payment!')
+		# messages.warning(request, 'can`t supply abort payment!')
 		# 		messages_ += '\n' +'can`t connect to supply system abort payment!'
 		# 		return False, 0, 0, messages_
 		# 		# messages.warning(request, 'can`t connect to supply system abort payment!')
@@ -529,7 +536,7 @@ def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_detail
 
 			_item_name = _item.name
 			# print("reached herre")
-			if (_item.quantity == 0):
+			if _item.quantity == 0:
 				_item.delete()
 
 			messages_ += '\n' + 'Thank you! you bought ' + _item_name + '\n' + 'Total after discount: ' + str(
@@ -556,18 +563,6 @@ def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_detail
 def buy_item(request, pk):
 	# return redirect('/store/contact/' + str(pk) + '/')
 	print('heryyyyyyyyyyyy')
-	form_class = BuyForm
-	curr_item = Item.objects.get(id=pk)
-	context = {
-		'name': curr_item.name,
-		'pk': curr_item.id,
-		'form': form_class,
-		'price': curr_item.price,
-		'description': curr_item.description,
-		'text': SearchForm(),
-		'card': PayForm(),
-		'shipping': ShippingForm(),
-	}
 	if request.method == 'POST':
 		print("post")
 		form = BuyForm(request.POST)
@@ -762,7 +757,6 @@ class AddItemToStore(CreateView):
 
 
 def itemAddedSucceffuly(request, store_id, id):
-	x = 1
 	return render(request, 'store/item_detail.html')
 
 
@@ -800,11 +794,11 @@ def add_manager_to_store(request, pk):
 
 @permission_required_or_403('ADD_DISCOUNT', (Store, 'id', 'pk'))
 @login_required
-def add_discount_to_store(request,  pk, which_button):
+def add_discount_to_store(request, pk, which_button):
 	if request.method == 'POST':
 		form = AddDiscountForm(pk, request.POST)
 		if form.is_valid():
-			#disc = form.save()
+			# disc = form.save()
 			# if (min_max_cond.cleaned_data.get('cond_min_max')):
 			# cond_1 = min_max_cond.save()
 			# disc.conditions.add(cond_1)
@@ -816,18 +810,19 @@ def add_discount_to_store(request,  pk, which_button):
 			condition = form.cleaned_data.get('condition')
 			percentage = form.cleaned_data.get('percentage')
 			amount = form.cleaned_data.get('amount')
-			start_date = form.cleaned_data.get('start_date')
 			end_date = form.cleaned_data.get('end_date')
-			add_item = form.cleaned_data.get('add_item')
+			add_item1 = form.cleaned_data.get('add_item')
 			item = form.cleaned_data.get('item')
-			if condition is False and add_item is False:
-				ans = service.add_discount(store_id=pk, percentage=percentage,  end_date=end_date)
-			if condition is False and add_item is True:
-				ans = service.add_discount(store_id=pk, percentage=percentage,  end_date=end_date, item=item)
-			if condition is True and add_item is False:
-				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage, end_date=end_date)
-			if condition is True and add_item is True:
-				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,  end_date=end_date, item=item)
+			if condition is False and add_item1 is False:
+				ans = service.add_discount(store_id=pk, percentage=percentage, end_date=end_date)
+			if condition is False and add_item1 is True:
+				ans = service.add_discount(store_id=pk, percentage=percentage, end_date=end_date, item=item)
+			if condition is True and add_item1 is False:
+				ans = service.add_discount(store_id=pk, kind=type, amount=amount, percentage=percentage,
+				                           end_date=end_date)
+			if condition is True and add_item1 is True:
+				ans = service.add_discount(store_id=pk, kind=type, amount=amount, percentage=percentage,
+				                           end_date=end_date, item=item)
 			print(ans[1])
 			messages.success(request, 'add discount :  ' + str(percentage) + '%')
 			return redirect('/store/home_page_owner/')
@@ -911,8 +906,6 @@ def add_complex_rule_to_store_1(request, rule_id1, store_id, which_button):
 	if request.method == 'POST':
 		form = AddRuleToStore_withop(request.POST)
 		if form.is_valid():
-			rule_to_ret = -1
-			store = Store.objects.get(id=store_id)
 			rule = form.cleaned_data.get('rule')
 			operator = form.cleaned_data.get('operator')
 			parameter = form.cleaned_data.get('parameter')
@@ -955,8 +948,6 @@ def add_complex_rule_to_store_2(request, rule_id_before, store_id, which_button)
 	if request.method == 'POST':
 		form = AddRuleToStore_two(request.POST)
 		if form.is_valid():
-			rule_to_ret = -1
-			store = Store.objects.get(id=store_id)
 			rule1 = form.cleaned_data.get('rule1')
 			rule2 = form.cleaned_data.get('rule2')
 			operator1 = form.cleaned_data.get('operator1')
@@ -1039,8 +1030,6 @@ def add_complex_rule_to_item_1(request, rule_id1, item_id, which_button):
 	if request.method == 'POST':
 		form = AddRuleToItem_withop(request.POST)
 		if form.is_valid():
-			rule_to_ret = -1
-			item = Item.objects.get(id=item_id)
 			rule = form.cleaned_data.get('rule')
 			operator = form.cleaned_data.get('operator')
 			parameter = form.cleaned_data.get('parameter')
@@ -1076,8 +1065,6 @@ def add_complex_rule_to_item_2(request, rule_id_before, item_id, which_button):
 	if request.method == 'POST':
 		form = AddRuleToItem_two(request.POST)
 		if form.is_valid():
-			rule_to_ret = -1
-			item = Item.objects.get(id=item_id)
 			rule1 = form.cleaned_data.get('rule1')
 			rule2 = form.cleaned_data.get('rule2')
 			operator1 = form.cleaned_data.get('operator1')
@@ -1202,11 +1189,20 @@ class NotificationsListView(ListView):
 	template_name = 'store/owner_feed.html'
 
 	def get_queryset(self):
-		return service.get_user_notifications(user_id = self.request.user.pk)
+		return service.get_user_notifications(user_id=self.request.user.pk)
 
 	def get_context_data(self, **kwargs):
 		context = super(NotificationsListView, self).get_context_data(**kwargs)  # get the default context data
 		context['owner_id'] = self.request.user.pk
 		context['unread_notifications'] = 0
-		service.mark_notification_read(user_id = self.request.user.pk)
+		service.mark_notification_read(user_id=self.request.user.pk)
 		return context
+
+
+def delete_owner(request, pk_owner, pk_store):
+	if (service.remove_manager_from_store(pk_store, pk_owner)):
+		messages.success(request, 'delete owner')  # <-
+		return redirect('/store/home_page_owner/')
+	else:
+		messages.warning(request, 'can`t delete owner')  # <-
+		return redirect('/store/home_page_owner/')

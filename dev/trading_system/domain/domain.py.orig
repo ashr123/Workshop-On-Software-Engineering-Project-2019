@@ -47,8 +47,13 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 		store.assign_perm(perm=perm, user_id=user_.pk)
 	if is_owner:
 		try:
+<<<<<<< HEAD:dev/trading_system/domain/domain.py
 			if store.is_already_owner(user_id=user_.pk):
+				return [True, 'allready manager']
+=======
+			if store_.owners.filter(id=user_.pk).exists():
 				return [True, 'allready owner']
+>>>>>>> origin/roy_testing:dev/trading_system/domain.py
 			store_owners_group = Group.objects.get(name="store_owners")
 			user_.groups.add(store_owners_group)
 			# store_.owners.add(user_)
@@ -119,7 +124,15 @@ def add_complex_rule_to_store_1(rule_type, prev_rule, store_id, operator, parame
 
 
 def get_store_details(store_id):
+<<<<<<< HEAD:dev/trading_system/domain/domain.py
 	return c_Store.get_store(store_id).get_details()
+=======
+	store = Store.objects.get(pk=store_id)
+	return {"name": store.name, "description": store.description, "owners":
+		list(map(lambda o: User.objects.get(pk=o.id).username, store.owners.all())), "managers":
+		        list(map(lambda m: User.objects.get(pk=m.id).username.name, store.managers.all())),
+	        "items": list(map(lambda i: str(i), store.items.all()))}
+>>>>>>> origin/roy_testing:dev/trading_system/domain.py
 
 
 def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2, prev_rule):
@@ -257,8 +270,13 @@ def len_of_super():
 	return c_User.len_of_super()
 
 
-def add_discount(store_id, percentage, end_date, kind=None, amount=None, item=None):
+<<<<<<< HEAD:dev/trading_system/domain/domain.py
+def add_discount(store_id, percentage, end_date, type=None, amount=None, item=None):
 	discount = Discount(store_id=store_id, type=type, percentage=percentage, amount=amount,
+=======
+def add_discount(store_id, percentage, end_date, kind=None, amount=None, item=None):
+	discount = Discount(store=Store.objects.get(id=store_id), type=kind, percentage=percentage, amount=amount,
+>>>>>>> origin/roy_testing:dev/trading_system/domain.py
 	                    end_date=end_date, item=item)
 	discount.save()
 	return [True, discount.id]
