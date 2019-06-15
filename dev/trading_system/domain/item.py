@@ -24,7 +24,8 @@ class Item():
 		return self._model.quantity
 
 	def get_details(self):
-		return {"name": self._model.name,
+		return {"pk": self._model.pk,
+				"name": self._model.name,
 		        "category": self._model.get_category_display,
 		        "description": self._model.description,
 		        "price": self._model.price,
@@ -48,5 +49,5 @@ class Item():
 		items_models = m_Item.objects.filter(Q(name__contains=txt) | Q(
 			description__contains=txt) | Q(
 			category__contains=txt))
-		items = list(map(lambda im: Item(im), items_models))
+		items = list(map(lambda im: Item(model=im), items_models))
 		return list(map(lambda i: i.get_details(), items))

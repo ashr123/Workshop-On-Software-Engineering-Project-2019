@@ -74,12 +74,19 @@ class Store():
 
 	def delete(self):
 		items_to_delete = self._model.items.all()
-		creator = self.get_creator()  # craetor
-		owner_name = self._model.owners.all()[0]  # craetor
+		owners_ids = self.all_owners_ids()
+		managers_ids = self.all_managers_ids()
+		owners_objs = list(map(lambda id: c_User.get_user(user_id=id), owners_ids))
+		managers_objs = list(map(lambda id: c_User.get_user(user_id=id), managers_ids))
+		self._model.delete()
 		for item_ in items_to_delete:
 			item_.delete()
-		if creator.have_no_more_stores():
-			creator.remove_from_owners()
+		for owner in owners_objs:
+			if owner.owns_no_more_stores():
+				owner.remove_from_owners()
+		for manager in managers_objs:
+			if manager.manages_no_more_stores():
+				manager.remove_from_managers()
 
 	def update(self, store_dict):
 		for field in self._model._meta.fields:
@@ -103,6 +110,11 @@ class Store():
 	@staticmethod
 	def owns_stores(user_id):
 		tmp = m_Store.objects.filter(owners__username__contains=user_id)
+		return len(tmp) == 0
+
+	@staticmethod
+	def manages_stores(user_id):
+		tmp = m_Store.objects.filter(managers__username__contains=user_id)
 		return len(tmp) == 0
 
 	@staticmethod

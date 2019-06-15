@@ -167,3 +167,7 @@ def add_item_to_cart(user_id, item_id):
 
 def get_item(id1):
 	return domain.get_item(id1)
+
+
+def buy_logic(pk, amount, amount_in_db, user, shipping_details, card_details):
+	return domain.buy_logic(pk, amount, amount_in_db, user, shipping_details, card_details)

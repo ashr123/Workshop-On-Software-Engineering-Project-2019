@@ -1,15 +1,22 @@
 import datetime
+import traceback
 
 from django.contrib.auth.models import User, Group
 from django.db.models import Q
 
-from store.models import BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount
+from store.models import BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount, Store, Item
 # from store.models import Item, BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount
 from trading_system.models import ObserverUser, NotificationUser, Notification
 from trading_system.domain.store import Store as c_Store
 from trading_system.domain.user import User as c_User
 from trading_system.domain.item import Item as c_Item
 from trading_system.domain.cart import Cart as c_Cart
+from external_systems.money_collector.payment_system import Payment
+from external_systems.supply_system.supply_system import Supply
+from trading_system.observer import ItemSubject
+
+pay_system = Payment()
+supply_system = Supply()
 
 
 def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
@@ -28,8 +35,11 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 	# messages.warning(request, 'can`t add yourself as a manager!')
 	# return redirect('/store/home_page_owner/')
 	pre_store_owners_ids = store.all_owners_ids()
+	pre_store_managers_ids = store.all_managers_ids()
+	all_pre_m_o = pre_store_managers_ids + pre_store_owners_ids
+
 	# print('\n owners: ' ,pre_store_owners)
-	for owner_id in pre_store_owners_ids:
+	for owner_id in all_pre_m_o:
 		if c_User.get_user(user_id=owner_id).username == wanna_be_manager:
 			fail = True
 			messages_ += 'allready owner'
@@ -47,30 +57,35 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 		store.assign_perm(perm=perm, user_id=user_.pk)
 	if is_owner:
 		try:
-			if store.is_already_owner(user_id=user_.pk):
-				return [True, 'allready owner']
 			store_owners_group = Group.objects.get(name="store_owners")
 			user_.groups.add(store_owners_group)
 			# store_.owners.add(user_)
 			store.add_owner(user_.pk)
-			ObserverUser.objects.create(user_id=user_.pk,
-			                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(user_.pk)).save()
-		except:
-			return [True, 'allready manager']
+			try:
+				ObserverUser.objects.create(user_id=user_.pk,
+				                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(user_.pk)).save()
+			except Exception as e:
+				messages_ += str(e)
+
+		except Exception as e:
+			messages_ += str(e)
 	else:
 		try:
-			if store.is_already_manager(user_id=user_.pk):
-				return [True, 'allready manager']
 			store_managers = Group.objects.get_or_create(name="store_managers")[0]
 			# store_managers = Group.objects.get(name="store_managers")
 			user_.groups.add(store_managers)
 			store.add_manager(user_.pk)
-			ObserverUser.objects.create(user_id=user_.pk,
-			                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(user_.pk)).save()
-		except:
-			return [True, 'allready manager ']
+			try:
+				ObserverUser.objects.create(user_id=user_.pk,
+				                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(user_.pk)).save()
+			except Exception as e:
+				messages_ += str(e)
 
-	return [False, '']
+		except Exception as e:
+			messages_ += str(e)
+			return [True, messages_ ]
+
+	return [False, messages_]
 
 
 def search(txt):
@@ -212,7 +227,6 @@ def get_user_store_list(user_id):
 
 def get_item_details(item_id):
 	return c_Item.get_item(item_id=item_id).get_details()
-
 
 
 def add_item_to_cart(user_id, item_id):
@@ -439,6 +453,7 @@ def get_store_by_id(store_id):
 	return Store.objects.get(pk=store_id)
 
 
+#TODO - REFACTOR
 def remove_manager_from_store(store_id, m_id):
 	try:
 		store_ = Store.objects.get(pk=store_id)
@@ -468,3 +483,220 @@ def mark_notification_read(user_id):
 
 def have_no_more_stores(user_pk):
 	return c_User.get_user(user_id=user_pk).have_no_more_stores()
+
+
+def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details):
+
+	pay_transaction_id = -1
+	supply_transaction_id = -1
+
+
+
+	messages_ = ''
+	curr_item = Item.objects.get(id=item_id)
+	if amount <= amount_in_db:
+		# print("good amount")
+		total = amount * curr_item.price
+		total_after_discount = total
+		# check item rules
+		if check_item_rules(curr_item, amount, user) is False:
+			messages_ = "you can't buy due to item policies"
+			return False, 0, 0, messages_
+		store_of_item = Store.objects.get(items__id__contains=item_id)
+		# check store rules
+		if check_store_rules(store_of_item, amount,shipping_details['country'], user) is False:
+			messages_ = "you can't buy due to store policies"
+			return False, 0, 0, messages_
+		## check discounts
+		# precentage1 =0
+		# precentage2=0
+		# [precentage1, total_after_discount] = service.get_discount_for_store(item_id, amount, total)
+		# [precentage2, total_after_discount] =  service.get_discount_for_item(item_id, amount, total_after_discount)
+		#
+		#
+		# if precentage1 != 0 :
+		# 	discount = str(precentage1)
+		# 	messages_ += '\n' + 'you have discount for store '+discount
+		# if precentage2 != 0:
+		# 	discount = str(precentage2)
+		# 	messages_ += '\n' + 'you have discount for item ' + discount
+
+		try:
+			if pay_system.handshake():
+				print("pay hand shake")
+
+				pay_transaction_id = pay_system.pay(str(card_details['card_number']), str(card_details['month']), str(card_details['year']), str(card_details['holder']), str(card_details['cvc']),
+				                                str(card_details['id']))
+				if (pay_transaction_id == '-1'):
+					messages_ += '\n' + 'can`t pay !'
+					return False, 0, 0, messages_
+			else:
+				messages_ += '\n' + 'can`t connect to pay system!'
+				return False, 0, 0, messages_
+			if supply_system.handshake():
+				print("supply hand shake")
+				supply_transaction_id = supply_system.supply(str(shipping_details['name']), str(shipping_details['address']), str(shipping_details['city']), str(shipping_details['country']),
+				                                             str(shipping_details['zip']))
+				if (supply_transaction_id == '-1'):
+					chech_cancle = pay_system.cancel_pay(pay_transaction_id)
+					messages_ += '\n' +'can`t supply abort payment!'
+					return False, 0, 0, messages_
+			else:
+				chech_cancle = pay_system.cancel_pay(pay_transaction_id)
+				messages_ += '\n' +'can`t connect to supply system abort payment!'
+				return False, 0, 0, messages_
+
+			curr_item.quantity = amount_in_db - amount
+			curr_item.save()
+
+			# store = get_item_store(_item.pk)
+			item_subject = ItemSubject(curr_item.pk)
+			try:
+				if (user.is_authenticated):
+					notification = Notification.objects.create(
+						msg=user.username + ' bought ' + str(amount) + ' pieces of ' + curr_item.name)
+					notification.save()
+					item_subject.subject_state = item_subject.subject_state + [notification.pk]
+				else:
+					notification = Notification.objects.create(
+						msg='A guest bought ' + str(amount) + ' pieces of ' + curr_item.name)
+					notification.save()
+					item_subject.subject_state = item_subject.subject_state + [notification.pk]
+			except Exception as e:
+				messages_ += 'cant connect websocket ' + str(e)
+
+			_item_name = curr_item.name
+			# print("reached herre")
+			if (curr_item.quantity == 0):
+				curr_item.delete()
+
+			messages_ += '\n'+ 'Thank you! you bought ' + _item_name +'\n'+'Total after discount: ' \
+			             + str(total_after_discount) + ' $'+'\n'+'Total before: ' + str(total) + ' $'
+			return True, total,total_after_discount,messages_
+		except Exception as a:
+			# print(a)
+			# print(str(a))
+			traceback.print_exc()
+			curr_item.quantity = amount_in_db
+			curr_item.save()
+
+			if not (pay_transaction_id == -1 ):
+				messages_ += '\n' +'failed and aborted pay! please try again!'
+				chech_cancle = pay_system.cancel_pay(pay_transaction_id)
+			if  not (supply_transaction_id == -1 ):
+				messages_ += '\n' + 'failed and aborted supply! please try again!'
+				chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
+			messages_ = "can`t buy this item " + str(item_id) +'  :  '+ str(a)
+			return False, 0, 0, messages_
+	else:
+		messages_ = "no such amount for item : " + str(item_id)
+		return False, 0, 0, messages_
+
+def check_item_rules(item, amount, user):
+	base_arr = []
+	complex_arr = []
+	itemRules = ComplexItemRule.objects.all().filter(item=item)
+	for rule in reversed(itemRules):
+		if rule.id in complex_arr:
+			continue
+		if check_item_rule(rule, amount, base_arr, complex_arr, user) is False:
+			return False
+	itemBaseRules = BaseItemRule.objects.all().filter(item=item)
+	for rule in itemBaseRules:
+		if rule.id in base_arr:
+			continue
+		if check_base_item_rule(rule.id, amount, user) is False:
+			return False
+	return True
+
+
+def check_store_rules(store_of_item, amount, country, user):
+	base_arr = []
+	complex_arr = []
+	storeRules = ComplexStoreRule.objects.all().filter(store=store_of_item)
+	for rule in reversed(storeRules):
+		if rule.id in complex_arr:
+			continue
+		if check_store_rule(rule, amount, country, base_arr, complex_arr, user) is False:
+			return False
+	storeBaseRules = BaseRule.objects.all().filter(store=store_of_item)
+	for rule in storeBaseRules:
+		if rule.id in base_arr:
+			continue
+		if check_base_rule(rule.id, amount, country, user) is False:
+			return False
+	return True
+
+
+#
+def check_store_rule(rule, amount, country, base_arr, complex_arr, user):
+	if rule.left[0] == '_':
+		base_arr.append(int(rule.left[1:]))
+		left = check_base_rule(int(rule.left[1:]), amount, country, user)
+		print('left')
+		print(str(left))
+	else:
+		complex_arr.append(int(rule.left))
+		tosend = ComplexStoreRule.objects.get(id=int(rule.left))
+		left = check_store_rule(tosend, amount, country, base_arr, complex_arr, user)
+	if rule.right[0] == '_':
+		base_arr.append(int(rule.right[1:]))
+		right = check_base_rule(int(rule.right[1:]), amount, country, user)
+		print('right')
+		print(str(right))
+	else:
+		complex_arr.append(int(rule.right))
+		tosend = ComplexStoreRule.objects.get(id=int(rule.right))
+		right = check_store_rule(tosend, amount, country, base_arr, complex_arr, user)
+	if rule.operator == "AND" and (left == False or right == False):
+		return False
+	if rule.operator == "OR" and (left == False and right == False):
+		return False
+	if rule.operator == "XOR" and ((left == False and right == False) or (left == True and right == True)):
+		return False
+	return True
+
+
+#
+def check_item_rule(rule, amount, base_arr, complex_arr, user):
+	if rule.left[0] == '_':
+		base_arr.append(int(rule.left[1:]))
+		left = check_base_item_rule(int(rule.left[1:]), amount, user)
+	else:
+		complex_arr.append(int(rule.left))
+		tosend = ComplexItemRule.objects.get(id=int(rule.left))
+		left = check_item_rule(tosend, amount, base_arr, complex_arr, user)
+	if rule.right[0] == '_':
+		base_arr.append(int(rule.right[1:]))
+		right = check_base_item_rule(int(rule.right[1:]), amount, user)
+	else:
+		complex_arr.append(int(rule.right))
+		tosend = ComplexItemRule.objects.get(id=int(rule.right))
+		right = check_item_rule(tosend, amount, base_arr, complex_arr, user)
+	if rule.operator == "AND" and (left == False or right == False):
+		return False
+	if rule.operator == "OR" and (left == False and right == False):
+		return False
+	if rule.operator == "XOR" and ((left == False and right == False) or (left == True and right == True)):
+		return False
+	return True
+
+def check_base_item_rule(rule_id, amount, user):
+	rule = BaseItemRule.objects.get(id=rule_id)
+	if rule.type == 'MAX' and amount > int(rule.parameter):
+		return False
+	elif rule.type == 'MIN' and amount < int(rule.parameter):
+		return False
+	return True
+
+def check_base_rule(rule_id, amount, country, user):
+	rule = BaseRule.objects.get(id=rule_id)
+	if rule.type == 'MAX' and amount > int(rule.parameter):
+		return False
+	elif rule.type == 'MIN' and amount < int(rule.parameter):
+		return False
+	elif rule.type == 'FOR' and country == rule.parameter:
+		return False
+	elif rule.type == 'REG' and not user.is_authenticated:
+		return False
+	return True

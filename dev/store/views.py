@@ -428,6 +428,74 @@ def get_store_of_item(item_id):
 
 
 ######################elhanan prev###########################
+
+
+#################################################3
+
+def buy_item(request, pk):
+	# return redirect('/store/contact/' + str(pk) + '/')
+	print('heryyyyyyyyyyyy')
+	if request.method == 'POST':
+		print("post")
+		form = BuyForm(request.POST)
+		shipping_form = ShippingForm(request.POST)
+		supply_form = PayForm(request.POST)
+
+		if form.is_valid() and shipping_form.is_valid() and supply_form.is_valid():
+			# shipping
+			country = shipping_form.cleaned_data.get('country')
+			city = shipping_form.cleaned_data.get('city')
+			zip = shipping_form.cleaned_data.get('zip')
+			address = shipping_form.cleaned_data.get('address')
+			name = shipping_form.cleaned_data.get('name')
+
+			shipping_details = {'country': country, 'city': city, 'zip': zip, 'address': address, 'name': name}
+
+			# card
+
+			card_number = supply_form.cleaned_data.get('card_number')
+			month = supply_form.cleaned_data.get('month')
+			year = supply_form.cleaned_data.get('year')
+			holder = supply_form.cleaned_data.get('holder')
+			cvc = supply_form.cleaned_data.get('cvc')
+			id = supply_form.cleaned_data.get('id')
+
+			card_details = {'card_number': card_number, 'month': month, 'year': year, 'holder': holder, 'cvc': cvc,
+			                'id': id}
+
+			#########################buy proccss
+			_item = Item.objects.get(id=pk)
+			amount = form.cleaned_data.get('amount')
+			amount_in_db = _item.quantity
+
+			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, amount_in_db, request.user,shipping_details, card_details)
+			if valid == False:
+				messages.warning(request, messages_)
+				return redirect('/login_redirect')
+			else:
+				messages.success(request, messages_)
+				return redirect('/login_redirect')
+
+		###########################end buy procces
+		errors = str(form.errors) + str(shipping_form.errors) + str(supply_form.errors)
+		messages.warning(request, 'error in :  ' + errors)
+		return redirect('/login_redirect')
+	else:
+		form_class = BuyForm
+		curr_item = Item.objects.get(id=pk)
+		context = {
+			'name': curr_item.name,
+			'pk': curr_item.id,
+			'form': form_class,
+			'price': curr_item.price,
+			'description': curr_item.description,
+			'text': SearchForm(),
+			'card': PayForm(),
+			'shipping': ShippingForm(),
+		}
+		return render(request, 'store/buy_item.html', context)
+
+'''
 def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details):
 
 	pay_transaction_id = -1
@@ -534,72 +602,6 @@ def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details)
 	else:
 		messages_ = "no such amount for item : " + str(item_id)
 		return False, 0, 0, messages_
-
-#################################################3
-
-def buy_item(request, pk):
-	# return redirect('/store/contact/' + str(pk) + '/')
-	print('heryyyyyyyyyyyy')
-	if request.method == 'POST':
-		print("post")
-		form = BuyForm(request.POST)
-		shipping_form = ShippingForm(request.POST)
-		supply_form = PayForm(request.POST)
-
-		if form.is_valid() and shipping_form.is_valid() and supply_form.is_valid():
-			# shipping
-			country = shipping_form.cleaned_data.get('country')
-			city = shipping_form.cleaned_data.get('city')
-			zip = shipping_form.cleaned_data.get('zip')
-			address = shipping_form.cleaned_data.get('address')
-			name = shipping_form.cleaned_data.get('name')
-
-			shipping_details = {'country': country, 'city': city, 'zip': zip, 'address': address, 'name': name}
-
-			# card
-
-			card_number = supply_form.cleaned_data.get('card_number')
-			month = supply_form.cleaned_data.get('month')
-			year = supply_form.cleaned_data.get('year')
-			holder = supply_form.cleaned_data.get('holder')
-			cvc = supply_form.cleaned_data.get('cvc')
-			id = supply_form.cleaned_data.get('id')
-
-			card_details = {'card_number': card_number, 'month': month, 'year': year, 'holder': holder, 'cvc': cvc,
-			                'id': id}
-
-			#########################buy proccss
-			_item = Item.objects.get(id=pk)
-			amount = form.cleaned_data.get('amount')
-			amount_in_db = _item.quantity
-
-			valid, total, total_after_discount, messages_ = buy_logic(pk, amount, amount_in_db, request.user,shipping_details, card_details)
-			if valid == False:
-				messages.warning(request, messages_)
-				return redirect('/login_redirect')
-			else:
-				messages.success(request, messages_)
-				return redirect('/login_redirect')
-
-		###########################end buy procces
-		errors = str(form.errors) + str(shipping_form.errors) + str(supply_form.errors)
-		messages.warning(request, 'error in :  ' + errors)
-		return redirect('/login_redirect')
-	else:
-		form_class = BuyForm
-		curr_item = Item.objects.get(id=pk)
-		context = {
-			'name': curr_item.name,
-			'pk': curr_item.id,
-			'form': form_class,
-			'price': curr_item.price,
-			'description': curr_item.description,
-			'text': SearchForm(),
-			'card': PayForm(),
-			'shipping': ShippingForm(),
-		}
-		return render(request, 'store/buy_item.html', context)
-
 
 def check_base_rule(rule_id, amount, country, user):
 	rule = BaseRule.objects.get(id=rule_id)
@@ -711,7 +713,7 @@ def check_item_rule(rule, amount, base_arr, complex_arr, user):
 	if rule.operator == "XOR" and ((left == False and right == False) or (left == True and right == True)):
 		return False
 	return True
-
+'''
 
 @login_required
 def home_page_owner(request):
@@ -735,7 +737,7 @@ class AddItemToStore(CreateView):
 def itemAddedSucceffuly(request, store_id, id):
 	return render(request, 'store/item_detail.html')
 
-@transaction.atomic
+# @transaction.atomic
 @permission_required_or_403('ADD_MANAGER', (Store, 'id', 'pk'))
 @login_required
 def add_manager_to_store(request, pk):

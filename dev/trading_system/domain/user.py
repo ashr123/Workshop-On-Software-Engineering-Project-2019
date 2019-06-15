@@ -20,8 +20,18 @@ class User():
 	def have_no_more_stores(self):
 		StoreModule.Store.owns_stores(user_id= self.pk)
 
+	def owns_no_more_stores(self):
+		return StoreModule.Store.owns_stores(user_id= self.pk)
+
+	def manages_no_more_stores(self):
+		return StoreModule.Store.manages_stores(user_id= self.pk)
+
 	def remove_from_owners(self):
 		owners_group = Group.objects.get(name="store_owners")
+		owners_group.user_set.remove(self._model)
+
+	def remove_from_managers(self):
+		owners_group = Group.objects.get(name="store_managers")
 		owners_group.user_set.remove(self._model)
 
 	def get_stores(self):
