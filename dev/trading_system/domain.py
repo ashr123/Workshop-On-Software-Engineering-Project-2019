@@ -58,7 +58,7 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 		try:
 			if store_.managers.filter(id=user_.pk).exists():
 				return [True, 'allready manager']
-			store_managers = Group.objects.get_or_create(name="store_managers")
+			store_managers = Group.objects.get_or_create(name="store_managers")[0]
 			# store_managers = Group.objects.get(name="store_managers")
 			user_.groups.add(store_managers)
 			store_.managers.add(user_)
@@ -81,7 +81,7 @@ def open_store(store_name, desc, user_id):
 	store.owners.add(User.objects.get(pk=user_id))
 	store.save()
 	_user = User.objects.get(pk=user_id)
-	my_group = Group.objects.get_or_create(name="store_owners")
+	my_group = Group.objects.get_or_create(name="store_owners")[0]
 	# my_group = Group.objects.get(name="store_owners")
 	if len(ObserverUser.objects.filter(user_id=_user.pk)) == 0:
 		ObserverUser.objects.create(user_id=_user.pk,
