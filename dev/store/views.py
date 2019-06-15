@@ -28,6 +28,28 @@ from .models import Item, ComplexStoreRule, ComplexItemRule
 from .models import Store
 
 
+import logging
+log_setup = logging.getLogger('event log')
+formatter = logging.Formatter('%(levelname)s: %(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+fileHandler = logging.FileHandler('event.log', mode='a')
+fileHandler.setFormatter(formatter)
+streamHandler = logging.StreamHandler()
+streamHandler.setFormatter(formatter)
+log_setup.setLevel(logging.INFO)
+log_setup.addHandler(fileHandler)
+log_setup.addHandler(streamHandler)
+log_setup1 = logging.getLogger('error log')
+fileHandler1 = logging.FileHandler('error.log', mode='a')
+fileHandler1.setFormatter(formatter)
+streamHandler1 = logging.StreamHandler()
+streamHandler1.setFormatter(formatter)
+log_setup1.setLevel(logging.ERROR)
+log_setup1.addHandler(fileHandler1)
+log_setup1.addHandler(streamHandler1)
+logev = logging.getLogger('event log')
+loger = logging.getLogger('error log')
+
+
 def get_client_ip(request):
 	x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
 	if x_forwarded_for:
@@ -47,16 +69,20 @@ def get_country_of_request(request):
 @login_required
 def add_item(request, pk):
 	if request.method == 'POST':
+		logev.info('add_item post')
 		form = ItemForm(request.POST)
 		if form.is_valid():
 			ans = service.add_item_to_store(item_json=s_json.dumps(form.cleaned_data),
 			                                store_id=pk)
 			messages.success(request, ans[1])  # <-
+			logev.info('add_item post s')
 			return redirect('/store/home_page_owner/')
 		else:
+			loger.warning('add_item fail not a valid form')
 			messages.warning(request, 'Problem with filed : ', form.errors, 'please try again!')  # <-
 			return redirect('/store/home_page_owner/')
 	else:
+		logev.info('add_item get')
 		form_class = ItemForm
 		curr_store = Store.objects.get(id=pk)
 		store_name = curr_store.name
@@ -334,14 +360,14 @@ class StoreDelete(DeleteView):
 
 		owner_name = service.get_store_creator(store_id = kwargs['pk'])
 		ans = service.delete_store(store_id=kwargs['pk'])
-		response = super(StoreDelete, self).delete(request, *args, **kwargs)
+		# response = super(StoreDelete, self).delete(request, *args, **kwargs)
 		messages.success(request, ans[1])
-		if service.have_no_more_stores(owner_name=owner_name):
+		if service.have_no_more_stores((User.objects.get(username=owner_name)).id):
 			user_name = request.user.username
 			text = SearchForm()
 			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
 		else:
-			return response
+			return redirect('/login_redirect')
 
 	def get_context_data(self, **kwargs):
 		text = SearchForm()
@@ -568,7 +594,7 @@ def buy_item(request, pk):
 			_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
 			amount_in_db = _item.quantity
-			
+
 			valid, total, total_after_discount, messages_ = buy_logic(pk, amount, amount_in_db, request.user,shipping_details, card_details)
 			if valid == False:
 				messages.warning(request, messages_)

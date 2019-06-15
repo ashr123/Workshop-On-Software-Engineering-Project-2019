@@ -30,7 +30,7 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 	for owner in pre_store_owners:
 		if owner.username == wanna_be_manager:
 			fail = True
-			messages_ += 'allready owner'
+			messages_ += 'allready owner 1'
 			return [fail, messages_]
 	# messages.warning(request, 'allready owner')
 	# return redirect('/store/home_page_owner/')
@@ -46,7 +46,7 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 	if is_owner:
 		try:
 			if store_.owners.filter(id=user_.pk).exists():
-				return [True, 'allready owner']
+				return [True, 'allready owner 2']
 			store_owners_group = Group.objects.get(name="store_owners")
 			user_.groups.add(store_owners_group)
 			store_.owners.add(user_)
@@ -224,23 +224,43 @@ def can_remove_store(store_id, user_id):
 	user = User.objects.get(pk=user_id)
 	store = Store.objects.get(pk=store_id)
 	return user.has_perm('REMOVE_STORE', store)
-
+from itertools import chain
 
 def delete_store(store_id):
+
 	store = Store.objects.get(id=store_id)
 	items_to_delete = store.items.all()
-	owner_name = store.owners.all()[0]  # craetor
+	owners = store.owners.all()
+	managers = store.managers.all()
+	owners_all =list(chain(owners,managers))
+	store.delete()
 	for item_ in items_to_delete:
 		item_.delete()
-	if have_no_more_stores(owner_name):
-		owners_group = Group.objects.get(name="store_owners")
-		user = User.objects.get(username=owner_name)
-		owners_group.user_set.remove(user)
+	for owner in owners_all:
+		tmp_ow = Store.objects.filter(owners__id__contains=owner.username)
+		print('yyyyyyyyyyyyyyyyyyyyyyy',tmp_ow )
+		print('++++++++++++++++++++++++++++++++++++++++++++',owner)
+		if have_no_more_stores(owner.id):
+			owners_group = Group.objects.get(name="store_owners")
+			managers_group = Group.objects.get_or_create(name="store_managers")
+			managers_group = Group.objects.get(name="store_managers")
+			# user = User.objects.get(id = owner)
+			managers_group.user_set.remove(owner)
+			owners_group.user_set.remove(owner)
 	return [True, 'store was deleted : ' + store.name]
 
 
+
+
 def have_no_more_stores(user_pk):
-	tmp = Store.objects.filter(owners__username__contains=user_pk)
+	print('oooooooooooooooooooooooooo',user_pk)
+
+	owner_of_stores = Store.objects.filter(owners__id__in=[user_pk])
+	manager_of_stores = Store.objects.filter(managers__id__in=[user_pk])
+	# tmp_ow = Store.objects.filter(owners__id__contains=user_pk)
+	# tmp_man = Store.objects.filter(managers__id__contains=user_pk)
+	tmp = list(chain(owner_of_stores,manager_of_stores))
+	print('ppppppppppppppppppppppppppppppppppppp',len(tmp) == 0)
 	return len(tmp) == 0
 
 
