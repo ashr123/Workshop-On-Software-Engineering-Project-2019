@@ -45,8 +45,8 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 		assign_perm(perm, user_, store_)
 	if is_owner:
 		try:
-			if store_.owners.get(id=user_.pk):
-				print('hhhhhhhhhhhhhhh')
+			if store_.owners.filter(id=user_.pk).exists():
+				return [True, 'allready owner']
 			store_owners_group = Group.objects.get(name="store_owners")
 			user_.groups.add(store_owners_group)
 			store_.owners.add(user_)
@@ -56,8 +56,8 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 			return [True, 'allready manager']
 	else:
 		try:
-			if store_.managers.get(id=user_.pk):
-				print('hhhhhhhhhhhhhhh')
+			if store_.managers.filter(id=user_.pk).exists():
+				return [True, 'allready manager']
 			store_managers = Group.objects.get_or_create(name="store_managers")
 			store_managers = Group.objects.get(name="store_managers")
 			user_.groups.add(store_managers)
@@ -137,7 +137,7 @@ def get_store_details(store_id):
 	store = Store.objects.get(pk=store_id)
 	items = list(map(lambda i: str(i),store.items.all()))
 	owners = list(map(lambda o: User.objects.get(pk=o.id).username,store.owners.all()))
-	managers = list(map(lambda m: (User.objects.get(pk=m.id).username).name,store.managers.all()))
+	managers = list(map(lambda m: User.objects.get(pk=m.id).username,store.managers.all()))
 	return {"name": store.name, "description": store.description, "owners": owners, "managers": managers, "items": items}
 
 def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2, prev_rule):
@@ -452,6 +452,16 @@ def get_store_items(store_id):
 	items = store.items.all()
 	return list(map(lambda i: i.__dict__,items))
 
+def get_store_managers(store_id):
+	store = Store.objects.get(pk = store_id)
+	managers = store.managers.all()
+	return list(map(lambda i: i.__dict__,managers))
+
+def get_store_owners(store_id):
+	store = Store.objects.get(pk = store_id)
+	owners = store.owners.all()
+	return list(map(lambda i: i.__dict__,owners))
+
 
 def update_store(store_id, store_dict):
 	store = Store.objects.get(pk=store_id)
@@ -515,6 +525,29 @@ def delete_item(item_id):
 def get_store_creator(store_id):
 	store = Store.objects.get(pk= store_id)
 	return store.owners.all()[0]  # creator
+
+
+def get_store_by_id(store_id):
+	return Store.objects.get(pk= store_id)
+
+def remove_manager_from_store(store_id,m_id):
+	store_ = Store.objects.get(pk= store_id)
+	store_.managers.remove(id =m_id)
+
+def remove_manager_from_store(store_id,m_id):
+	try:
+		store_ = Store.objects.get(pk= store_id)
+		user = User.objects.get(id =m_id)
+		is_manager = len(Store.objects.filter(id=store_id,owners__id__in=[m_id]))==0
+		if (is_manager):
+			store_.managers.remove(user)
+			return True
+		else:
+			store_.owners.remove(user)
+			return True
+	except:
+		return False
+
 
 
 def get_user_notifications(user_id):
