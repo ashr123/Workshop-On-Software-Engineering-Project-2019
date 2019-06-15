@@ -140,10 +140,8 @@ class StoreListView(ListView):
 		return context
 
 	def get_queryset(self):
-		if ("store_managers" in self.request.user.groups.values_list('name', flat=True)):
-			return Store.objects.filter(managers__id__in=[self.request.user.id])
-		else:
-			return Store.objects.filter(owners__id__in=[self.request.user.id])
+		return Store.objects.filter(managers__id__in=[self.request.user.id]) | Store.objects.filter(
+			owners__id__in=[self.request.user.id])
 
 
 class ItemListView(ListView):
@@ -325,7 +323,7 @@ class StoreDelete(DeleteView):
 		ans = service.delete_store(store_id=kwargs['pk'])
 		response = super(StoreDelete, self).delete(request, *args, **kwargs)
 		messages.success(request, ans[1])
-		if service.have_no_more_stores(owner_name=owner_name):
+		if service.have_no_more_stores(user_pk=owner_name):
 			user_name = request.user.username
 			text = SearchForm()
 			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})

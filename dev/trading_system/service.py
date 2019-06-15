@@ -1,6 +1,6 @@
 import json
 
-from trading_system import domain
+from trading_system.domain import domain
 
 
 def buy_item():
@@ -59,8 +59,8 @@ def can_remove_store(store_id, user_id):
 	return domain.can_remove_store(store_id=store_id, user_id=user_id)
 
 
-def have_no_more_stores(owner_name):
-	return domain.have_no_more_stores(user_pk=owner_name)
+def have_no_more_stores(user_pk):
+	return domain.have_no_more_stores(user_pk=user_pk)
 
 
 def delete_store(store_id):
