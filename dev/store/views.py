@@ -26,7 +26,7 @@ from .forms import BuyForm, AddManagerForm, AddRuleToItem, AddRuleToStore_base, 
 from .forms import ShippingForm, AddRuleToItem_withop, AddRuleToItem_two
 from .models import Item, ComplexStoreRule, ComplexItemRule
 from .models import Store
-
+from django.db import transaction
 
 import logging
 log_setup = logging.getLogger('event log')
@@ -758,7 +758,7 @@ def itemAddedSucceffuly(request, store_id, id):
 	x = 1
 	return render(request, 'store/item_detail.html')
 
-
+@transaction.atomic
 @permission_required_or_403('ADD_MANAGER', (Store, 'id', 'pk'))
 @login_required
 def add_manager_to_store(request, pk):
@@ -772,7 +772,7 @@ def add_manager_to_store(request, pk):
 			if (fail):
 				messages.warning(request, message_)
 				return redirect('/store/home_page_owner/')
-			messages.success(request, user_name + ' is appointed')
+			messages.success(request, user_name + ' is appointed' +message_)
 			return redirect('/store/home_page_owner/')
 		messages.warning(request, 'error in :  ', form.errors)
 		return redirect('/store/home_page_owner/')

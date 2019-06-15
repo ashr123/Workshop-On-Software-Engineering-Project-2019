@@ -26,11 +26,11 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 	# messages.warning(request, 'can`t add yourself as a manager!')
 	# return redirect('/store/home_page_owner/')
 	pre_store_owners = store_.owners.all()
-	# print('\n owners: ' ,pre_store_owners)
+	print('\n owners: ' ,pre_store_owners)
 	for owner in pre_store_owners:
 		if owner.username == wanna_be_manager:
 			fail = True
-			messages_ += 'allready owner 1'
+			messages_ += 'allready  manager'
 			return [fail, messages_]
 	# messages.warning(request, 'allready owner')
 	# return redirect('/store/home_page_owner/')
@@ -44,30 +44,39 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 	for perm in picked:
 		assign_perm(perm, user_, store_)
 	if is_owner:
+
 		try:
-			if store_.owners.filter(id=user_.pk).exists():
-				return [True, 'allready owner 2']
 			store_owners_group = Group.objects.get(name="store_owners")
 			user_.groups.add(store_owners_group)
 			store_.owners.add(user_)
-			ObserverUser.objects.create(user_id=user_.pk,
-			                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(user_.pk)).save()
-		except:
-			return [True, 'allready manager']
+			try:
+				ObserverUser.objects.create(user_id=user_.pk,
+				                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(user_.pk)).save()
+			except Exception  as e:
+				messages_ += ' '+str(e)
+			return [False, messages_]
+
+
+		except Exception  as e1:
+			messages_ += 'error: ' + str(e1)
+			return [True, messages_]
 	else:
 		try:
-			if store_.managers.filter(id=user_.pk).exists():
-				return [True, 'allready manager']
 			store_managers = Group.objects.get_or_create(name="store_managers")
 			store_managers = Group.objects.get(name="store_managers")
 			user_.groups.add(store_managers)
 			store_.managers.add(user_)
-			ObserverUser.objects.create(user_id=user_.pk,
-			                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(user_.pk)).save()
-		except:
-			return [True, 'allready manager ']
+			try:
+				ObserverUser.objects.create(user_id=user_.pk,
+				                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(user_.pk)).save()
+			except Exception  as e:
+				messages_ += '' + str(e)
+			return [False, messages_]
+		except Exception  as e1:
+			messages_ += 'error: ' + str(e1)
+			return [True, messages_]
 
-	return [False, '']
+
 
 
 def search(txt):

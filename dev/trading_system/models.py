@@ -55,4 +55,4 @@ class NotificationUser(models.Model):
 
 class ObserverUser(models.Model):
 	address = models.URLField(max_length=250)
-	user = models.ForeignKey(User, on_delete=models.CASCADE, unique = True)
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
