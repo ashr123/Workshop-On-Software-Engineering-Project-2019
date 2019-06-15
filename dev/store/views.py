@@ -307,6 +307,7 @@ class StoreUpdate(UpdateView):
 		context = super(StoreUpdate, self).get_context_data(**kwargs)  # get the default context data
 		text = SearchForm()
 		rules = service.store_rules_string(store_id=self.kwargs['pk'])
+		discounts = service.store_discounts_string(store_id=self.kwargs['pk'])
 		store_items = service.get_store_items(store_id=self.kwargs['pk'])
 
 		store_managers = service.get_store_managers(store_id=self.kwargs['pk'])
@@ -318,6 +319,7 @@ class StoreUpdate(UpdateView):
 		context['user_name'] = self.request.user.username
 		context['form_'] = UpdateItems(store_items)
 		context['rules'] = rules
+		context['discounts'] = discounts
 		context['delete_owners'] = DeleteOwners(all_managers, self.kwargs['pk'])
 		return context
 
@@ -571,11 +573,15 @@ def add_discount_to_store(request, pk, which_button):
 			amount = form.cleaned_data.get('amount')
 			end_date = form.cleaned_data.get('end_date')
 			item = form.cleaned_data.get('item')
-			ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage, end_date=end_date,
-			                           item_id=item.pk)
+			if item is None:
+				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,end_date=end_date,
+				                           item_id=None)
+			else:
+				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,end_date=end_date,
+				                           item_id=item.pk)
 			if which_button == 'ok':
-				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,
-				                           end_date=end_date, item_id=item.pk)
+				# ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,
+				#                            end_date=end_date, item_id=item.pk)
 				messages.success(request, 'add discount :  ' + str(percentage) + '%')
 				return redirect('/store/home_page_owner/')
 			if which_button == 'complex':
@@ -977,6 +983,44 @@ def delete_complex_item(rule_id):
 def delete_base_item(rule_id):
 	rule = BaseItemRule.objects.get(id=rule_id)
 	rule.delete()
+
+
+# sss---------------------------------------------------------------------------------------------
+def remove_discount_from_store(request, pk, type, store):
+	if type == 2:
+		complexDiscount = ComplexDiscount.objects.get(id=pk)
+		delete_complex_discount(complexDiscount.id)
+	else:
+		baseDiscount = Discount.objects.get(id=pk)
+		delete_base_discount(baseDiscount.id)
+	messages.success(request, 'remove discount successfully!')
+	text = SearchForm()
+	user_name = request.user.username
+	context = {
+		'user_name': user_name,
+		'text': text,
+	}
+	return redirect('/store/update/' + str(store))
+
+
+def delete_complex_discount(disc_id):
+	discount = ComplexDiscount.objects.get(id=disc_id)
+	if discount.left[0] == '_':
+		Discount.objects.get(id=int(discount.left[1:])).delete()
+	else:
+		delete_complex_discount(int(discount.left))
+	if discount.right[0] == '_':
+		Discount.objects.get(id=int(discount.right[1:])).delete()
+	else:
+		delete_complex_discount(int(discount.right))
+	discount.delete()
+
+
+def delete_base_discount(disc_id):
+	discount = Discount.objects.get(id=disc_id)
+	discount.delete()
+# sss--------------------------------------------------------------------------------------------------
+
 
 
 class NotificationsListView(ListView):

@@ -175,3 +175,6 @@ def add_complex_discount(store_id, left, right, operator):
 
 def buy_logic(pk, amount, amount_in_db, user, shipping_details, card_details):
 	return domain.buy_logic(pk, amount, amount_in_db, user, shipping_details, card_details)
+
+def store_discounts_string(store_id):
+	return domain.store_discounts_string(store_id)

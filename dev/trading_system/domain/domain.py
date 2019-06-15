@@ -383,6 +383,70 @@ def get_base_rule(rule_id):
 		return rule.type + ': Only'
 	return rule.type + ': ' + rule.parameter
 
+# sss-----------------------------------------------------------------------------------------
+def store_discounts_string(store_id):
+	base_arr = []
+	complex_arr = []
+	base = []
+	complex = []
+	for discount in reversed(ComplexDiscount.objects.all().filter(store_id=store_id)):
+		if discount.id in complex_arr:
+			continue
+		res = {"id": discount.id, "type": 2, "store": store_id, "name": string_store_discount(discount, base_arr, complex_arr)}
+		complex.append(res)
+	for discount in Discount.objects.all().filter(store_id=store_id):
+		if discount.id in base_arr:
+			continue
+		res = {"id": discount.id, "type": 1, "store": store_id, "name": get_base_discount(discount.id)}
+		base.append(res)
+	return complex + base
+
+
+def string_store_discount(disc, base_arr, complex_arr):
+	curr = '('
+	if disc.left[0] == '_':
+		base_arr.append(int(disc.left[1:]))
+		curr += get_base_discount(int(disc.left[1:]))
+	else:
+		complex_arr.append(int(disc.left))
+		tosend = ComplexDiscount.objects.get(id=int(disc.left))
+		curr += string_store_discount(tosend, base_arr, complex_arr)
+	curr += ' ' + disc.operator + ' '
+	if disc.right[0] == '_':
+		base_arr.append(int(disc.right[1:]))
+		curr += get_base_discount(int(disc.right[1:]))
+	else:
+		complex_arr.append(int(disc.right))
+		tosend = ComplexDiscount.objects.get(id=int(disc.right))
+		curr += string_store_discount(tosend, base_arr, complex_arr)
+	curr += ')'
+	return curr
+
+
+def get_base_discount(disc_id):
+	discount = Discount.objects.get(id=disc_id)
+	if discount.type == 'MAX':
+		if discount.item is None:
+			res = str(discount.percentage) + ' % off, up to ' + str(discount.amount) + ' items.'
+		else:
+			item = Item.objects.get(id=discount.item.id)
+			res = str(discount.percentage) + ' % off on ' + item.name + ', up to ' + str(discount.amount) + ' of these.'
+	elif discount.type == 'MIN':
+		if discount.item is None:
+			res = 'Buy at least ' + str(discount.amount) + ' items and get ' + str(discount.percentage) + ' % off.'
+		else:
+			item = Item.objects.get(id=discount.item.id)
+			res = 'Buy at least ' + str(discount.amount) + ' copies of ' + item.name + ' and get ' + str(discount.percentage) + ' % off.'
+	else:
+		if discount.item is None:
+			res = str(discount.percentage) + ' % off.'
+		else:
+			item = Item.objects.get(id=discount.item.id)
+			res = str(discount.percentage) + ' % off on ' + item.name
+
+	return res
+# sss--------------------------------------------------------------------------------------
+
 
 def get_store_items(store_id):
 	return list(
