@@ -43,7 +43,7 @@ def get_country_of_request(request):
 	return g.country_name(ip_)
 
 
-@permission_required_or_403('ADD_ITEM', (Store, 'id', 'pk'))
+# @permission_required_or_403('ADD_ITEM', (Store, 'id', 'pk'))
 @login_required
 def add_item(request, pk):
 	if request.method == 'POST':

@@ -1,5 +1,8 @@
 import json
 
+from guardian.decorators import permission_required_or_403
+
+from store.models import Store
 from trading_system import domain
 
 
@@ -54,6 +57,7 @@ def add_complex_rule_to_item_2(item_id, prev_rule, rule1, parameter1, rule2, par
 	                                         operator2)
 
 
+@permission_required_or_403('ADD_ITEM', (Store, 'id', 'store_id'))
 def add_item_to_store(item_json, store_id):
 	item_dict = json.loads(item_json)
 	return domain.add_item_to_store(price=item_dict['price'],
