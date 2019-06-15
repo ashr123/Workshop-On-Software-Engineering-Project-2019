@@ -355,7 +355,11 @@ class StoreDelete(DeleteView):
 		ans = service.delete_store(store_id=kwargs['pk'])
 		# response = super(StoreDelete, self).delete(request, *args, **kwargs)
 		messages.success(request, ans[1])
+<<<<<<< HEAD
+		if service.have_no_more_stores(user_pk=owner_name):
+=======
 		if service.have_no_more_stores((User.objects.get(username=owner_name)).id):
+>>>>>>> origin/elahana_after_domain
 			user_name = request.user.username
 			text = SearchForm()
 			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
@@ -426,11 +430,18 @@ def get_store_of_item(item_id):
 	return Store.objects.filter(items__id__contains=item_id)[0]
 
 
+<<<<<<< HEAD
+def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_details):
+	transaction_id = -1
+=======
+
+
 
 ######################elhanan prev###########################
 def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details):
 
 	pay_transaction_id = -1
+>>>>>>> origin/elahana_after_domain
 	supply_transaction_id = -1
 
 
@@ -450,11 +461,79 @@ def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details)
 		if check_store_rules(store_of_item, amount,shipping_details['country'], user) is False:
 			messages_ = "you can't buy due to store policies"
 			return False, 0, 0, messages_
+<<<<<<< HEAD
+		# check discounts
+		# [precentage1, total_after_discount] = get_discount_for_store(item_id, amount, total)
+		# [precentage2, total_after_discount] = get_discount_for_item(item_id, amount, total_after_discount)
+
+		precentage1 = 0
+		precentage2 = 0
+		total_after_discount = 0
+		if precentage1 != 0:
+			discount = str(precentage1)
+			messages_ += '\n' + 'you have discount for store ' + discount
+		if precentage2 != 0:
+			discount = str(precentage2)
+			messages_ += '\n' + 'you have discount for item ' + discount
+		# try:
+		# 	if pay_system.handshake():
+		# 		print("pay hand shake")
+		#
+		# 		transaction_id = pay_system.pay(str(card_details.card_number), str(card_details.month), str(card_details.year), str(card_details.holder), str(card_details.ccv),
+		# 		transaction_id = pay_system.pay(str(card_details.card_number), str(card_details.month),
+		# 		                                str(card_details.year), str(card_details.holder), str(card_details.ccv),
+		# 			# messages.warning(request, 'can`t pay !')
+		# 			messages_ += '\n' + 'can`t pay !'
+		# 			return False, 0, 0, messages_
+		# 			# return redirect('/login_redirect')
+		# 	else:
+		# return redirect('/login_redirect')
+		# 		messages_ += '\n' + 'can`t connect to pay system!'
+		# 		return False, 0, 0, messages_
+		# 		# return redirect('/login_redirect')
+		#
+		# return redirect('/login_redirect')
+		# 		# print("supply hand shake")
+		# 		supply_transaction_id = supply_system.supply(str(shipping_details.name), str(shipping_details.address), str(shipping_details.city), str(shipping_details.country),
+		# 		                                             str(zip))
+		# 		supply_transaction_id = supply_system.supply(str(shipping_details.name), str(shipping_details.address),
+		# 		                                             str(shipping_details.city), str(shipping_details.country),
+		# 			messages_ += '\n' +'can`t supply abort payment!'
+		# 			return False, 0, 0, messages_
+		# 			# messages.warning(request, 'can`t supply abort payment!')
+		# 			messages_ += '\n' + 'can`t supply abort payment!'
+		# 	else:
+		# messages.warning(request, 'can`t supply abort payment!')
+		# 		messages_ += '\n' +'can`t connect to supply system abort payment!'
+		# 		return False, 0, 0, messages_
+		# 		# messages.warning(request, 'can`t connect to supply system abort payment!')
+		# 		# return redirect('/login_redirect')
+		#
+		# 	_item.quantity = amount_in_db - amount
+		# 	_item.save()
+		#
+		# 	# store = get_item_store(_item.pk)
+		# 	item_subject = ItemSubject(_item.pk)
+		# 	try:
+		# 		if (user.is_authenticated):
+		# 			notification = Notification.objects.create(
+		# 				msg=user.username + ' bought ' + str(amount) + ' pieces of ' + _item.name)
+		# 			notification.save()
+		# 			item_subject.subject_state = item_subject.subject_state + [notification.pk]
+		# 		else:
+		# 			notification = Notification.objects.create(
+		# 				msg='A guest bought ' + str(amount) + ' pieces of ' + _item.name)
+		# 			notification.save()
+		# 			item_subject.subject_state = item_subject.subject_state + [notification.pk]
+		# 	except Exception as e:
+		# 		messages_ += 'cant connect websocket ' + str(e)
+=======
 		## check discounts
 		# precentage1 =0
 		# precentage2=0
 		# [precentage1, total_after_discount] = service.get_discount_for_store(item_id, amount, total)
 		# [precentage2, total_after_discount] =  service.get_discount_for_item(item_id, amount, total_after_discount)
+>>>>>>> origin/elahana_after_domain
 		#
 		#
 		# if precentage1 != 0 :
@@ -510,8 +589,13 @@ def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details)
 
 			_item_name = curr_item.name
 			# print("reached herre")
+<<<<<<< HEAD
+			if _item.quantity == 0:
+				_item.delete()
+=======
 			if (curr_item.quantity == 0):
 				curr_item.delete()
+>>>>>>> origin/elahana_after_domain
 
 			messages_ += '\n'+ 'Thank you! you bought ' + _item_name +'\n'+'Total after discount: ' \
 			             + str(total_after_discount) + ' $'+'\n'+'Total before: ' + str(total) + ' $'
