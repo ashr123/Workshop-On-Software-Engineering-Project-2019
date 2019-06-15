@@ -13,6 +13,10 @@ class User():
 	def pk(self):
 		return self._model.pk
 
+	@property
+	def username(self):
+		return self._model.username
+
 	def have_no_more_stores(self):
 		StoreModule.Store.owns_stores(user_id= self.pk)
 

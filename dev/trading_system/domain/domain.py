@@ -27,10 +27,10 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 		return [fail, messages_]
 	# messages.warning(request, 'can`t add yourself as a manager!')
 	# return redirect('/store/home_page_owner/')
-	pre_store_owners = store.all_owners()
+	pre_store_owners_ids = store.all_owners_ids()
 	# print('\n owners: ' ,pre_store_owners)
-	for owner in pre_store_owners:
-		if owner.username == wanna_be_manager:
+	for owner_id in pre_store_owners_ids:
+		if c_User.get_user(user_id=owner_id).username == wanna_be_manager:
 			fail = True
 			messages_ += 'allready owner'
 			return [fail, messages_]
