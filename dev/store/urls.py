@@ -24,6 +24,8 @@ urlpatterns = [
 	path('add_manager_to_store/<int:pk>/', views.add_manager_to_store),
 	path('add_discount_to_store/<int:pk>/<slug:which_button>', views.add_discount_to_store),
 	path('add_discount_to_store/<int:pk>/<slug:which_button>/', views.add_discount_to_store),
+	path('add_complex_discount_to_store/<int:pk>/<slug:disc>/<slug:which_button>', views.add_complex_discount_to_store),
+	path('add_complex_discount_to_store/<int:pk>/<slug:disc>/<slug:which_button>/', views.add_complex_discount_to_store),
 	# path('update_item/<int:pk>/', views.update_item),
 	path('update_item/<int:pk>/', views.ItemUpdate.as_view(success_url="/login_redirect")),
 	# path('contact/<int:pk>/', ContactWizard.as_view(FORMS_)),

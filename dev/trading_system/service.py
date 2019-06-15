@@ -107,7 +107,6 @@ def get_store_by_id(store_id):
 def remove_manager_from_store(store_id, m_id):
 	return domain.remove_manager_from_store(store_id, m_id)
 
-
 def len_of_super():
 	return domain.len_of_super()
 
@@ -167,6 +166,8 @@ def add_item_to_cart(user_id, item_id):
 
 def get_item(id1):
 	return domain.get_item(id1)
+def add_complex_discount(store_id, left, right, operator):
+	return domain.add_complex_discount_to_store(store_id, left, right, operator)
 
 
 def buy_logic(pk, amount, amount_in_db, user, shipping_details, card_details):
