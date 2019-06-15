@@ -550,9 +550,7 @@ def get_store_creator(store_id):
 def get_store_by_id(store_id):
 	return Store.objects.get(pk= store_id)
 
-def remove_manager_from_store(store_id,m_id):
-	store_ = Store.objects.get(pk= store_id)
-	store_.managers.remove(id =m_id)
+
 
 def remove_manager_from_store(store_id,m_id):
 	try:
@@ -561,9 +559,23 @@ def remove_manager_from_store(store_id,m_id):
 		is_manager = len(Store.objects.filter(id=store_id,owners__id__in=[m_id]))==0
 		if (is_manager):
 			store_.managers.remove(user)
+			if have_no_more_stores(m_id):
+				owners_group = Group.objects.get(name="store_owners")
+				managers_group = Group.objects.get_or_create(name="store_managers")
+				managers_group = Group.objects.get(name="store_managers")
+				# user = User.objects.get(id = owner)
+				managers_group.user_set.remove(user)
+				owners_group.user_set.remove(user)
 			return True
 		else:
 			store_.owners.remove(user)
+			if have_no_more_stores(m_id):
+				owners_group = Group.objects.get(name="store_owners")
+				managers_group = Group.objects.get_or_create(name="store_managers")
+				managers_group = Group.objects.get(name="store_managers")
+				# user = User.objects.get(id = owner)
+				managers_group.user_set.remove(user)
+				owners_group.user_set.remove(user)
 			return True
 	except:
 		return False
