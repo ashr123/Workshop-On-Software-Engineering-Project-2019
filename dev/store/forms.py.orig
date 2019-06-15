@@ -10,6 +10,7 @@ from .models import Item, Store #, Discount, MaxMinCondition
 class StoreForm(forms.ModelForm):
 	class Meta:
 		model = Store
+<<<<<<< HEAD
 		# fields = ['name', 'owners', 'description', 'discounts']
 
 		fields = ['name', 'description']
@@ -17,6 +18,13 @@ class StoreForm(forms.ModelForm):
 		# 	'owners': forms.CheckboxSelectMultiple,
 		# 	# 'items': forms.CheckboxSelectMultiple,
 		# }
+=======
+		fields = ['name', 'owners', 'description']
+		widgets = {
+			'owners': forms.CheckboxSelectMultiple,
+			# 'items': forms.CheckboxSelectMultiple,
+		}
+>>>>>>> origin/noa_delete_rule
 
 
 # 		def __init__(self, user, list_for_guest, *args, **kwargs):

@@ -1,23 +1,25 @@
+import datetime
+
 from django.contrib.auth.models import User, Group
 from django.db.models import Q
 from guardian.shortcuts import assign_perm
 
 from store.models import Store, Item, BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount
-from trading_system.models import ObserverUser, Cart
+from trading_system.models import ObserverUser, Cart, NotificationUser, Notification
 
 
-def add_manager(user_name, picked, is_owner, pk, request_user_name):
+def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 	messages_ = ''
 	try:
-		user_ = User.objects.get(username=user_name)
+		user_ = User.objects.get(username=wanna_be_manager)
 	except:
 		fail = True
 		messages_ += 'no such user'
 		return [fail, messages_]
 	# messages.warning(request, 'no such user')
-	# return redirect('/store/add_manager_to_store/' + str(pk) + '/')
-	store_ = Store.objects.get(id=pk)
-	if user_name == request_user_name:
+	# return redirect('/store/add_manager_to_store/' + str(store_pk) + '/')
+	store_ = Store.objects.get(id=store_pk)
+	if wanna_be_manager == store_manager:
 		fail = True
 		messages_ += 'can`t add yourself as a manager!'
 		return [fail, messages_]
@@ -26,14 +28,14 @@ def add_manager(user_name, picked, is_owner, pk, request_user_name):
 	pre_store_owners = store_.owners.all()
 	# print('\n owners: ' ,pre_store_owners)
 	for owner in pre_store_owners:
-		if (owner.username == user_name):
+		if owner.username == wanna_be_manager:
 			fail = True
 			messages_ += 'allready owner'
 			return [fail, messages_]
 	# messages.warning(request, 'allready owner')
 	# return redirect('/store/home_page_owner/')
 
-	if (user_ == None):
+	if user_ is None:
 		fail = True
 		messages_ += 'No such user'
 		return [fail, messages_]
@@ -41,7 +43,7 @@ def add_manager(user_name, picked, is_owner, pk, request_user_name):
 	# return redirect('/store/home_page_owner/')
 	for perm in picked:
 		assign_perm(perm, user_, store_)
-	if (is_owner):
+	if is_owner:
 		try:
 			if store_.owners.get(id=user_.pk):
 				print('hhhhhhhhhhhhhhh')
@@ -91,7 +93,7 @@ def open_store(store_name, desc, user_id):
 	assign_perm('ADD_MANAGER', _user, store)
 	assign_perm('REMOVE_STORE', _user, store)
 	assign_perm('ADD_DISCOUNT', _user, store)
-	return 'Your Store was added successfully!'
+	return store.pk
 
 
 def add_base_rule_to_store(rule_type, store_id, parameter):
@@ -131,6 +133,12 @@ def add_complex_rule_to_store_1(rule_type, prev_rule, store_id, operator, parame
 	cr.save()
 	return [True, cr.id]
 
+def get_store_details(store_id):
+	store = Store.objects.get(pk=store_id)
+	items = list(map(lambda i: str(i),store.items.all()))
+	owners = list(map(lambda o: User.objects.get(pk=o.id).username,store.owners.all()))
+	managers = list(map(lambda m: (User.objects.get(pk=m.id).username).name,store.managers.all()))
+	return {"name": store.name, "description": store.description, "owners": owners, "managers": managers, "items": items}
 
 def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2, prev_rule):
 	store = Store.objects.get(id=store_id)
@@ -205,7 +213,7 @@ def add_complex_rule_to_item_2(item_id, prev_rule, rule1, parameter1, rule2, par
 
 
 def add_item_to_store(price, name, description, category, quantity, store_id):
-	item = Item.objects.create(price=price, name=name, description=description, quantity=quantity)
+	item = Item.objects.create(price=price, name=name, category=category, description=description, quantity=quantity)
 	item.save()
 	curr_store = Store.objects.get(id=store_id)
 	curr_store.items.add(item)
@@ -239,8 +247,7 @@ def have_no_more_stores(user_pk):
 
 def get_user_store_list(user_id):
 	user = User.objects.get(pk=user_id)
-	user_stores = None
-	if ("store_managers" in user.groups.values_list('name', flat=True)):
+	if "store_managers" in user.groups.values_list('name', flat=True):
 		user_stores = Store.objects.filter(managers__id__in=[user_id])
 	else:
 		user_stores = Store.objects.filter(owners__id__in=[user_id])
@@ -268,12 +275,15 @@ def get_cart(store_pk, user_pk):
 		return carts[0]
 
 
-def open_cart_for_user_in_store(store_pk: int, user_pk: int) -> None:
+def open_cart_for_user_in_store(store_pk, user_pk):
 	Cart(customer_id=user_pk, store_id=store_pk).save()
 
 
 def add_item_to_cart(user_id, item_id):
-	user = User.objects.get(pk=user_id)
+	if user_id ==None:
+		user = User.objects.filter(username='AnonymousUser')[0]
+	else:
+		user = User.objects.get(pk=user_id)
 	if (user.is_authenticated):
 		item_store = get_item_store(item_id)
 		cart = get_cart(item_store, user_id)
@@ -326,7 +336,7 @@ def user_has_cart_for_store(store_pk, user_pk):
 	return len(Cart.objects.filter(customer_id=user_pk, store_id=store_pk)) > 0
 
 
-def user_has_cart_for_store(store_pk: int, user_pk: int) -> bool:
+def user_has_cart_for_store(store_pk, user_pk):
 	return len(Cart.objects.filter(customer_id=user_pk, store_id=store_pk)) > 0
 
 
@@ -338,3 +348,184 @@ def add_discount(store_id,  percentage,  end_date, type=None, amount=None, item=
 	discount = Discount(store=store, type=type, percentage=percentage, amount=amount, end_date=end_date, item=item)
 	discount.save()
 	return [True, discount.id]
+
+def update_item(item_id, item_dict):
+	item = Item.objects.get(pk = item_id)
+	for field in item._meta.fields:
+		if field.attname in item_dict.keys():
+			setattr(item, field.attname, item_dict[field.attname])
+	item.save()
+	return True
+
+def item_rules_string(itemId):
+	base_arr = []
+	complex_arr = []
+	base = []
+	complex = []
+	item = Item.objects.get(id=itemId)
+	itemRules = ComplexItemRule.objects.all().filter(item=item)
+	for rule in reversed(itemRules):
+		if rule.id in complex_arr:
+			continue
+		res = {"id": rule.id, "type": 2, "item": itemId, "name": string_item_rule(rule, base_arr, complex_arr)}
+		complex.append(res)
+	itemBaseRules = BaseItemRule.objects.all().filter(item=item)
+	for rule in itemBaseRules:
+		if rule.id in base_arr:
+			continue
+		res = {"id": rule.id, "type": 1, "item": itemId, "name": get_base_rule_item(rule.id)}
+		base.append(res)
+	return complex + base
+
+def string_item_rule(rule, base_arr, complex_arr):
+	curr = '('
+	if rule.left[0] == '_':
+		base_arr.append(int(rule.left[1:]))
+		curr += get_base_rule_item(int(rule.left[1:]))
+	else:
+		complex_arr.append(int(rule.left))
+		tosend = ComplexItemRule.objects.get(id=int(rule.left))
+		curr += string_item_rule(tosend, base_arr, complex_arr)
+	curr += ' ' + rule.operator + ' '
+	if rule.right[0] == '_':
+		base_arr.append(int(rule.right[1:]))
+		curr += get_base_rule_item(int(rule.right[1:]))
+	else:
+		complex_arr.append(int(rule.right))
+		tosend = ComplexItemRule.objects.get(id=int(rule.right))
+		curr += string_item_rule(tosend, base_arr, complex_arr)
+	curr += ')'
+	return curr
+
+def get_base_rule_item(rule_id):
+	rule = BaseItemRule.objects.get(id=rule_id)
+	return rule.type + ': ' + rule.parameter
+
+def store_rules_string(store_id):
+	base_arr = []
+	complex_arr = []
+	base = []
+	complex = []
+	storeRules = ComplexStoreRule.objects.all().filter(store_id= store_id)
+	for rule in reversed(storeRules):
+		if rule.id in complex_arr:
+			continue
+		res = {"id": rule.id, "type": 2, "store": store_id, "name": string_store_rule(rule, base_arr, complex_arr)}
+		complex.append(res)
+	storeBaseRules = BaseRule.objects.all().filter(store_id= store_id)
+	for rule in storeBaseRules:
+		if rule.id in base_arr:
+			continue
+		res = {"id": rule.id, "type": 1, "store": store_id, "name": get_base_rule(rule.id)}
+		base.append(res)
+	return complex + base
+
+def string_store_rule(rule, base_arr, complex_arr):
+	curr = '('
+	if rule.left[0] == '_':
+		base_arr.append(int(rule.left[1:]))
+		curr += get_base_rule(int(rule.left[1:]))
+	else:
+		complex_arr.append(int(rule.left))
+		tosend = ComplexStoreRule.objects.get(id=int(rule.left))
+		curr += string_store_rule(tosend, base_arr, complex_arr)
+	curr += ' ' + rule.operator + ' '
+	if rule.right[0] == '_':
+		base_arr.append(int(rule.right[1:]))
+		curr += get_base_rule(int(rule.right[1:]))
+	else:
+		complex_arr.append(int(rule.right))
+		tosend = ComplexStoreRule.objects.get(id=int(rule.right))
+		curr += string_store_rule(tosend, base_arr, complex_arr)
+	curr += ')'
+	return curr
+
+def get_base_rule(rule_id):
+	rule = BaseRule.objects.get(id=rule_id)
+	if rule.type == "REG":
+		return rule.type + ': Only'
+	return rule.type + ': ' + rule.parameter
+
+
+def get_store_items(store_id):
+	store = Store.objects.get(pk = store_id)
+	items = store.items.all()
+	return list(map(lambda i: i.__dict__,items))
+
+
+def update_store(store_id, store_dict):
+	store = Store.objects.get(pk=store_id)
+	for field in store._meta.fields:
+		if field.attname in store_dict.keys():
+			setattr(store, field.attname, store_dict[field.attname])
+	store.save()
+	return True
+
+def get_discount_for_store(pk, amount, total):
+	store_of_item = Store.objects.get(items__id__contains=pk)
+	if not (len(store_of_item.discounts.all()) == 0):
+		discount_ = store_of_item.discounts.all()[0]
+		now = datetime.datetime.now().date()
+		if (discount_.end_date >= now):
+			conditions = discount_.conditions.all()
+			if (len(conditions) > 0):
+				for cond in conditions:
+					if (amount <= cond.max_amount and amount >= cond.min_amount):
+						percentage = discount_.percentage
+						total = (100 - percentage) / 100 * float(total)
+						str_ret = percentage
+						return [str_ret, total]
+			else:
+				percentage = discount_.percentage
+				total = (100 - percentage) / 100 * float(total)
+				str_ret = percentage
+				return [str_ret, total]
+	else:
+		return [0, total]
+
+def get_discount_for_item(pk, amount, total):
+	item = Item.objects.get(id=pk)
+	if not (len(item.discounts.all()) == 0):
+		item_discount = item.discounts.all()[0]
+		now = datetime.datetime.now().date()
+		if (item_discount.end_date >= now):
+			conditions_item = item_discount.conditions.all()
+			if (len(conditions_item) > 0):
+				for cond_i in conditions_item:
+					if (amount <= cond_i.max_amount and amount >= cond_i.min_amount):
+						percentage = item_discount.percentage
+						total = (100 - percentage) / 100 * float(total)
+						str_ret = percentage
+						return [str_ret, total]
+			else:
+				percentage = item_discount.percentage
+				total = (100 - percentage) / 100 * float(total)
+				str_ret = percentage
+				return [str_ret, total]
+	else:
+		return [0, total]
+
+
+def delete_item(item_id):
+	item = Item.objects.get(pk = item_id)
+	item.delete()
+	return True
+
+
+def get_store_creator(store_id):
+	store = Store.objects.get(pk= store_id)
+	return store.owners.all()[0]  # creator
+
+
+def get_user_notifications(user_id):
+	user_ntfcs = NotificationUser.objects.filter(user=user_id)
+	ntfcs_ids = list(map(lambda n: n.notification_id, user_ntfcs))
+	ntfcs = list(map(lambda pk: Notification.objects.get(id=pk), ntfcs_ids))
+	return list(map(lambda n: n.__dict__,ntfcs))
+
+
+def mark_notification_read(user_id):
+	for n in NotificationUser.objects.filter(user=user_id):
+		n.been_read = True
+		n.save()
+	return True
