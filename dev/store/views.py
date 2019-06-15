@@ -428,136 +428,6 @@ def get_store_of_item(item_id):
 	return Store.objects.filter(items__id__contains=item_id)[0]
 
 
-def apply_discounts(store, curr_item, amount):
-	base_arr = []
-	complex_arr = []
-	price = curr_item.price * amount
-	store_complex_discountes = ComplexDiscount.objects.filter(store=store)
-	for disc in reversed(store_complex_discountes):
-		if disc.id in complex_arr:
-			continue
-		price = apply_complex(disc, base_arr, complex_arr, curr_item, amount, price)
-	store_base_discountes = Discount.objects.filter(store=store)
-	for disc in store_base_discountes:
-		if disc.id in base_arr:
-			continue
-		discount = float(apply_base(disc.id, curr_item, amount))
-		print(price)
-		print(discount)
-		if (discount != -1):
-			price = (1-discount) * float(price)
-	return price
-
-
-def apply_complex(disc, base_arr, complex_arr, curr_item, amount, price):
-	if disc.left[0] == '_':
-		base_arr.append(int(disc.left[1:]))
-		left = apply_base(int(disc.left[1:]), curr_item, amount)
-	else:
-		complex_arr.append(int(disc.left))
-		tosend = ComplexStoreRule.objects.get(id=int(disc.left))
-		left = apply_complex(tosend, base_arr, complex_arr, curr_item, amount, price)
-	if disc.right[0] == '_':
-		base_arr.append(int(disc.right[1:]))
-		right = apply_base(int(disc.right[1:]), curr_item, amount)
-	else:
-		complex_arr.append(int(disc.right))
-		tosend = ComplexStoreRule.objects.get(id=int(disc.right))
-		right = apply_complex(tosend, base_arr, complex_arr, curr_item, amount, price)
-	if disc.operator == "AND" and (left != -1 and right != -1):
-		return (price *left)*right
-	elif disc.operator == "OR":
-		if left != -1:
-			price = left * price
-		if right != -1:
-			price = right * price
-		return price
-	elif disc.operator == "XOR":
-		price1 = price
-		price2 = price
-		if left != -1:
-			price1 = left * price
-		if right != -1:
-			price2 = right * price
-		return min(price1, price2)
-
-
-def apply_base(disc, curr_item, amount):
-	base = Discount.objects.get(id=disc)
-	per = float(base.percentage)
-	today = date.today()
-	if base.end_date < today:
-		return -1
-	if base.item == None:
-		if base.type == 'MIN':
-			if amount >= base.amount:
-				return per / 100
-			else:
-				return -1
-		if base.type == 'MAX':
-			if amount <= base.amount:
-				return per / 100
-			else:
-				return -1
-		else:
-			return per / 100
-	elif base.item.id == curr_item.id:
-		if base.type == 'MIN':
-			if amount >= base.amount:
-				return per / 100
-			else:
-				return -1
-		if base.type == 'MAX':
-			if amount <= base.amount:
-				return per / 100
-			else:
-				return -1
-		else:
-			return per / 100
-	else:
-		print(curr_item.id)
-		print(base.item.id)
-		return -1
-######################elhanan prev###########################
-def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_details):
-		if check_store_rules(store_of_item, amount, shipping_details['country'], user) is False:
-		# check discounts for this item and store
-		total_after_discount = apply_discounts(store_of_item, curr_item, int(amount))
-
-				pay_transaction_id = pay_system.pay(str(card_details['card_number']), str(card_details['month']),
-				                                    str(card_details['year']), str(card_details['holder']),
-				                                    str(card_details['cvc']),
-				                                    str(card_details['id']))
-				supply_transaction_id = supply_system.supply(str(shipping_details['name']),
-				                                             str(shipping_details['address']),
-				                                             str(shipping_details['city']),
-				                                             str(shipping_details['country']),
-					messages_ += '\n' + 'can`t supply abort payment!'
-				messages_ += '\n' + 'can`t connect to supply system abort payment!'
-			# try:
-			# 	if (user.is_authenticated):
-			# 		notification = Notification.objects.create(
-			# 			msg=user.username + ' bought ' + str(amount) + ' pieces of ' + curr_item.name)
-			# 		notification.save()
-			# 		item_subject.subject_state = item_subject.subject_state + [notification.pk]
-			# 	else:
-			# 		notification = Notification.objects.create(
-			# 			msg='A guest bought ' + str(amount) + ' pieces of ' + curr_item.name)
-			# 		notification.save()
-			# 		item_subject.subject_state = item_subject.subject_state + [notification.pk]
-			# except Exception as e:
-			# 	messages_ += 'cant connect websocket ' + str(e)
-			messages_ += '\n' + 'Thank you! you bought ' + _item_name + '\n' + 'Total after discount: ' \
-			             + str(total_after_discount) + ' $' + '\n' + 'Total before: ' + str(total) + ' $'
-			return True, total, total_after_discount, messages_
-			if not (pay_transaction_id == -1):
-				messages_ += '\n' + 'failed and aborted pay! please try again!'
-			if not (supply_transaction_id == -1):
-			messages_ = "can`t buy this item " + str(item_id) + '  :  ' + str(a)
-
-
-#################################################3
-
 def buy_item(request, pk):
 	if request.method == 'POST':
 		print("post")
@@ -593,7 +463,7 @@ def buy_item(request, pk):
 			amount_in_db = _item.quantity
 
 			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, amount_in_db, request.user,shipping_details, card_details)
-			                                                          shipping_details, card_details)
+
 			if valid == False:
 				messages.warning(request, messages_)
 				return redirect('/login_redirect')
@@ -702,10 +572,10 @@ def add_discount_to_store(request, pk, which_button):
 			end_date = form.cleaned_data.get('end_date')
 			item = form.cleaned_data.get('item')
 			ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage, end_date=end_date,
-			                           item=item)
+			                           item_id=item.pk)
 			if which_button == 'ok':
-				ans = service.add_discount(store_id=pk, kind=type, amount=amount, percentage=percentage,
-				                           end_date=end_date, item=item)
+				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,
+				                           end_date=end_date, item_id=item.pk)
 				messages.success(request, 'add discount :  ' + str(percentage) + '%')
 				return redirect('/store/home_page_owner/')
 			if which_button == 'complex':
@@ -739,8 +609,13 @@ def add_complex_discount_to_store(request, pk, disc, which_button):
 			amount = form.cleaned_data.get('amount')
 			end_date = form.cleaned_data.get('end_date')
 			item = form.cleaned_data.get('item')
-			ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage, end_date=end_date,
-			                           item=item)
+			if(item is None):
+				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage, end_date=end_date,
+			                           item_id=None)
+			else:
+				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,
+				                           end_date=end_date,
+				                           item_id=item.pk)
 			complex = service.add_complex_discount(store_id=pk, left='_' + str(ans[1]), right=disc, operator=operator)
 			if which_button == 'ok':
 				messages.success(request, 'add complex discount successfully')

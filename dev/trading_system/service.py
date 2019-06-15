@@ -107,6 +107,7 @@ def get_store_by_id(store_id):
 def remove_manager_from_store(store_id, m_id):
 	return domain.remove_manager_from_store(store_id, m_id)
 
+
 def len_of_super():
 	return domain.len_of_super()
 
@@ -119,9 +120,9 @@ def update_item(item_id, item_dict):
 	return domain.update_item(item_id=item_id, item_dict=item_dict)
 
 
-def add_discount(store_id, percentage, end_date, item=None, kind=None, amount=None):
-	return domain.add_discount(store_id=store_id, kind=kind, percentage=percentage, amount=amount, end_date=end_date,
-	                           item=item)
+def add_discount(store_id, percentage, end_date, item_id=None, type=None, amount=None):
+	return domain.add_discount(store_id=store_id, type=type, percentage=percentage, amount=amount, end_date=end_date,
+	                           item_id=item_id)
 
 
 def item_rules_string(itemId):
@@ -166,6 +167,8 @@ def add_item_to_cart(user_id, item_id):
 
 def get_item(id1):
 	return domain.get_item(id1)
+
+
 def add_complex_discount(store_id, left, right, operator):
 	return domain.add_complex_discount_to_store(store_id, left, right, operator)
 
