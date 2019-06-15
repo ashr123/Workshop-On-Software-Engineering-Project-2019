@@ -7,7 +7,13 @@
 		{% for item in form_.items %}
 			<div class="check_item">{{ item }}</div>
 		{% endfor %}
+		<div>Managers:</div>
+		{% for m in delet_owners.owners_to_delete %}
+			<div class="delete_manager">{{ m }}</div>
+		{% endfor %}
 		<input type="submit" value="Update">
+
+
 	</form>
 	<div>Rules:</div>
 	{% for rule in rules %}

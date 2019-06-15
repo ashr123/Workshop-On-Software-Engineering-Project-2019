@@ -1,4 +1,3 @@
-from django.urls import reverse
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
@@ -28,7 +27,8 @@ class Item(models.Model):
 	description = models.CharField(max_length=64, default=None)
 	category = models.CharField(max_length=30, choices=CategoryChoice, default=1)
 	quantity = models.PositiveIntegerField(default=1)
-	#discounts = models.ManyToManyField(Discount)
+
+	# discounts = models.ManyToManyField(Discount)
 
 	def get_absolute_url(self):
 		return reverse('item-detail', kwargs={'id': self.pk})
@@ -44,7 +44,8 @@ class Store(models.Model):
 	managers = models.ManyToManyField(User, related_name="store_managers")
 	items = models.ManyToManyField(Item)
 	description = models.CharField(max_length=64)
-	#discounts = models.ManyToManyField(Discount)
+
+	# discounts = models.ManyToManyField(Discount)
 
 	# max_quantity = models.PositiveIntegerField(null=True, blank=True)
 	# max_op = models.CharField(max_length=3, null=True, blank=True)
@@ -126,7 +127,6 @@ class Discount(models.Model):
 	amount = models.IntegerField(default=0, null=True)
 	end_date = models.DateField(help_text='format: mm/dd/yyyy')
 	percentage = models.PositiveSmallIntegerField()
-
 
 # class ItemDiscount(models.Model):
 # 	MAX_QUANTITY = 'MXQ'

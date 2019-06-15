@@ -356,7 +356,7 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 					quantity_to_buy = 1
 					try:
 						quantity_to_buy = request.POST.get('quantity' + str(item.id))
-						print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
+						# print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
 					except:
 						messages.warning(request, 'problem with quantity ')
 					# item.quantity = amount_in_db - 1

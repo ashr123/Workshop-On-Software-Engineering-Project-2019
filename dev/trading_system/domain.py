@@ -46,7 +46,7 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 	if is_owner:
 		try:
 			if store_.owners.filter(id=user_.pk).exists():
-				return [True, 'allready manager']
+				return [True, 'allready owner']
 			store_owners_group = Group.objects.get(name="store_owners")
 			user_.groups.add(store_owners_group)
 			store_.owners.add(user_)
@@ -138,7 +138,7 @@ def get_store_details(store_id):
 	store = Store.objects.get(pk=store_id)
 	return {"name": store.name, "description": store.description, "owners":
 		list(map(lambda o: User.objects.get(pk=o.id).username, store.owners.all())), "managers":
-		list(map(lambda m: User.objects.get(pk=m.id).username.name, store.managers.all())),
+		        list(map(lambda m: User.objects.get(pk=m.id).username.name, store.managers.all())),
 	        "items": list(map(lambda i: str(i), store.items.all()))}
 
 
@@ -339,8 +339,8 @@ def len_of_super():
 	return len(User.objects.filter(is_superuser=True))
 
 
-def add_discount(store_id, percentage, end_date, type=None, amount=None, item=None):
-	discount = Discount(store=Store.objects.get(id=store_id), type=type, percentage=percentage, amount=amount,
+def add_discount(store_id, percentage, end_date, kind=None, amount=None, item=None):
+	discount = Discount(store=Store.objects.get(id=store_id), type=kind, percentage=percentage, amount=amount,
 	                    end_date=end_date, item=item)
 	discount.save()
 	return [True, discount.id]
@@ -450,6 +450,18 @@ def get_store_items(store_id):
 	return list(map(lambda i: i.__dict__, Store.objects.get(pk=store_id).items.all()))
 
 
+def get_store_managers(store_id):
+	store = Store.objects.get(pk=store_id)
+	managers = store.managers.all()
+	return list(map(lambda i: i.__dict__, managers))
+
+
+def get_store_owners(store_id):
+	store = Store.objects.get(pk=store_id)
+	owners = store.owners.all()
+	return list(map(lambda i: i.__dict__, owners))
+
+
 def update_store(store_id, store_dict):
 	store = Store.objects.get(pk=store_id)
 	for field in store._meta.fields:
@@ -508,6 +520,24 @@ def delete_item(item_id):
 
 def get_store_creator(store_id):
 	return Store.objects.get(pk=store_id).owners.all()[0]  # creator
+
+
+def get_store_by_id(store_id):
+	return Store.objects.get(pk=store_id)
+
+
+def remove_manager_from_store(store_id, m_id):
+	try:
+		store_ = Store.objects.get(pk=store_id)
+		user = User.objects.get(id=m_id)
+		if len(Store.objects.filter(id=store_id, owners__id__in=[m_id])) == 0:
+			store_.managers.remove(user)
+			return True
+		else:
+			store_.owners.remove(user)
+			return True
+	except:
+		return False
 
 
 def get_user_notifications(user_id):

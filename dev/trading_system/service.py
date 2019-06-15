@@ -11,8 +11,17 @@ def search(txt):
 	return domain.search(txt)
 
 
-def add_manager(user_name, picked, is_owner, pk, request_user_name):
-	return domain.add_manager(user_name, picked, is_owner, pk, request_user_name)
+def add_manager(user_name, picked, is_owner, store_pk, request_user_name):
+	"""
+
+	:param user_name: 
+	:param picked: 
+	:param is_owner: 
+	:param store_pk: 
+	:param request_user_name: 
+	:return: True if failing
+	"""
+	return domain.add_manager(user_name, picked, is_owner, store_pk, request_user_name)
 
 
 def open_store(store_name, desc, user_id):
@@ -75,12 +84,28 @@ def get_store_items(store_id):
 	return domain.get_store_items(store_id=store_id)
 
 
+def get_store_managers(store_id):
+	return domain.get_store_managers(store_id=store_id)
+
+
+def get_store_owners(store_id):
+	return domain.get_store_owners(store_id=store_id)
+
+
 def get_user_store_list(user_id):
 	return domain.get_user_store_list(user_id=user_id)
 
 
 def get_item_details(item_id):
 	return domain.get_item_details(item_id=item_id)
+
+
+def get_store_by_id(store_id):
+	return domain.get_store_by_id(store_id)
+
+
+def remove_manager_from_store(store_id, m_id):
+	return domain.remove_manager_from_store(store_id, m_id)
 
 
 def len_of_super():
@@ -95,8 +120,8 @@ def update_item(item_id, item_dict):
 	return domain.update_item(item_id=item_id, item_dict=item_dict)
 
 
-def add_discount(store_id, percentage, end_date, item=None, type=None, amount=None):
-	return domain.add_discount(store_id=store_id, type=type, percentage=percentage, amount=amount, end_date=end_date,
+def add_discount(store_id, percentage, end_date, item=None, kind=None, amount=None):
+	return domain.add_discount(store_id=store_id, kind=kind, percentage=percentage, amount=amount, end_date=end_date,
 	                           item=item)
 
 

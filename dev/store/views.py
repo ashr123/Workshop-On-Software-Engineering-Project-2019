@@ -269,6 +269,7 @@ class ItemDelete(DeleteView):
 # 		}
 # 		return render(request, 'store/add_discount_to_item.html', context)
 
+from .forms import DeleteOwners
 
 @method_decorator(login_required, name='dispatch')
 class StoreUpdate(UpdateView):
@@ -282,11 +283,21 @@ class StoreUpdate(UpdateView):
 		text = SearchForm()
 		rules = service.store_rules_string(store_id=self.kwargs['pk'])
 		store_items = service.get_store_items(store_id=self.kwargs['pk'])
+
+		store_managers = service.get_store_managers(store_id=self.kwargs['pk'])
+		store_owners = service.get_store_owners(store_id=self.kwargs['pk'])
+		del store_owners[0]
+		all_managers = store_owners+store_managers
+		# print(store_owners)
+		delet_owners = DeleteOwners(all_managers,self.kwargs['pk'])
+
+
 		user_name = self.request.user.username
 		context['text'] = text
 		context['user_name'] = user_name
 		context['form_'] = UpdateItems(store_items)
 		context['rules'] = rules
+		context['delet_owners'] = delet_owners
 		return context
 
 	def get_object(self, queryset=None):
@@ -394,6 +405,10 @@ supply_system = Supply()
 # 		return [0, total]
 def get_store_of_item(item_id):
 	return Store.objects.filter(items__id__contains=item_id)[0]
+
+
+
+
 def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_details):
 	transaction_id = -1
 	supply_transaction_id = -1
@@ -827,9 +842,9 @@ def add_discount_to_store(request,  pk, which_button):
 			if condition is False and add_item is True:
 				ans = service.add_discount(store_id=pk, percentage=percentage,  end_date=end_date, item=item)
 			if condition is True and add_item is False:
-				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage, end_date=end_date)
+				ans = service.add_discount(store_id=pk, kind=type, amount=amount, percentage=percentage, end_date=end_date)
 			if condition is True and add_item is True:
-				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,  end_date=end_date, item=item)
+				ans = service.add_discount(store_id=pk, kind=type, amount=amount, percentage=percentage, end_date=end_date, item=item)
 			print(ans[1])
 			messages.success(request, 'add discount :  ' + str(percentage) + '%')
 			return redirect('/store/home_page_owner/')
@@ -1212,3 +1227,15 @@ class NotificationsListView(ListView):
 		context['unread_notifications'] = 0
 		service.mark_notification_read(user_id = self.request.user.pk)
 		return context
+
+
+
+def delete_owner(request,pk_owner,pk_store):
+	if (service.remove_manager_from_store(pk_store,pk_owner)):
+		messages.success(request, 'delete owner')  # <-
+		return redirect('/store/home_page_owner/')
+	else:
+		messages.warning(request, 'can`t delete owner')  # <-
+		return redirect('/store/home_page_owner/')
+
+

@@ -211,6 +211,12 @@ class TestTradingSystem(MyUnitTesting):
 		self.assertTrue(service.get_user_store_list(new_user.pk))
 		self.assertTrue(service.add_manager(self.user.username, [], True, self.store.pk, new_user.username)[0])
 
+	def test_delete_owner_by_another_owner(self):  # 4.4-1
+		new_user = User.objects.create(username="new_user5", password=make_password(self.default_password))
+		self.assertFalse(service.add_manager(new_user.username, [], True, self.store.pk, self.user.username)[0])
+		
+
+
 	def test_add_manager(self):
 		store_pk = service.open_store("bla", "blabla", self.user.pk)
 		User.objects.create(username="new_user", password=make_password(self.default_password))
