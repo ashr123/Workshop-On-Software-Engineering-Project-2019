@@ -1,4 +1,5 @@
-import datetime
+import decimal
+from datetime import date
 import json
 import traceback
 
@@ -24,7 +25,7 @@ from . import forms
 from .forms import BuyForm, AddManagerForm, AddRuleToItem, AddRuleToStore_base, AddRuleToStore_withop, \
 	AddRuleToStore_two, AddDiscountForm, AddComplexDiscountForm
 from .forms import ShippingForm, AddRuleToItem_withop, AddRuleToItem_two
-from .models import Item, ComplexStoreRule, ComplexItemRule
+from .models import Item, ComplexStoreRule, ComplexItemRule, Discount, ComplexDiscount
 from .models import Store
 
 
@@ -207,9 +208,8 @@ class ItemUpdate(UpdateView):
 		)
 
 	def form_valid(self, form):
-		service.update_item(item_id = self.kwargs['pk'], item_dict =form.cleaned_data)
+		service.update_item(item_id=self.kwargs['pk'], item_dict=form.cleaned_data)
 		return super().form_valid(form)
-
 
 
 @method_decorator(login_required, name='dispatch')
@@ -227,16 +227,17 @@ class ItemDelete(DeleteView):
 		return context
 
 	def get_object(self, queryset=None):
-		item_details = service.get_item_details(item_id= self.kwargs['pk'])
+		item_details = service.get_item_details(item_id=self.kwargs['pk'])
 		return Item.objects.create(
 			name=item_details['name'],
 			description=item_details['description'],
-			category= item_details['category'],
-			price= item_details['price'],
-			quantity= item_details['quantity']
+			category=item_details['category'],
+			price=item_details['price'],
+			quantity=item_details['quantity']
 		)
+
 	def delete(self, request, *args, **kwargs):
-		service.delete_item(item_id = kwargs['pk'])
+		service.delete_item(item_id=kwargs['pk'])
 		return super(ItemDelete, self).delete(request, *args, **kwargs)
 
 
@@ -271,6 +272,7 @@ class ItemDelete(DeleteView):
 
 from .forms import DeleteOwners
 
+
 @method_decorator(login_required, name='dispatch')
 class StoreUpdate(UpdateView):
 	model = Store
@@ -287,10 +289,9 @@ class StoreUpdate(UpdateView):
 		store_managers = service.get_store_managers(store_id=self.kwargs['pk'])
 		store_owners = service.get_store_owners(store_id=self.kwargs['pk'])
 		del store_owners[0]
-		all_managers = store_owners+store_managers
+		all_managers = store_owners + store_managers
 		# print(store_owners)
-		delet_owners = DeleteOwners(all_managers,self.kwargs['pk'])
-
+		delet_owners = DeleteOwners(all_managers, self.kwargs['pk'])
 
 		user_name = self.request.user.username
 		context['text'] = text
@@ -301,14 +302,14 @@ class StoreUpdate(UpdateView):
 		return context
 
 	def get_object(self, queryset=None):
-		store_details = service.get_store_details(store_id= self.kwargs['pk'])
+		store_details = service.get_store_details(store_id=self.kwargs['pk'])
 		return Store.objects.create(
 			name=store_details['name'],
 			description=store_details['description']
 		)
 
 	def form_valid(self, form):
-		service.update_store(store_id = self.kwargs['pk'], store_dict =form.cleaned_data)
+		service.update_store(store_id=self.kwargs['pk'], store_dict=form.cleaned_data)
 		return super().form_valid(form)
 
 
@@ -332,7 +333,7 @@ class StoreDelete(DeleteView):
 			text = SearchForm()
 			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
 
-		owner_name = service.get_store_creator(store_id = kwargs['pk'])
+		owner_name = service.get_store_creator(store_id=kwargs['pk'])
 		ans = service.delete_store(store_id=kwargs['pk'])
 		response = super(StoreDelete, self).delete(request, *args, **kwargs)
 		messages.success(request, ans[1])
@@ -359,7 +360,7 @@ pay_system = Payment()
 supply_system = Supply()
 
 
-#def get_discount_for_store(pk, amount, total):
+# def get_discount_for_store(pk, amount, total):
 # 	store_of_item = Store.objects.get(items__id__contains=pk)
 # 	if not (len(store_of_item.discounts.all()) == 0):
 # 		discount_ = store_of_item.discounts.all()[0]
@@ -407,16 +408,102 @@ def get_store_of_item(item_id):
 	return Store.objects.filter(items__id__contains=item_id)[0]
 
 
+def apply_discounts(store, curr_item, amount):
+	base_arr = []
+	complex_arr = []
+	price = curr_item.price * amount
+	store_complex_discountes = ComplexDiscount.objects.filter(store=store)
+	for disc in reversed(store_complex_discountes):
+		if disc.id in complex_arr:
+			continue
+		price = apply_complex(disc, base_arr, complex_arr, curr_item, amount, price)
+	store_base_discountes = Discount.objects.filter(store=store)
+	for disc in store_base_discountes:
+		if disc.id in base_arr:
+			continue
+		discount = float(apply_base(disc.id, curr_item, amount))
+		print(price)
+		print(discount)
+		if (discount != -1):
+			price = (1-discount) * float(price)
+	return price
 
+
+def apply_complex(disc, base_arr, complex_arr, curr_item, amount, price):
+	if disc.left[0] == '_':
+		base_arr.append(int(disc.left[1:]))
+		left = apply_base(int(disc.left[1:]), curr_item, amount)
+	else:
+		complex_arr.append(int(disc.left))
+		tosend = ComplexStoreRule.objects.get(id=int(disc.left))
+		left = apply_complex(tosend, base_arr, complex_arr, curr_item, amount, price)
+	if disc.right[0] == '_':
+		base_arr.append(int(disc.right[1:]))
+		right = apply_base(int(disc.right[1:]), curr_item, amount)
+	else:
+		complex_arr.append(int(disc.right))
+		tosend = ComplexStoreRule.objects.get(id=int(disc.right))
+		right = apply_complex(tosend, base_arr, complex_arr, curr_item, amount, price)
+	if disc.operator == "AND" and (left != -1 and right != -1):
+		return (price *left)*right
+	elif disc.operator == "OR":
+		if left != -1:
+			price = left * price
+		if right != -1:
+			price = right * price
+		return price
+	elif disc.operator == "XOR":
+		price1 = price
+		price2 = price
+		if left != -1:
+			price1 = left * price
+		if right != -1:
+			price2 = right * price
+		return min(price1, price2)
+
+
+def apply_base(disc, curr_item, amount):
+	base = Discount.objects.get(id=disc)
+	per = float(base.percentage)
+	today = date.today()
+	if base.end_date < today:
+		return -1
+	if base.item == None:
+		if base.type == 'MIN':
+			if amount >= base.amount:
+				return per / 100
+			else:
+				return -1
+		if base.type == 'MAX':
+			if amount <= base.amount:
+				return per / 100
+			else:
+				return -1
+		else:
+			return per / 100
+	elif base.item.id == curr_item.id:
+		if base.type == 'MIN':
+			if amount >= base.amount:
+				return per / 100
+			else:
+				return -1
+		if base.type == 'MAX':
+			if amount <= base.amount:
+				return per / 100
+			else:
+				return -1
+		else:
+			return per / 100
+	else:
+		print(curr_item.id)
+		print(base.item.id)
+		return -1
 
 
 ######################elhanan prev###########################
-def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details):
-
+def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_details):
 	pay_transaction_id = -1
 	supply_transaction_id = -1
-
-
 
 	messages_ = ''
 	curr_item = Item.objects.get(id=item_id)
@@ -424,36 +511,26 @@ def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details)
 		# print("good amount")
 		total = amount * curr_item.price
 		new_q = amount_in_db - amount
-		total_after_discount = total
 		# check item rules
 		if check_item_rules(curr_item, amount, user) is False:
 			messages_ = "you can't buy due to item policies"
 			return False, 0, 0, messages_
 		store_of_item = Store.objects.get(items__id__contains=item_id)
 		# check store rules
-		if check_store_rules(store_of_item, amount,shipping_details['country'], user) is False:
+		if check_store_rules(store_of_item, amount, shipping_details['country'], user) is False:
 			messages_ = "you can't buy due to store policies"
 			return False, 0, 0, messages_
-		## check discounts
-		# precentage1 =0
-		# precentage2=0
-		# [precentage1, total_after_discount] = service.get_discount_for_store(item_id, amount, total)
-		# [precentage2, total_after_discount] =  service.get_discount_for_item(item_id, amount, total_after_discount)
-		#
-		#
-		# if precentage1 != 0 :
-		# 	discount = str(precentage1)
-		# 	messages_ += '\n' + 'you have discount for store '+discount
-		# if precentage2 != 0:
-		# 	discount = str(precentage2)
-		# 	messages_ += '\n' + 'you have discount for item ' + discount
+		# check discounts for this item and store
+		total_after_discount = apply_discounts(store_of_item, curr_item, int(amount))
 
 		try:
 			if pay_system.handshake():
 				print("pay hand shake")
 
-				pay_transaction_id = pay_system.pay(str(card_details['card_number']), str(card_details['month']), str(card_details['year']), str(card_details['holder']), str(card_details['cvc']),
-				                                str(card_details['id']))
+				pay_transaction_id = pay_system.pay(str(card_details['card_number']), str(card_details['month']),
+				                                    str(card_details['year']), str(card_details['holder']),
+				                                    str(card_details['cvc']),
+				                                    str(card_details['id']))
 				if (pay_transaction_id == '-1'):
 					messages_ += '\n' + 'can`t pay !'
 					return False, 0, 0, messages_
@@ -462,15 +539,18 @@ def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details)
 				return False, 0, 0, messages_
 			if supply_system.handshake():
 				print("supply hand shake")
-				supply_transaction_id = supply_system.supply(str(shipping_details['name']), str(shipping_details['address']), str(shipping_details['city']), str(shipping_details['country']),
+				supply_transaction_id = supply_system.supply(str(shipping_details['name']),
+				                                             str(shipping_details['address']),
+				                                             str(shipping_details['city']),
+				                                             str(shipping_details['country']),
 				                                             str(shipping_details['zip']))
 				if (supply_transaction_id == '-1'):
 					chech_cancle = pay_system.cancel_pay(pay_transaction_id)
-					messages_ += '\n' +'can`t supply abort payment!'
+					messages_ += '\n' + 'can`t supply abort payment!'
 					return False, 0, 0, messages_
 			else:
 				chech_cancle = pay_system.cancel_pay(pay_transaction_id)
-				messages_ += '\n' +'can`t connect to supply system abort payment!'
+				messages_ += '\n' + 'can`t connect to supply system abort payment!'
 				return False, 0, 0, messages_
 
 			curr_item.quantity = amount_in_db - amount
@@ -478,28 +558,28 @@ def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details)
 
 			# store = get_item_store(_item.pk)
 			item_subject = ItemSubject(curr_item.pk)
-			try:
-				if (user.is_authenticated):
-					notification = Notification.objects.create(
-						msg=user.username + ' bought ' + str(amount) + ' pieces of ' + curr_item.name)
-					notification.save()
-					item_subject.subject_state = item_subject.subject_state + [notification.pk]
-				else:
-					notification = Notification.objects.create(
-						msg='A guest bought ' + str(amount) + ' pieces of ' + curr_item.name)
-					notification.save()
-					item_subject.subject_state = item_subject.subject_state + [notification.pk]
-			except Exception as e:
-				messages_ += 'cant connect websocket ' + str(e)
+			# try:
+			# 	if (user.is_authenticated):
+			# 		notification = Notification.objects.create(
+			# 			msg=user.username + ' bought ' + str(amount) + ' pieces of ' + curr_item.name)
+			# 		notification.save()
+			# 		item_subject.subject_state = item_subject.subject_state + [notification.pk]
+			# 	else:
+			# 		notification = Notification.objects.create(
+			# 			msg='A guest bought ' + str(amount) + ' pieces of ' + curr_item.name)
+			# 		notification.save()
+			# 		item_subject.subject_state = item_subject.subject_state + [notification.pk]
+			# except Exception as e:
+			# 	messages_ += 'cant connect websocket ' + str(e)
 
 			_item_name = curr_item.name
 			# print("reached herre")
 			if (curr_item.quantity == 0):
 				curr_item.delete()
 
-			messages_ += '\n'+ 'Thank you! you bought ' + _item_name +'\n'+'Total after discount: ' \
-			             + str(total_after_discount) + ' $'+'\n'+'Total before: ' + str(total) + ' $'
-			return True, total,total_after_discount,messages_
+			messages_ += '\n' + 'Thank you! you bought ' + _item_name + '\n' + 'Total after discount: ' \
+			             + str(total_after_discount) + ' $' + '\n' + 'Total before: ' + str(total) + ' $'
+			return True, total, total_after_discount, messages_
 		except Exception as a:
 			# print(a)
 			# print(str(a))
@@ -507,23 +587,22 @@ def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details)
 			curr_item.quantity = amount_in_db
 			curr_item.save()
 
-			if not (pay_transaction_id == -1 ):
-				messages_ += '\n' +'failed and aborted pay! please try again!'
+			if not (pay_transaction_id == -1):
+				messages_ += '\n' + 'failed and aborted pay! please try again!'
 				chech_cancle = pay_system.cancel_pay(pay_transaction_id)
-			if  not (supply_transaction_id == -1 ):
+			if not (supply_transaction_id == -1):
 				messages_ += '\n' + 'failed and aborted supply! please try again!'
 				chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
-			messages_ = "can`t buy this item " + str(item_id) +'  :  '+ str(a)
+			messages_ = "can`t buy this item " + str(item_id) + '  :  ' + str(a)
 			return False, 0, 0, messages_
 	else:
 		messages_ = "no such amount for item : " + str(item_id)
 		return False, 0, 0, messages_
 
+
 #################################################3
 
 def buy_item(request, pk):
-	# return redirect('/store/contact/' + str(pk) + '/')
-	print('heryyyyyyyyyyyy')
 	form_class = BuyForm
 	curr_item = Item.objects.get(id=pk)
 	context = {
@@ -568,8 +647,9 @@ def buy_item(request, pk):
 			_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
 			amount_in_db = _item.quantity
-			
-			valid, total, total_after_discount, messages_ = buy_logic(pk, amount, amount_in_db, request.user,shipping_details, card_details)
+
+			valid, total, total_after_discount, messages_ = buy_logic(pk, amount, amount_in_db, request.user,
+			                                                          shipping_details, card_details)
 			if valid == False:
 				messages.warning(request, messages_)
 				return redirect('/login_redirect')
@@ -597,19 +677,6 @@ def buy_item(request, pk):
 		return render(request, 'store/buy_item.html', context)
 
 
-def check_base_rule(rule_id, amount, country, user):
-	rule = BaseRule.objects.get(id=rule_id)
-	if rule.type == 'MAX' and amount > int(rule.parameter):
-		return False
-	elif rule.type == 'MIN' and amount < int(rule.parameter):
-		return False
-	elif rule.type == 'FOR' and country == rule.parameter:
-		return False
-	elif rule.type == 'REG' and not user.is_authenticated:
-		return False
-	return True
-
-
 def check_base_item_rule(rule_id, amount, user):
 	rule = BaseItemRule.objects.get(id=rule_id)
 	if rule.type == 'MAX' and amount > int(rule.parameter):
@@ -634,6 +701,19 @@ def check_item_rules(item, amount, user):
 			continue
 		if check_base_item_rule(rule.id, amount, user) is False:
 			return False
+	return True
+
+
+def check_base_rule(rule_id, amount, country, user):
+	rule = BaseRule.objects.get(id=rule_id)
+	if rule.type == 'MAX' and amount > int(rule.parameter):
+		return False
+	elif rule.type == 'MIN' and amount < int(rule.parameter):
+		return False
+	elif rule.type == 'FOR' and country == rule.parameter:
+		return False
+	elif rule.type == 'REG' and not user.is_authenticated:
+		return False
 	return True
 
 
@@ -767,7 +847,7 @@ def add_manager_to_store(request, pk):
 
 @permission_required_or_403('ADD_DISCOUNT', (Store, 'id', 'pk'))
 @login_required
-def add_discount_to_store(request,  pk, which_button):
+def add_discount_to_store(request, pk, which_button):
 	if request.method == 'POST':
 		form = AddDiscountForm(pk, request.POST)
 		if form.is_valid():
@@ -776,7 +856,8 @@ def add_discount_to_store(request,  pk, which_button):
 			amount = form.cleaned_data.get('amount')
 			end_date = form.cleaned_data.get('end_date')
 			item = form.cleaned_data.get('item')
-			ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,  end_date=end_date, item=item)
+			ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage, end_date=end_date,
+			                           item=item)
 			if which_button == 'ok':
 				messages.success(request, 'add discount :  ' + str(percentage) + '%')
 				return redirect('/store/home_page_owner/')
@@ -798,9 +879,10 @@ def add_discount_to_store(request,  pk, which_button):
 		}
 		return render(request, 'store/add_discount_to_store.html', context)
 
+
 @permission_required_or_403('ADD_DISCOUNT', (Store, 'id', 'pk'))
 @login_required
-def add_complex_discount_to_store(request,  pk, disc, which_button):
+def add_complex_discount_to_store(request, pk, disc, which_button):
 	if request.method == 'POST':
 		form = AddComplexDiscountForm(pk, request.POST)
 		if form.is_valid():
@@ -810,7 +892,8 @@ def add_complex_discount_to_store(request,  pk, disc, which_button):
 			amount = form.cleaned_data.get('amount')
 			end_date = form.cleaned_data.get('end_date')
 			item = form.cleaned_data.get('item')
-			ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,  end_date=end_date, item=item)
+			ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage, end_date=end_date,
+			                           item=item)
 			complex = service.add_complex_discount(store_id=pk, left='_' + str(ans[1]), right=disc, operator=operator)
 			if which_button == 'ok':
 				messages.success(request, 'add complex discount successfully')
@@ -1187,23 +1270,20 @@ class NotificationsListView(ListView):
 	template_name = 'store/owner_feed.html'
 
 	def get_queryset(self):
-		return service.get_user_notifications(user_id = self.request.user.pk)
+		return service.get_user_notifications(user_id=self.request.user.pk)
 
 	def get_context_data(self, **kwargs):
 		context = super(NotificationsListView, self).get_context_data(**kwargs)  # get the default context data
 		context['owner_id'] = self.request.user.pk
 		context['unread_notifications'] = 0
-		service.mark_notification_read(user_id = self.request.user.pk)
+		service.mark_notification_read(user_id=self.request.user.pk)
 		return context
 
 
-
-def delete_owner(request,pk_owner,pk_store):
-	if (service.remove_manager_from_store(pk_store,pk_owner)):
+def delete_owner(request, pk_owner, pk_store):
+	if (service.remove_manager_from_store(pk_store, pk_owner)):
 		messages.success(request, 'delete owner')  # <-
 		return redirect('/store/home_page_owner/')
 	else:
 		messages.warning(request, 'can`t delete owner')  # <-
 		return redirect('/store/home_page_owner/')
-
-
