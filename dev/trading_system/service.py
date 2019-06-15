@@ -75,6 +75,14 @@ def get_store_items(store_id):
 	return domain.get_store_items(store_id=store_id)
 
 
+def get_store_managers(store_id):
+	return domain.get_store_managers(store_id=store_id)
+
+
+def get_store_owners(store_id):
+	return domain.get_store_owners(store_id=store_id)
+
+
 def get_user_store_list(user_id):
 	return domain.get_user_store_list(user_id=user_id)
 
@@ -83,6 +91,11 @@ def get_item_details(item_id):
 	return domain.get_item_details(item_id=item_id)
 
 
+def get_store_by_id(store_id):
+	return domain.get_store_by_id(store_id)
+
+def remove_manager_from_store(store_id,m_id):
+	return domain.remove_manager_from_store(store_id, m_id)
 def len_of_super():
 	return domain.len_of_super()
 

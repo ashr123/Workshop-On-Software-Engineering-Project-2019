@@ -269,6 +269,7 @@ class ItemDelete(DeleteView):
 # 		}
 # 		return render(request, 'store/add_discount_to_item.html', context)
 
+from .forms import DeleteOwners
 
 @method_decorator(login_required, name='dispatch')
 class StoreUpdate(UpdateView):
@@ -282,11 +283,21 @@ class StoreUpdate(UpdateView):
 		text = SearchForm()
 		rules = service.store_rules_string(store_id=self.kwargs['pk'])
 		store_items = service.get_store_items(store_id=self.kwargs['pk'])
+
+		store_managers = service.get_store_managers(store_id=self.kwargs['pk'])
+		store_owners = service.get_store_owners(store_id=self.kwargs['pk'])
+		del store_owners[0]
+		all_managers = store_owners+store_managers
+		# print(store_owners)
+		delet_owners = DeleteOwners(all_managers,self.kwargs['pk'])
+
+
 		user_name = self.request.user.username
 		context['text'] = text
 		context['user_name'] = user_name
 		context['form_'] = UpdateItems(store_items)
 		context['rules'] = rules
+		context['delet_owners'] = delet_owners
 		return context
 
 	def get_object(self, queryset=None):
@@ -394,11 +405,18 @@ supply_system = Supply()
 # 		return [0, total]
 def get_store_of_item(item_id):
 	return Store.objects.filter(items__id__contains=item_id)[0]
-def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_details):
-	transaction_id = -1
+
+
+
+
+
+######################elhanan prev###########################
+def buy_logic(item_id, amount, amount_in_db, user,shipping_details,card_details):
+
+	pay_transaction_id = -1
 	supply_transaction_id = -1
 
-	_item = Item.objects.get(id=item_id)
+
 
 	messages_ = ''
 	curr_item = Item.objects.get(id=item_id)
@@ -409,151 +427,99 @@ def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_detail
 		total_after_discount = total
 		# check item rules
 		if check_item_rules(curr_item, amount, user) is False:
-			# messages.warning(request, "you can't buy due to item policies")
-			# return render(request, 'store/buy_item.html', context)
 			messages_ = "you can't buy due to item policies"
 			return False, 0, 0, messages_
-		store_of_item = get_store_of_item(item_id)
+		store_of_item = Store.objects.get(items__id__contains=item_id)
 		# check store rules
-		if check_store_rules(store_of_item, amount, shipping_details['country'], user) is False:
-			# messages.warning(request, "you can't buy due to store policies")
+		if check_store_rules(store_of_item, amount,shipping_details['country'], user) is False:
 			messages_ = "you can't buy due to store policies"
 			return False, 0, 0, messages_
-		# check discounts
-		# [precentage1, total_after_discount] = get_discount_for_store(item_id, amount, total)
-		# [precentage2, total_after_discount] = get_discount_for_item(item_id, amount, total_after_discount)
-
-		precentage1=0
-		precentage2=0
-		total_after_discount=0
-		if precentage1 != 0:
-			discount = str(precentage1)
-			messages_ += '\n' + 'you have discount for store ' + discount
-		if precentage2 != 0:
-			discount = str(precentage2)
-			messages_ += '\n' + 'you have discount for item ' + discount
-		# try:
-		# 	if pay_system.handshake():
-		# 		print("pay hand shake")
+		## check discounts
+		# precentage1 =0
+		# precentage2=0
+		# [precentage1, total_after_discount] = service.get_discount_for_store(item_id, amount, total)
+		# [precentage2, total_after_discount] =  service.get_discount_for_item(item_id, amount, total_after_discount)
 		#
-		# 		transaction_id = pay_system.pay(str(card_details.card_number), str(card_details.month), str(card_details.year), str(card_details.holder), str(card_details.ccv),
-		# 		transaction_id = pay_system.pay(str(card_details.card_number), str(card_details.month),
-		# 		                                str(card_details.year), str(card_details.holder), str(card_details.ccv),
-		# 			# messages.warning(request, 'can`t pay !')
-		# 			messages_ += '\n' + 'can`t pay !'
-		# 			return False, 0, 0, messages_
-		# 			# return redirect('/login_redirect')
-		# 	else:
-			# return redirect('/login_redirect')
-		# 		messages_ += '\n' + 'can`t connect to pay system!'
-		# 		return False, 0, 0, messages_
-		# 		# return redirect('/login_redirect')
 		#
-			# return redirect('/login_redirect')
-		# 		# print("supply hand shake")
-		# 		supply_transaction_id = supply_system.supply(str(shipping_details.name), str(shipping_details.address), str(shipping_details.city), str(shipping_details.country),
-		# 		                                             str(zip))
-		# 		supply_transaction_id = supply_system.supply(str(shipping_details.name), str(shipping_details.address),
-		# 		                                             str(shipping_details.city), str(shipping_details.country),
-		# 			messages_ += '\n' +'can`t supply abort payment!'
-		# 			return False, 0, 0, messages_
-		# 			# messages.warning(request, 'can`t supply abort payment!')
-		# 			messages_ += '\n' + 'can`t supply abort payment!'
-		# 	else:
-			# messages.warning(request, 'can`t supply abort payment!')
-		# 		messages_ += '\n' +'can`t connect to supply system abort payment!'
-		# 		return False, 0, 0, messages_
-		# 		# messages.warning(request, 'can`t connect to supply system abort payment!')
-		# 		# return redirect('/login_redirect')
-		#
-		# 	_item.quantity = amount_in_db - amount
-		# 	_item.save()
-		#
-		# 	# store = get_item_store(_item.pk)
-		# 	item_subject = ItemSubject(_item.pk)
-		# 	try:
-		# 		if (user.is_authenticated):
-		# 			notification = Notification.objects.create(
-		# 				msg=user.username + ' bought ' + str(amount) + ' pieces of ' + _item.name)
-		# 			notification.save()
-		# 			item_subject.subject_state = item_subject.subject_state + [notification.pk]
-		# 		else:
-		# 			notification = Notification.objects.create(
-		# 				msg='A guest bought ' + str(amount) + ' pieces of ' + _item.name)
-		# 			notification.save()
-		# 			item_subject.subject_state = item_subject.subject_state + [notification.pk]
-		# 	except Exception as e:
-		# 		messages_ += 'cant connect websocket ' + str(e)
-		#
-		# 	_item_name = _item.name
-		# 	# print("reached herre")
-		# 	if (_item.quantity == 0):
-		# 		_item.delete()
-		#
-		# 	messages_ += '\n'+ 'Thank you! you bought ' + _item_name +'\n'+'Total after discount: ' + str(total_after_discount) + ' $'+'\n'+'Total before: ' + str(total) + ' $'
-		# 	#
-		# 	# messages.success(request, 'Thank you! you bought ' + _item_name)
-		# 	# messages.success(request, 'Total after discount: ' + str(total_after_discount) + ' $')
-		# 	# messages.success(request, 'Total before: ' + str(total) + ' $')
-		# 	# print("!!!!!!!!!!!!!!!!!!!!")
-		# 	return redirect('/login_redirect')
-		# except Exception as a:
-		# 	print(a)
-		# 	print(str(a))
-		# 	traceback.print_exc()
-		# 	if not (transaction_id == -1):
-		# 		messages_ += '\n' +'failed and aborted pay! please try again!'
-		# 		# messages.warning(request, 'failed and aborted pay! please try again!')
-		# 		_item.quantity = amount_in_db
-		# 		chech_cancle = pay_system.cancel_pay(transaction_id)
-		# 		chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
-		# 	return redirect('/login_redirect')
+		# if precentage1 != 0 :
+		# 	discount = str(precentage1)
+		# 	messages_ += '\n' + 'you have discount for store '+discount
+		# if precentage2 != 0:
+		# 	discount = str(precentage2)
+		# 	messages_ += '\n' + 'you have discount for item ' + discount
 
 		try:
-			_item.quantity = amount_in_db - amount
-			_item.save()
+			if pay_system.handshake():
+				print("pay hand shake")
+
+				pay_transaction_id = pay_system.pay(str(card_details['card_number']), str(card_details['month']), str(card_details['year']), str(card_details['holder']), str(card_details['cvc']),
+				                                str(card_details['id']))
+				if (pay_transaction_id == '-1'):
+					messages_ += '\n' + 'can`t pay !'
+					return False, 0, 0, messages_
+			else:
+				messages_ += '\n' + 'can`t connect to pay system!'
+				return False, 0, 0, messages_
+			if supply_system.handshake():
+				print("supply hand shake")
+				supply_transaction_id = supply_system.supply(str(shipping_details['name']), str(shipping_details['address']), str(shipping_details['city']), str(shipping_details['country']),
+				                                             str(shipping_details['zip']))
+				if (supply_transaction_id == '-1'):
+					chech_cancle = pay_system.cancel_pay(pay_transaction_id)
+					messages_ += '\n' +'can`t supply abort payment!'
+					return False, 0, 0, messages_
+			else:
+				chech_cancle = pay_system.cancel_pay(pay_transaction_id)
+				messages_ += '\n' +'can`t connect to supply system abort payment!'
+				return False, 0, 0, messages_
+
+			curr_item.quantity = amount_in_db - amount
+			curr_item.save()
 
 			# store = get_item_store(_item.pk)
-			item_subject = ItemSubject(_item.pk)
+			item_subject = ItemSubject(curr_item.pk)
 			try:
 				if (user.is_authenticated):
 					notification = Notification.objects.create(
-						msg=user.username + ' bought ' + str(amount) + ' pieces of ' + _item.name)
+						msg=user.username + ' bought ' + str(amount) + ' pieces of ' + curr_item.name)
 					notification.save()
 					item_subject.subject_state = item_subject.subject_state + [notification.pk]
 				else:
 					notification = Notification.objects.create(
-						msg='A guest bought ' + str(amount) + ' pieces of ' + _item.name)
+						msg='A guest bought ' + str(amount) + ' pieces of ' + curr_item.name)
 					notification.save()
 					item_subject.subject_state = item_subject.subject_state + [notification.pk]
 			except Exception as e:
 				messages_ += 'cant connect websocket ' + str(e)
 
-			_item_name = _item.name
+			_item_name = curr_item.name
 			# print("reached herre")
-			if (_item.quantity == 0):
-				_item.delete()
+			if (curr_item.quantity == 0):
+				curr_item.delete()
 
-			messages_ += '\n' + 'Thank you! you bought ' + _item_name + '\n' + 'Total after discount: ' + str(
-				total_after_discount) + ' $' + '\n' + 'Total before: ' + str(total) + ' $'
-			return False, 0, 0, messages_
+			messages_ += '\n'+ 'Thank you! you bought ' + _item_name +'\n'+'Total after discount: ' \
+			             + str(total_after_discount) + ' $'+'\n'+'Total before: ' + str(total) + ' $'
+			return True, total,total_after_discount,messages_
 		except Exception as a:
-			print(a)
-			print(str(a))
+			# print(a)
+			# print(str(a))
 			traceback.print_exc()
-			if not (transaction_id == -1):
-				messages_ += '\n' + 'failed and aborted pay! please try again!'
-				# messages.warning(request, 'failed and aborted pay! please try again!')
-				_item.quantity = amount_in_db
-				chech_cancle = pay_system.cancel_pay(transaction_id)
-				chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
-			return False, 0, 0, messages_
+			curr_item.quantity = amount_in_db
+			curr_item.save()
 
-		messages_ = "you have discount for this item: " + discount + "%"
-		return True, total, total_after_discount, messages_
+			if not (pay_transaction_id == -1 ):
+				messages_ += '\n' +'failed and aborted pay! please try again!'
+				chech_cancle = pay_system.cancel_pay(pay_transaction_id)
+			if  not (supply_transaction_id == -1 ):
+				messages_ += '\n' + 'failed and aborted supply! please try again!'
+				chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
+			messages_ = "can`t buy this item " + str(item_id) +'  :  '+ str(a)
+			return False, 0, 0, messages_
 	else:
+		messages_ = "no such amount for item : " + str(item_id)
 		return False, 0, 0, messages_
 
+#################################################3
 
 def buy_item(request, pk):
 	# return redirect('/store/contact/' + str(pk) + '/')
@@ -592,19 +558,18 @@ def buy_item(request, pk):
 			month = supply_form.cleaned_data.get('month')
 			year = supply_form.cleaned_data.get('year')
 			holder = supply_form.cleaned_data.get('holder')
-			ccv = supply_form.cleaned_data.get('ccv')
+			cvc = supply_form.cleaned_data.get('cvc')
 			id = supply_form.cleaned_data.get('id')
 
-			card_details = {'card_number': card_number, 'month': month, 'year': year, 'holder': holder, 'ccv': ccv,
+			card_details = {'card_number': card_number, 'month': month, 'year': year, 'holder': holder, 'cvc': cvc,
 			                'id': id}
 
 			#########################buy proccss
 			_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
 			amount_in_db = _item.quantity
-
-			valid, total, total_after_discount, messages_ = buy_logic(pk, amount, amount_in_db, request.user,
-			                                                          shipping_details, card_details)
+			
+			valid, total, total_after_discount, messages_ = buy_logic(pk, amount, amount_in_db, request.user,shipping_details, card_details)
 			if valid == False:
 				messages.warning(request, messages_)
 				return redirect('/login_redirect')
@@ -1230,3 +1195,15 @@ class NotificationsListView(ListView):
 		context['unread_notifications'] = 0
 		service.mark_notification_read(user_id = self.request.user.pk)
 		return context
+
+
+
+def delete_owner(request,pk_owner,pk_store):
+	if (service.remove_manager_from_store(pk_store,pk_owner)):
+		messages.success(request, 'delete owner')  # <-
+		return redirect('/store/home_page_owner/')
+	else:
+		messages.warning(request, 'can`t delete owner')  # <-
+		return redirect('/store/home_page_owner/')
+
+
