@@ -2,12 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7f206d29-0b35-4da3-95c1-1baab1223eb3" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/store/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/domain.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/domain.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/item.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/item.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/store.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/store.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/service.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/service.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -65,20 +61,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/store/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="583">
-              <caret line="470" column="77" selection-start-line="470" selection-start-column="68" selection-end-line="470" selection-end-column="77" />
+            <state relative-caret-position="352">
+              <caret line="497" lean-forward="true" selection-start-line="497" selection-end-line="497" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
-                <element signature="e#16676#20869#0" />
-                <element signature="e#20923#21263#0" />
-                <element signature="e#21316#21518#0" />
-                <element signature="e#21564#22037#0" />
-                <element signature="e#22102#22610#0" />
-                <element signature="e#22690#23690#0" />
-                <element signature="e#23760#24658#0" />
               </folding>
             </state>
           </provider>
@@ -87,15 +76,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/domain/domain.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="140">
-              <caret line="91" column="21" selection-start-line="91" selection-start-column="21" selection-end-line="91" selection-end-column="21" />
+            <state relative-caret-position="747">
+              <caret line="592" column="37" lean-forward="true" selection-start-line="487" selection-end-line="592" selection-end-column="37" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
-                <element signature="e#15042#19235#0" />
-                <element signature="e#19510#19983#0" />
-                <element signature="e#20048#20556#0" />
-                <element signature="e#20636#21636#0" />
-                <element signature="e#21706#22604#0" />
                 <element signature="e#22673#22875#0" />
                 <element signature="e#22931#23271#0" />
               </folding>
@@ -106,8 +90,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="250">
-              <caret line="159" column="31" lean-forward="true" selection-start-line="159" selection-start-column="31" selection-end-line="159" selection-end-column="31" />
+            <state relative-caret-position="2948">
+              <caret line="159" column="31" selection-start-line="159" selection-start-column="31" selection-end-line="159" selection-end-column="31" />
             </state>
           </provider>
         </entry>
@@ -115,7 +99,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/domain/store.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="966">
+            <state relative-caret-position="2398">
               <caret line="116" column="45" selection-start-line="116" selection-start-column="45" selection-end-line="116" selection-end-column="45" />
             </state>
           </provider>
@@ -124,7 +108,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/domain/user.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="253">
+            <state relative-caret-position="506">
               <caret line="26" column="47" selection-start-line="26" selection-start-column="33" selection-end-line="26" selection-end-column="47" />
             </state>
           </provider>
@@ -133,7 +117,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="148">
+            <state relative-caret-position="176">
               <caret line="10" column="21" selection-start-line="10" selection-start-column="21" selection-end-line="10" selection-end-column="21" />
             </state>
           </provider>
@@ -142,13 +126,13 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tests/acceptanceTests.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="432">
+            <state relative-caret-position="5896">
               <caret line="277" selection-start-line="277" selection-end-line="277" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/domain/item.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="148">
@@ -160,7 +144,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/templates/trading_system/search_results.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-132">
+            <state>
               <caret column="23" selection-start-column="23" selection-end-column="23" />
             </state>
           </provider>
@@ -277,9 +261,9 @@
         <option value="$PROJECT_DIR$/trading_system/domain/user.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/store.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/domain.py" />
-        <option value="$PROJECT_DIR$/store/views.py" />
         <option value="$PROJECT_DIR$/trading_system/service.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/item.py" />
+        <option value="$PROJECT_DIR$/store/views.py" />
       </list>
     </option>
   </component>
@@ -296,6 +280,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -317,20 +302,18 @@
               <item name="dev" type="b2602c69:ProjectViewProjectNode" />
               <item name="dev" type="462c0819:PsiDirectoryNode" />
               <item name="trading_system" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="domain" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="dev" type="b2602c69:ProjectViewProjectNode" />
               <item name="dev" type="462c0819:PsiDirectoryNode" />
               <item name="trading_system" type="462c0819:PsiDirectoryNode" />
               <item name="templates" type="462c0819:PsiDirectoryNode" />
-              <item name="trading_system" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -609,15 +592,15 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Django server.run" />
       <item itemvalue="Django tests.Test: store.tests.StoreUnitTesting" />
       <item itemvalue="Django tests.Test: store.tests.StoreUnitTesting.test_add_store" />
-      <item itemvalue="Django tests.unittests" />
-      <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_add_guest_to_store_by_store_owner" />
-      <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_make_reflexive_ownership" />
-      <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_add_manager" />
       <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem" />
+      <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_add_guest_to_store_by_store_owner" />
+      <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_add_manager" />
       <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_add_manager_that_already_manages_the_store" />
+      <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem.test_make_reflexive_ownership" />
+      <item itemvalue="Django tests.unittests" />
+      <item itemvalue="Django server.run" />
     </list>
     <recent_temporary>
       <list>
@@ -720,7 +703,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="366927000" />
+    <option name="totallyTimeSpent" value="366952000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -735,8 +718,8 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.48666668" visible="true" weight="0.15085287" />
-      <window_info id="Structure" order="1" sideWeight="0.5133333" side_tool="true" visible="true" weight="0.15085287" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.48555556" visible="true" weight="0.15245202" />
+      <window_info id="Structure" order="1" sideWeight="0.5144445" side_tool="true" visible="true" weight="0.15245202" />
       <window_info id="Favorites" order="2" sideWeight="0.5120167" side_tool="true" weight="0.22100122" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3286517" />
@@ -760,6 +743,29 @@
       <window_info anchor="right" x="0" y="0" width="370" height="850" id="Documentation" order="5" side_tool="true" weight="0.32967034" />
       <window_info anchor="right" id="SciView" order="6" sideWeight="0.49947754" weight="0.32955465" />
     </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49668875" visible="true" weight="0.13931681" />
+      <window_info id="Structure" order="1" sideWeight="0.5033113" side_tool="true" weight="0.13931681" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49721915" weight="0.33333334" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4989953" weight="0.40888888" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="bottom" id="Database Changes" order="9" />
+      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49430677" visible="true" weight="0.33868614" />
+      <window_info anchor="bottom" id="Python Console" order="11" />
+      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.50500554" side_tool="true" weight="0.32706374" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="SciView" order="3" weight="0.32967034" />
+      <window_info anchor="right" id="Database" order="4" weight="0.18559219" />
+    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -1078,74 +1084,62 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/domain/user.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
+        <state relative-caret-position="506">
           <caret line="26" column="47" selection-start-line="26" selection-start-column="33" selection-end-line="26" selection-end-column="47" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/domain/store.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="966">
+        <state relative-caret-position="2398">
           <caret line="116" column="45" selection-start-line="116" selection-start-column="45" selection-end-line="116" selection-end-column="45" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/tests/acceptanceTests.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
+        <state relative-caret-position="5896">
           <caret line="277" selection-start-line="277" selection-end-line="277" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/store/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="583">
-          <caret line="470" column="77" selection-start-line="470" selection-start-column="68" selection-end-line="470" selection-end-column="77" />
+        <state relative-caret-position="352">
+          <caret line="497" lean-forward="true" selection-start-line="497" selection-end-line="497" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
-            <element signature="e#16676#20869#0" />
-            <element signature="e#20923#21263#0" />
-            <element signature="e#21316#21518#0" />
-            <element signature="e#21564#22037#0" />
-            <element signature="e#22102#22610#0" />
-            <element signature="e#22690#23690#0" />
-            <element signature="e#23760#24658#0" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/templates/trading_system/search_results.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-132">
+        <state>
           <caret column="23" selection-start-column="23" selection-end-column="23" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="159" column="31" lean-forward="true" selection-start-line="159" selection-start-column="31" selection-end-line="159" selection-end-column="31" />
+        <state relative-caret-position="2948">
+          <caret line="159" column="31" selection-start-line="159" selection-start-column="31" selection-end-line="159" selection-end-column="31" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/service.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="148">
+        <state relative-caret-position="176">
           <caret line="10" column="21" selection-start-line="10" selection-start-column="21" selection-end-line="10" selection-end-column="21" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/domain/domain.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
-          <caret line="91" column="21" selection-start-line="91" selection-start-column="21" selection-end-line="91" selection-end-column="21" />
+        <state relative-caret-position="747">
+          <caret line="592" column="37" lean-forward="true" selection-start-line="487" selection-end-line="592" selection-end-column="37" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
-            <element signature="e#15042#19235#0" />
-            <element signature="e#19510#19983#0" />
-            <element signature="e#20048#20556#0" />
-            <element signature="e#20636#21636#0" />
-            <element signature="e#21706#22604#0" />
             <element signature="e#22673#22875#0" />
             <element signature="e#22931#23271#0" />
           </folding>
