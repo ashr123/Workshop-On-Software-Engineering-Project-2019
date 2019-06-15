@@ -4,7 +4,8 @@ from django.contrib.auth.models import User, Group
 from django.db.models import Q
 from guardian.shortcuts import assign_perm
 
-from store.models import Store, Item, BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount
+from store.models import Store, Item, BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount, \
+	ComplexDiscount
 from trading_system.models import ObserverUser, Cart, NotificationUser, Notification
 
 
@@ -529,3 +530,10 @@ def mark_notification_read(user_id):
 		n.been_read = True
 		n.save()
 	return True
+
+
+def add_complex_discount_to_store(store_id, left, right, operator):
+	store = Store.objects.get(id=store_id)
+	discount = ComplexDiscount(store=store, left=left, right=right, operator=operator)
+	discount.save()
+	return [True, discount.id]

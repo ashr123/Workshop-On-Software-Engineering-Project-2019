@@ -118,10 +118,24 @@ class AddDiscountForm(forms.Form):
 		           ('MIN_QUANTITY', 'Min quantity - restrict min amount of items per order'),)
 		self.fields['percentage'] = forms.IntegerField(min_value=0, max_value=100)
 		self.fields['end_date'] = forms.DateField(help_text='format: mm/dd/yyyy')
-		self.fields['condition'] = forms.BooleanField(initial=False, required=False)
 		self.fields['type'] = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
 		self.fields['amount'] = forms.IntegerField(min_value=0, required=False)
-		self.fields['add_item'] = forms.BooleanField(initial=False, required=False)
+		self.fields['item'] = forms.ModelChoiceField(queryset=Item.objects.filter(id=self.store_id), required=False)
+
+class AddComplexDiscountForm(forms.Form):
+	def __init__(self, store_id, *args, **kwargs):
+		super(AddComplexDiscountForm, self).__init__(*args, **kwargs)
+		self.store_id = store_id
+		CHOICES = (('MAX_QUANTITY', 'Max quantity - restrict max amount of items per order'),
+		           ('MIN_QUANTITY', 'Min quantity - restrict min amount of items per order'),)
+		LOGICS = (('OR', 'or'),
+		          ('AND', 'and'),
+		          ('XOR', 'xor'))
+		self.fields['operator'] = forms.ChoiceField(choices=LOGICS, widget=forms.RadioSelect)
+		self.fields['percentage'] = forms.IntegerField(min_value=0, max_value=100)
+		self.fields['end_date'] = forms.DateField(help_text='format: mm/dd/yyyy')
+		self.fields['type'] = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
+		self.fields['amount'] = forms.IntegerField(min_value=0, required=False)
 		self.fields['item'] = forms.ModelChoiceField(queryset=Item.objects.filter(id=self.store_id), required=False)
 
 

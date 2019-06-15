@@ -219,8 +219,18 @@
     border-bottom: 2px solid #ced9ff;
 }
 
-.my_stores tr:hover {
+.my_stores tbody tr:hover {
     background-color: aliceblue;
+}
+
+.my_stores thead tr {
+    background-color: #7ba3ed;
+    height: 50px;
+    color: white;
+}
+
+.my_stores thead th:nth-of-type(1) {
+    text-align: left;
 }
 
 .store_name_button {
@@ -340,6 +350,7 @@
     background-color: #7ba3ed;
     color: white;
 }
+
 
 .item_buttons {
     background-color: white;

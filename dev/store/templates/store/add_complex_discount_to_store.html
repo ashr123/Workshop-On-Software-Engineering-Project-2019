@@ -4,6 +4,7 @@
 	<div style="font-family: Arial">
 		<form action="" method='post'>
 			{% csrf_token %}
+			<div>choose operator: {{ form.operator }}</div>
 			<div>Percentage: {{ form.percentage }} %</div>
 			<div>End date: {{ form.end_date }} format: mm/dd/yyyy</div>
 			<br>

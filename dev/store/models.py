@@ -28,7 +28,8 @@ class Item(models.Model):
 	description = models.CharField(max_length=64, default=None)
 	category = models.CharField(max_length=30, choices=CategoryChoice, default=1)
 	quantity = models.PositiveIntegerField(default=1)
-	#discounts = models.ManyToManyField(Discount)
+
+	# discounts = models.ManyToManyField(Discount)
 
 	def get_absolute_url(self):
 		return reverse('item-detail', kwargs={'id': self.pk})
@@ -44,7 +45,8 @@ class Store(models.Model):
 	managers = models.ManyToManyField(User, related_name="store_managers")
 	items = models.ManyToManyField(Item)
 	description = models.CharField(max_length=64)
-	#discounts = models.ManyToManyField(Discount)
+
+	# discounts = models.ManyToManyField(Discount)
 
 	# max_quantity = models.PositiveIntegerField(null=True, blank=True)
 	# max_op = models.CharField(max_length=3, null=True, blank=True)
@@ -122,22 +124,17 @@ class Discount(models.Model):
 	)
 	store = models.ForeignKey(Store, on_delete=models.CASCADE)
 	item = models.ForeignKey(Item, null=True, on_delete=models.CASCADE)
-	type = models.CharField(max_length=3, choices=RULE_TYPES, null=True)
+	type = models.CharField(max_length=3, choices=RULE_TYPES)
 	amount = models.IntegerField(default=0, null=True)
 	end_date = models.DateField(help_text='format: mm/dd/yyyy')
 	percentage = models.PositiveSmallIntegerField()
 
 
-# class ItemDiscount(models.Model):
-# 	MAX_QUANTITY = 'MXQ'
-# 	MIN_QUANTITY = 'MNQ'
-# 	RULE_TYPES = (
-# 		(MAX_QUANTITY, 'max_quantity'),
-# 		(MIN_QUANTITY, 'min_quantity'),
-# 	)
-# 	item = models.ForeignKey(Item, on_delete=models.CASCADE)
-# 	type = models.CharField(max_length=3, choices=RULE_TYPES)
-# 	amount = models.IntegerField(default=0)
-# 	start_date = models.DateField(auto_now_add=True)
-# 	end_date = models.DateField(help_text='format: mm/dd/yyyy')
-# 	percentage = models.PositiveSmallIntegerField()
+class ComplexDiscount(models.Model):
+	LOGICS = (('OR', 'or'),
+	          ('AND', 'and'),
+	          ('XOR', 'xor'))
+	left = models.CharField(max_length=4)
+	right = models.CharField(max_length=4)
+	operator = models.CharField(max_length=3, choices=LOGICS)
+	store = models.ForeignKey(Store, on_delete=models.CASCADE)

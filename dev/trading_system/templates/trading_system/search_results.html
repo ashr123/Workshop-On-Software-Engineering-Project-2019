@@ -4,15 +4,17 @@
 	<div id="items_table">
 		<h2 class="title_1">Results</h2>
 		<table class="search_results">
-			<tr>
+			<thead>
+			{% if object_list %}
 				<th>Item</th>
 				<th>Category</th>
 				<th>Price</th>
 				<th>Quantity</th>
 				<th>Buy</th>
 				<th>Add to Cart</th>
-				<th>Join Auction</th>
-			</tr>
+			{% endif %}
+			</thead>
+			<tbody>
 			{% for item in object_list %}
 				<tr>
 					<td>
@@ -40,17 +42,14 @@
 							<button class="item_buttons" type="submit"><i class="fas fa-cart-plus"></i></button>
 						</form>
 					</td>
-					<td>
-						<form action="/join_auction/{{ item.pk }}" method="GET">
-							<button class="item_buttons" type="submit"><i class="fas fa-gavel"></i></button>
-						</form>
-					</td>
 				</tr>
 			{% empty %}
 				<tr>
 					<span class="semi_title">No results for this search</span>
 				</tr>
 			{% endfor %}
+			</tbody>
+
 		</table>
 	</div>
 

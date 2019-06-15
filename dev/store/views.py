@@ -22,7 +22,7 @@ from trading_system.models import Notification, NotificationUser
 from trading_system.observer import ItemSubject
 from . import forms
 from .forms import BuyForm, AddManagerForm, AddRuleToItem, AddRuleToStore_base, AddRuleToStore_withop, \
-	AddRuleToStore_two, AddDiscountForm
+	AddRuleToStore_two, AddDiscountForm, AddComplexDiscountForm
 from .forms import ShippingForm, AddRuleToItem_withop, AddRuleToItem_two
 from .models import Item, ComplexStoreRule, ComplexItemRule
 from .models import Store
@@ -102,7 +102,7 @@ def submit_open_store(request):
 		msg = service.open_store(store_name=open_store_form.cleaned_data.get('name'),
 		                         desc=open_store_form.cleaned_data.get('description'),
 		                         user_id=request.user.pk)
-		messages.success(request, msg)
+		messages.success(request, "your new store added successfully")
 		return redirect('/store/home_page_owner')
 	else:
 		messages.warning(request, 'Please correct the error and try again.')  # <-
@@ -806,33 +806,18 @@ def add_discount_to_store(request,  pk, which_button):
 	if request.method == 'POST':
 		form = AddDiscountForm(pk, request.POST)
 		if form.is_valid():
-			#disc = form.save()
-			# if (min_max_cond.cleaned_data.get('cond_min_max')):
-			# cond_1 = min_max_cond.save()
-			# disc.conditions.add(cond_1)
-			# disc.save()
-			# store = Store.objects.get(id=pk)
-			# store.discounts.add(disc)
-			# store.save()
 			type = form.cleaned_data.get('type')
-			condition = form.cleaned_data.get('condition')
 			percentage = form.cleaned_data.get('percentage')
 			amount = form.cleaned_data.get('amount')
-			start_date = form.cleaned_data.get('start_date')
 			end_date = form.cleaned_data.get('end_date')
-			add_item = form.cleaned_data.get('add_item')
 			item = form.cleaned_data.get('item')
-			if condition is False and add_item is False:
-				ans = service.add_discount(store_id=pk, percentage=percentage,  end_date=end_date)
-			if condition is False and add_item is True:
-				ans = service.add_discount(store_id=pk, percentage=percentage,  end_date=end_date, item=item)
-			if condition is True and add_item is False:
-				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage, end_date=end_date)
-			if condition is True and add_item is True:
-				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,  end_date=end_date, item=item)
-			print(ans[1])
-			messages.success(request, 'add discount :  ' + str(percentage) + '%')
-			return redirect('/store/home_page_owner/')
+			ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,  end_date=end_date, item=item)
+			if which_button == 'ok':
+				messages.success(request, 'add discount :  ' + str(percentage) + '%')
+				return redirect('/store/home_page_owner/')
+			if which_button == 'complex':
+				return redirect('/store/add_complex_discount_to_store/' + str(pk) + '/' + '_' + str(ans[1]) + '/a')
+
 		messages.warning(request, 'error in :  ' + str(form.errors))
 		return redirect('/store/home_page_owner/')
 
@@ -847,6 +832,39 @@ def add_discount_to_store(request,  pk, which_button):
 			'pk': pk,
 		}
 		return render(request, 'store/add_discount_to_store.html', context)
+
+@permission_required_or_403('ADD_DISCOUNT', (Store, 'id', 'pk'))
+@login_required
+def add_complex_discount_to_store(request,  pk, disc, which_button):
+	if request.method == 'POST':
+		form = AddComplexDiscountForm(pk, request.POST)
+		if form.is_valid():
+			operator = form.cleaned_data.get('operator')
+			type = form.cleaned_data.get('type')
+			percentage = form.cleaned_data.get('percentage')
+			amount = form.cleaned_data.get('amount')
+			end_date = form.cleaned_data.get('end_date')
+			item = form.cleaned_data.get('item')
+			ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,  end_date=end_date, item=item)
+			complex = service.add_complex_discount(store_id=pk, left='_' + str(ans[1]), right=disc, operator=operator)
+			if which_button == 'ok':
+				messages.success(request, 'add complex discount successfully')
+				return redirect('/store/home_page_owner/')
+			if which_button == 'complex':
+				return redirect('/store/add_complex_discount_to_store/' + str(pk) + '/' + str(complex[1]) + '/a')
+		messages.warning(request, 'error in :  ' + str(form.errors))
+		return redirect('/store/home_page_owner/')
+	else:
+		text = SearchForm()
+		user_name = request.user.username
+		discountForm = AddComplexDiscountForm(pk)
+		context = {
+			'user_name': user_name,
+			'text': text,
+			'form': discountForm,
+			'pk': pk,
+		}
+		return render(request, 'store/add_complex_discount_to_store.html', context)
 
 
 def owner_feed(request, owner_id):
