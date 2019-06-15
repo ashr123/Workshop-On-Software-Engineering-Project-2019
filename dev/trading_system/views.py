@@ -1,9 +1,9 @@
 import json
-from typing import Any, Dict, List, Union
+from typing import Any, List, Union
 
 import django
 from django.contrib import messages
-from django.contrib.auth.models import AnonymousUser
+# from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q, QuerySet
 from django.http import HttpResponse
@@ -59,8 +59,8 @@ def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 
 			return render(request, 'homepage_member.html', {'text': SearchForm(), 'user_name': request.user.username})
 
-			return render(request, 'homepage_member.html',
-			              {'text': text, 'user_name': user_name})
+			# return render(request, 'homepage_member.html',
+			#               {'text': text, 'user_name': user_name})
 
 	return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
@@ -79,7 +79,7 @@ class CartsListView(ListView):
 		return Cart.objects.filter(customer_id=self.request.user.pk)
 
 
-##ELHANANA - note that search returns the filtered items list
+# ELHANANA - note that search returns the filtered items list
 def search(request: Any) -> QuerySet:
 	text = SearchForm(request.GET)
 	if text.is_valid():
@@ -95,12 +95,12 @@ def search(request: Any) -> QuerySet:
 class CartDetail(DetailView):
 	model = Cart
 
-	def get_context_data(self, **kwargs) -> Dict[str, Any]:
-		print('!!!!!!!!!!!!!!!!!!!!!!!!!\n')
-		cart = Cart.objects.get(pk=kwargs['object'].pk)
-		item_ids = list(map(lambda i: i.pk, cart.items.all()))
-		context = super().get_context_data(**kwargs)  # get the default context data
-		context['items'] = list(map(lambda i_pk: Item.objects.get(pk=i_pk), item_ids))
+	# def get_context_data(self, **kwargs):
+	# 	print('!!!!!!!!!!!!!!!!!!!!!!!!!\n')
+	# 	cart = Cart.objects.get(pk=kwargs['object'].pk)
+	# 	item_ids = list(map(lambda i: i.pk, cart.items.all()))
+	# 	context = super().get_context_data(**kwargs)  # get the default context data
+	# 	context['items'] = list(map(lambda i_pk: Item.objects.get(pk=i_pk), item_ids))
 
 	def get_context_data(self, **kwargs):
 		print('???????????????????????????\n')
@@ -123,10 +123,9 @@ class CartDetail(DetailView):
 ########################################################################################################################
 
 def index(request: Any) -> HttpResponse:
-	if (service.len_of_super() == 0):
+	if service.len_of_super() == 0:
 		return redirect('/super_user')
-	else:
-		return render(request, 'homepage_guest.html', {'text': SearchForm()})
+	return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
 
 def show_cart(request: Any) -> HttpResponse:
@@ -142,8 +141,8 @@ def show_cart(request: Any) -> HttpResponse:
 			'text': SearchForm(),
 			'base_template_name': base_template_name
 		})
-	else:
-		base_template_name = 'homepage_guest.html'
+	# else:
+	# 	base_template_name = 'homepage_guest.html'
 
 
 cart_index = 0
@@ -161,9 +160,9 @@ class SearchListView(ListView):
 			# items = Item.objects.filter(name=correct_word)
 			return service.search(text.cleaned_data.get('search'))
 
-	def get_context_data(self, **kwargs) -> Dict[str, Any]:
-		context = super().get_context_data(**kwargs)  # get the default context data
-		context['text'] = SearchForm()
+	# def get_context_data(self, **kwargs):
+	# 	context = super().get_context_data(**kwargs)  # get the default context data
+	# 	context['text'] = SearchForm()
 
 	def get_context_data(self, **kwargs):
 		text = SearchForm()
@@ -256,40 +255,36 @@ def add_item_to_cart(request, item_pk):
 		return redirect('/login_redirect')
 	else:
 		if 'cart' in request.session:
-			cartG = request.session['cart']
-			cartG['items_id'].append(item_pk)
+			cart_g = request.session['cart']
+			cart_g['items_id'].append(item_pk)
 		else:
-			cartG = CartGuest([item_pk]).serialize()
+			cart_g = CartGuest([item_pk]).serialize()
 
-		request.session['cart'] = cartG
+		request.session['cart'] = cart_g
 		messages.success(request, 'add to cart successfully')
 		return redirect('/login_redirect')
 
 
-def makeGuestCart(request):
-	if (service.is_authenticated(request.user.pk)):
+def make_guest_cart(request):
+	if service.is_authenticated(request.user.pk):
 		return []
 	items_ = []
-	cartG = request.session['cart']
-	id_list = cartG['items_id']
-	for id in id_list:
-		items_ += list([service.get_item(id)])
+	for id1 in request.session['cart']['items_id']:
+		items_ += list([service.get_item(id1)])
 	return items_
 
 
 def delete_item_from_cart(request, item_pk):
-	if (request.user.is_authenticated):
-		item_store = get_item_store(item_pk)
-		cart = get_cart(item_store, request.user.pk)
-		cart.items.remove(item_pk)
+	if request.user.is_authenticated:
+		get_cart(get_item_store(item_pk), request.user.pk).items.remove(item_pk)
 		messages.success(request, 'remove to cart successfully')
 		return redirect('/login_redirect')
 	else:
 
-		cartG = request.session['cart']
-		cartG['items_id'].remove(item_pk)
+		cart_g = request.session['cart']
+		cart_g['items_id'].remove(item_pk)
 
-		request.session['cart'] = cartG
+		request.session['cart'] = cart_g
 
 		messages.success(request, 'remove to cart successfully')
 		return redirect('/login_redirect')
@@ -297,7 +292,7 @@ def delete_item_from_cart(request, item_pk):
 
 # TODO move to domain
 def get_item_store(item_pk):
-	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
+	# stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
 	# Might cause bug. Need to apply the item-in-one-store condition
 	return list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))[0]
 
@@ -316,7 +311,7 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	# 	return makeGuestCart(request)
 	items_bought = []
 	if request.method == 'POST':
-		form = CartForm(request.user, makeGuestCart(request), request.POST)
+		form = CartForm(request.user, make_guest_cart(request), request.POST)
 		shipping_form = ShippingForm(request.POST)
 		supply_form = PayForm(request.POST)
 
@@ -324,11 +319,11 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			# shipping
 			country = shipping_form.cleaned_data.get('country')
 			city = shipping_form.cleaned_data.get('city')
-			zip = shipping_form.cleaned_data.get('zip')
+			zip1 = shipping_form.cleaned_data.get('zip')
 			address = shipping_form.cleaned_data.get('address')
 			name = shipping_form.cleaned_data.get('name')
 
-			shipping_details = {'country': country, 'city': city, 'zip': zip, 'address': address, 'name': name}
+			shipping_details = {'country': country, 'city': city, 'zip': zip1, 'address': address, 'name': name}
 
 			# card
 
@@ -337,10 +332,10 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			year = supply_form.cleaned_data.get('year')
 			holder = supply_form.cleaned_data.get('holder')
 			ccv = supply_form.cleaned_data.get('ccv')
-			id = supply_form.cleaned_data.get('id')
+			id1 = supply_form.cleaned_data.get('id')
 
 			card_details = {'card_number': card_number, 'month': month, 'year': year, 'holder': holder, 'ccv': ccv,
-			                'id': id}
+			                'id': id1}
 		else:
 			err = '' + str(shipping_form.errors) + str(supply_form.errors)
 			messages.warning(request, 'error in :  ' + err)
@@ -351,11 +346,11 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			for item_id in form.cleaned_data.get('items'):
 
 				amount_in_db = Item.objects.get(id=item_id).quantity
-				if (amount_in_db > 0):
-					item = Item.objects.get(id=item_id)
+				if amount_in_db > 0:
+					item1 = Item.objects.get(id=item_id)
 					quantity_to_buy = 1
 					try:
-						quantity_to_buy = request.POST.get('quantity' + str(item.id))
+						quantity_to_buy = request.POST.get('quantity' + str(item1.id))
 						# print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
 					except:
 						messages.warning(request, 'problem with quantity ')
@@ -366,19 +361,19 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 					                                                          amount_in_db,
 					                                                          request.user, shipping_details,
 					                                                          card_details)
-					if valid == False:
+					if not valid:
 						messages.warning(request, 'can`t buy item : ' + str(item_id))
 						messages.warning(request, 'reason : ' + str(messages_))
 					else:
 						messages.success(request, ' buy item : ' + str(item_id))
 						items_bought.append(item_id)
-						if (request.user.is_authenticated):
+						if request.user.is_authenticated:
 							cart = Cart.objects.get(customer=request.user)
-							cart.items.remove(item)
+							cart.items.remove(item1)
 						else:
-							cartG = request.session['cart']
-							cartG['items_id'].remove(Decimal(item_id))
-							request.session['cart'] = cartG
+							cart_g = request.session['cart']
+							cart_g['items_id'].remove(Decimal(item_id))
+							request.session['cart'] = cart_g
 
 			return redirect('/login_redirect')
 		else:
@@ -388,9 +383,9 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 
 	else:
 		list_ = []
-		if not (request.user.is_authenticated):
+		if not request.user.is_authenticated:
 			base_template_name = 'homepage_guest.html'
-			list_ = makeGuestCart(request)
+			list_ = make_guest_cart(request)
 		else:
 			if "store_owners" in request.user.groups.values_list('name', flat=True):
 				base_template_name = 'store/homepage_store_owner.html'
@@ -403,16 +398,11 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 		q_list = QForm(request.user, list_)
 		text = SearchForm()
 		user_name = request.user.username
-		size_ = 0
-		if (request.user.is_authenticated):
+		if request.user.is_authenticated:
 			carts = Cart.objects.filter(customer=request.user)
 			items_of_user = []
 			for cart in carts:
 				items_of_user += list(cart.items.all())
-
-			size_ = len(items_of_user)
-		else:
-			size_ = len(list_)
 		context = {
 			'user_name': user_name,
 			'text': text,

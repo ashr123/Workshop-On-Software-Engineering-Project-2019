@@ -163,3 +163,7 @@ def mark_notification_read(user_id):
 
 def add_item_to_cart(user_id, item_id):
 	return domain.add_item_to_cart(user_id, item_id)
+
+
+def get_item(id1):
+	return domain.get_item(id1)
