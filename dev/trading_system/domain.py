@@ -59,7 +59,7 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 			if store_.managers.filter(id=user_.pk).exists():
 				return [True, 'allready manager']
 			store_managers = Group.objects.get_or_create(name="store_managers")
-			store_managers = Group.objects.get(name="store_managers")
+			# store_managers = Group.objects.get(name="store_managers")
 			user_.groups.add(store_managers)
 			store_.managers.add(user_)
 			ObserverUser.objects.create(user_id=user_.pk,
@@ -82,7 +82,7 @@ def open_store(store_name, desc, user_id):
 	store.save()
 	_user = User.objects.get(pk=user_id)
 	my_group = Group.objects.get_or_create(name="store_owners")
-	my_group = Group.objects.get(name="store_owners")
+	# my_group = Group.objects.get(name="store_owners")
 	if len(ObserverUser.objects.filter(user_id=_user.pk)) == 0:
 		ObserverUser.objects.create(user_id=_user.pk,
 		                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(_user.pk)).save()
@@ -125,9 +125,9 @@ def add_complex_rule_to_store_1(rule_type, prev_rule, store_id, operator, parame
 		except ValueError:
 			return [False, 'Enter a number please']
 	store = Store.objects.get(id=store_id)
-	baseRule = BaseRule(store=store, type=rule_type, parameter=parameter)
-	baseRule.save()
-	rule_id2 = baseRule.id
+	base_rule = BaseRule(store=store, type=rule_type, parameter=parameter)
+	base_rule.save()
+	rule_id2 = base_rule.id
 	rule2_temp = '_' + str(rule_id2)
 	cr = ComplexStoreRule(left=prev_rule, right=rule2_temp, operator=operator, store=store)
 	cr.save()
@@ -136,11 +136,10 @@ def add_complex_rule_to_store_1(rule_type, prev_rule, store_id, operator, parame
 
 def get_store_details(store_id):
 	store = Store.objects.get(pk=store_id)
-	items = list(map(lambda i: str(i), store.items.all()))
-	owners = list(map(lambda o: User.objects.get(pk=o.id).username, store.owners.all()))
-	managers = list(map(lambda m: (User.objects.get(pk=m.id).username).name, store.managers.all()))
-	return {"name": store.name, "description": store.description, "owners": owners, "managers": managers,
-	        "items": items}
+	return {"name": store.name, "description": store.description, "owners":
+		list(map(lambda o: User.objects.get(pk=o.id).username, store.owners.all())), "managers":
+		list(map(lambda m: User.objects.get(pk=m.id).username.name, store.managers.all())),
+	        "items": list(map(lambda i: str(i), store.items.all()))}
 
 
 def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2, prev_rule):
@@ -163,13 +162,13 @@ def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, 
 				return [False, 'Enter a positive number please for second parameter']
 		except ValueError:
 			return [False, 'Enter a number please for second parameter']
-	baseRule1 = BaseRule(store=store, type=rule1, parameter=parameter1)
-	baseRule1.save()
-	rule_id1 = baseRule1.id
+	base_rule1 = BaseRule(store=store, type=rule1, parameter=parameter1)
+	base_rule1.save()
+	rule_id1 = base_rule1.id
 	rule1_temp = '_' + str(rule_id1)
-	baseRule2 = BaseRule(store=store, type=rule2, parameter=parameter2)
-	baseRule2.save()
-	rule_id2 = baseRule2.id
+	base_rule2 = BaseRule(store=store, type=rule2, parameter=parameter2)
+	base_rule2.save()
+	rule_id2 = base_rule2.id
 	rule2_temp = '_' + str(rule_id2)
 	cr = ComplexStoreRule(left=rule1_temp, right=rule2_temp, operator=operator1, store=store)
 	cr.save()
@@ -188,9 +187,9 @@ def add_base_rule_to_item(item_id, rule, parameter):
 
 def add_complex_rule_to_item_1(item_id, prev_rule, rule, operator, parameter):
 	item = Item.objects.get(id=item_id)
-	baseRule = BaseItemRule(item=item, type=rule, parameter=parameter)
-	baseRule.save()
-	rule_id2 = baseRule.id
+	base_rule = BaseItemRule(item=item, type=rule, parameter=parameter)
+	base_rule.save()
+	rule_id2 = base_rule.id
 	rule2_temp = '_' + str(rule_id2)
 	cr = ComplexItemRule(left=prev_rule, right=rule2_temp, operator=operator, item=item)
 	cr.save()
@@ -199,13 +198,13 @@ def add_complex_rule_to_item_1(item_id, prev_rule, rule, operator, parameter):
 
 def add_complex_rule_to_item_2(item_id, prev_rule, rule1, parameter1, rule2, parameter2, operator1, operator2):
 	item = Item.objects.get(id=item_id)
-	baseRule1 = BaseItemRule(item=item, type=rule1, parameter=parameter1)
-	baseRule1.save()
-	rule_id1 = baseRule1.id
+	base_rule1 = BaseItemRule(item=item, type=rule1, parameter=parameter1)
+	base_rule1.save()
+	rule_id1 = base_rule1.id
 	rule1_temp = '_' + str(rule_id1)
-	baseRule2 = BaseItemRule(item=item, type=rule2, parameter=parameter2)
-	baseRule2.save()
-	rule_id2 = baseRule2.id
+	base_rule2 = BaseItemRule(item=item, type=rule2, parameter=parameter2)
+	base_rule2.save()
+	rule_id2 = base_rule2.id
 	rule2_temp = '_' + str(rule_id2)
 	cr = ComplexItemRule(left=rule1_temp, right=rule2_temp, operator=operator1, item=item)
 	cr.save()
@@ -285,18 +284,18 @@ def open_cart_for_user_in_store(store_pk, user_pk):
 
 
 def get_item_store(item_pk):
-	stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
+	# stores = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
 
 	# Might cause bug. Need to apply the item-in-one-store condition
 	return list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), Store.objects.all()))[0]
 
 
 def add_item_to_cart(user_id, item_id):
-	if user_id == None:
+	if user_id is None:
 		user = User.objects.filter(username='AnonymousUser')[0]
 	else:
 		user = User.objects.get(pk=user_id)
-	if (user.is_authenticated):
+	if user.is_authenticated:
 		item_store = get_item_store(item_id)
 		cart = get_cart(item_store, user_id)
 		if cart is None:
@@ -311,29 +310,24 @@ def is_authenticated(user_id):
 	return User.objects.get(pk=user_id).is_authenticated
 
 
-def get_item(id):
-	return Item.objects.get(id=id)
+def get_item(item_id):
+	return Item.objects.get(id=item_id)
 
 
 def amount_in_db(item_id):
-	amount_in_db = Item.objects.get(id=item_id).quantity
-	if (amount_in_db > 0):
-		return True
-	return False
+	return Item.objects.get(id=item_id).quantity > 0
 
 
 def make_cart_2(item_id):
 	item = Item.objects.get(id=item_id)
-	amount_in_db = Item.objects.get(id=item_id).quantity
-	item.quantity = amount_in_db - 1
+	item.quantity = Item.objects.get(id=item_id).quantity - 1
 	item.save()
 
 
 def remove_item_from_cart(user_id, item_id):
 	item = Item.objects.get(id=item_id)
-	cart = Cart.objects.get(customer=User.objects.get(pk=user_id))
-	cart.items.remove(item)
-	if (item.quantity == 0):
+	Cart.objects.get(customer=User.objects.get(pk=user_id)).items.remove(item)
+	if item.quantity == 0:
 		item.delete()
 
 
@@ -346,8 +340,8 @@ def len_of_super():
 
 
 def add_discount(store_id, percentage, end_date, type=None, amount=None, item=None):
-	store = Store.objects.get(id=store_id)
-	discount = Discount(store=store, type=type, percentage=percentage, amount=amount, end_date=end_date, item=item)
+	discount = Discount(store=Store.objects.get(id=store_id), type=type, percentage=percentage, amount=amount,
+	                    end_date=end_date, item=item)
 	discount.save()
 	return [True, discount.id]
 
@@ -361,25 +355,23 @@ def update_item(item_id, item_dict):
 	return True
 
 
-def item_rules_string(itemId):
+def item_rules_string(item_id):
 	base_arr = []
 	complex_arr = []
 	base = []
-	complex = []
-	item = Item.objects.get(id=itemId)
-	itemRules = ComplexItemRule.objects.all().filter(item=item)
-	for rule in reversed(itemRules):
+	complex1 = []
+	item = Item.objects.get(id=item_id)
+	for rule in reversed(ComplexItemRule.objects.all().filter(item=item)):
 		if rule.id in complex_arr:
 			continue
-		res = {"id": rule.id, "type": 2, "item": itemId, "name": string_item_rule(rule, base_arr, complex_arr)}
-		complex.append(res)
-	itemBaseRules = BaseItemRule.objects.all().filter(item=item)
-	for rule in itemBaseRules:
+		res = {"id": rule.id, "type": 2, "item": item_id, "name": string_item_rule(rule, base_arr, complex_arr)}
+		complex1.append(res)
+	for rule in BaseItemRule.objects.all().filter(item=item):
 		if rule.id in base_arr:
 			continue
-		res = {"id": rule.id, "type": 1, "item": itemId, "name": get_base_rule_item(rule.id)}
+		res = {"id": rule.id, "type": 1, "item": item_id, "name": get_base_rule_item(rule.id)}
 		base.append(res)
-	return complex + base
+	return complex1 + base
 
 
 def string_item_rule(rule, base_arr, complex_arr):
@@ -412,20 +404,18 @@ def store_rules_string(store_id):
 	base_arr = []
 	complex_arr = []
 	base = []
-	complex = []
-	storeRules = ComplexStoreRule.objects.all().filter(store_id=store_id)
-	for rule in reversed(storeRules):
+	complex1 = []
+	for rule in reversed(ComplexStoreRule.objects.all().filter(store_id=store_id)):
 		if rule.id in complex_arr:
 			continue
 		res = {"id": rule.id, "type": 2, "store": store_id, "name": string_store_rule(rule, base_arr, complex_arr)}
-		complex.append(res)
-	storeBaseRules = BaseRule.objects.all().filter(store_id=store_id)
-	for rule in storeBaseRules:
+		complex1.append(res)
+	for rule in BaseRule.objects.all().filter(store_id=store_id):
 		if rule.id in base_arr:
 			continue
 		res = {"id": rule.id, "type": 1, "store": store_id, "name": get_base_rule(rule.id)}
 		base.append(res)
-	return complex + base
+	return complex1 + base
 
 
 def string_store_rule(rule, base_arr, complex_arr):
@@ -457,9 +447,7 @@ def get_base_rule(rule_id):
 
 
 def get_store_items(store_id):
-	store = Store.objects.get(pk=store_id)
-	items = store.items.all()
-	return list(map(lambda i: i.__dict__, items))
+	return list(map(lambda i: i.__dict__, Store.objects.get(pk=store_id).items.all()))
 
 
 def update_store(store_id, store_dict):
@@ -475,21 +463,18 @@ def get_discount_for_store(pk, amount, total):
 	store_of_item = Store.objects.get(items__id__contains=pk)
 	if not (len(store_of_item.discounts.all()) == 0):
 		discount_ = store_of_item.discounts.all()[0]
-		now = datetime.datetime.now().date()
-		if (discount_.end_date >= now):
+		if discount_.end_date >= datetime.datetime.now().date():
 			conditions = discount_.conditions.all()
-			if (len(conditions) > 0):
+			if len(conditions) > 0:
 				for cond in conditions:
-					if (amount <= cond.max_amount and amount >= cond.min_amount):
+					if cond.max_amount >= amount >= cond.min_amount:
 						percentage = discount_.percentage
 						total = (100 - percentage) / 100 * float(total)
-						str_ret = percentage
-						return [str_ret, total]
+						return [percentage, total]
 			else:
 				percentage = discount_.percentage
 				total = (100 - percentage) / 100 * float(total)
-				str_ret = percentage
-				return [str_ret, total]
+				return [percentage, total]
 	else:
 		return [0, total]
 
@@ -498,12 +483,11 @@ def get_discount_for_item(pk, amount, total):
 	item = Item.objects.get(id=pk)
 	if not (len(item.discounts.all()) == 0):
 		item_discount = item.discounts.all()[0]
-		now = datetime.datetime.now().date()
-		if (item_discount.end_date >= now):
+		if item_discount.end_date >= datetime.datetime.now().date():
 			conditions_item = item_discount.conditions.all()
-			if (len(conditions_item) > 0):
+			if len(conditions_item) > 0:
 				for cond_i in conditions_item:
-					if (amount <= cond_i.max_amount and amount >= cond_i.min_amount):
+					if cond_i.max_amount >= amount >= cond_i.min_amount:
 						percentage = item_discount.percentage
 						total = (100 - percentage) / 100 * float(total)
 						str_ret = percentage
@@ -518,21 +502,18 @@ def get_discount_for_item(pk, amount, total):
 
 
 def delete_item(item_id):
-	item = Item.objects.get(pk=item_id)
-	item.delete()
+	Item.objects.get(pk=item_id).delete()
 	return True
 
 
 def get_store_creator(store_id):
-	store = Store.objects.get(pk=store_id)
-	return store.owners.all()[0]  # creator
+	return Store.objects.get(pk=store_id).owners.all()[0]  # creator
 
 
 def get_user_notifications(user_id):
-	user_ntfcs = NotificationUser.objects.filter(user=user_id)
-	ntfcs_ids = list(map(lambda n: n.notification_id, user_ntfcs))
-	ntfcs = list(map(lambda pk: Notification.objects.get(id=pk), ntfcs_ids))
-	return list(map(lambda n: n.__dict__, ntfcs))
+	return list(map(lambda n: n.__dict__, list(map(lambda pk: Notification.objects.get(id=pk),
+	                                               list(map(lambda n: n.notification_id,
+	                                                        NotificationUser.objects.filter(user=user_id)))))))
 
 
 def mark_notification_read(user_id):
