@@ -231,16 +231,21 @@ def get_item_details(item_id):
 
 
 def add_item_to_cart(user_id, item_id):
-	user = c_User.get_user(user_id=user_id)
-	if user.is_authenticated():
+
+	if not (user_id ==None):
 		item_store_pk = c_Store.get_item_store(item_pk=item_id).pk
-		cart = c_Cart.get_cart(store_pk=item_store_pk, user_id=user.pk)
+		cart = c_Cart.get_cart(store_pk=item_store_pk, user_id=user_id)
 		if cart is None:
 			cart = c_Cart(store_pk=item_store_pk, user_pk=user_id)
 		cart.add_item(item_id=item_id)
 		return True
-	return False
+	else:
 
+		return False
+
+
+def get_item(id1):
+	return  Item.objects.get(id=id1)
 
 def is_authenticated(user_id):
 	return c_User.get_user(user_id=user_id).is_authenticated()
@@ -523,12 +528,12 @@ def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_detail
 		total_after_discount = total
 		# check item rules
 		if check_item_rules(curr_item, amount, user) is False:
-			messages_ = "you can't buy due to item policies"
+			messages_ += "you can't buy due to item policies"
 			return False, 0, 0, messages_
 		store_of_item = Store.objects.get(items__id__contains=item_id)
 		# check store rules
 		if check_store_rules(store_of_item, amount, shipping_details['country'], user) is False:
-			messages_ = "you can't buy due to store policies"
+			messages_ += "you can't buy due to store policies"
 			return False, 0, 0, messages_
 		total_after_discount = apply_discounts(store=store_of_item, curr_item=curr_item, amount=int(amount))
 
@@ -566,8 +571,9 @@ def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_detail
 			curr_item.save()
 
 			# store = get_item_store(_item.pk)
-			item_subject = ItemSubject(curr_item.pk)
+
 			try:
+				item_subject = ItemSubject(curr_item.pk)
 				if (user.is_authenticated):
 					notification = Notification.objects.create(
 						msg=user.username + ' bought ' + str(amount) + ' pieces of ' + curr_item.name)
@@ -602,10 +608,10 @@ def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_detail
 			if not (supply_transaction_id == -1):
 				messages_ += '\n' + 'failed and aborted supply! please try again!'
 				chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
-			messages_ = "can`t buy this item " + str(item_id) + '  :  ' + str(a)
+			messages_ = "Exception! "  '  :  ' + str(a)
 			return False, 0, 0, messages_
 	else:
-		messages_ = "no such amount for item : " + str(item_id)
+		messages_ = "no such amount for item : " + str(item_id) +'   messages_ : ' +messages_
 		return False, 0, 0, messages_
 
 
