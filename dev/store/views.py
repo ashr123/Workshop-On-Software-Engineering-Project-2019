@@ -463,8 +463,7 @@ def buy_item(request, pk):
 			_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
 			amount_in_db = _item.quantity
-
-			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, amount_in_db, request.user,shipping_details, card_details)
+			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, amount_in_db, request.user, shipping_details, card_details)
 
 			if valid == False:
 				messages.warning(request, messages_)
@@ -917,11 +916,9 @@ def add_complex_rule_to_item_2(request, rule_id_before, item_id, which_button):
 
 def remove_rule_from_store(request, pk, type, store):
 	if type == 2:
-		complexRule = ComplexStoreRule.objects.get(id=pk)
-		delete_complex(complexRule.id)
+		service.delete_complex_rule(pk)
 	else:
-		baseRule = BaseRule.objects.get(id=pk)
-		delete_base(baseRule.id)
+		service.delete_base_rule(pk)
 	messages.success(request, 'remove rule successfully!')
 	text = SearchForm()
 	user_name = request.user.username
@@ -932,31 +929,14 @@ def remove_rule_from_store(request, pk, type, store):
 	return redirect('/store/update/' + str(store))
 
 
-def delete_complex(rule_id):
-	rule = ComplexStoreRule.objects.get(id=rule_id)
-	if rule.left[0] == '_':
-		BaseRule.objects.get(id=int(rule.left[1:])).delete()
-	else:
-		delete_complex(int(rule.left))
-	if rule.right[0] == '_':
-		BaseRule.objects.get(id=int(rule.right[1:])).delete()
-	else:
-		delete_complex(int(rule.right))
-	rule.delete()
 
-
-def delete_base(rule_id):
-	rule = BaseRule.objects.get(id=rule_id)
-	rule.delete()
 
 
 def remove_rule_from_item(request, pk, type, item):
 	if type == 2:
-		complexRule = ComplexItemRule.objects.get(id=pk)
-		delete_complex_item(complexRule.id)
+		service.delete_complex_item_rule(pk)
 	else:
-		baseRule = BaseItemRule.objects.get(id=pk)
-		delete_base_item(baseRule.id)
+		service.delete_base_item_rule(pk)
 	messages.success(request, 'remove rule successfully!')
 	text = SearchForm()
 	user_name = request.user.username
@@ -967,22 +947,9 @@ def remove_rule_from_item(request, pk, type, item):
 	return redirect('/store/update_item/' + str(item))
 
 
-def delete_complex_item(rule_id):
-	rule = ComplexItemRule.objects.get(id=rule_id)
-	if rule.left[0] == '_':
-		BaseItemRule.objects.get(id=int(rule.left[1:])).delete()
-	else:
-		delete_complex_item(int(rule.left))
-	if rule.right[0] == '_':
-		BaseItemRule.objects.get(id=int(rule.right[1:])).delete()
-	else:
-		delete_complex_item(int(rule.right))
-	rule.delete()
 
 
-def delete_base_item(rule_id):
-	rule = BaseItemRule.objects.get(id=rule_id)
-	rule.delete()
+
 
 
 # sss---------------------------------------------------------------------------------------------

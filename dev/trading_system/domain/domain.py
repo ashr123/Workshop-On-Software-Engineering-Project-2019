@@ -273,19 +273,20 @@ def len_of_super():
 
 
 def add_discount(store_id, percentage, end_date, type=None, amount=None, item_id=None):
-	d = Discount(store_id=store_id, type=type,percentage=percentage,end_date=end_date,amount=amount,item_id=item_id)
+	d = Discount(store_id=store_id, type=type, percentage=percentage, end_date=end_date, amount=amount, item_id=item_id)
 	return [True, d.id]
+
 
 def add_discount(store_id, percentage, end_date, type=None, amount=None, item_id=None):
-	d = Discount(store_id=store_id, type=type,percentage=percentage,end_date=end_date,amount=amount,item_id=item_id)
+	d = Discount(store_id=store_id, type=type, percentage=percentage, end_date=end_date, amount=amount, item_id=item_id)
 	d.save()
 	return [True, d.id]
 
+
 def add_complex_discount_to_store(store_id, left, right, operator):
-	d= ComplexDiscount(store_id=store_id, left=left, right=right, operator=operator)
+	d = ComplexDiscount(store_id=store_id, left=left, right=right, operator=operator)
 	d.save()
 	return [True, d.pk]
-
 
 
 def update_item(item_id, item_dict):
@@ -383,6 +384,7 @@ def get_base_rule(rule_id):
 		return rule.type + ': Only'
 	return rule.type + ': ' + rule.parameter
 
+
 # sss-----------------------------------------------------------------------------------------
 def store_discounts_string(store_id):
 	base_arr = []
@@ -392,7 +394,8 @@ def store_discounts_string(store_id):
 	for discount in reversed(ComplexDiscount.objects.all().filter(store_id=store_id)):
 		if discount.id in complex_arr:
 			continue
-		res = {"id": discount.id, "type": 2, "store": store_id, "name": string_store_discount(discount, base_arr, complex_arr)}
+		res = {"id": discount.id, "type": 2, "store": store_id,
+		       "name": string_store_discount(discount, base_arr, complex_arr)}
 		complex.append(res)
 	for discount in Discount.objects.all().filter(store_id=store_id):
 		if discount.id in base_arr:
@@ -436,7 +439,8 @@ def get_base_discount(disc_id):
 			res = 'Buy at least ' + str(discount.amount) + ' items and get ' + str(discount.percentage) + ' % off.'
 		else:
 			item = Item.objects.get(id=discount.item.id)
-			res = 'Buy at least ' + str(discount.amount) + ' copies of ' + item.name + ' and get ' + str(discount.percentage) + ' % off.'
+			res = 'Buy at least ' + str(discount.amount) + ' copies of ' + item.name + ' and get ' + str(
+				discount.percentage) + ' % off.'
 	else:
 		if discount.item is None:
 			res = str(discount.percentage) + ' % off.'
@@ -445,6 +449,8 @@ def get_base_discount(disc_id):
 			res = str(discount.percentage) + ' % off on ' + item.name
 
 	return res
+
+
 # sss--------------------------------------------------------------------------------------
 
 
@@ -737,11 +743,11 @@ def check_item_rule(rule, amount, base_arr, complex_arr, user):
 		complex_arr.append(int(rule.right))
 		tosend = ComplexItemRule.objects.get(id=int(rule.right))
 		right = check_item_rule(tosend, amount, base_arr, complex_arr, user)
-	if rule.operator == "AND" and (left == False or right == False):
+	if rule.operator == "AND" and (left is False or right is False):
 		return False
-	if rule.operator == "OR" and (left == False and right == False):
+	if rule.operator == "OR" and (left is False and right is False):
 		return False
-	if rule.operator == "XOR" and ((left == False and right == False) or (left == True and right == True)):
+	if rule.operator == "XOR" and ((left is False and right is False) or (left is True and right is True)):
 		return False
 	return True
 
@@ -858,3 +864,62 @@ def apply_base(disc, curr_item, amount):
 		print(curr_item.id)
 		print(base.item.id)
 		return -1
+
+
+def delete_complex(rule_id):
+	rule = ComplexStoreRule.objects.get(id=rule_id)
+	if rule.left[0] == '_':
+		BaseRule.objects.get(id=int(rule.left[1:])).delete()
+	else:
+		delete_complex(int(rule.left))
+	if rule.right[0] == '_':
+		BaseRule.objects.get(id=int(rule.right[1:])).delete()
+	else:
+		delete_complex(int(rule.right))
+	rule.delete()
+
+
+def delete_complex_rule(rule_id):
+	complexRule = ComplexStoreRule.objects.get(id=rule_id)
+	delete_complex(complexRule.id)
+
+
+def delete_base(rule_id):
+	rule = BaseRule.objects.get(id=rule_id)
+	rule.delete()
+
+
+def delegte_base_rule(rule_id):
+	baseRule = BaseRule.objects.get(id=rule_id)
+	delete_base(baseRule.id)
+
+
+def delete_complex_item(rule_id):
+	rule = ComplexItemRule.objects.get(id=rule_id)
+	if rule.left[0] == '_':
+		BaseItemRule.objects.get(id=int(rule.left[1:])).delete()
+	else:
+		delete_complex_item(int(rule.left))
+	if rule.right[0] == '_':
+		BaseItemRule.objects.get(id=int(rule.right[1:])).delete()
+	else:
+		delete_complex_item(int(rule.right))
+	rule.delete()
+
+
+
+def delete_complex_item_rule(rule_id):
+	complexRule = ComplexItemRule.objects.get(id=pk)
+	delete_complex_item(complexRule.id)
+
+
+def delete_base_item(rule_id):
+	rule = BaseItemRule.objects.get(id=rule_id)
+	rule.delete()
+
+
+
+def delete_base_item_rule(rule_id):
+	baseRule = BaseItemRule.objects.get(id=rule_id)
+	delete_base_item(baseRule.id)
+
