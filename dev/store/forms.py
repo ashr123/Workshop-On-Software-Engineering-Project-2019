@@ -204,7 +204,7 @@ class PayForm(forms.Form):
 
 class ShippingForm(forms.Form):
 	name = forms.CharField(label='Customer', max_length=25, required=True)
-	street = forms.CharField(label='Street', max_length=30)
+	address = forms.CharField(label='Street', max_length=30)
 	city = forms.CharField(label='City', max_length=25)
 	country = forms.CharField(max_length=25)
 	zip = forms.IntegerField(label='Zip Code')

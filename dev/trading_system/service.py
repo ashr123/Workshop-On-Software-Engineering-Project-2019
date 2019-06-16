@@ -3,7 +3,7 @@ import json
 from guardian.decorators import permission_required_or_403
 
 from store.models import Store
-from trading_system import domain
+from trading_system.domain import domain
 
 
 def buy_item():
@@ -57,8 +57,8 @@ def add_complex_rule_to_item_2(item_id, prev_rule, rule1, parameter1, rule2, par
 	                                         operator2)
 
 
-@permission_required_or_403('ADD_ITEM', (Store, 'id', 'store_id'))
-def add_item_to_store(item_json, store_id):
+# @permission_required_or_403('ADD_ITEM', (Store, 'id', 'store_id'))
+def add_item_to_store(item_json, store_id, user_id):
 	item_dict = json.loads(item_json)
 	return domain.add_item_to_store(price=item_dict['price'],
 	                                name=item_dict['name'],
@@ -72,8 +72,8 @@ def can_remove_store(store_id, user_id):
 	return domain.can_remove_store(store_id=store_id, user_id=user_id)
 
 
-def have_no_more_stores(owner_name):
-	return domain.have_no_more_stores(user_pk=owner_name)
+def have_no_more_stores(user_pk):
+	return domain.have_no_more_stores(user_pk=user_pk)
 
 
 def delete_store(store_id):
@@ -171,3 +171,7 @@ def add_item_to_cart(user_id, item_id):
 
 def get_item(id1):
 	return domain.get_item(id1)
+
+
+def buy_logic(pk, amount, amount_in_db, user, shipping_details, card_details):
+	return domain.buy_logic(pk, amount, amount_in_db, user, shipping_details, card_details)

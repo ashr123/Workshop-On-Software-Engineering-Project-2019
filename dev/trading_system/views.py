@@ -152,22 +152,15 @@ class SearchListView(ListView):
 	model = Item
 	template_name = 'trading_system/search_results.html'
 
-	def get_queryset(self):
-		text = SearchForm(self.request.GET)
-		if text.is_valid():
-			# spell checker
-			# correct_word = checker.Spellchecker(text)
-			# items = Item.objects.filter(name=correct_word)
-			return service.search(text.cleaned_data.get('search'))
-
-	# def get_context_data(self, **kwargs):
-	# 	context = super().get_context_data(**kwargs)  # get the default context data
-	# 	context['text'] = SearchForm()
-
 	def get_context_data(self, **kwargs):
 		text = SearchForm()
-		context = super(SearchListView, self).get_context_data(**kwargs)  # get the default context data
+		# context = super(SearchListView, self).get_context_data(**kwargs)  # get the default context data
+		text = SearchForm(self.request.GET)
+		if text.is_valid():
+			items = service.search(text.cleaned_data.get('search'))
+		context = {}
 		context['text'] = text
+		context['object_list'] = items
 
 		return context
 
