@@ -423,3 +423,13 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			'shipping': ShippingForm(),
 		}
 		return render(request, 'trading_system/cart_test.html', context)
+
+
+def view_discounts(request, pk):
+	discounts = service.get_discounts_serach(pk)
+	text = SearchForm()
+	context = {
+		'text': text,
+		'discounts': discounts
+	}
+	return render(request, 'trading_system/view_discounts.html', context)

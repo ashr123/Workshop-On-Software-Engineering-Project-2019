@@ -201,3 +201,6 @@ def delete_complex_discount(disc):
 
 def delete_base_store_discount(disc):
 	return domain.delete_base_discount(disc)
+
+def get_discounts_serach(item_id):
+	return domain.get_discounts_serach(item_id)

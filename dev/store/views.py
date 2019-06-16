@@ -223,13 +223,14 @@ class ItemUpdate(UpdateView):
 
 	def get_object(self, queryset=None):
 		item_details = service.get_item_details(item_id=self.kwargs['pk'])
-		return Item.objects.create(
-			name=item_details['name'],
-			description=item_details['description'],
-			category=item_details['category'],
-			price=item_details['price'],
-			quantity=item_details['quantity']
-		)
+		return Item.objects.get(id=self.kwargs['pk'])
+		#Item.objects.create(
+		# 	name=item_details['name'],
+		# 	description=item_details['description'],
+		# 	category=item_details['category'],
+		# 	price=item_details['price'],
+		# 	quantity=item_details['quantity']
+		# )
 
 	def form_valid(self, form):
 		service.update_item(item_id=self.kwargs['pk'], item_dict=form.cleaned_data)
@@ -325,10 +326,11 @@ class StoreUpdate(UpdateView):
 
 	def get_object(self, queryset=None):
 		store_details = service.get_store_details(store_id=self.kwargs['pk'])
-		return Store.objects.create(
-			name=store_details['name'],
-			description=store_details['description']
-		)
+		return Store.objects.get(id=self.kwargs['pk'])
+		# 	Store.objects.create(
+		# 	name=store_details['name'],
+		# 	description=store_details['description']
+		# )
 
 	def form_valid(self, form):
 		service.update_store(store_id=self.kwargs['pk'], store_dict=form.cleaned_data)

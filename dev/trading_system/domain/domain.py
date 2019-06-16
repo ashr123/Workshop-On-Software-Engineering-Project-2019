@@ -448,15 +448,12 @@ def get_base_discount(disc_id):
 				discount.percentage) + ' % off.'
 	else:
 		if discount.item is None:
-			res = str(discount.percentage) + ' % off.'
+			res = str(discount.percentage) + ' % off on the entire store.'
 		else:
 			item = Item.objects.get(id=discount.item.id)
 			res = str(discount.percentage) + ' % off on ' + item.name
 
 	return res
-
-
-# sss--------------------------------------------------------------------------------------
 
 
 def get_store_items(store_id):
@@ -944,4 +941,85 @@ def delete_base_discount(disc_id):
 	discount.delete()
 
 
+def get_discounts_serach(item_id):
+	store_id = Store.objects.get(items__id__contains=item_id).id
+	base_arr = []
+	complex_arr = []
+	base = []
+	complex = []
+	for discount in reversed(ComplexDiscount.objects.all().filter(store_id=store_id)):
+		if discount.id in complex_arr:
+			continue
+		check = []
+		res = search_store_discount(discount, base_arr, complex_arr, item_id, check)
+		if len(check) > 0:
+			complex.append(res)
+	for discount in Discount.objects.all().filter(store_id=store_id):
+		if discount.id in base_arr:
+			continue
+		result = search_base_discount(discount.id, item_id)
+		if result['is_item'] is True:
+			base.append(result['discount'])
+	return complex + base
 
+def search_store_discount(disc, base_arr, complex_arr, item_id, check):
+	curr = '('
+	if disc.left[0] == '_':
+		base_arr.append(int(disc.left[1:]))
+		result = search_base_discount(int(disc.left[1:]), item_id)
+		curr += result['discount']
+		if result['is_item'] is True:
+			check.append(1)
+	else:
+		complex_arr.append(int(disc.left))
+		tosend = ComplexDiscount.objects.get(id=int(disc.left))
+		curr += search_store_discount(tosend, base_arr, complex_arr, item_id, check)
+	curr += ' ' + disc.operator + ' '
+	if disc.right[0] == '_':
+		base_arr.append(int(disc.right[1:]))
+		result = search_base_discount(int(disc.right[1:]), item_id)
+		curr += result['discount']
+		if result['is_item'] is True:
+			check.append(1)
+	else:
+		complex_arr.append(int(disc.right))
+		tosend = ComplexDiscount.objects.get(id=int(disc.right))
+		curr += search_store_discount(tosend, base_arr, complex_arr, item_id, check)
+	curr += ')'
+	return curr
+
+
+def search_base_discount(disc_id, item_id):
+	discount = Discount.objects.get(id=disc_id)
+	flag = False
+	today = datetime.date.today()
+	if discount.end_date >= today:
+		if discount.type == 'MAX':
+			if discount.item is None:
+				res = str(discount.percentage) + ' % off, up to ' + str(discount.amount) + ' items.'
+				flag = True
+			else:
+				item = Item.objects.get(id=discount.item.id)
+				res = str(discount.percentage) + ' % off on ' + item.name + ', up to ' + str(discount.amount) + ' of these.'
+				if item.id == item_id:
+					flag = True
+		elif discount.type == 'MIN':
+			if discount.item is None:
+				res = 'Buy at least ' + str(discount.amount) + ' items and get ' + str(discount.percentage) + ' % off.'
+				flag = True
+			else:
+				item = Item.objects.get(id=discount.item.id)
+				res = 'Buy at least ' + str(discount.amount) + ' copies of ' + item.name + ' and get ' + str(
+					discount.percentage) + ' % off.'
+				if item.id == item_id:
+					flag = True
+		else:
+			if discount.item is None:
+				res = str(discount.percentage) + ' % off on the entire store.'
+				flag = True
+			else:
+				item = Item.objects.get(id=discount.item.id)
+				res = str(discount.percentage) + ' % off on ' + item.name
+				if item.id == item_id:
+					flag = True
+	return {"is_item": flag, "discount": res}
