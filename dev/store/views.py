@@ -995,6 +995,7 @@ class NotificationsListView(ListView):
 
 
 def delete_owner(request, pk_owner, pk_store):
+	print('remove omanager: ',pk_owner)
 	if (service.remove_manager_from_store(pk_store, pk_owner)):
 		messages.success(request, 'delete owner')  # <-
 		return redirect('/store/home_page_owner/')

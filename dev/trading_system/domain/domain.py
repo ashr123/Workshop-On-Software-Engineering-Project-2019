@@ -468,11 +468,28 @@ def remove_manager_from_store(store_id, m_id):
 	try:
 		store_ = Store.objects.get(pk=store_id)
 		user = User.objects.get(id=m_id)
-		if len(Store.objects.filter(id=store_id, owners__id__in=[m_id])) == 0:
+		print('---------------remove manager : ',user.username)
+		is_manager = len(Store.objects.filter(id=store_id, owners__id__in=[m_id])) == 0
+		if (is_manager):
 			store_.managers.remove(user)
+			if have_no_more_stores(m_id):
+				print('[[[[[[[[[[[[[[[[[[[[[')
+				owners_group = Group.objects.get(name="store_owners")
+				managers_group = Group.objects.get_or_create(name="store_managers")
+				managers_group = Group.objects.get(name="store_managers")
+				# user = User.objects.get(id = owner)
+				managers_group.user_set.remove(user)
+				owners_group.user_set.remove(user)
 			return True
 		else:
 			store_.owners.remove(user)
+			if have_no_more_stores(m_id):
+				print('[[[[[[[[[999999999999999999[[[[[[[[[[[[')
+				owners_group = Group.objects.get(name="store_owners")
+				managers_group = Group.objects.get_or_create(name="store_managers")
+				managers_group = Group.objects.get(name="store_managers")
+				managers_group.user_set.remove(user)
+				owners_group.user_set.remove(user)
 			return True
 	except:
 		return False

@@ -18,7 +18,7 @@ class User():
 		return self._model.username
 
 	def have_no_more_stores(self):
-		StoreModule.Store.owns_stores(user_id= self.pk)
+		StoreModule.Store.owns_stores(user_id= self.pk) and StoreModule.Store.manages_stores(user_id= self.pk)
 
 	def owns_no_more_stores(self):
 		return StoreModule.Store.owns_stores(user_id= self.pk)

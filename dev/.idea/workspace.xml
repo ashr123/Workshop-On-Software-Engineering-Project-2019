@@ -3,11 +3,16 @@
   <component name="ChangeListManager">
     <list default="true" id="7f206d29-0b35-4da3-95c1-1baab1223eb3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/migrations/0001_initial.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/store/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/trading_system/domain/domain.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/domain.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/service.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/trading_system/domain/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/trading_system/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/easy-install.pth" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/easy-install.pth" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/setuptools.pth" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/setuptools.pth" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Scripts/easy_install-3.7.exe" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/easy_install-3.7.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Scripts/easy_install-script.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/easy_install-script.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Scripts/easy_install.exe" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/easy_install.exe" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -53,8 +58,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/store/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="518">
-              <caret line="743" column="20" selection-start-line="743" selection-start-column="20" selection-end-line="743" selection-end-column="20" />
+            <state relative-caret-position="276">
+              <caret line="998" column="33" selection-start-line="998" selection-start-column="33" selection-end-line="998" selection-end-column="33" />
             </state>
           </provider>
         </entry>
@@ -62,8 +67,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/trading_system/domain/domain.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="286">
-              <caret line="734" column="38" selection-start-line="734" selection-start-column="38" selection-end-line="734" selection-end-column="38" />
+            <state relative-caret-position="351">
+              <caret line="486" column="50" selection-start-line="486" selection-start-column="50" selection-end-line="486" selection-end-column="50" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -72,9 +77,36 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/trading_system/domain/user.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="189">
+              <caret line="20" column="86" lean-forward="true" selection-start-line="20" selection-start-column="86" selection-end-line="20" selection-end-column="86" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/trading_system/domain/store.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="171">
+              <caret line="115" column="8" selection-start-line="115" selection-start-column="8" selection-end-line="115" selection-end-column="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/store/forms.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="483">
+              <caret line="124" column="22" selection-start-line="124" selection-start-column="22" selection-end-line="124" selection-end-column="22" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/store/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2948">
+            <state relative-caret-position="2278">
               <caret line="136" column="38" selection-start-line="136" selection-start-column="38" selection-end-line="136" selection-end-column="38" />
             </state>
           </provider>
@@ -83,8 +115,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="149">
-              <caret line="172" selection-start-line="172" selection-end-line="172" />
+            <state relative-caret-position="477">
+              <caret line="107" column="31" lean-forward="true" selection-start-line="107" selection-start-column="31" selection-end-line="107" selection-end-column="31" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -104,8 +136,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>get_queryset</find>
-      <find>user_has_cart_for_store</find>
       <find>form_class</find>
       <find>add_base_rule_to_store</find>
       <find>get_object</find>
@@ -134,6 +164,8 @@
       <find>apply_di</find>
       <find>add_comple</find>
       <find>add_discount</find>
+      <find>dele</find>
+      <find>remove_</find>
     </findStrings>
     <replaceStrings>
       <replace>UnitTesting.driver</replace>
@@ -146,7 +178,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/store/templates/store/homepage_store_owner.html" />
         <option value="$PROJECT_DIR$/store/templates/store/item_list.html" />
         <option value="$PROJECT_DIR$/store/templates/store/store_detail.html" />
         <option value="$PROJECT_DIR$/trading_system/observer.py" />
@@ -196,13 +227,14 @@
         <option value="$PROJECT_DIR$/store/templates/store/store_list.html" />
         <option value="$PROJECT_DIR$/trading_system/service.py" />
         <option value="$PROJECT_DIR$/store/views.py" />
+        <option value="$PROJECT_DIR$/trading_system/domain/user.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/domain.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="width" value="975" />
-    <option name="height" value="1047" />
+    <option name="height" value="1050" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
@@ -212,6 +244,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -227,6 +260,12 @@
             <path>
               <item name="dev" type="b2602c69:ProjectViewProjectNode" />
               <item name="dev" type="462c0819:PsiDirectoryNode" />
+              <item name="store" type="462c0819:PsiDirectoryNode" />
+              <item name="migrations" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dev" type="462c0819:PsiDirectoryNode" />
               <item name="trading_system" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -235,11 +274,16 @@
               <item name="trading_system" type="462c0819:PsiDirectoryNode" />
               <item name="domain" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dev" type="462c0819:PsiDirectoryNode" />
+              <item name="trading_system" type="462c0819:PsiDirectoryNode" />
+              <item name="migrations" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -593,6 +637,8 @@
       <workItem from="1560433382263" duration="11999000" />
       <workItem from="1560589823564" duration="8024000" />
       <workItem from="1560620470642" duration="2075000" />
+      <workItem from="1560674604199" duration="741000" />
+      <workItem from="1560684674925" duration="1048000" />
     </task>
     <servers />
   </component>
@@ -629,7 +675,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="364147000" />
+    <option name="totallyTimeSpent" value="365936000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -641,10 +687,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.48010612" visible="true" weight="0.27665246" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.48010612" visible="true" weight="0.13730744" />
       <window_info id="Structure" order="1" sideWeight="0.5198939" side_tool="true" weight="0.1891892" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -657,7 +703,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49255663" weight="0.41555557" />
+      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49255663" visible="true" weight="0.20875913" />
       <window_info anchor="bottom" id="Python Console" order="11" weight="0.1425926" />
       <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.21440823" side_tool="true" weight="0.359147" />
       <window_info anchor="bottom" id="Database Console" order="13" weight="0.3291536" />
@@ -844,12 +890,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/store/templates/store/item_detail.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/store/templates/store/item_form.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/store/templates/store/add_base_rule_to_store.html">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -1063,13 +1103,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/domain.py" />
-    <entry file="file://$PROJECT_DIR$/store/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2948">
-          <caret line="136" column="38" selection-start-line="136" selection-start-column="38" selection-end-line="136" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/store/templates/store/add_complex_discount_to_store.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="110">
@@ -1096,13 +1129,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/store/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2662">
-          <caret line="124" column="22" selection-start-line="124" selection-start-column="22" selection-end-line="124" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/templates/trading_system/search_results.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="154">
@@ -1124,27 +1150,55 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/store/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2278">
+          <caret line="136" column="38" selection-start-line="136" selection-start-column="38" selection-end-line="136" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/store/forms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="483">
+          <caret line="124" column="22" selection-start-line="124" selection-start-column="22" selection-end-line="124" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/store/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="276">
+          <caret line="998" column="33" selection-start-line="998" selection-start-column="33" selection-end-line="998" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/service.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="149">
-          <caret line="172" selection-start-line="172" selection-end-line="172" />
+        <state relative-caret-position="477">
+          <caret line="107" column="31" lean-forward="true" selection-start-line="107" selection-start-column="31" selection-end-line="107" selection-end-column="31" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/store/views.py">
+    <entry file="file://$PROJECT_DIR$/trading_system/domain/store.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="518">
-          <caret line="743" column="20" selection-start-line="743" selection-start-column="20" selection-end-line="743" selection-end-column="20" />
+        <state relative-caret-position="171">
+          <caret line="115" column="8" selection-start-line="115" selection-start-column="8" selection-end-line="115" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/trading_system/domain/user.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="20" column="86" lean-forward="true" selection-start-line="20" selection-start-column="86" selection-end-line="20" selection-end-column="86" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/domain/domain.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="734" column="38" selection-start-line="734" selection-start-column="38" selection-end-line="734" selection-end-column="38" />
+        <state relative-caret-position="351">
+          <caret line="486" column="50" selection-start-line="486" selection-start-column="50" selection-end-line="486" selection-end-column="50" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
