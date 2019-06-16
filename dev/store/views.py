@@ -950,16 +950,12 @@ def remove_rule_from_item(request, pk, type, item):
 
 
 
-
-
 # sss---------------------------------------------------------------------------------------------
 def remove_discount_from_store(request, pk, type, store):
 	if type == 2:
-		complexDiscount = ComplexDiscount.objects.get(id=pk)
-		delete_complex_discount(complexDiscount.id)
+		service.delete_complex_discount(pk)
 	else:
-		baseDiscount = Discount.objects.get(id=pk)
-		delete_base_discount(baseDiscount.id)
+		service.delete_base_store_discount(pk)
 	messages.success(request, 'remove discount successfully!')
 	text = SearchForm()
 	user_name = request.user.username
@@ -970,22 +966,9 @@ def remove_discount_from_store(request, pk, type, store):
 	return redirect('/store/update/' + str(store))
 
 
-def delete_complex_discount(disc_id):
-	discount = ComplexDiscount.objects.get(id=disc_id)
-	if discount.left[0] == '_':
-		Discount.objects.get(id=int(discount.left[1:])).delete()
-	else:
-		delete_complex_discount(int(discount.left))
-	if discount.right[0] == '_':
-		Discount.objects.get(id=int(discount.right[1:])).delete()
-	else:
-		delete_complex_discount(int(discount.right))
-	discount.delete()
 
 
-def delete_base_discount(disc_id):
-	discount = Discount.objects.get(id=disc_id)
-	discount.delete()
+
 # sss--------------------------------------------------------------------------------------------------
 
 

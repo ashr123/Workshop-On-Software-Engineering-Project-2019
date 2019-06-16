@@ -182,16 +182,22 @@ def store_discounts_string(store_id):
 
 
 def delete_complex_rule(rule_id):
-	return domain.delete_complex_rule(rule_id)
+	return domain.delete_complex(rule_id)
 
 
 def delete_base_rule(rule_id):
-	return domain.delete_base_rule(rule_id)
+	return domain.delete_base(rule_id)
 
 
 def delete_complex_item_rule(rule_id):
-	return domain.delete_complex_item_rule(rule_id)
+	return domain.delete_complex_item(rule_id)
 
 
 def delete_base_item_rule(rule_id):
-	return domain.delete_base_item_rule(rule_id)
+	return domain.delete_base_item(rule_id)
+
+def delete_complex_discount(disc):
+	return domain.delete_complex_discount(disc)
+
+def delete_base_store_discount(disc):
+	return domain.delete_base_discount(disc)

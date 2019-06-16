@@ -879,9 +879,9 @@ def delete_complex(rule_id):
 	rule.delete()
 
 
-def delete_complex_rule(rule_id):
-	complexRule = ComplexStoreRule.objects.get(id=rule_id)
-	delete_complex(complexRule.id)
+# def delete_complex_rule(rule_id):
+# 	complexRule = ComplexStoreRule.objects.get(id=rule_id)
+# 	delete_complex(complexRule.id)
 
 
 def delete_base(rule_id):
@@ -889,9 +889,9 @@ def delete_base(rule_id):
 	rule.delete()
 
 
-def delegte_base_rule(rule_id):
-	baseRule = BaseRule.objects.get(id=rule_id)
-	delete_base(baseRule.id)
+# def delete_base_rule(rule_id):
+# 	baseRule = BaseRule.objects.get(id=rule_id)
+# 	delete_base(baseRule.id)
 
 
 def delete_complex_item(rule_id):
@@ -908,9 +908,9 @@ def delete_complex_item(rule_id):
 
 
 
-def delete_complex_item_rule(rule_id):
-	complexRule = ComplexItemRule.objects.get(id=pk)
-	delete_complex_item(complexRule.id)
+# def delete_complex_item_rule(rule_id):
+# 	complexRule = ComplexItemRule.objects.get(id=pk)
+# 	delete_complex_item(complexRule.id)
 
 
 def delete_base_item(rule_id):
@@ -919,7 +919,35 @@ def delete_base_item(rule_id):
 
 
 
-def delete_base_item_rule(rule_id):
-	baseRule = BaseItemRule.objects.get(id=rule_id)
-	delete_base_item(baseRule.id)
+# def delete_base_item_rule(rule_id):
+# 	baseRule = BaseItemRule.objects.get(id=rule_id)
+# 	delete_base_item(baseRule.id)
 
+
+def delete_complex_discount(disc_id):
+	discount = ComplexDiscount.objects.get(id=disc_id)
+	if discount.left[0] == '_':
+		Discount.objects.get(id=int(discount.left[1:])).delete()
+	else:
+		delete_complex_discount(int(discount.left))
+	if discount.right[0] == '_':
+		Discount.objects.get(id=int(discount.right[1:])).delete()
+	else:
+		delete_complex_discount(int(discount.right))
+	discount.delete()
+
+
+
+def delete_base_discount(disc_id):
+	discount = Discount.objects.get(id=disc_id)
+	discount.delete()
+
+
+# def delete_complex_discount(disc):
+# 	complexDiscount = ComplexDiscount.objects.get(id=disc)
+# 	delete_complex_discount(complexDiscount.id)
+#
+#
+# def delete_base_store_discount(disc):
+# 	baseDiscount = Discount.objects.get(id=disc)
+# 	delete_base_discount(baseDiscount.id)
