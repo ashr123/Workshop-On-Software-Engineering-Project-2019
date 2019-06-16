@@ -3,7 +3,7 @@ from django.db.models import Q
 from store.models import Item as m_Item
 
 
-class Item():
+class Item:
 	def __init__(self, price=None, name=None, category=None, description=None, quantity=None, model=None):
 		if model != None:
 			self._model = model
@@ -25,7 +25,7 @@ class Item():
 
 	def get_details(self):
 		return {"pk": self._model.pk,
-				"name": self._model.name,
+		        "name": self._model.name,
 		        "category": self._model.get_category_display,
 		        "description": self._model.description,
 		        "price": self._model.price,
@@ -47,7 +47,6 @@ class Item():
 	@staticmethod
 	def search(txt):
 		items_models = m_Item.objects.filter(Q(name__contains=txt) | Q(
-			description__contains=txt) | Q(
-			category__contains=txt))
+			description__contains=txt) | Q(category__contains=txt))
 		items = list(map(lambda im: Item(model=im), items_models))
 		return list(map(lambda i: i.get_details(), items))

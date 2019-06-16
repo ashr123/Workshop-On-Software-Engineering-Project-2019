@@ -65,9 +65,9 @@ def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
 
-def item(request: Any, id: int) -> HttpResponse:
+def item(request: Any, id1: int) -> HttpResponse:
 	return render(request, 'trading_system/item_page.html', {
-		'item': Item.objects.get(name=id)
+		'item': Item.objects.get(name=id1)
 	})
 
 

@@ -88,7 +88,7 @@ class TestTradingSystem(MyUnitTesting):
 		                                      "name": "fur shampoo",
 		                                      "description": "This is a fur shampoo",
 		                                      "category": "HOME",
-		                                      "quantity": 12}), self.store.pk)
+		                                      "quantity": 12}), self.store.pk, self.user.pk)
 		self.assertTrue(list(service.search("fur shampoo")))
 
 	@skip("Not relevant")
@@ -104,7 +104,7 @@ class TestTradingSystem(MyUnitTesting):
 		                                      "name": "fur shampoo 2",
 		                                      "description": "This is a fur shampoo 2",
 		                                      "category": "HOME",
-		                                      "quantity": 12}), self.store.pk)
+		                                      "quantity": 12}), self.store.pk, self.user.pk)
 		self.login(self.default_user, self.default_password)
 
 	@skip("Not ready: can't buy item at all")
@@ -134,11 +134,11 @@ class TestTradingSystem(MyUnitTesting):
 		self.assertTrue(self.user.groups.filter(name='store_owners').exists())
 		item_name = "fur shampoo 3"
 		self.assertFalse(self.store.items.filter(name=item_name).exists())
-		service.add_item_to_store(json.dumps({"price": 12.34,
+		output = service.add_item_to_store(json.dumps({"price": 12.34,
 		                                      "name": item_name,
 		                                      "description": "This is a %s" % item_name,
 		                                      "category": "HOME",
-		                                      "quantity": 12}), self.store.pk)
+		                                      "quantity": 12}), self.store.pk, self.user.pk)
 		self.assertTrue(self.store.items.filter(name=item_name).exists())
 
 	def test_not_store_owner_adds_item_to_store(self):  # 4.1.1-2
@@ -150,7 +150,7 @@ class TestTradingSystem(MyUnitTesting):
 		                                      "name": item_name,
 		                                      "description": "This is a %s" % item_name,
 		                                      "category": "HOME",
-		                                      "quantity": 12}), self.store.pk)
+		                                      "quantity": 12}), self.store.pk, user.pk)
 		self.assertFalse(self.store.items.filter(name=item_name).exists())
 
 	@skip("Not relevant")
@@ -162,13 +162,13 @@ class TestTradingSystem(MyUnitTesting):
 		                                      "name": item_name,
 		                                      "description": "This is a %s" % item_name,
 		                                      "category": "HOME",
-		                                      "quantity": 12}), self.store.pk)
+		                                      "quantity": 12}), self.store.pk, self.user.pk)
 		self.assertTrue(self.store.items.filter(name=item_name).exists())
 		service.add_item_to_store(json.dumps({"price": 12.34,
 		                                      "name": item_name,
 		                                      "description": "This is a %s" % item_name,
 		                                      "category": "HOME",
-		                                      "quantity": 12}), self.store.pk)
+		                                      "quantity": 12}), self.store.pk, self.user.pk)
 
 	def test_adding_item_with_negative_quantity(self):  # 4.1.1-5
 		self.assertTrue(self.user.groups.filter(name='store_owners').exists())
@@ -179,7 +179,7 @@ class TestTradingSystem(MyUnitTesting):
 			                                      "name": item_name,
 			                                      "description": "This is a %s" % item_name,
 			                                      "category": "HOME",
-			                                      "quantity": -12}), self.store.pk)
+			                                      "quantity": -12}), self.store.pk, self.user.pk)
 		self.assertFalse(self.store.items.filter(name=item_name).exists())
 
 	@expectedFailure
@@ -192,12 +192,11 @@ class TestTradingSystem(MyUnitTesting):
 		                                      "name": item_name,
 		                                      "description": "This is a %s" % item_name,
 		                                      "category": "HOME",
-		                                      "quantity": 0.3}), self.store.pk)
+		                                      "quantity": 0.3}), self.store.pk, self.user.pk)
 
 		self.assertFalse(self.store.items.filter(name=item_name).exists())
 
-	@skip("there isn't a function for deletion yet")
-	def test_delete_an_item_from_store(self):  # 4.1.2-1...
+	def test_delete_an_item_from_store(self):  # 4.1.2-1... TODO: complete
 		user = next(self.generate_user_with_default_password)
 		self.assertFalse(user.groups.filter(name='store_owners').exists())
 		item_name = "fur shampoo 4"
@@ -206,7 +205,7 @@ class TestTradingSystem(MyUnitTesting):
 		                                      "name": item_name,
 		                                      "description": "This is a %s" % item_name,
 		                                      "category": "HOME",
-		                                      "quantity": 12}), self.store.pk)
+		                                      "quantity": 12}), self.store.pk, self.user.pk)
 		self.assertFalse(self.store.items.filter(name=item_name).exists())
 
 	@skip("there isn't a function for deletion yet")
@@ -259,7 +258,7 @@ class TestTradingSystem(MyUnitTesting):
 		new_user = next(self.generate_user_with_default_password)
 		self.assertFalse(service.get_user_store_list(new_user.pk))
 
-	def test_add_manager_with_edit_permission(self):  #4.5-1
+	def test_add_manager_with_edit_permission(self):  # 4.5-1
 		store_pk = self.generate_store(self.user)
 		new_user = next(self.generate_user_with_default_password)
 		self.assertFalse(
@@ -292,21 +291,21 @@ class TestTradingSystem(MyUnitTesting):
 			                    self.default_user)[0])
 
 	@skip("permission checking doesn't exist")
-	def test_remove_manager(self):  #4.6-1
+	def test_remove_manager(self):  # 4.6-1
 		pass
 
-	def test_delete_existing_item_from_store(self):  # 5.1-1   can't check for permissions
+	def test_delete_existing_item_from_store(self):  # 5.1-1
 		item_name = "bbb"
 		item_dict = {"price": 12.34,
 		             "name": item_name,
 		             "description": "This is a %s" % item_name,
 		             "category": "HOME",
 		             "quantity": 12}
-		service.add_item_to_store(json.dumps(item_dict), self.store.pk)
+		service.add_item_to_store(json.dumps(item_dict), self.store.pk, self.user.pk)
 		self.assertTrue(item_dict["name"] == service.get_store_items(self.store.pk)[0]["name"])
-		service.delete_item(service.get_store_items(self.store.pk)[0]["id"])
+		service.delete_item(service.get_store_items(self.store.pk)[0]["id"], self.user.pk)
 		self.assertFalse(service.get_store_items(self.store.pk))
 
 	@skip("need to fix 'delete_item' to catch exceptions")
 	def test_delete_none_existing_item_from_store(self):  # 5.1-2   can't check for permissions
-		service.delete_item(33)
+		service.delete_item(33, self.user.pk)

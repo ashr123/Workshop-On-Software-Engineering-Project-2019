@@ -1,10 +1,9 @@
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
-from django.db.models import Q
 
 from trading_system.models import Cart as m_Cart
 
 
-class Cart():
+class Cart:
 	def __init__(self, store_pk=None, user_pk=None, model=None):
 		if model != None:
 			self._model = model

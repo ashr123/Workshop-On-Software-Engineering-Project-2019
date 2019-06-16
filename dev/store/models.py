@@ -56,12 +56,13 @@ class Store(models.Model):
 
 	class Meta:
 		permissions = (
-			('ADD_ITEM', 'add item'),
-			('REMOVE_ITEM', 'delete item'),
-			('EDIT_ITEM', 'update item'),
-			('ADD_MANAGER', 'add manager'),
-			('REMOVE_STORE', 'delete store'),
-			('ADD_DISCOUNT', 'add discount'),
+			('ADD_ITEM', 'add item'),  # V
+			('REMOVE_ITEM', 'delete item'),  # V
+			('EDIT_ITEM', 'update item'),  # V
+			('ADD_MANAGER', 'add manager'),  # V
+			('REMOVE_STORE', 'delete store'),  # V
+			('ADD_DISCOUNT', 'add discount'),  # V
+			('ADD_RULE', 'add rule')  # V
 		)
 
 
