@@ -231,16 +231,21 @@ def get_item_details(item_id):
 
 
 def add_item_to_cart(user_id, item_id):
-	user = c_User.get_user(user_id=user_id)
-	if user.is_authenticated():
+
+	if not (user_id ==None):
 		item_store_pk = c_Store.get_item_store(item_pk=item_id).pk
-		cart = c_Cart.get_cart(store_pk=item_store_pk, user_id=user.pk)
+		cart = c_Cart.get_cart(store_pk=item_store_pk, user_id=user_id)
 		if cart is None:
 			cart = c_Cart(store_pk=item_store_pk, user_pk=user_id)
 		cart.add_item(item_id=item_id)
 		return True
-	return False
+	else:
 
+		return False
+
+
+def get_item(id1):
+	return  Item.objects.get(id=id1)
 
 def is_authenticated(user_id):
 	return c_User.get_user(user_id=user_id).is_authenticated()
@@ -538,11 +543,28 @@ def remove_manager_from_store(store_id, m_id):
 	try:
 		store_ = Store.objects.get(pk=store_id)
 		user = User.objects.get(id=m_id)
-		if len(Store.objects.filter(id=store_id, owners__id__in=[m_id])) == 0:
+		print('---------------remove manager : ',user.username)
+		is_manager = len(Store.objects.filter(id=store_id, owners__id__in=[m_id])) == 0
+		if (is_manager):
 			store_.managers.remove(user)
+			if have_no_more_stores(m_id):
+				print('[[[[[[[[[[[[[[[[[[[[[')
+				owners_group = Group.objects.get(name="store_owners")
+				managers_group = Group.objects.get_or_create(name="store_managers")
+				managers_group = Group.objects.get(name="store_managers")
+				# user = User.objects.get(id = owner)
+				managers_group.user_set.remove(user)
+				owners_group.user_set.remove(user)
 			return True
 		else:
 			store_.owners.remove(user)
+			if have_no_more_stores(m_id):
+				print('[[[[[[[[[999999999999999999[[[[[[[[[[[[')
+				owners_group = Group.objects.get(name="store_owners")
+				managers_group = Group.objects.get_or_create(name="store_managers")
+				managers_group = Group.objects.get(name="store_managers")
+				managers_group.user_set.remove(user)
+				owners_group.user_set.remove(user)
 			return True
 	except:
 		return False
@@ -565,7 +587,7 @@ def have_no_more_stores(user_pk):
 	return c_User.get_user(user_id=user_pk).have_no_more_stores()
 
 
-def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_details):
+def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details, card_details):
 	pay_transaction_id = -1
 	supply_transaction_id = -1
 	messages_ = ''
@@ -575,13 +597,13 @@ def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_detail
 		total = amount * curr_item.price
 		total_after_discount = total
 		# check item rules
-		if check_item_rules(curr_item, amount, user) is False:
-			messages_ = "you can't buy due to item policies"
+		if check_item_rules(curr_item, amount) is False:
+			messages_ += "you can't buy due to item policies"
 			return False, 0, 0, messages_
 		store_of_item = Store.objects.get(items__id__contains=item_id)
 		# check store rules
-		if check_store_rules(store_of_item, amount, shipping_details['country'], user) is False:
-			messages_ = "you can't buy due to store policies"
+		if check_store_rules(store_of_item, amount, shipping_details['country'], is_auth) is False:
+			messages_ += "you can't buy due to store policies"
 			return False, 0, 0, messages_
 		total_after_discount = apply_discounts(store=store_of_item, curr_item=curr_item, amount=int(amount))
 
@@ -619,11 +641,12 @@ def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_detail
 			curr_item.save()
 
 			# store = get_item_store(_item.pk)
-			item_subject = ItemSubject(curr_item.pk)
+
 			try:
-				if (user.is_authenticated):
+				item_subject = ItemSubject(curr_item.pk)
+				if (is_auth):
 					notification = Notification.objects.create(
-						msg=user.username + ' bought ' + str(amount) + ' pieces of ' + curr_item.name)
+						msg=username + ' bought ' + str(amount) + ' pieces of ' + curr_item.name)
 					notification.save()
 					item_subject.subject_state = item_subject.subject_state + [notification.pk]
 				else:
@@ -655,69 +678,69 @@ def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_detail
 			if not (supply_transaction_id == -1):
 				messages_ += '\n' + 'failed and aborted supply! please try again!'
 				chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
-			messages_ = "can`t buy this item " + str(item_id) + '  :  ' + str(a)
+			messages_ = "Exception! "  '  :  ' + str(a)
 			return False, 0, 0, messages_
 	else:
-		messages_ = "no such amount for item : " + str(item_id)
+		messages_ = "no such amount for item : " + str(item_id) +'   messages_ : ' +messages_
 		return False, 0, 0, messages_
 
 
-def check_item_rules(item, amount, user):
+def check_item_rules(item, amount):
 	base_arr = []
 	complex_arr = []
 	itemRules = ComplexItemRule.objects.all().filter(item=item)
 	for rule in reversed(itemRules):
 		if rule.id in complex_arr:
 			continue
-		if check_item_rule(rule, amount, base_arr, complex_arr, user) is False:
+		if check_item_rule(rule, amount, base_arr, complex_arr) is False:
 			return False
 	itemBaseRules = BaseItemRule.objects.all().filter(item=item)
 	for rule in itemBaseRules:
 		if rule.id in base_arr:
 			continue
-		if check_base_item_rule(rule.id, amount, user) is False:
+		if check_base_item_rule(rule.id, amount) is False:
 			return False
 	return True
 
 
-def check_store_rules(store_of_item, amount, country, user):
+def check_store_rules(store_of_item, amount, country, is_auth):
 	base_arr = []
 	complex_arr = []
 	storeRules = ComplexStoreRule.objects.all().filter(store=store_of_item)
 	for rule in reversed(storeRules):
 		if rule.id in complex_arr:
 			continue
-		if check_store_rule(rule, amount, country, base_arr, complex_arr, user) is False:
+		if check_store_rule(rule, amount, country, base_arr, complex_arr, is_auth) is False:
 			return False
 	storeBaseRules = BaseRule.objects.all().filter(store=store_of_item)
 	for rule in storeBaseRules:
 		if rule.id in base_arr:
 			continue
-		if check_base_rule(rule.id, amount, country, user) is False:
+		if check_base_rule(rule.id, amount, country, is_auth) is False:
 			return False
 	return True
 
 
 #
-def check_store_rule(rule, amount, country, base_arr, complex_arr, user):
+def check_store_rule(rule, amount, country, base_arr, complex_arr, is_auth):
 	if rule.left[0] == '_':
 		base_arr.append(int(rule.left[1:]))
-		left = check_base_rule(int(rule.left[1:]), amount, country, user)
+		left = check_base_rule(int(rule.left[1:]), amount, country, is_auth)
 		print('left')
 		print(str(left))
 	else:
 		complex_arr.append(int(rule.left))
 		tosend = ComplexStoreRule.objects.get(id=int(rule.left))
-		left = check_store_rule(tosend, amount, country, base_arr, complex_arr, user)
+		left = check_store_rule(tosend, amount, country, base_arr, complex_arr, is_auth)
 	if rule.right[0] == '_':
 		base_arr.append(int(rule.right[1:]))
-		right = check_base_rule(int(rule.right[1:]), amount, country, user)
+		right = check_base_rule(int(rule.right[1:]), amount, country, is_auth)
 		print('right')
 		print(str(right))
 	else:
 		complex_arr.append(int(rule.right))
 		tosend = ComplexStoreRule.objects.get(id=int(rule.right))
-		right = check_store_rule(tosend, amount, country, base_arr, complex_arr, user)
+		right = check_store_rule(tosend, amount, country, base_arr, complex_arr, is_auth)
 	if rule.operator == "AND" and (left == False or right == False):
 		return False
 	if rule.operator == "OR" and (left == False and right == False):
@@ -728,21 +751,21 @@ def check_store_rule(rule, amount, country, base_arr, complex_arr, user):
 
 
 #
-def check_item_rule(rule, amount, base_arr, complex_arr, user):
+def check_item_rule(rule, amount, base_arr, complex_arr):
 	if rule.left[0] == '_':
 		base_arr.append(int(rule.left[1:]))
-		left = check_base_item_rule(int(rule.left[1:]), amount, user)
+		left = check_base_item_rule(int(rule.left[1:]), amount)
 	else:
 		complex_arr.append(int(rule.left))
 		tosend = ComplexItemRule.objects.get(id=int(rule.left))
-		left = check_item_rule(tosend, amount, base_arr, complex_arr, user)
+		left = check_item_rule(tosend, amount, base_arr, complex_arr)
 	if rule.right[0] == '_':
 		base_arr.append(int(rule.right[1:]))
-		right = check_base_item_rule(int(rule.right[1:]), amount, user)
+		right = check_base_item_rule(int(rule.right[1:]), amount)
 	else:
 		complex_arr.append(int(rule.right))
 		tosend = ComplexItemRule.objects.get(id=int(rule.right))
-		right = check_item_rule(tosend, amount, base_arr, complex_arr, user)
+		right = check_item_rule(tosend, amount, base_arr, complex_arr)
 	if rule.operator == "AND" and (left is False or right is False):
 		return False
 	if rule.operator == "OR" and (left is False and right is False):
@@ -752,7 +775,7 @@ def check_item_rule(rule, amount, base_arr, complex_arr, user):
 	return True
 
 
-def check_base_item_rule(rule_id, amount, user):
+def check_base_item_rule(rule_id, amount):
 	rule = BaseItemRule.objects.get(id=rule_id)
 	if rule.type == 'MAX' and amount > int(rule.parameter):
 		return False
@@ -761,7 +784,7 @@ def check_base_item_rule(rule_id, amount, user):
 	return True
 
 
-def check_base_rule(rule_id, amount, country, user):
+def check_base_rule(rule_id, amount, country, is_auth):
 	rule = BaseRule.objects.get(id=rule_id)
 	if rule.type == 'MAX' and amount > int(rule.parameter):
 		return False
@@ -769,7 +792,7 @@ def check_base_rule(rule_id, amount, country, user):
 		return False
 	elif rule.type == 'FOR' and country == rule.parameter:
 		return False
-	elif rule.type == 'REG' and not user.is_authenticated:
+	elif rule.type == 'REG' and is_auth is False:
 		return False
 	return True
 
@@ -782,50 +805,47 @@ def apply_discounts(store, curr_item, amount):
 	for disc in reversed(store_complex_discountes):
 		if disc.id in complex_arr:
 			continue
-		price = apply_complex(disc, base_arr, complex_arr, curr_item, amount, price)
+		discount = apply_complex(disc, base_arr, complex_arr, curr_item, amount)
+		if (discount != -1):
+			price = (1 - discount) * float(price)
 	store_base_discountes = Discount.objects.filter(store=store)
 	for disc in store_base_discountes:
 		if disc.id in base_arr:
 			continue
 		discount = float(apply_base(disc.id, curr_item, amount))
-		print(price)
-		print(discount)
 		if (discount != -1):
 			price = (1 - discount) * float(price)
 	return price
 
 
-def apply_complex(disc, base_arr, complex_arr, curr_item, amount, price):
+def apply_complex(disc, base_arr, complex_arr, curr_item, amount):
 	if disc.left[0] == '_':
 		base_arr.append(int(disc.left[1:]))
 		left = apply_base(int(disc.left[1:]), curr_item, amount)
 	else:
 		complex_arr.append(int(disc.left))
 		tosend = ComplexStoreRule.objects.get(id=int(disc.left))
-		left = apply_complex(tosend, base_arr, complex_arr, curr_item, amount, price)
+		left = apply_complex(tosend, base_arr, complex_arr, curr_item, amount)
 	if disc.right[0] == '_':
 		base_arr.append(int(disc.right[1:]))
 		right = apply_base(int(disc.right[1:]), curr_item, amount)
 	else:
 		complex_arr.append(int(disc.right))
 		tosend = ComplexStoreRule.objects.get(id=int(disc.right))
-		right = apply_complex(tosend, base_arr, complex_arr, curr_item, amount, price)
+		right = apply_complex(tosend, base_arr, complex_arr, curr_item, amount)
 	if disc.operator == "AND" and (left != -1 and right != -1):
-		return (float(price) * float(left)) * float(right)
+		return 1 - ((1-left)*(1-right))
 	elif disc.operator == "OR":
-		if left != -1:
-			price = left * price
-		if right != -1:
-			price = right * price
-		return price
+		if left != -1 and right != -1:
+			return 1 - ((1-left)*(1-right))
+		elif left != -1:
+			return left
+		elif right != -1:
+			return right
 	elif disc.operator == "XOR":
-		price1 = price
-		price2 = price
-		if left != -1:
-			price1 = left * price
-		if right != -1:
-			price2 = right * price
-		return min(price1, price2)
+		return max(left, right)
+	else:
+		return -1
 
 
 def apply_base(disc, curr_item, amount):
@@ -879,19 +899,10 @@ def delete_complex(rule_id):
 	rule.delete()
 
 
-# def delete_complex_rule(rule_id):
-# 	complexRule = ComplexStoreRule.objects.get(id=rule_id)
-# 	delete_complex(complexRule.id)
-
 
 def delete_base(rule_id):
 	rule = BaseRule.objects.get(id=rule_id)
 	rule.delete()
-
-
-# def delete_base_rule(rule_id):
-# 	baseRule = BaseRule.objects.get(id=rule_id)
-# 	delete_base(baseRule.id)
 
 
 def delete_complex_item(rule_id):
@@ -908,20 +919,10 @@ def delete_complex_item(rule_id):
 
 
 
-# def delete_complex_item_rule(rule_id):
-# 	complexRule = ComplexItemRule.objects.get(id=pk)
-# 	delete_complex_item(complexRule.id)
-
-
 def delete_base_item(rule_id):
 	rule = BaseItemRule.objects.get(id=rule_id)
 	rule.delete()
 
-
-
-# def delete_base_item_rule(rule_id):
-# 	baseRule = BaseItemRule.objects.get(id=rule_id)
-# 	delete_base_item(baseRule.id)
 
 
 def delete_complex_discount(disc_id):
@@ -943,11 +944,4 @@ def delete_base_discount(disc_id):
 	discount.delete()
 
 
-# def delete_complex_discount(disc):
-# 	complexDiscount = ComplexDiscount.objects.get(id=disc)
-# 	delete_complex_discount(complexDiscount.id)
-#
-#
-# def delete_base_store_discount(disc):
-# 	baseDiscount = Discount.objects.get(id=disc)
-# 	delete_base_discount(baseDiscount.id)
+

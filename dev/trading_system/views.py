@@ -241,30 +241,47 @@ def view_auction(request, auction_pk):
 # 	return stores[0]
 
 
+
 def add_item_to_cart(request, item_pk):
-	ans = service.add_item_to_cart(request.user.pk, item_pk)
-	if ans is True:
-		messages.success(request, 'add to cart successfully')
-		return redirect('/login_redirect')
-	else:
+	if not (request.user.is_authenticated):
 		if 'cart' in request.session:
+			items_in =request.session['cart']['items_id']
+
 			cart_g = request.session['cart']
-			cart_g['items_id'].append(item_pk)
+			if(item_pk not in items_in):
+				cart_g['items_id'].append(item_pk)
 		else:
 			cart_g = CartGuest([item_pk]).serialize()
 
 		request.session['cart'] = cart_g
 		messages.success(request, 'add to cart successfully')
 		return redirect('/login_redirect')
+	else:
+		ans = service.add_item_to_cart(request.user.pk, item_pk)
+		if ans is True:
+			messages.success(request, 'add to cart successfully')
+			return redirect('/login_redirect')
+		else:
+			messages.warning(request, 'can`t add to cart ')
+			return redirect('/login_redirect')
 
 
 def make_guest_cart(request):
-	if service.is_authenticated(request.user.pk):
+	if request.user.is_authenticated:
 		return []
-	items_ = []
-	for id1 in request.session['cart']['items_id']:
-		items_ += list([service.get_item(id1)])
-	return items_
+	else:
+		items_ = []
+		# for id1 in request.session['cart']['items_id']:
+		# 	items_ += list([service.get_item(id1)])
+			# return items_
+		if   'cart' in request.session:
+
+			cartG = request.session['cart']
+			id_list = cartG['items_id']
+			for id in id_list:
+				items_ += list([service.get_item(id)])
+
+		return items_
 
 
 def delete_item_from_cart(request, item_pk):
@@ -324,10 +341,10 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			month = supply_form.cleaned_data.get('month')
 			year = supply_form.cleaned_data.get('year')
 			holder = supply_form.cleaned_data.get('holder')
-			ccv = supply_form.cleaned_data.get('ccv')
+			cvc = supply_form.cleaned_data.get('cvc')
 			id1 = supply_form.cleaned_data.get('id')
 
-			card_details = {'card_number': card_number, 'month': month, 'year': year, 'holder': holder, 'ccv': ccv,
+			card_details = {'card_number': card_number, 'month': month, 'year': year, 'holder': holder, 'cvc': cvc,
 			                'id': id1}
 		else:
 			err = '' + str(shipping_form.errors) + str(supply_form.errors)
@@ -349,8 +366,8 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 						messages.warning(request, 'problem with quantity ')
 					# item.quantity = amount_in_db - 1
 					# item.save()
-					from store.views import buy_logic
-					valid, total, total_after_discount, messages_ = buy_logic(item_id, int(quantity_to_buy),
+
+					valid, total, total_after_discount, messages_ = service.buy_logic(item_id, int(quantity_to_buy),
 					                                                          amount_in_db,
 					                                                          request.user, shipping_details,
 					                                                          card_details)

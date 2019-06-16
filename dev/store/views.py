@@ -463,7 +463,9 @@ def buy_item(request, pk):
 			_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
 			amount_in_db = _item.quantity
-			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, amount_in_db, request.user, shipping_details, card_details)
+			is_auth = request.user.is_authenticated
+			username = request.user.username
+			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details)
 
 			if valid == False:
 				messages.warning(request, messages_)
@@ -989,6 +991,7 @@ class NotificationsListView(ListView):
 
 
 def delete_owner(request, pk_owner, pk_store):
+	print('remove omanager: ',pk_owner)
 	if (service.remove_manager_from_store(pk_store, pk_owner)):
 		messages.success(request, 'delete owner')  # <-
 		return redirect('/store/home_page_owner/')
