@@ -14,8 +14,7 @@ class Supply:
 		try:
 			r = requests.post("https://cs-bgu-wsep.herokuapp.com/",
 			                  data={'action_type': 'supply', 'name': name, 'address': address, 'city': city,
-			                        'country': country
-				                  , 'zip': zip1})
+			                        'country': country, 'zip': zip1})
 			print(r.status_code, r.reason)
 			print(r.text)
 			return r.text

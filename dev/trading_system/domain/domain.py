@@ -277,7 +277,7 @@ def get_item(id1):
 
 
 def is_authenticated(user_id):
-	return c_User.get_user(user_id=user_id).is_authenticated()
+	return c_User.get_user(user_id=user_id).is_authenticated
 
 
 def amount_in_db(item_id):

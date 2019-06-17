@@ -1,8 +1,7 @@
-import decimal
-from datetime import date
 import json
-import traceback
+import json
 import logging
+
 import simplejson as s_json
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -24,7 +23,7 @@ from . import forms
 from .forms import BuyForm, AddManagerForm, AddRuleToItem, AddRuleToStore_base, AddRuleToStore_withop, \
 	AddRuleToStore_two, AddDiscountForm, AddComplexDiscountForm
 from .forms import ShippingForm, AddRuleToItem_withop, AddRuleToItem_two
-from .models import Item, ComplexStoreRule, ComplexItemRule, Discount, ComplexDiscount
+from .models import Item, ComplexStoreRule, ComplexItemRule
 from .models import Store
 
 log_setup = logging.getLogger('event log')
@@ -255,7 +254,6 @@ class ItemDelete(DeleteView):
 		                           price=item_details['price'],
 		                           quantity=item_details['quantity'])
 
-
 	def delete(self, request, *args, **kwargs):
 		service.delete_item(item_id=kwargs['pk'], user_id=request.user.pk)
 		return super(ItemDelete, self).delete(request, *args, **kwargs)
@@ -458,7 +456,8 @@ def buy_item(request, pk):
 			_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
 
-			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, request.user.pk,shipping_details, card_details)
+			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, request.user.pk,
+			                                                                  shipping_details, card_details)
 
 			if valid == False:
 				messages.warning(request, messages_)
@@ -498,8 +497,6 @@ def check_base_rule(rule_id, amount, country, user):
 	elif rule.type == 'REG' and not user.is_authenticated:
 		return False
 	return True
-
-
 
 
 @login_required
@@ -607,9 +604,10 @@ def add_complex_discount_to_store(request, pk, disc, which_button):
 			amount = form.cleaned_data.get('amount')
 			end_date = form.cleaned_data.get('end_date')
 			item = form.cleaned_data.get('item')
-			if(item is None):
-				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage, end_date=end_date,
-			                           item_id=None)
+			if (item is None):
+				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,
+				                           end_date=end_date,
+				                           item_id=None)
 			else:
 				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,
 				                           end_date=end_date,
@@ -750,7 +748,8 @@ def add_complex_rule_to_store_2(request, rule_id_before, store_id, which_button)
 			parameter2 = form.cleaned_data.get('parameter2')
 			ans = service.add_complex_rule_to_store_2(rule1=rule1, parameter1=parameter1, rule2=rule2,
 			                                          parameter2=parameter2, store_id=store_id, operator1=operator1,
-			                                          operator2=operator2, prev_rule=rule_id_before, user_id=request.user.pk)
+			                                          operator2=operator2, prev_rule=rule_id_before,
+			                                          user_id=request.user.pk)
 			if ans[0] == True:
 				if which_button == 'ok':
 					messages.success(request, 'added rule successfully!')
@@ -995,7 +994,7 @@ class NotificationsListView(ListView):
 
 
 def delete_owner(request, pk_owner, pk_store):
-	print('remove omanager: ',pk_owner)
+	print('remove omanager: ', pk_owner)
 	if service.remove_manager_from_store(pk_store, pk_owner):
 		messages.success(request, 'delete owner')  # <-
 		return redirect('/store/home_page_owner/')

@@ -59,8 +59,8 @@ def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 
 			return render(request, 'homepage_member.html', {'text': SearchForm(), 'user_name': request.user.username})
 
-			# return render(request, 'homepage_member.html',
-			#               {'text': text, 'user_name': user_name})
+	# return render(request, 'homepage_member.html',
+	#               {'text': text, 'user_name': user_name})
 
 	return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
@@ -141,8 +141,10 @@ def show_cart(request: Any) -> HttpResponse:
 			'text': SearchForm(),
 			'base_template_name': base_template_name
 		})
-	# else:
-	# 	base_template_name = 'homepage_guest.html'
+
+
+# else:
+# 	base_template_name = 'homepage_guest.html'
 
 
 cart_index = 0
@@ -241,14 +243,13 @@ def view_auction(request, auction_pk):
 # 	return stores[0]
 
 
-
 def add_item_to_cart(request, item_pk):
 	if not (request.user.is_authenticated):
 		if 'cart' in request.session:
-			items_in =request.session['cart']['items_id']
+			items_in = request.session['cart']['items_id']
 
 			cart_g = request.session['cart']
-			if(item_pk not in items_in):
+			if (item_pk not in items_in):
 				cart_g['items_id'].append(item_pk)
 		else:
 			cart_g = CartGuest([item_pk]).serialize()
@@ -273,9 +274,8 @@ def make_guest_cart(request):
 		items_ = []
 		# for id1 in request.session['cart']['items_id']:
 		# 	items_ += list([service.get_item(id1)])
-			# return items_
+		# return items_
 		if 'cart' in request.session:
-
 			cartG = request.session['cart']
 			id_list = cartG['items_id']
 			for id in id_list:
@@ -361,15 +361,15 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 					quantity_to_buy = 1
 					try:
 						quantity_to_buy = request.POST.get('quantity' + str(item1.id))
-						# print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
+					# print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
 					except:
 						messages.warning(request, 'problem with quantity ')
 					# item.quantity = amount_in_db - 1
 					# item.save()
 
 					valid, total, total_after_discount, messages_ = service.buy_logic(item_id, int(quantity_to_buy),
-					                                                          request.user.pk, shipping_details,
-					                                                          card_details)
+					                                                                  request.user.pk, shipping_details,
+					                                                                  card_details)
 					if not valid:
 						messages.warning(request, 'can`t buy item : ' + str(item_id))
 						messages.warning(request, 'reason : ' + str(messages_))
@@ -400,16 +400,15 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 				base_template_name = 'store/homepage_store_owner.html'
 			else:
 				base_template_name = 'homepage_member.html'
-
-			list_ = None
+			list_ = []
 
 		form = CartForm(request.user, list_)
 		q_list = QForm(request.user, list_)
 		text = SearchForm()
 		user_name = request.user.username
+		items_of_user = []
 		if request.user.is_authenticated:
 			carts = Cart.objects.filter(customer=request.user)
-			items_of_user = []
 			for cart in carts:
 				items_of_user += list(cart.items.all())
 		context = {
@@ -420,5 +419,6 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			'qua': q_list,
 			'card': PayForm(),
 			'shipping': ShippingForm(),
+			'items_list': items_of_user + list_
 		}
 		return render(request, 'trading_system/cart_test.html', context)
