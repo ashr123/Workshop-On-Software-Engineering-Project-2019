@@ -376,17 +376,15 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 						messages.warning(request, 'reason : ' + str(messages_))
 						return redirect('/login_redirect')
 
-
+				if request.user.is_authenticated:
+					cart = Cart.objects.get(customer=request.user)
+					cart.items.remove(item1)
+				else:
+					cart_g = request.session['cart']
+					cart_g['items_id'].remove(Decimal(item_id))
+					request.session['cart'] = cart_g
 			res, res_before = service.apply_discounts_for_cart(list_of_items)
-			messages.success(request, ' total after discount : ' + str(res) +" instead of: "+ str(res_before))
-			if request.user.is_authenticated:
-				cart = Cart.objects.get(customer=request.user)
-				cart.items.remove(item1)
-			else:
-				cart_g = request.session['cart']
-				cart_g['items_id'].remove(Decimal(item_id))
-				request.session['cart'] = cart_g
-
+			messages.success(request, ' total after discount : ' + str(res) + " instead of: " + str(res_before))
 			return redirect('/login_redirect')
 		else:
 			err = '' + str(form.errors)
