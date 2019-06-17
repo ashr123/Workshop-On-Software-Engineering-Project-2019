@@ -124,21 +124,17 @@ class Discount(models.Model):
 	)
 	store = models.ForeignKey(Store, on_delete=models.CASCADE)
 	item = models.ForeignKey(Item, null=True, on_delete=models.CASCADE)
-	type = models.CharField(max_length=3, choices=RULE_TYPES, null=True)
+	type = models.CharField(max_length=3, choices=RULE_TYPES)
 	amount = models.IntegerField(default=0, null=True)
 	end_date = models.DateField(help_text='format: mm/dd/yyyy')
 	percentage = models.PositiveSmallIntegerField()
 
-# class ItemDiscount(models.Model):
-# 	MAX_QUANTITY = 'MXQ'
-# 	MIN_QUANTITY = 'MNQ'
-# 	RULE_TYPES = (
-# 		(MAX_QUANTITY, 'max_quantity'),
-# 		(MIN_QUANTITY, 'min_quantity'),
-# 	)
-# 	item = models.ForeignKey(Item, on_delete=models.CASCADE)
-# 	type = models.CharField(max_length=3, choices=RULE_TYPES)
-# 	amount = models.IntegerField(default=0)
-# 	start_date = models.DateField(auto_now_add=True)
-# 	end_date = models.DateField(help_text='format: mm/dd/yyyy')
-# 	percentage = models.PositiveSmallIntegerField()
+class ComplexDiscount(models.Model):
+	LOGICS = (('OR', 'or'),
+	          ('AND', 'and'),
+	          ('XOR', 'xor'))
+	left = models.CharField(max_length=4)
+	right = models.CharField(max_length=4)
+	operator = models.CharField(max_length=3, choices=LOGICS)
+	store = models.ForeignKey(Store, on_delete=models.CASCADE)
+

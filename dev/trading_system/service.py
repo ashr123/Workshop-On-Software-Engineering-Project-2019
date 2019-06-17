@@ -173,5 +173,9 @@ def get_item(id1):
 	return domain.get_item(id1)
 
 
+def add_complex_discount(store_id, left, right, operator):
+	return domain.add_complex_discount_to_store(store_id, left, right, operator)
+
+
 def buy_logic(pk, amount, amount_in_db, user, shipping_details, card_details):
 	return domain.buy_logic(pk, amount, amount_in_db, user, shipping_details, card_details)

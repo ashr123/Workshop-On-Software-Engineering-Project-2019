@@ -3,7 +3,8 @@ import traceback
 
 from django.contrib.auth.models import User, Group
 
-from store.models import BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount, Store, Item
+from store.models import BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount, Store, Item, \
+	ComplexDiscount
 # from store.models import Item, BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount
 from trading_system.models import ObserverUser, NotificationUser, Notification
 from trading_system.domain.store import Store as c_Store
@@ -84,7 +85,7 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 
 		except Exception as e:
 			messages_ += str(e)
-			return [True, messages_ ]
+			return [True, messages_]
 
 	return [False, messages_]
 
@@ -258,16 +259,21 @@ def get_item_details(item_id):
 
 
 def add_item_to_cart(user_id, item_id):
-	user = c_User.get_user(user_id=user_id)
-	if user.is_authenticated():
+
+	if not (user_id ==None):
 		item_store_pk = c_Store.get_item_store(item_pk=item_id).pk
-		cart = c_Cart.get_cart(store_pk=item_store_pk, user_id=user.pk)
+		cart = c_Cart.get_cart(store_pk=item_store_pk, user_id=user_id)
 		if cart is None:
 			cart = c_Cart(store_pk=item_store_pk, user_pk=user_id)
 		cart.add_item(item_id=item_id)
 		return True
-	return False
+	else:
 
+		return False
+
+
+def get_item(id1):
+	return  Item.objects.get(id=id1)
 
 def is_authenticated(user_id):
 	return c_User.get_user(user_id=user_id).is_authenticated()
@@ -299,6 +305,13 @@ def len_of_super():
 	return c_User.len_of_super()
 
 
+
+def add_complex_discount_to_store(store_id, left, right, operator):
+	d= ComplexDiscount(store_id=store_id, left=left, right=right, operator=operator)
+	d.save()
+	return [True, d.pk]
+
+
 def add_discount(store_id, percentage, end_date, user_id, amount=None, item=None):
 	if not User.objects.get(id=user_id).has_perm('ADD_DISCOUNT', Store.objects.get(pk=store_id)):
 		return [False, "you don't have the permission to add discount to store!"]
@@ -307,6 +320,7 @@ def add_discount(store_id, percentage, end_date, user_id, amount=None, item=None
 	                    end_date=end_date, item=item)
 	discount.save()
 	return [True, discount.id]
+
 
 
 def update_item(item_id, item_dict, user_id):
@@ -492,16 +506,33 @@ def get_store_by_id(store_id):
 	return Store.objects.get(pk=store_id)
 
 
-#TODO - REFACTOR
+# TODO - REFACTOR
 def remove_manager_from_store(store_id, m_id):
 	try:
 		store_ = Store.objects.get(pk=store_id)
 		user = User.objects.get(id=m_id)
-		if len(Store.objects.filter(id=store_id, owners__id__in=[m_id])) == 0:
+		print('---------------remove manager : ',user.username)
+		is_manager = len(Store.objects.filter(id=store_id, owners__id__in=[m_id])) == 0
+		if (is_manager):
 			store_.managers.remove(user)
+			if have_no_more_stores(m_id):
+				print('[[[[[[[[[[[[[[[[[[[[[')
+				owners_group = Group.objects.get(name="store_owners")
+				managers_group = Group.objects.get_or_create(name="store_managers")
+				managers_group = Group.objects.get(name="store_managers")
+				# user = User.objects.get(id = owner)
+				managers_group.user_set.remove(user)
+				owners_group.user_set.remove(user)
 			return True
 		else:
 			store_.owners.remove(user)
+			if have_no_more_stores(m_id):
+				print('[[[[[[[[[999999999999999999[[[[[[[[[[[[')
+				owners_group = Group.objects.get(name="store_owners")
+				managers_group = Group.objects.get_or_create(name="store_managers")
+				managers_group = Group.objects.get(name="store_managers")
+				managers_group.user_set.remove(user)
+				owners_group.user_set.remove(user)
 			return True
 	except:
 		return False
@@ -528,9 +559,6 @@ def buy_logic(item_id, amount, amount_in_db1, user, shipping_details, card_detai
 
 	pay_transaction_id = -1
 	supply_transaction_id = -1
-
-
-
 	messages_ = ''
 	curr_item = Item.objects.get(id=item_id)
 	if amount <= amount_in_db1:
@@ -539,34 +567,24 @@ def buy_logic(item_id, amount, amount_in_db1, user, shipping_details, card_detai
 		total_after_discount = total
 		# check item rules
 		if check_item_rules(curr_item, amount, user) is False:
-			messages_ = "you can't buy due to item policies"
+			messages_ += "you can't buy due to item policies"
 			return False, 0, 0, messages_
 		store_of_item = Store.objects.get(items__id__contains=item_id)
 		# check store rules
-		if check_store_rules(store_of_item, amount,shipping_details['country'], user) is False:
-			messages_ = "you can't buy due to store policies"
+		if check_store_rules(store_of_item, amount, shipping_details['country'], user) is False:
+			messages_ += "you can't buy due to store policies"
 			return False, 0, 0, messages_
-		## check discounts
-		# precentage1 =0
-		# precentage2=0
-		# [precentage1, total_after_discount] = service.get_discount_for_store(item_id, amount, total)
-		# [precentage2, total_after_discount] =  service.get_discount_for_item(item_id, amount, total_after_discount)
-		#
-		#
-		# if precentage1 != 0 :
-		# 	discount = str(precentage1)
-		# 	messages_ += '\n' + 'you have discount for store '+discount
-		# if precentage2 != 0:
-		# 	discount = str(precentage2)
-		# 	messages_ += '\n' + 'you have discount for item ' + discount
+		total_after_discount = apply_discounts(store=store_of_item, curr_item=curr_item, amount=int(amount))
 
 		try:
 			if pay_system.handshake():
 				print("pay hand shake")
 
-				pay_transaction_id = pay_system.pay(str(card_details['card_number']), str(card_details['month']), str(card_details['year']), str(card_details['holder']), str(card_details['cvc']),
-				                                str(card_details['id']))
-				if pay_transaction_id == '-1':
+				pay_transaction_id = pay_system.pay(str(card_details['card_number']), str(card_details['month']),
+				                                    str(card_details['year']), str(card_details['holder']),
+				                                    str(card_details['cvc']),
+				                                    str(card_details['id']))
+				if (pay_transaction_id == '-1'):
 					messages_ += '\n' + 'can`t pay !'
 					return False, 0, 0, messages_
 			else:
@@ -574,24 +592,28 @@ def buy_logic(item_id, amount, amount_in_db1, user, shipping_details, card_detai
 				return False, 0, 0, messages_
 			if supply_system.handshake():
 				print("supply hand shake")
-				supply_transaction_id = supply_system.supply(str(shipping_details['name']), str(shipping_details['address']), str(shipping_details['city']), str(shipping_details['country']),
+				supply_transaction_id = supply_system.supply(str(shipping_details['name']),
+				                                             str(shipping_details['address']),
+				                                             str(shipping_details['city']),
+				                                             str(shipping_details['country']),
 				                                             str(shipping_details['zip']))
 				if supply_transaction_id == '-1':
 					chech_cancle = pay_system.cancel_pay(pay_transaction_id)
-					messages_ += '\n' +'can`t supply abort payment!'
+					messages_ += '\n' + 'can`t supply abort payment!'
 					return False, 0, 0, messages_
 			else:
 				chech_cancle = pay_system.cancel_pay(pay_transaction_id)
-				messages_ += '\n' +'can`t connect to supply system abort payment!'
+				messages_ += '\n' + 'can`t connect to supply system abort payment!'
 				return False, 0, 0, messages_
 
 			curr_item.quantity = amount_in_db1 - amount
 			curr_item.save()
 
 			# store = get_item_store(_item.pk)
-			item_subject = ItemSubject(curr_item.pk)
+
 			try:
-				if user.is_authenticated:
+				item_subject = ItemSubject(curr_item.pk)
+				if (user.is_authenticated):
 					notification = Notification.objects.create(
 						msg=user.username + ' bought ' + str(amount) + ' pieces of ' + curr_item.name)
 					notification.save()
@@ -609,9 +631,9 @@ def buy_logic(item_id, amount, amount_in_db1, user, shipping_details, card_detai
 			if curr_item.quantity == 0:
 				curr_item.delete()
 
-			messages_ += '\n'+ 'Thank you! you bought ' + _item_name +'\n'+'Total after discount: ' \
-			             + str(total_after_discount) + ' $'+'\n'+'Total before: ' + str(total) + ' $'
-			return True, total,total_after_discount,messages_
+			messages_ += '\n' + 'Thank you! you bought ' + _item_name + '\n' + 'Total after discount: ' \
+			             + str(total_after_discount) + ' $' + '\n' + 'Total before: ' + str(total) + ' $'
+			return True, total, total_after_discount, messages_
 		except Exception as a:
 			# print(a)
 			# print(str(a))
@@ -619,17 +641,18 @@ def buy_logic(item_id, amount, amount_in_db1, user, shipping_details, card_detai
 			curr_item.quantity = amount_in_db1
 			curr_item.save()
 
-			if not (pay_transaction_id == -1 ):
-				messages_ += '\n' +'failed and aborted pay! please try again!'
+			if not (pay_transaction_id == -1):
+				messages_ += '\n' + 'failed and aborted pay! please try again!'
 				chech_cancle = pay_system.cancel_pay(pay_transaction_id)
-			if  not (supply_transaction_id == -1 ):
+			if not (supply_transaction_id == -1):
 				messages_ += '\n' + 'failed and aborted supply! please try again!'
 				chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
-			messages_ = "can`t buy this item " + str(item_id) +'  :  '+ str(a)
+			messages_ = "Exception! "  '  :  ' + str(a)
 			return False, 0, 0, messages_
 	else:
-		messages_ = "no such amount for item : " + str(item_id)
+		messages_ = "no such amount for item : " + str(item_id) +'   messages_ : ' +messages_
 		return False, 0, 0, messages_
+
 
 def check_item_rules(item, amount, user):
 	base_arr = []
@@ -720,6 +743,7 @@ def check_item_rule(rule, amount, base_arr, complex_arr, user):
 		return False
 	return True
 
+
 def check_base_item_rule(rule_id, amount, user):
 	rule = BaseItemRule.objects.get(id=rule_id)
 	if rule.type == 'MAX' and amount > int(rule.parameter):
@@ -727,6 +751,7 @@ def check_base_item_rule(rule_id, amount, user):
 	elif rule.type == 'MIN' and amount < int(rule.parameter):
 		return False
 	return True
+
 
 def check_base_rule(rule_id, amount, country, user):
 	rule = BaseRule.objects.get(id=rule_id)
@@ -739,3 +764,95 @@ def check_base_rule(rule_id, amount, country, user):
 	elif rule.type == 'REG' and not user.is_authenticated:
 		return False
 	return True
+
+
+def apply_discounts(store, curr_item, amount):
+	base_arr = []
+	complex_arr = []
+	price = curr_item.price * amount
+	store_complex_discountes = ComplexDiscount.objects.filter(store=store)
+	for disc in reversed(store_complex_discountes):
+		if disc.id in complex_arr:
+			continue
+		price = apply_complex(disc, base_arr, complex_arr, curr_item, amount, price)
+	store_base_discountes = Discount.objects.filter(store=store)
+	for disc in store_base_discountes:
+		if disc.id in base_arr:
+			continue
+		discount = float(apply_base(disc.id, curr_item, amount))
+		print(price)
+		print(discount)
+		if (discount != -1):
+			price = (1 - discount) * float(price)
+	return price
+
+
+def apply_complex(disc, base_arr, complex_arr, curr_item, amount, price):
+	if disc.left[0] == '_':
+		base_arr.append(int(disc.left[1:]))
+		left = apply_base(int(disc.left[1:]), curr_item, amount)
+	else:
+		complex_arr.append(int(disc.left))
+		tosend = ComplexStoreRule.objects.get(id=int(disc.left))
+		left = apply_complex(tosend, base_arr, complex_arr, curr_item, amount, price)
+	if disc.right[0] == '_':
+		base_arr.append(int(disc.right[1:]))
+		right = apply_base(int(disc.right[1:]), curr_item, amount)
+	else:
+		complex_arr.append(int(disc.right))
+		tosend = ComplexStoreRule.objects.get(id=int(disc.right))
+		right = apply_complex(tosend, base_arr, complex_arr, curr_item, amount, price)
+	if disc.operator == "AND" and (left != -1 and right != -1):
+		return (float(price) * float(left)) * float(right)
+	elif disc.operator == "OR":
+		if left != -1:
+			price = left * price
+		if right != -1:
+			price = right * price
+		return price
+	elif disc.operator == "XOR":
+		price1 = price
+		price2 = price
+		if left != -1:
+			price1 = left * price
+		if right != -1:
+			price2 = right * price
+		return min(price1, price2)
+
+
+def apply_base(disc, curr_item, amount):
+	base = Discount.objects.get(id=disc)
+	per = float(base.percentage)
+	today = datetime.date.today()
+	if base.end_date < today:
+		return -1
+	if base.item == None:
+		if base.type == 'MIN':
+			if amount >= base.amount:
+				return per / 100
+			else:
+				return -1
+		if base.type == 'MAX':
+			if amount <= base.amount:
+				return per / 100
+			else:
+				return -1
+		else:
+			return per / 100
+	elif base.item.id == curr_item.id:
+		if base.type == 'MIN':
+			if amount >= base.amount:
+				return per / 100
+			else:
+				return -1
+		if base.type == 'MAX':
+			if amount <= base.amount:
+				return per / 100
+			else:
+				return -1
+		else:
+			return per / 100
+	else:
+		print(curr_item.id)
+		print(base.item.id)
+		return -1
