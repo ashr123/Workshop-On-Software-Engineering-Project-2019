@@ -368,8 +368,7 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 					# item.save()
 
 					valid, total, total_after_discount, messages_ = service.buy_logic(item_id, int(quantity_to_buy),
-					                                                          amount_in_db,
-					                                                          request.user, shipping_details,
+					                                                          request.user.pk, shipping_details,
 					                                                          card_details)
 					if not valid:
 						messages.warning(request, 'can`t buy item : ' + str(item_id))

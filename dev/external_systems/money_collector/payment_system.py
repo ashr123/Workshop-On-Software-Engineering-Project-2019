@@ -2,7 +2,6 @@ import requests
 
 
 class Payment:
-
 	def handshake(self):
 		try:
 			r = requests.post("https://cs-bgu-wsep.herokuapp.com/", data={'action_type': 'handshake'})
@@ -16,7 +15,7 @@ class Payment:
 			r = requests.post("https://cs-bgu-wsep.herokuapp.com/",
 			                  data={'action_type': 'pay', 'card_number': card_number, 'month': month, 'year': year,
 			                        'holder': holder
-				                  , 'ccv': ccv, 'id1': id1})
+				                  , 'ccv': ccv, 'id': id1})
 			print(r.status_code, r.reason)
 			print(r.text)
 			return r.text

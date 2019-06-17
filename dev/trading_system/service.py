@@ -1,13 +1,6 @@
 import json
 
-from guardian.decorators import permission_required_or_403
-
-from store.models import Store
 from trading_system.domain import domain
-
-
-def buy_item():
-	pass
 
 
 def search(txt):
@@ -39,7 +32,8 @@ def add_complex_rule_to_store_1(rule_type, prev_rule, store_id, operator, parame
 	return domain.add_complex_rule_to_store_1(rule_type, prev_rule, store_id, operator, parameter, user_id)
 
 
-def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2, prev_rule, user_id):
+def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2, prev_rule,
+                                user_id):
 	return domain.add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2,
 	                                          prev_rule, user_id)
 
@@ -125,7 +119,8 @@ def update_item(item_id, item_dict, user_id):
 
 
 def add_discount(store_id, percentage, end_date, user_id, item=None, amount=None):
-	return domain.add_discount(store_id=store_id, user_id=user_id, percentage=percentage, amount=amount, end_date=end_date,
+	return domain.add_discount(store_id=store_id, user_id=user_id, percentage=percentage, amount=amount,
+	                           end_date=end_date,
 	                           item=item)
 
 
@@ -177,5 +172,5 @@ def add_complex_discount(store_id, left, right, operator):
 	return domain.add_complex_discount_to_store(store_id, left, right, operator)
 
 
-def buy_logic(pk, amount, amount_in_db, user, shipping_details, card_details):
-	return domain.buy_logic(pk, amount, amount_in_db, user, shipping_details, card_details)
+def buy_logic(item_id, amount, user_id, shipping_details, card_details):
+	return domain.buy_logic(item_id, amount, user_id, shipping_details, card_details)

@@ -2,7 +2,6 @@ import requests
 
 
 class Supply:
-
 	def handshake(self):
 		try:
 			r = requests.post("https://cs-bgu-wsep.herokuapp.com/", data={'action_type': 'handshake'})

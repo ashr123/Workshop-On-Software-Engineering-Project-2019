@@ -1,4 +1,5 @@
 import json
+from decimal import Decimal
 from unittest import skip, expectedFailure
 
 from django.contrib.auth.hashers import make_password
@@ -135,10 +136,10 @@ class TestTradingSystem(MyUnitTesting):
 		item_name = "fur shampoo 3"
 		self.assertFalse(self.store.items.filter(name=item_name).exists())
 		output = service.add_item_to_store(json.dumps({"price": 12.34,
-		                                      "name": item_name,
-		                                      "description": "This is a %s" % item_name,
-		                                      "category": "HOME",
-		                                      "quantity": 12}), self.store.pk, self.user.pk)
+		                                               "name": item_name,
+		                                               "description": "This is a %s" % item_name,
+		                                               "category": "HOME",
+		                                               "quantity": 12}), self.store.pk, self.user.pk)
 		self.assertTrue(self.store.items.filter(name=item_name).exists())
 
 	def test_not_store_owner_adds_item_to_store(self):  # 4.1.1-2
@@ -258,8 +259,34 @@ class TestTradingSystem(MyUnitTesting):
 		service.update_item(added_items[0].pk, {"quantity": 99}, user.pk)
 		self.assertEqual(added_items[0].quantity, 12)
 
-	def test_edit_an_none_existing_item_by_owner(self):  # 4.1.3-2
-		self.assertFalse(service.update_item(99, {"quantity": 99}, self.user.pk)[0])
+	def test_edit_an_none_existing_item_by_owner(self):  # 4.1.3-3
+		self.assertFalse(service.update_item(666, {"quantity": 99}, self.user.pk)[0])
+
+	def test_edit_an_existing_item_by_owner_with_negative_price(self):  # 4.1.3-4
+		item_name = "fur shampoo 8"
+		self.assertFalse(self.store.items.filter(name=item_name).exists())
+		service.add_item_to_store(json.dumps({"price": 12.34,
+		                                      "name": item_name,
+		                                      "description": "This is a %s" % item_name,
+		                                      "category": "HOME",
+		                                      "quantity": 12}), self.store.pk, self.user.pk)
+		added_items = self.store.items.filter(name=item_name)
+		self.assertTrue(added_items.exists())
+		service.update_item(added_items[0].pk, {"price": -5}, self.user.pk)
+		self.assertEqual(added_items[0].price, 12.34)
+
+	def test_edit_an_existing_item_by_owner_with_float_quantity(self):  # 4.1.3-5
+		item_name = "fur shampoo 9"
+		self.assertFalse(self.store.items.filter(name=item_name).exists())
+		service.add_item_to_store(json.dumps({"price": 12.34,
+		                                      "name": item_name,
+		                                      "description": "This is a %s" % item_name,
+		                                      "category": "HOME",
+		                                      "quantity": 12}), self.store.pk, self.user.pk)
+		added_items = self.store.items.filter(name=item_name)
+		self.assertTrue(added_items.exists())
+		service.update_item(added_items[0].pk, {"quantity": 20.5}, self.user.pk)
+		self.assertEqual(added_items[0].quantity, 12)
 
 	def test_add_owner_to_store(self):  # 4.3-1
 		new_user = next(self.generate_user_with_default_password)
@@ -293,7 +320,7 @@ class TestTradingSystem(MyUnitTesting):
 	def test_delete_first_owner_by_second_owner_that_didnt_ownered_the_first_owner(self):  # 4.4-2
 		pass
 
-	@skip("permission for deleting from store doesn't exist")
+	@skip("chain of ownership doesn't implemented")
 	def test_delete_an_owner_by_none_owner(self):  # 4.4-3
 		new_user = next(self.generate_user_with_default_password)
 		new_user2 = next(self.generate_user_with_default_password)
@@ -302,7 +329,7 @@ class TestTradingSystem(MyUnitTesting):
 		self.assertFalse(service.remove_manager_from_store(self.store.pk, new_user.pk))
 		self.assertFalse(service.get_user_store_list(new_user.pk))
 
-	@skip("permission for deleting from store doesn't exist, not ready")
+	@skip("chain of ownership doesn't implemented, not ready")
 	def test_delete_a_none_owner_by_owner(self):  # 4.4-4
 		new_user = next(self.generate_user_with_default_password)
 		self.assertFalse(service.get_user_store_list(new_user.pk))
@@ -343,18 +370,107 @@ class TestTradingSystem(MyUnitTesting):
 	def test_remove_manager(self):  # 4.6-1
 		pass
 
-	def test_delete_existing_item_by_manager(self):  # 5.1-1 TODO
-		item_name = "bbb"
+	def test_delete_existing_item_by_manager(self):  # 5.1-1
+		new_user = next(self.generate_user_with_default_password)
+		self.assertFalse(
+			service.add_manager(new_user.username, [self.Perms.REMOVE_ITEM.value], False,
+			                    self.store.pk,
+			                    self.default_user)[0])
+		item_name = "bbb2"
 		item_dict = {"price": 12.34,
 		             "name": item_name,
 		             "description": "This is a %s" % item_name,
 		             "category": "HOME",
 		             "quantity": 12}
 		service.add_item_to_store(json.dumps(item_dict), self.store.pk, self.user.pk)
-		self.assertTrue(item_dict["name"] == service.get_store_items(self.store.pk)[0]["name"])
-		service.delete_item(service.get_store_items(self.store.pk)[0]["id"], self.user.pk)
+		self.assertEqual(item_dict["name"], service.get_store_items(self.store.pk)[0]["name"])
+		self.assertTrue(service.delete_item(service.get_store_items(self.store.pk)[0]["id"], new_user.pk))
 		self.assertFalse(service.get_store_items(self.store.pk))
 
-	@skip("need to fix 'delete_item' to catch exceptions")
-	def test_delete_none_existing_item_from_store(self):  # 5.1-2   can't check for permissions
-		service.delete_item(33, self.user.pk)
+	def test_delete_none_existing_item_by_manager(self):  # 5.1-2
+		new_user = next(self.generate_user_with_default_password)
+		self.assertFalse(
+			service.add_manager(new_user.username, [self.Perms.REMOVE_ITEM.value], False,
+			                    self.store.pk,
+			                    self.default_user)[0])
+		self.assertFalse(service.delete_item(666, new_user.pk)[0])
+
+	def test_delete_existing_item_by_manager_without_permission(self):  # 5.1-3
+		new_user = next(self.generate_user_with_default_password)
+		self.assertFalse(
+			service.add_manager(new_user.username, [self.Perms.ADD_ITEM.value], False,
+			                    self.store.pk,
+			                    self.default_user)[0])
+		item_name = "bbb2"
+		item_dict = {"price": 12.34,
+		             "name": item_name,
+		             "description": "This is a %s" % item_name,
+		             "category": "HOME",
+		             "quantity": 12}
+		service.add_item_to_store(json.dumps(item_dict), self.store.pk, self.user.pk)
+		self.assertEqual(item_dict["name"], service.get_store_items(self.store.pk)[0]["name"])
+		self.assertFalse(service.delete_item(service.get_store_items(self.store.pk)[0]["id"], new_user.pk)[0])
+		self.assertTrue(service.get_store_items(self.store.pk))
+
+	def test_delete_existing_item_by_member(self):  # 5.1-4
+		new_user = next(self.generate_user_with_default_password)
+		item_name = "bbb2"
+		item_dict = {"price": 12.34,
+		             "name": item_name,
+		             "description": "This is a %s" % item_name,
+		             "category": "HOME",
+		             "quantity": 12}
+		service.add_item_to_store(json.dumps(item_dict), self.store.pk, self.user.pk)
+		self.assertEqual(item_dict["name"], service.get_store_items(self.store.pk)[0]["name"])
+		self.assertFalse(service.delete_item(service.get_store_items(self.store.pk)[0]["id"], new_user.pk)[0])
+		self.assertTrue(service.get_store_items(self.store.pk))
+
+	def test_buy_logic_all_ok(self):  # 7-1
+		item_name = "fur shampoo 10"
+		quantity = 12
+		amount_to_buy = 6
+		self.assertFalse(self.store.items.filter(name=item_name).exists())
+		service.add_item_to_store(json.dumps({"price": 12.34,
+		                                      "name": item_name,
+		                                      "description": "This is a %s" % item_name,
+		                                      "category": "HOME",
+		                                      "quantity": quantity}), self.store.pk, self.user.pk)
+		added_items = self.store.items.filter(name=item_name)
+		self.assertTrue(added_items.exists())
+		shipping_details = {'country': "Israel", 'city': "Nahariyya", 'zip': 2242676, 'address': "Blafour 113",
+		                    'name': "Roy Ash"}
+		card_details = {'card_number': "222", 'month': 6, 'year': 2020, 'holder': "Roy Ash", 'cvc': 234,
+		                'id': 308007749}
+		valid, total, total_after_discount, messages_ = service.buy_logic(added_items[0].pk,
+		                                                                  amount_to_buy,
+		                                                                  self.user.pk,
+		                                                                  shipping_details,
+		                                                                  card_details)
+		self.assertTrue(valid)
+		self.assertEqual(total, Decimal(12.34 * amount_to_buy).quantize(Decimal('1.00')))
+		self.assertEqual(added_items[0].quantity, quantity - amount_to_buy)
+
+	def test_buy_logic_all_wrong_payment_info(self):  # 7-2
+		item_name = "fur shampoo 11"
+		quantity = 12
+		amount_to_buy = 6
+		self.assertFalse(self.store.items.filter(name=item_name).exists())
+		service.add_item_to_store(json.dumps({"price": 12.34,
+		                                      "name": item_name,
+		                                      "description": "This is a %s" % item_name,
+		                                      "category": "HOME",
+		                                      "quantity": quantity}), self.store.pk, self.user.pk)
+		added_items = self.store.items.filter(name=item_name)
+		self.assertTrue(added_items.exists())
+		shipping_details = {'country': "Israel", 'city': "Nahariyya", 'zip': 2242676, 'address': "Blafour 113",
+		                    'name': "Roy Ash"}
+		card_details = {'card_number': "222", 'month': -1, 'year': 0, 'holder': "", 'cvc': 0,
+		                'id1': 308007749}
+		valid, total, total_after_discount, messages_ = service.buy_logic(added_items[0].pk,
+		                                                                  amount_to_buy,
+		                                                                  self.user.pk,
+		                                                                  shipping_details,
+		                                                                  card_details)
+		self.assertFalse(valid)
+		self.assertEqual(total, 0)
+		self.assertEqual(added_items[0].quantity, quantity)

@@ -61,14 +61,13 @@
 						</form>
 					</td>
 				{% endif %}
-				{#				{% if "עוד אין שם לפרמישן הזה. רותם ב." in user_store_perms %}#}
-				<td>
-					<form action="/store/add_base_rule_to_store/{{ store.pk }}/a" method="GET">
-						<button class="store_buttons" type="submit"><i class="fas fa-lightbulb"></i></button>
-					</form>
-				</td>
-				{#				{% endif %}#}
-
+				{% if "ADD_RULE" in user_store_perms %}
+					<td>
+						<form action="/store/add_base_rule_to_store/{{ store.pk }}/a" method="GET">
+							<button class="store_buttons" type="submit"><i class="fas fa-lightbulb"></i></button>
+						</form>
+					</td>
+				{% endif %}
 			</tr>
 		{% empty %}
 			<tr class="title">No stores yet</tr>

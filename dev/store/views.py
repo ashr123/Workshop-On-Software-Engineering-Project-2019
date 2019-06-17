@@ -436,11 +436,11 @@ def buy_item(request, pk):
 			# shipping
 			country = shipping_form.cleaned_data.get('country')
 			city = shipping_form.cleaned_data.get('city')
-			zip1 = shipping_form.cleaned_data.get('zip1')
+			zip1 = shipping_form.cleaned_data.get('zip')
 			address = shipping_form.cleaned_data.get('address')
 			name = shipping_form.cleaned_data.get('name')
 
-			shipping_details = {'country': country, 'city': city, 'zip1': zip1, 'address': address, 'name': name}
+			shipping_details = {'country': country, 'city': city, 'zip': zip1, 'address': address, 'name': name}
 
 			# card
 
@@ -449,17 +449,16 @@ def buy_item(request, pk):
 			year = supply_form.cleaned_data.get('year')
 			holder = supply_form.cleaned_data.get('holder')
 			cvc = supply_form.cleaned_data.get('cvc')
-			id1 = supply_form.cleaned_data.get('id1')
+			id1 = supply_form.cleaned_data.get('id')
 
 			card_details = {'card_number': card_number, 'month': month, 'year': year, 'holder': holder, 'cvc': cvc,
-			                'id1': id1}
+			                'id': id1}
 
 			#########################buy proccss
 			_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
-			amount_in_db = _item.quantity
 
-			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, amount_in_db, request.user,shipping_details, card_details)
+			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, request.user.pk,shipping_details, card_details)
 
 			if valid == False:
 				messages.warning(request, messages_)
@@ -997,7 +996,7 @@ class NotificationsListView(ListView):
 
 def delete_owner(request, pk_owner, pk_store):
 	print('remove omanager: ',pk_owner)
-	if (service.remove_manager_from_store(pk_store, pk_owner)):
+	if service.remove_manager_from_store(pk_store, pk_owner):
 		messages.success(request, 'delete owner')  # <-
 		return redirect('/store/home_page_owner/')
 	else:

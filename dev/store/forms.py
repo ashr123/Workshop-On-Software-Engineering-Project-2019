@@ -184,7 +184,7 @@ class AddManagerForm(forms.Form):
 	           ('ADD_MANAGER', 'add manager'),
 	           ('REMOVE_STORE', 'delete store'),
 	           ('ADD_DISCOUNT', 'add discount'),
-	           )
+	           ('ADD_RULE', 'add rule'))
 
 	permissions = forms.MultipleChoiceField(choices=CHOICES, widget=forms.CheckboxSelectMultiple())
 

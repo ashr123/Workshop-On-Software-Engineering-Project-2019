@@ -1,5 +1,5 @@
 import datetime
-import traceback
+# import traceback
 
 from django.contrib.auth.models import User, Group
 
@@ -186,7 +186,7 @@ def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, 
 def add_base_rule_to_item(item_id, rule, parameter, user_id):
 	if not (Store.objects.filter(items__id=item_id).exists() and
 	        User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0])):
-		return [False, "you don't have the permission to add base rule to store!"]
+		return [False, "you don't have the permission to add base rule to store or the item doesn't exists!"]
 
 	brule = BaseItemRule(item_id=item_id, type=rule, parameter=parameter)
 	brule.save()
@@ -196,7 +196,7 @@ def add_base_rule_to_item(item_id, rule, parameter, user_id):
 def add_complex_rule_to_item_1(item_id, prev_rule, rule, operator, parameter, user_id):
 	if not (Store.objects.filter(items__id=item_id).exists() and
 	        User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0])):
-		return [False, "you don't have the permission to add complex rule to store!"]
+		return [False, "you don't have the permission to add complex rule to store or the item doesn't exists!"]
 
 	base_rule = BaseItemRule(item_id=item_id, type=rule, parameter=parameter)
 	base_rule.save()
@@ -210,7 +210,7 @@ def add_complex_rule_to_item_1(item_id, prev_rule, rule, operator, parameter, us
 def add_complex_rule_to_item_2(item_id, prev_rule, rule1, parameter1, rule2, parameter2, operator1, operator2, user_id):
 	if not (Store.objects.filter(items__id=item_id).exists() and
 	        User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0])):
-		return [False, "you don't have the permission to add complex rule to store!"]
+		return [False, "you don't have the permission to add complex rule to store or the item doesn't exists!"]
 
 	base_rule1 = BaseItemRule(item_id=item_id, type=rule1, parameter=parameter1)
 	base_rule1.save()
@@ -326,7 +326,7 @@ def add_discount(store_id, percentage, end_date, user_id, amount=None, item=None
 def update_item(item_id, item_dict, user_id):
 	if not (Store.objects.filter(items__id=item_id).exists() and
 	        User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0])):
-		return [False, "you don't have the permission to update an item!"]
+		return [False, "you don't have the permission to update an item or the item doesn't exists!"]
 
 	c_Item.get_item(item_id=item_id).update(item_dict=item_dict)
 	return True
@@ -491,8 +491,8 @@ def get_discount_for_item(pk, amount, total):
 
 def delete_item(item_id, user_id):
 	if not (Store.objects.filter(items__id=item_id).exists() and
-	        User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0])):
-		return [False, "you don't have the permission to delete this item from the store!"]
+	        User.objects.get(id=user_id).has_perm('REMOVE_ITEM', Store.objects.filter(items__id=item_id)[0])):
+		return [False, "you don't have the permission to delete this item from the store or the item doesn't exists!"]
 
 	c_Item.get_item(item_id=item_id).delete()
 	return True
@@ -513,13 +513,13 @@ def remove_manager_from_store(store_id, m_id):
 		user = User.objects.get(id=m_id)
 		print('---------------remove manager : ',user.username)
 		is_manager = len(Store.objects.filter(id=store_id, owners__id__in=[m_id])) == 0
-		if (is_manager):
+		if is_manager:
 			store_.managers.remove(user)
 			if have_no_more_stores(m_id):
 				print('[[[[[[[[[[[[[[[[[[[[[')
 				owners_group = Group.objects.get(name="store_owners")
-				managers_group = Group.objects.get_or_create(name="store_managers")
-				managers_group = Group.objects.get(name="store_managers")
+				managers_group = Group.objects.get_or_create(name="store_managers")[0]
+				# managers_group = Group.objects.get(name="store_managers")
 				# user = User.objects.get(id = owner)
 				managers_group.user_set.remove(user)
 				owners_group.user_set.remove(user)
@@ -529,8 +529,8 @@ def remove_manager_from_store(store_id, m_id):
 			if have_no_more_stores(m_id):
 				print('[[[[[[[[[999999999999999999[[[[[[[[[[[[')
 				owners_group = Group.objects.get(name="store_owners")
-				managers_group = Group.objects.get_or_create(name="store_managers")
-				managers_group = Group.objects.get(name="store_managers")
+				managers_group = Group.objects.get_or_create(name="store_managers")[0]
+				# managers_group = Group.objects.get(name="store_managers")
 				managers_group.user_set.remove(user)
 				owners_group.user_set.remove(user)
 			return True
@@ -555,16 +555,16 @@ def have_no_more_stores(user_pk):
 	return c_User.get_user(user_id=user_pk).have_no_more_stores()
 
 
-def buy_logic(item_id, amount, amount_in_db1, user, shipping_details, card_details):
-
+def buy_logic(item_id, amount, user_id, shipping_details, card_details):
 	pay_transaction_id = -1
 	supply_transaction_id = -1
 	messages_ = ''
 	curr_item = Item.objects.get(id=item_id)
+	amount_in_db1 = Item.objects.get(id=item_id).quantity
+	user = User.objects.get(pk=user_id)
 	if amount <= amount_in_db1:
 		# print("good amount")
 		total = amount * curr_item.price
-		total_after_discount = total
 		# check item rules
 		if check_item_rules(curr_item, amount, user) is False:
 			messages_ += "you can't buy due to item policies"
@@ -584,7 +584,7 @@ def buy_logic(item_id, amount, amount_in_db1, user, shipping_details, card_detai
 				                                    str(card_details['year']), str(card_details['holder']),
 				                                    str(card_details['cvc']),
 				                                    str(card_details['id']))
-				if (pay_transaction_id == '-1'):
+				if pay_transaction_id == '-1':
 					messages_ += '\n' + 'can`t pay !'
 					return False, 0, 0, messages_
 			else:
@@ -598,11 +598,11 @@ def buy_logic(item_id, amount, amount_in_db1, user, shipping_details, card_detai
 				                                             str(shipping_details['country']),
 				                                             str(shipping_details['zip']))
 				if supply_transaction_id == '-1':
-					chech_cancle = pay_system.cancel_pay(pay_transaction_id)
+					pay_system.cancel_pay(pay_transaction_id)
 					messages_ += '\n' + 'can`t supply abort payment!'
 					return False, 0, 0, messages_
 			else:
-				chech_cancle = pay_system.cancel_pay(pay_transaction_id)
+				pay_system.cancel_pay(pay_transaction_id)
 				messages_ += '\n' + 'can`t connect to supply system abort payment!'
 				return False, 0, 0, messages_
 
@@ -613,7 +613,7 @@ def buy_logic(item_id, amount, amount_in_db1, user, shipping_details, card_detai
 
 			try:
 				item_subject = ItemSubject(curr_item.pk)
-				if (user.is_authenticated):
+				if user.is_authenticated:
 					notification = Notification.objects.create(
 						msg=user.username + ' bought ' + str(amount) + ' pieces of ' + curr_item.name)
 					notification.save()
@@ -637,16 +637,16 @@ def buy_logic(item_id, amount, amount_in_db1, user, shipping_details, card_detai
 		except Exception as a:
 			# print(a)
 			# print(str(a))
-			traceback.print_exc()
+			# traceback.print_exc()
 			curr_item.quantity = amount_in_db1
 			curr_item.save()
 
 			if not (pay_transaction_id == -1):
 				messages_ += '\n' + 'failed and aborted pay! please try again!'
-				chech_cancle = pay_system.cancel_pay(pay_transaction_id)
+				pay_system.cancel_pay(pay_transaction_id)
 			if not (supply_transaction_id == -1):
 				messages_ += '\n' + 'failed and aborted supply! please try again!'
-				chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
+				supply_system.cancel_supply(supply_transaction_id)
 			messages_ = "Exception! "  '  :  ' + str(a)
 			return False, 0, 0, messages_
 	else:
