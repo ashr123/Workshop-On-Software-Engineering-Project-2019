@@ -21,5 +21,6 @@ urlpatterns = [
 	path('view_auctions', views.AuctionsListView.as_view()),
 	path('view_auction/<int:auction_pk>', views.view_auction),
 	path('delete_item_from_cart/<int:item_pk>', views.delete_item_from_cart),
+	path('agreement_by_partner/<int:store_pk>/<int:user_pk>', views.agreement_by_partner),
 
 ]

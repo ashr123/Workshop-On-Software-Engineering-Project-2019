@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 
 from .models import Item, Store  # , Discount, MaxMinCondition
@@ -36,6 +37,19 @@ class DeleteOwners(forms.Form):
 			                    '/' + 'store/delete_owner/' + str(
 				          o['id'])+ '/' + str(store_id)  + '>' + 'remove this owner' + '</a>')) for o in
 			         list_]
+			, widget=forms.CheckboxSelectMultiple(),
+
+		)
+
+class ApproveForm(forms.Form):
+	def __init__(self, wait_to_approve_list, *args, **kwargs):
+		super(ApproveForm, self).__init__(*args, **kwargs)
+		list_ = wait_to_approve_list
+		self.fields['approve_list'] = forms.MultipleChoiceField(
+			choices=[(key,
+			          mark_safe(' <a id="approve_href" href=' + '/' + 'agreement_by_partner/' +str(value)+'/'+ str(key
+				          ) + '>' + ' approve: ' + str(User.objects.get(id=key)) +' </a>')) for key, value in list_.items()
+			         ]
 			, widget=forms.CheckboxSelectMultiple(),
 
 		)

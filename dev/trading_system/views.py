@@ -48,6 +48,7 @@ def def_super_user(request):
 		return render(request, 'trading_system/add_super_user.html', {'form': UserCreationForm()})
 
 
+# ---------------------new
 from store.models import WaitToAgreement
 from django.contrib.auth.models import User
 
@@ -69,40 +70,54 @@ def check_if_this_partner_need_to_approve(manager):
 	return len(WaitToAgreement.objects.filter(managers_who_wait__user_who_wait__in=[manager])) == 1
 
 
+def get_all_whait_agreement_t_need_to_approve(manager):
+	return WaitToAgreement.objects.filter(managers_who_wait__user_who_wait__in=[manager])
+
+
 def check_if_user_is_in_waiting_list(user_):
 	return len(WaitToAgreement.objects.filter(user_to_wait=user_)) == 1
 
 
-def check_if_user_is_approved(user_):
-	wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user_)
+def check_if_user_is_approved(user_, store):
+	wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user_, store=store)
 	managers_list = wait_to_agg_obj.managers_who_wait.all()
 	for obj in managers_list:
 		if not obj.is_approve:
-			return [False, wait_to_agg_obj.store, wait_to_agg_obj.is_owner]
-	return [True, wait_to_agg_obj.store, wait_to_agg_obj.is_owner]
+			return False
+	return True
 
 
-def approved_user_to_store_manager(user, store, is_owner):
-	[is_suc, message] = service.approved_user_to_store_manager()
-	wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user)
-	wait_to_agg_obj.remove()
+def agreement_by_partner(request, store_pk, user_pk):
+	user = User.objects.get(id=user_pk)
+	partner = User.objects.get(id=request.user.id)
+	store = Store.objects.get(id=store_pk)
+	wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user, store=store)
+	partner_wait_obg = wait_to_agg_obj.managers_who_wait.get(user_who_wait=partner)
+	partner_wait_obg.is_approve = True
+	partner_wait_obg.save()
+	if (check_if_user_is_approved(user, store)):
+		approved_user_to_store_manager(user_pk, store_pk)
+		# messages.success(request,' you approve! ')
+	wait_to_agg_obj.managers_who_wait.remove(partner_wait_obg)
+	wait_to_agg_obj.save()
+	return redirect('/login_redirect')
 
-	pass
+
+def approved_user_to_store_manager(user_pk, store_pk):
+	user = User.objects.get(id=user_pk)
+	store = Store.objects.get(id=store_pk)
+	if (service.approved_user_to_store_manager(user.username, store_pk)):
+		wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user, store=store)
+		wait_to_agg_obj.delete()
+		return True
+	return False
 
 
 def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	if request.user.is_authenticated:
-		# here need to check if check_if_user_is_in_waiting_list and if true
-		# check_if_user_is_approved if true approved_user_to_store_manager()
-		print('====================1=========', check_if_user_is_in_waiting_list(request.user))
-		print('====================2=========', check_if_this_partner_need_to_approve(request.user))
-
 		if "store_owners" in request.user.groups.values_list('name',
 		                                                     flat=True) or "store_managers" in request.user.groups.values_list(
 			'name', flat=True):
-
-			if (check_if_this_partner_need_to_approve(request.user)):
-				pass
 
 			return redirect('/store/home_page_owner/',
 			                {'text': SearchForm(), 'user_name': request.user.username, 'owner_id': request.user.pk, })
