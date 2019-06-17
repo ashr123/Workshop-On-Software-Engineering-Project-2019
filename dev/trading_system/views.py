@@ -274,7 +274,7 @@ def make_guest_cart(request):
 		# for id1 in request.session['cart']['items_id']:
 		# 	items_ += list([service.get_item(id1)])
 			# return items_
-		if   'cart' in request.session:
+		if 'cart' in request.session:
 
 			cartG = request.session['cart']
 			id_list = cartG['items_id']
