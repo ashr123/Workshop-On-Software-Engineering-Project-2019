@@ -1,5 +1,8 @@
 import json
 
+from guardian.decorators import permission_required_or_403
+
+from store.models import Store
 from trading_system.domain import domain
 
 
@@ -28,40 +31,41 @@ def open_store(store_name, desc, user_id):
 	return domain.open_store(store_name, desc, user_id)
 
 
-def add_base_rule_to_store(rule_type, store_id, parameter):
-	return domain.add_base_rule_to_store(rule_type, store_id, parameter)
+def add_base_rule_to_store(rule_type, store_id, parameter, user_id):
+	return domain.add_base_rule_to_store(rule_type, store_id, parameter, user_id)
 
 
-def add_complex_rule_to_store_1(rule_type, prev_rule, store_id, operator, parameter):
-	return domain.add_complex_rule_to_store_1(rule_type, prev_rule, store_id, operator, parameter)
+def add_complex_rule_to_store_1(rule_type, prev_rule, store_id, operator, parameter, user_id):
+	return domain.add_complex_rule_to_store_1(rule_type, prev_rule, store_id, operator, parameter, user_id)
 
 
-def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2, prev_rule):
+def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2, prev_rule, user_id):
 	return domain.add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2,
-	                                          prev_rule)
+	                                          prev_rule, user_id)
 
 
-def add_base_rule_to_item(item_id, rule, parameter):
-	return domain.add_base_rule_to_item(item_id, rule, parameter)
+def add_base_rule_to_item(item_id, rule, parameter, user_id):
+	return domain.add_base_rule_to_item(item_id, rule, parameter, user_id)
 
 
-def add_complex_rule_to_item_1(item_id, prev_rule, rule, operator, parameter):
-	return domain.add_complex_rule_to_item_1(item_id, prev_rule, rule, operator, parameter)
+def add_complex_rule_to_item_1(item_id, prev_rule, rule, operator, parameter, user_id):
+	return domain.add_complex_rule_to_item_1(item_id, prev_rule, rule, operator, parameter, user_id)
 
 
-def add_complex_rule_to_item_2(item_id, prev_rule, rule1, parameter1, rule2, parameter2, operator1, operator2):
+def add_complex_rule_to_item_2(item_id, prev_rule, rule1, parameter1, rule2, parameter2, operator1, operator2, user_id):
 	return domain.add_complex_rule_to_item_2(item_id, prev_rule, rule1, parameter1, rule2, parameter2, operator1,
-	                                         operator2)
+	                                         operator2, user_id)
 
 
-def add_item_to_store(item_json, store_id):
+def add_item_to_store(item_json, store_id, user_id):
 	item_dict = json.loads(item_json)
 	return domain.add_item_to_store(price=item_dict['price'],
 	                                name=item_dict['name'],
 	                                description=item_dict['description'],
 	                                category=item_dict['category'],
 	                                quantity=item_dict['quantity'],
-	                                store_id=store_id)
+	                                store_id=store_id,
+	                                user_id=user_id)
 
 
 def can_remove_store(store_id, user_id):
@@ -72,8 +76,8 @@ def have_no_more_stores(user_pk):
 	return domain.have_no_more_stores(user_pk=user_pk)
 
 
-def delete_store(store_id):
-	return domain.delete_store(store_id=store_id)
+def delete_store(store_id, user_id):
+	return domain.delete_store(store_id=store_id, user_id=user_id)
 
 
 def get_store_details(store_id):
@@ -116,13 +120,13 @@ def is_authenticated(user_id):
 	return domain.is_authenticated(user_id)
 
 
-def update_item(item_id, item_dict):
-	return domain.update_item(item_id=item_id, item_dict=item_dict)
+def update_item(item_id, item_dict, user_id):
+	return domain.update_item(item_id=item_id, item_dict=item_dict, user_id=user_id)
 
 
-def add_discount(store_id, percentage, end_date, item_id=None, type=None, amount=None):
-	return domain.add_discount(store_id=store_id, type=type, percentage=percentage, amount=amount, end_date=end_date,
-	                           item_id=item_id)
+def add_discount(store_id, percentage, end_date, user_id, item=None, amount=None):
+	return domain.add_discount(store_id=store_id, user_id=user_id, percentage=percentage, amount=amount, end_date=end_date,
+	                           item=item)
 
 
 def item_rules_string(itemId):
@@ -145,8 +149,8 @@ def get_discount_for_item(pk, amount, total):
 	return domain.get_discount_for_item(pk, amount, total)
 
 
-def delete_item(item_id):
-	return domain.delete_item(item_id)
+def delete_item(item_id, user_id):
+	return domain.delete_item(item_id, user_id=user_id)
 
 
 def get_store_creator(store_id):

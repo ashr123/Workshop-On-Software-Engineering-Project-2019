@@ -28,7 +28,7 @@ class StoreOwnerConsumer(WebsocketConsumer):
 		)
 
 	# Receive message from WebSocket
-	def receive(self, text_data):
+	def receive(self, text_data=None, bytes_data=None):
 		text_data_json = json.loads(text_data)
 		ntfcs_ids = extract_ntfcs_ids(text_data_json['message'])
 		for ntfc_id in ntfcs_ids:

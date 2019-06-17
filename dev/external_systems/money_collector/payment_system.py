@@ -1,7 +1,7 @@
 import requests
 
 
-class Payment():
+class Payment:
 
 	def handshake(self):
 		try:
@@ -11,12 +11,12 @@ class Payment():
 		except:
 			return False
 
-	def pay(self, card_number, month, year, holder, ccv, id):
+	def pay(self, card_number, month, year, holder, ccv, id1):
 		try:
 			r = requests.post("https://cs-bgu-wsep.herokuapp.com/",
 			                  data={'action_type': 'pay', 'card_number': card_number, 'month': month, 'year': year,
 			                        'holder': holder
-				                  , 'ccv': ccv, 'id': id})
+				                  , 'ccv': ccv, 'id1': id1})
 			print(r.status_code, r.reason)
 			print(r.text)
 			return r.text

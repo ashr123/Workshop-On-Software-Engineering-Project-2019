@@ -8,7 +8,7 @@ from trading_system.models import ObserverUser
 from trading_system.domain.user import User as c_User
 
 
-class Store():
+class Store:
 	def __init__(self, name=None, desc=None, owner_id=None, model=None):
 		if model != None:
 			self._model = model
@@ -29,6 +29,7 @@ class Store():
 		assign_perm('ADD_MANAGER', _user, self._model)
 		assign_perm('REMOVE_STORE', _user, self._model)
 		assign_perm('ADD_DISCOUNT', _user, self._model)
+		assign_perm('ADD_RULE', _user, self._model)
 
 	@property
 	def pk(self):
@@ -58,7 +59,7 @@ class Store():
 		assign_perm(perm, User.objects.get(pk=user_id), self._model)
 
 	def has_perm(self, perm, user_id):
-		return User.objects.get(pk=user_id).has_perm('REMOVE_STORE', self._model)
+		return User.objects.get(pk=user_id).has_perm(perm, self._model)
 
 	def is_already_owner(self, user_id):
 		return self._model.owners.filter(id=user_id).exists()
@@ -76,8 +77,8 @@ class Store():
 		items_to_delete = self._model.items.all()
 		owners_ids = self.all_owners_ids()
 		managers_ids = self.all_managers_ids()
-		owners_objs = list(map(lambda id: c_User.get_user(user_id=id), owners_ids))
-		managers_objs = list(map(lambda id: c_User.get_user(user_id=id), managers_ids))
+		owners_objs = list(map(lambda id1: c_User.get_user(user_id=id1), owners_ids))
+		managers_objs = list(map(lambda id1: c_User.get_user(user_id=id1), managers_ids))
 		self._model.delete()
 		for item_ in items_to_delete:
 			item_.delete()

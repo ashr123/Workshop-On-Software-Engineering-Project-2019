@@ -1,7 +1,7 @@
 import requests
 
 
-class Supply():
+class Supply:
 
 	def handshake(self):
 		try:
@@ -11,12 +11,12 @@ class Supply():
 		except:
 			return False
 
-	def supply(self, name, address, city, country, zip):
+	def supply(self, name, address, city, country, zip1):
 		try:
 			r = requests.post("https://cs-bgu-wsep.herokuapp.com/",
 			                  data={'action_type': 'supply', 'name': name, 'address': address, 'city': city,
 			                        'country': country
-				                  , 'zip': zip})
+				                  , 'zip': zip1})
 			print(r.status_code, r.reason)
 			print(r.text)
 			return r.text
