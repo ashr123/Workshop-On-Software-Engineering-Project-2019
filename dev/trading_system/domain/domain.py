@@ -245,7 +245,7 @@ def add_item_to_cart(user_id, item_id):
 
 
 def get_item(id1):
-	return  Item.objects.get(id=id1)
+	return Item.objects.get(id=id1)
 
 def is_authenticated(user_id):
 	return c_User.get_user(user_id=user_id).is_authenticated()
@@ -584,7 +584,7 @@ def have_no_more_stores(user_pk):
 	return c_User.get_user(user_id=user_pk).have_no_more_stores()
 
 
-def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details, card_details):
+def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart):
 	pay_transaction_id = -1
 	supply_transaction_id = -1
 	messages_ = ''
@@ -602,7 +602,9 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 		if check_store_rules(store_of_item, amount, shipping_details['country'], is_auth) is False:
 			messages_ += "you can't buy due to store policies"
 			return False, 0, 0, messages_
-		total_after_discount = apply_discounts(store=store_of_item, curr_item=curr_item, amount=int(amount))
+
+		if (is_cart is False):
+			total_after_discount = apply_discounts(store=store_of_item, curr_item=curr_item, amount=int(amount))
 
 		try:
 			if pay_system.handshake():
@@ -794,93 +796,7 @@ def check_base_rule(rule_id, amount, country, is_auth):
 	return True
 
 
-def apply_discounts(store, curr_item, amount):
-	base_arr = []
-	complex_arr = []
-	price = curr_item.price * amount
-	store_complex_discountes = ComplexDiscount.objects.filter(store=store)
-	for disc in reversed(store_complex_discountes):
-		if disc.id in complex_arr:
-			continue
-		discount = apply_complex(disc, base_arr, complex_arr, curr_item, amount)
-		if (discount != -1):
-			price = (1 - discount) * float(price)
-	store_base_discountes = Discount.objects.filter(store=store)
-	for disc in store_base_discountes:
-		if disc.id in base_arr:
-			continue
-		discount = float(apply_base(disc.id, curr_item, amount))
-		if (discount != -1):
-			price = (1 - discount) * float(price)
-	return price
 
-
-def apply_complex(disc, base_arr, complex_arr, curr_item, amount):
-	if disc.left[0] == '_':
-		base_arr.append(int(disc.left[1:]))
-		left = apply_base(int(disc.left[1:]), curr_item, amount)
-	else:
-		complex_arr.append(int(disc.left))
-		tosend = ComplexStoreRule.objects.get(id=int(disc.left))
-		left = apply_complex(tosend, base_arr, complex_arr, curr_item, amount)
-	if disc.right[0] == '_':
-		base_arr.append(int(disc.right[1:]))
-		right = apply_base(int(disc.right[1:]), curr_item, amount)
-	else:
-		complex_arr.append(int(disc.right))
-		tosend = ComplexStoreRule.objects.get(id=int(disc.right))
-		right = apply_complex(tosend, base_arr, complex_arr, curr_item, amount)
-	if disc.operator == "AND" and (left != -1 and right != -1):
-		return 1 - ((1-left)*(1-right))
-	elif disc.operator == "OR":
-		if left != -1 and right != -1:
-			return 1 - ((1-left)*(1-right))
-		elif left != -1:
-			return left
-		elif right != -1:
-			return right
-	elif disc.operator == "XOR":
-		return max(left, right)
-	else:
-		return -1
-
-
-def apply_base(disc, curr_item, amount):
-	base = Discount.objects.get(id=disc)
-	per = float(base.percentage)
-	today = datetime.date.today()
-	if base.end_date < today:
-		return -1
-	if base.item == None:
-		if base.type == 'MIN':
-			if amount >= base.amount:
-				return per / 100
-			else:
-				return -1
-		if base.type == 'MAX':
-			if amount <= base.amount:
-				return per / 100
-			else:
-				return -1
-		else:
-			return per / 100
-	elif base.item.id == curr_item.id:
-		if base.type == 'MIN':
-			if amount >= base.amount:
-				return per / 100
-			else:
-				return -1
-		if base.type == 'MAX':
-			if amount <= base.amount:
-				return per / 100
-			else:
-				return -1
-		else:
-			return per / 100
-	else:
-		print(curr_item.id)
-		print(base.item.id)
-		return -1
 
 
 def delete_complex(rule_id):
@@ -1023,3 +939,267 @@ def search_base_discount(disc_id, item_id):
 				if item.id == item_id:
 					flag = True
 	return {"is_item": flag, "discount": res}
+
+
+def get_quantity(item_id):
+	return Item.objects.get(id=item_id).quantity
+
+
+def apply_discounts(store, curr_item, amount):
+	base_arr = []
+	complex_arr = []
+	price = curr_item.price * amount
+	store_complex_discountes = ComplexDiscount.objects.filter(store=store)
+	for disc in reversed(store_complex_discountes):
+		if disc.id in complex_arr:
+			continue
+		discount = apply_complex(disc, base_arr, complex_arr, curr_item, amount)
+		if (discount != -1):
+			price = (1 - discount) * float(price)
+	store_base_discountes = Discount.objects.filter(store=store)
+	for disc in store_base_discountes:
+		if disc.id in base_arr:
+			continue
+		discount = float(apply_base(disc.id, curr_item, amount))
+		if (discount != -1):
+			price = (1 - discount) * float(price)
+	return price
+
+
+
+def build_map(list_of_items):
+	ret = []
+	print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55')
+	print(list_of_items)
+	for i in list_of_items:
+		store_id = Store.objects.get(items__id__contains=i['item_id']).id
+		if store_id in list(map(lambda x: x['store_id'], ret)):
+			store_detail = list(filter(lambda x: x['store_id'] == store_id, ret))[0]
+			store_detail['amount'] += i['amount']
+			store_detail['items'].append({'item_id':i['item_id'], 'item_amount': i['amount']})
+		else:
+			ret.append({'store_id': store_id, 'amount': i['amount'], 'items':[{'item_id': i['item_id'], 'item_amount':i['amount']}]})
+
+	return ret
+
+def calculate_price(store_map):
+	ret = []
+	for item in store_map['items']:
+		item_o = Item.objects.get(id=item['item_id'])
+		ret.append({'item_id': item['item_id'], 'price': float(item_o.price) * float(item['item_amount'])})
+	return ret
+
+def calculate_total_price(list_price):
+	ret = 0
+	for i in list_price:
+		ret += i['price']
+	return ret
+
+def apply_discounts_for_cart(list_of_items):
+	struct = build_map(list_of_items)
+	total_price = 0
+	total_before = 0
+	for store_map in struct:
+		base_arr = []
+		complex_arr = []
+		store_price = calculate_price(store_map)
+		total_before += calculate_total_price(store_price)
+		_store = Store.objects.get(id=store_map['store_id'])
+		store_complex_discountes = ComplexDiscount.objects.all().filter(store=_store)
+		for disc in reversed(store_complex_discountes):
+			if disc.id in complex_arr:
+				continue
+			discount = apply_complex_cart(disc, base_arr, complex_arr, store_map)
+			if (discount != -1):
+				for dis in discount:
+					iprice = list(filter(lambda x: x['item_id'] == dis['product'], store_price))
+					if len(iprice) != 0:
+						iprice[0]['price'] = float(iprice[0]['price']) * float((1 - dis['discount']))
+					else:
+						for i in store_price:
+							i['price'] = float(i['price']) * float((1 - dis['discount']))
+		store_base_discountes = Discount.objects.filter(store=store_map['store_id'])
+		for disc in store_base_discountes:
+			if disc.id in base_arr:
+				continue
+			discount = apply_base_cart(disc.id, store_map)
+			if (discount != -1):
+				iprice = list(filter(lambda x: x['item_id']== discount[0]['product'], store_price))
+				if len(iprice) != 0:
+					iprice[0]['price'] = float(iprice[0]['price']) * float((1 - discount[0]['discount']))
+				else:
+					for i in store_price:
+						i['price'] = float(i['price']) * float((1 - discount[0]['discount']))
+		total_store = 0
+		for price in store_price:
+			total_store += float(price['price'])
+		total_price += total_store
+	return total_price, total_before
+
+
+
+
+def apply_complex_cart(disc, base_arr, complex_arr, store_map):
+	if disc.left[0] == '_':
+		base_arr.append(int(disc.left[1:]))
+		left = apply_base_cart(int(disc.left[1:]), store_map)
+	else:
+		complex_arr.append(int(disc.left))
+		tosend = ComplexDiscount.objects.get(id=int(disc.left))
+		left = apply_complex_cart(tosend, base_arr, complex_arr, store_map)
+	if disc.right[0] == '_':
+		base_arr.append(int(disc.right[1:]))
+		right = apply_base_cart(int(disc.right[1:]),store_map)
+	else:
+		complex_arr.append(int(disc.right))
+		tosend = ComplexDiscount.objects.get(id=int(disc.right))
+		right = apply_complex_cart(tosend, base_arr, complex_arr,store_map)
+	if disc.operator == "AND" and (left != -1 and right != -1):
+		res = []
+		for dis in right:
+			ids_left = list(map(lambda x: x['product'], left))
+			if dis['product'] in ids_left:
+				index = ids_left.index(dis['product'])
+				res.append({'product': dis['product'], 'discount': 1 - ((1 - dis['discount']) * (1 - left[index]['discount']))})
+				left.remove(left[index])
+			else:
+				res.append(dis)
+		return res + left
+	elif disc.operator == "OR":
+		res = []
+		if left != -1 and right != -1:
+			for dis in right:
+				ids_left = list(map(lambda x: x['product'], left))
+				if dis['product'] in ids_left:
+					index = ids_left.index(dis['product'])
+					res.append({'product': dis['product'],
+					            'discount': 1 - ((1 - dis['discount']) * (1 - left[index]['discount']))})
+					left.remove(left[index])
+				else:
+					res.append(dis)
+			return res + left
+		elif left != -1:
+			return left
+		elif right != -1:
+			return right
+	elif disc.operator == "XOR":
+		if (left != -1 and right != -1) or (left != -1 and right == -1):
+			return left
+		else:
+			return right
+	else:
+		return -1
+
+
+
+def apply_base_cart(disc, store_map):
+	base = Discount.objects.get(id=disc)
+	list_of_ids = list(map(lambda x: x['item_id'], store_map['items']))
+	per = float(base.percentage)
+	today = datetime.date.today()
+	if base.end_date < today:
+		return -1
+	if base.item == None:
+		if base.type == 'MIN':
+			if store_map['amount'] >= base.amount:
+				return [{'product': '*' ,'discount': per / 100}]
+			else:
+				return -1
+		if base.type == 'MAX':
+			if store_map['amount'] <= base.amount:
+				return [{'product': '*' ,'discount': per / 100}]
+			else:
+				return -1
+		else:
+			return [{'product': '*' ,'discount': per / 100}]
+	if str(base.item.id) in list_of_ids:
+		item_index = list_of_ids.index(str(base.item.id))
+		if base.type == 'MIN':
+			if store_map['items'][item_index]['item_amount'] >= base.amount:
+				return [{'product': list_of_ids[item_index] ,'discount': per / 100}]
+			else:
+				return -1
+		if base.type == 'MAX':
+			if store_map['items'][item_index]['item_amount'] <= base.amount:
+				return [{'product': list_of_ids[item_index] ,'discount': per / 100}]
+			else:
+				return -1
+		else:
+			return [{'product': list_of_ids[item_index] ,'discount': per / 100}]
+	else:
+		return -1
+
+
+
+
+def apply_complex(disc, base_arr, complex_arr, curr_item, amount):
+	if disc.left[0] == '_':
+		base_arr.append(int(disc.left[1:]))
+		left = apply_base(int(disc.left[1:]), curr_item, amount)
+	else:
+		complex_arr.append(int(disc.left))
+		tosend = ComplexDiscount.objects.get(id=int(disc.left))
+		left = apply_complex(tosend, base_arr, complex_arr, curr_item, amount)
+	if disc.right[0] == '_':
+		base_arr.append(int(disc.right[1:]))
+		right = apply_base(int(disc.right[1:]), curr_item, amount)
+	else:
+		complex_arr.append(int(disc.right))
+		print(disc.right)
+		tosend = ComplexDiscount.objects.get(id=int(disc.right))
+		right = apply_complex(tosend, base_arr, complex_arr, curr_item, amount)
+	if disc.operator == "AND" and (left != -1 and right != -1):
+		return 1 - ((1 - left) * (1 - right))
+	elif disc.operator == "OR":
+		if left != -1 and right != -1:
+			return 1 - ((1 - left) * (1 - right))
+		elif left != -1:
+			return left
+		elif right != -1:
+			return right
+	elif disc.operator == "XOR":
+		return max(left, right)
+	else:
+		return -1
+
+
+
+
+def apply_base(disc, curr_item, amount):
+	base = Discount.objects.get(id=disc)
+	per = float(base.percentage)
+	today = datetime.date.today()
+	if base.end_date < today:
+		return -1
+	if base.item == None:
+		if base.type == 'MIN':
+			if amount >= base.amount:
+				return per / 100
+			else:
+				return -1
+		if base.type == 'MAX':
+			if amount <= base.amount:
+				return per / 100
+			else:
+				return -1
+		else:
+			return per / 100
+	elif base.item.id == curr_item.id:
+		if base.type == 'MIN':
+			if amount >= base.amount:
+				return per / 100
+			else:
+				return -1
+		if base.type == 'MAX':
+			if amount <= base.amount:
+				return per / 100
+			else:
+				return -1
+		else:
+			return per / 100
+	else:
+		return -1
+
+
+
+

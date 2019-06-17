@@ -173,8 +173,8 @@ def add_complex_discount(store_id, left, right, operator):
 	return domain.add_complex_discount_to_store(store_id, left, right, operator)
 
 
-def buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details):
-	return domain.buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details)
+def buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart):
+	return domain.buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart)
 
 
 def store_discounts_string(store_id):
@@ -196,11 +196,22 @@ def delete_complex_item_rule(rule_id):
 def delete_base_item_rule(rule_id):
 	return domain.delete_base_item(rule_id)
 
+
 def delete_complex_discount(disc):
 	return domain.delete_complex_discount(disc)
+
 
 def delete_base_store_discount(disc):
 	return domain.delete_base_discount(disc)
 
+
 def get_discounts_serach(item_id):
 	return domain.get_discounts_serach(item_id)
+
+
+def get_quantity(item_id):
+	return domain.get_quantity(item_id)
+
+
+def apply_discounts_for_cart(list_of_items):
+	return domain.apply_discounts_for_cart(list_of_items)

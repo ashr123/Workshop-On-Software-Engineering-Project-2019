@@ -462,12 +462,12 @@ def buy_item(request, pk):
 			                'id': id}
 
 			#########################buy proccss
-			_item = Item.objects.get(id=pk)
+			#_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
-			amount_in_db = _item.quantity
+			amount_in_db = service.get_quantity(item_id=pk)
 			is_auth = request.user.is_authenticated
 			username = request.user.username
-			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details)
+			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, False)
 
 			if valid == False:
 				messages.warning(request, messages_)

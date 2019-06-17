@@ -59,8 +59,8 @@ def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 
 			return render(request, 'homepage_member.html', {'text': SearchForm(), 'user_name': request.user.username})
 
-			# return render(request, 'homepage_member.html',
-			#               {'text': text, 'user_name': user_name})
+		# return render(request, 'homepage_member.html',
+		#               {'text': text, 'user_name': user_name})
 
 	return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
@@ -141,8 +141,10 @@ def show_cart(request: Any) -> HttpResponse:
 			'text': SearchForm(),
 			'base_template_name': base_template_name
 		})
-	# else:
-	# 	base_template_name = 'homepage_guest.html'
+
+
+# else:
+# 	base_template_name = 'homepage_guest.html'
 
 
 cart_index = 0
@@ -241,14 +243,13 @@ def view_auction(request, auction_pk):
 # 	return stores[0]
 
 
-
 def add_item_to_cart(request, item_pk):
 	if not (request.user.is_authenticated):
 		if 'cart' in request.session:
-			items_in =request.session['cart']['items_id']
+			items_in = request.session['cart']['items_id']
 
 			cart_g = request.session['cart']
-			if(item_pk not in items_in):
+			if (item_pk not in items_in):
 				cart_g['items_id'].append(item_pk)
 		else:
 			cart_g = CartGuest([item_pk]).serialize()
@@ -273,8 +274,8 @@ def make_guest_cart(request):
 		items_ = []
 		# for id1 in request.session['cart']['items_id']:
 		# 	items_ += list([service.get_item(id1)])
-			# return items_
-		if   'cart' in request.session:
+		# return items_
+		if 'cart' in request.session:
 
 			cartG = request.session['cart']
 			id_list = cartG['items_id']
@@ -352,38 +353,39 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			return redirect('/login_redirect')
 
 		if form.is_valid():
-
+			list_of_items = []
 			for item_id in form.cleaned_data.get('items'):
-
-				amount_in_db = Item.objects.get(id=item_id).quantity
+				amount_in_db = service.get_quantity(item_id)
 				if amount_in_db > 0:
 					item1 = Item.objects.get(id=item_id)
 					quantity_to_buy = 1
 					try:
 						quantity_to_buy = request.POST.get('quantity' + str(item1.id))
-						# print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
+					# print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
 					except:
 						messages.warning(request, 'problem with quantity ')
-					# item.quantity = amount_in_db - 1
-					# item.save()
-
+					list_of_items.append({'item_id': item_id, 'amount': int(quantity_to_buy)})
 					valid, total, total_after_discount, messages_ = service.buy_logic(item_id, int(quantity_to_buy),
-					                                                          amount_in_db,
-					                                                          request.user, shipping_details,
-					                                                          card_details)
+					                                                                  amount_in_db,
+					                                                                  request.user.is_authenticated,
+					                                                                  request.user.username,
+					                                                                  shipping_details,
+					                                                                  card_details, True)
 					if not valid:
 						messages.warning(request, 'can`t buy item : ' + str(item_id))
 						messages.warning(request, 'reason : ' + str(messages_))
-					else:
-						messages.success(request, ' buy item : ' + str(item_id))
-						items_bought.append(item_id)
-						if request.user.is_authenticated:
-							cart = Cart.objects.get(customer=request.user)
-							cart.items.remove(item1)
-						else:
-							cart_g = request.session['cart']
-							cart_g['items_id'].remove(Decimal(item_id))
-							request.session['cart'] = cart_g
+						return redirect('/login_redirect')
+
+
+			res, res_before = service.apply_discounts_for_cart(list_of_items)
+			messages.success(request, ' total after discount : ' + str(res) +" instead of: "+ str(res_before))
+			if request.user.is_authenticated:
+				cart = Cart.objects.get(customer=request.user)
+				cart.items.remove(item1)
+			else:
+				cart_g = request.session['cart']
+				cart_g['items_id'].remove(Decimal(item_id))
+				request.session['cart'] = cart_g
 
 			return redirect('/login_redirect')
 		else:
