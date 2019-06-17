@@ -183,7 +183,8 @@ def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, 
 
 
 def add_base_rule_to_item(item_id, rule, parameter, user_id):
-	if not User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0]):
+	if not (Store.objects.filter(items__id=item_id).exists() and
+	        User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0])):
 		return [False, "you don't have the permission to add base rule to store!"]
 
 	brule = BaseItemRule(item_id=item_id, type=rule, parameter=parameter)
@@ -192,7 +193,8 @@ def add_base_rule_to_item(item_id, rule, parameter, user_id):
 
 
 def add_complex_rule_to_item_1(item_id, prev_rule, rule, operator, parameter, user_id):
-	if not User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0]):
+	if not (Store.objects.filter(items__id=item_id).exists() and
+	        User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0])):
 		return [False, "you don't have the permission to add complex rule to store!"]
 
 	base_rule = BaseItemRule(item_id=item_id, type=rule, parameter=parameter)
@@ -205,7 +207,8 @@ def add_complex_rule_to_item_1(item_id, prev_rule, rule, operator, parameter, us
 
 
 def add_complex_rule_to_item_2(item_id, prev_rule, rule1, parameter1, rule2, parameter2, operator1, operator2, user_id):
-	if not User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0]):
+	if not (Store.objects.filter(items__id=item_id).exists() and
+	        User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0])):
 		return [False, "you don't have the permission to add complex rule to store!"]
 
 	base_rule1 = BaseItemRule(item_id=item_id, type=rule1, parameter=parameter1)
@@ -307,7 +310,8 @@ def add_discount(store_id, percentage, end_date, user_id, amount=None, item=None
 
 
 def update_item(item_id, item_dict, user_id):
-	if not User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0]):
+	if not (Store.objects.filter(items__id=item_id).exists() and
+	        User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0])):
 		return [False, "you don't have the permission to update an item!"]
 
 	c_Item.get_item(item_id=item_id).update(item_dict=item_dict)
@@ -472,7 +476,8 @@ def get_discount_for_item(pk, amount, total):
 
 
 def delete_item(item_id, user_id):
-	if not User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0]):
+	if not (Store.objects.filter(items__id=item_id).exists() and
+	        User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0])):
 		return [False, "you don't have the permission to delete this item from the store!"]
 
 	c_Item.get_item(item_id=item_id).delete()

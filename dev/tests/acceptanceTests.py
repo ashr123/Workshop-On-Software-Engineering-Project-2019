@@ -196,7 +196,7 @@ class TestTradingSystem(MyUnitTesting):
 
 		self.assertFalse(self.store.items.filter(name=item_name).exists())
 
-	def test_delete_an_item_from_store(self):  # 4.1.2-1... TODO: complete
+	def test_delete_existing_item_by_owner(self):  # 4.1.2-1
 		user = next(self.generate_user_with_default_password)
 		self.assertFalse(user.groups.filter(name='store_owners').exists())
 		item_name = "fur shampoo 4"
@@ -206,11 +206,60 @@ class TestTradingSystem(MyUnitTesting):
 		                                      "description": "This is a %s" % item_name,
 		                                      "category": "HOME",
 		                                      "quantity": 12}), self.store.pk, self.user.pk)
-		self.assertFalse(self.store.items.filter(name=item_name).exists())
+		added_items = self.store.items.filter(name=item_name)
+		self.assertTrue(added_items.exists())
+		service.delete_item(added_items[0].pk, self.user.pk)
+		self.assertFalse(added_items.exists())
 
-	@skip("there isn't a function for deletion yet")
-	def test_edit_an_existing_item(self):  # 4.1.3-1...
-		pass
+	def test_delete_none_existing_item(self):  # 4.1.2-2
+		user = next(self.generate_user_with_default_password)
+		self.assertFalse(user.groups.filter(name='store_owners').exists())
+		self.assertFalse(service.delete_item(999, self.user.pk)[0])
+
+	def test_delete_existing_item_by_none_owner(self):  # 4.1.2-3
+		user = next(self.generate_user_with_default_password)
+		self.assertFalse(user.groups.filter(name='store_owners').exists())
+		item_name = "fur shampoo 5"
+		self.assertFalse(self.store.items.filter(name=item_name).exists())
+		service.add_item_to_store(json.dumps({"price": 12.34,
+		                                      "name": item_name,
+		                                      "description": "This is a %s" % item_name,
+		                                      "category": "HOME",
+		                                      "quantity": 12}), self.store.pk, self.user.pk)
+		added_items = self.store.items.filter(name=item_name)
+		self.assertTrue(added_items.exists())
+		service.delete_item(added_items[0].pk, user.pk)
+		self.assertTrue(added_items.exists())
+
+	def test_edit_an_existing_item_by_owner(self):  # 4.1.3-1
+		item_name = "fur shampoo 6"
+		self.assertFalse(self.store.items.filter(name=item_name).exists())
+		service.add_item_to_store(json.dumps({"price": 12.34,
+		                                      "name": item_name,
+		                                      "description": "This is a %s" % item_name,
+		                                      "category": "HOME",
+		                                      "quantity": 12}), self.store.pk, self.user.pk)
+		added_items = self.store.items.filter(name=item_name)
+		self.assertTrue(added_items.exists())
+		service.update_item(added_items[0].pk, {"quantity": 99}, self.user.pk)
+		self.assertEqual(added_items[0].quantity, 99)
+
+	def test_edit_an_existing_item_by_none_owner(self):  # 4.1.3-2
+		user = next(self.generate_user_with_default_password)
+		item_name = "fur shampoo 7"
+		self.assertFalse(self.store.items.filter(name=item_name).exists())
+		service.add_item_to_store(json.dumps({"price": 12.34,
+		                                      "name": item_name,
+		                                      "description": "This is a %s" % item_name,
+		                                      "category": "HOME",
+		                                      "quantity": 12}), self.store.pk, self.user.pk)
+		added_items = self.store.items.filter(name=item_name)
+		self.assertTrue(added_items.exists())
+		service.update_item(added_items[0].pk, {"quantity": 99}, user.pk)
+		self.assertEqual(added_items[0].quantity, 12)
+
+	def test_edit_an_none_existing_item_by_owner(self):  # 4.1.3-2
+		self.assertFalse(service.update_item(99, {"quantity": 99}, self.user.pk)[0])
 
 	def test_add_owner_to_store(self):  # 4.3-1
 		new_user = next(self.generate_user_with_default_password)
@@ -294,7 +343,7 @@ class TestTradingSystem(MyUnitTesting):
 	def test_remove_manager(self):  # 4.6-1
 		pass
 
-	def test_delete_existing_item_from_store(self):  # 5.1-1
+	def test_delete_existing_item_by_manager(self):  # 5.1-1 TODO
 		item_name = "bbb"
 		item_dict = {"price": 12.34,
 		             "name": item_name,
