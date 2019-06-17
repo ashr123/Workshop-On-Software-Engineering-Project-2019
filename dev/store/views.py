@@ -2,7 +2,7 @@ import decimal
 from datetime import date
 import json
 import traceback
-
+import logging
 import simplejson as s_json
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
