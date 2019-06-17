@@ -536,7 +536,8 @@ def add_manager_to_store(request, pk):
 			user_name = form.cleaned_data.get('user_name')
 			picked = form.cleaned_data.get('permissions')
 			is_owner = form.cleaned_data.get('is_owner')
-			[fail, message_] = service.add_manager(user_name, picked, is_owner, pk, request.user.username)
+			is_partner = form.cleaned_data.get('is_partner')
+			[fail, message_] = service.add_manager(user_name, picked, is_owner, pk, request.user.username,is_partner)
 			if fail:
 				messages.warning(request, message_)
 				return redirect('/store/home_page_owner/')

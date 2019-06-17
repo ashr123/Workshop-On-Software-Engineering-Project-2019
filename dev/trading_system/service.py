@@ -1,8 +1,5 @@
 import json
 
-from guardian.decorators import permission_required_or_403
-
-from store.models import Store
 from trading_system.domain import domain
 
 
@@ -14,7 +11,7 @@ def search(txt):
 	return domain.search(txt)
 
 
-def add_manager(user_name, picked, is_owner, store_pk, request_user_name):
+def add_manager(user_name, picked, is_owner, store_pk, request_user_name, is_partner):
 	"""
 
 	:param user_name: 
@@ -24,7 +21,7 @@ def add_manager(user_name, picked, is_owner, store_pk, request_user_name):
 	:param request_user_name: 
 	:return: True if failing
 	"""
-	return domain.add_manager(user_name, picked, is_owner, store_pk, request_user_name)
+	return domain.add_manager(user_name, picked, is_owner, store_pk, request_user_name, is_partner)
 
 
 def open_store(store_name, desc, user_id):
@@ -39,7 +36,8 @@ def add_complex_rule_to_store_1(rule_type, prev_rule, store_id, operator, parame
 	return domain.add_complex_rule_to_store_1(rule_type, prev_rule, store_id, operator, parameter, user_id)
 
 
-def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2, prev_rule, user_id):
+def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2, prev_rule,
+                                user_id):
 	return domain.add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2,
 	                                          prev_rule, user_id)
 
@@ -125,7 +123,8 @@ def update_item(item_id, item_dict, user_id):
 
 
 def add_discount(store_id, percentage, end_date, user_id, item=None, amount=None):
-	return domain.add_discount(store_id=store_id, user_id=user_id, percentage=percentage, amount=amount, end_date=end_date,
+	return domain.add_discount(store_id=store_id, user_id=user_id, percentage=percentage, amount=amount,
+	                           end_date=end_date,
 	                           item=item)
 
 
@@ -179,3 +178,11 @@ def add_complex_discount(store_id, left, right, operator):
 
 def buy_logic(pk, amount, amount_in_db, user, shipping_details, card_details):
 	return domain.buy_logic(pk, amount, amount_in_db, user, shipping_details, card_details)
+
+
+def approved_user_to_store_manager(wanna_be_manager, store_pk, is_owner):
+	return domain.approved_user_to_store_manager(wanna_be_manager, store_pk, is_owner)
+
+
+def approved_user_to_store_manager(wanna_be_manager, store_pk):
+	return domain.approved_user_to_store_manager(wanna_be_manager, store_pk)

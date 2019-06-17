@@ -42,6 +42,7 @@ class Store(models.Model):
 	name = models.CharField(max_length=30)
 	owners = models.ManyToManyField(User)
 	managers = models.ManyToManyField(User, related_name="store_managers")
+	partners = models.ManyToManyField(User, related_name="store_partners")
 	items = models.ManyToManyField(Item)
 	description = models.CharField(max_length=64)
 
@@ -129,6 +130,7 @@ class Discount(models.Model):
 	end_date = models.DateField(help_text='format: mm/dd/yyyy')
 	percentage = models.PositiveSmallIntegerField()
 
+
 class ComplexDiscount(models.Model):
 	LOGICS = (('OR', 'or'),
 	          ('AND', 'and'),
@@ -137,4 +139,15 @@ class ComplexDiscount(models.Model):
 	right = models.CharField(max_length=4)
 	operator = models.CharField(max_length=3, choices=LOGICS)
 	store = models.ForeignKey(Store, on_delete=models.CASCADE)
+
+
+class ManagersWhoWait(models.Model):
+	user_who_wait = models.ForeignKey(User, on_delete=None)
+	is_approve = models.BooleanField(default=False)
+
+
+class WaitToAgreement(models.Model):
+	user_to_wait = models.ForeignKey(User, on_delete=None)
+	store = models.ForeignKey(Store, on_delete=None)
+	managers_who_wait = models.ManyToManyField(ManagersWhoWait, related_name="store_managers_to_wait")
 

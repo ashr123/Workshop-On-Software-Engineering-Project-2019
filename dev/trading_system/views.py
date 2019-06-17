@@ -48,19 +48,70 @@ def def_super_user(request):
 		return render(request, 'trading_system/add_super_user.html', {'form': UserCreationForm()})
 
 
+from store.models import WaitToAgreement
+from django.contrib.auth.models import User
+
+
+def approve_user(pk_manager, pk_user):
+	try:
+		manager_obj = User.objects.get(id=pk_manager)
+		user_obj = User.objects.get(id=pk_user)
+		wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user_obj)
+		managersWhoWait_obj = wait_to_agg_obj.managers_who_wait.get(user_who_wait=manager_obj)
+		managersWhoWait_obj.is_approve = True
+		managersWhoWait_obj.save()
+		return True
+	except:
+		return False
+
+
+def check_if_this_partner_need_to_approve(manager):
+	return len(WaitToAgreement.objects.filter(managers_who_wait__user_who_wait__in=[manager])) == 1
+
+
+def check_if_user_is_in_waiting_list(user_):
+	return len(WaitToAgreement.objects.filter(user_to_wait=user_)) == 1
+
+
+def check_if_user_is_approved(user_):
+	wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user_)
+	managers_list = wait_to_agg_obj.managers_who_wait.all()
+	for obj in managers_list:
+		if not obj.is_approve:
+			return [False, wait_to_agg_obj.store, wait_to_agg_obj.is_owner]
+	return [True, wait_to_agg_obj.store, wait_to_agg_obj.is_owner]
+
+
+def approved_user_to_store_manager(user, store, is_owner):
+	[is_suc, message] = service.approved_user_to_store_manager()
+	wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user)
+	wait_to_agg_obj.remove()
+
+	pass
+
+
 def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	if request.user.is_authenticated:
+		# here need to check if check_if_user_is_in_waiting_list and if true
+		# check_if_user_is_approved if true approved_user_to_store_manager()
+		print('====================1=========', check_if_user_is_in_waiting_list(request.user))
+		print('====================2=========', check_if_this_partner_need_to_approve(request.user))
+
 		if "store_owners" in request.user.groups.values_list('name',
 		                                                     flat=True) or "store_managers" in request.user.groups.values_list(
 			'name', flat=True):
+
+			if (check_if_this_partner_need_to_approve(request.user)):
+				pass
+
 			return redirect('/store/home_page_owner/',
 			                {'text': SearchForm(), 'user_name': request.user.username, 'owner_id': request.user.pk, })
 		else:
 
 			return render(request, 'homepage_member.html', {'text': SearchForm(), 'user_name': request.user.username})
 
-			# return render(request, 'homepage_member.html',
-			#               {'text': text, 'user_name': user_name})
+	# return render(request, 'homepage_member.html',
+	#               {'text': text, 'user_name': user_name})
 
 	return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
@@ -141,8 +192,10 @@ def show_cart(request: Any) -> HttpResponse:
 			'text': SearchForm(),
 			'base_template_name': base_template_name
 		})
-	# else:
-	# 	base_template_name = 'homepage_guest.html'
+
+
+# else:
+# 	base_template_name = 'homepage_guest.html'
 
 
 cart_index = 0
@@ -241,14 +294,13 @@ def view_auction(request, auction_pk):
 # 	return stores[0]
 
 
-
 def add_item_to_cart(request, item_pk):
 	if not (request.user.is_authenticated):
 		if 'cart' in request.session:
-			items_in =request.session['cart']['items_id']
+			items_in = request.session['cart']['items_id']
 
 			cart_g = request.session['cart']
-			if(item_pk not in items_in):
+			if (item_pk not in items_in):
 				cart_g['items_id'].append(item_pk)
 		else:
 			cart_g = CartGuest([item_pk]).serialize()
@@ -273,7 +325,7 @@ def make_guest_cart(request):
 		items_ = []
 		# for id1 in request.session['cart']['items_id']:
 		# 	items_ += list([service.get_item(id1)])
-			# return items_
+		# return items_
 		if 'cart' in request.session:
 
 			cartG = request.session['cart']
@@ -361,16 +413,16 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 					quantity_to_buy = 1
 					try:
 						quantity_to_buy = request.POST.get('quantity' + str(item1.id))
-						# print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
+					# print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
 					except:
 						messages.warning(request, 'problem with quantity ')
 					# item.quantity = amount_in_db - 1
 					# item.save()
 
 					valid, total, total_after_discount, messages_ = service.buy_logic(item_id, int(quantity_to_buy),
-					                                                          amount_in_db,
-					                                                          request.user, shipping_details,
-					                                                          card_details)
+					                                                                  amount_in_db,
+					                                                                  request.user, shipping_details,
+					                                                                  card_details)
 					if not valid:
 						messages.warning(request, 'can`t buy item : ' + str(item_id))
 						messages.warning(request, 'reason : ' + str(messages_))

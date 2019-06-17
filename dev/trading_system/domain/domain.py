@@ -2,34 +2,66 @@ import datetime
 import traceback
 
 from django.contrib.auth.models import User, Group
+from guardian.shortcuts import assign_perm
 
-from store.models import BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount, Store, Item, \
-	ComplexDiscount
-# from store.models import Item, BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount
-from trading_system.models import ObserverUser, NotificationUser, Notification
-from trading_system.domain.store import Store as c_Store
-from trading_system.domain.user import User as c_User
-from trading_system.domain.item import Item as c_Item
-from trading_system.domain.cart import Cart as c_Cart
 from external_systems.money_collector.payment_system import Payment
 from external_systems.supply_system.supply_system import Supply
+from store.models import BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount, Store, Item, \
+	ComplexDiscount
+from trading_system.domain.cart import Cart as c_Cart
+from trading_system.domain.item import Item as c_Item
+from trading_system.domain.store import Store as c_Store
+from trading_system.domain.user import User as c_User
+# from store.models import Item, BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount
+from trading_system.models import ObserverUser, NotificationUser, Notification
 from trading_system.observer import ItemSubject
 
 pay_system = Payment()
 supply_system = Supply()
 
+from store.models import WaitToAgreement, ManagersWhoWait
 
-def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
+
+def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager, is_partner):
+	print('--------------------------------------------------------is_p----', is_partner)
+
 	if not User.objects.get(username=store_manager).has_perm('ADD_MANAGER', Store.objects.get(id=store_pk)):
 		return [True, "Store manager don't have the permission to add another manager"]
 	messages_ = ''
+	store = c_Store.get_store(store_id=store_pk)
+	if (is_partner):
+
+		all_partners = store.all_partners_ids()
+		if (len(all_partners) > 1):  # there is other partner besids curr
+			store_obj = Store.objects.get(id=store_pk)
+			wanna_be_manager_user_obg = User.objects.get(username=wanna_be_manager)
+			store_manager_user_obg = User.objects.get(username=store_manager)
+			wait_obj = WaitToAgreement(user_to_wait=wanna_be_manager_user_obg, store=store_obj)
+			wait_obj.save()
+			for m_id in all_partners:
+				pre_manager_user_obg = User.objects.get(id=m_id)
+				m_obj = ManagersWhoWait(user_who_wait=pre_manager_user_obg)
+				m_obj.save()
+				wait_obj.managers_who_wait.add(m_obj)
+			wait_obj_for_this_manager = wait_obj.managers_who_wait.get(
+				user_who_wait=store_manager_user_obg)  # remove curr manager from wait list
+			wait_obj.managers_who_wait.remove(wait_obj_for_this_manager)
+			wait_obj.save()
+			messages_ += ' . wait to approve partnership . '
+			return [False, messages_]
+		else:
+			if approved_user_to_store_manager(wanna_be_manager, store_pk):
+				return [False,'approved']
+			else:
+				return  [True,'can`t complete']
+
 	try:
 		user_ = User.objects.get(username=wanna_be_manager)
 	except:
 		fail = True
 		messages_ += 'no such user'
 		return [fail, messages_]
-	store = c_Store.get_store(store_id=store_pk)
+
 	if wanna_be_manager == store_manager:
 		fail = True
 		messages_ += 'can`t add yourself as a manager!'
@@ -55,9 +87,12 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 		return [fail, messages_]
 	# messages.warning(request, 'No such user')
 	# return redirect('/store/home_page_owner/')
+
 	for perm in picked:
 		store.assign_perm(perm=perm, user_id=user_.pk)
+
 	if is_owner:
+
 		try:
 			store_owners_group = Group.objects.get(name="store_owners")
 			user_.groups.add(store_owners_group)
@@ -88,6 +123,36 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 			return [True, messages_]
 
 	return [False, messages_]
+
+
+def approved_user_to_store_manager(wanna_be_manager, store_pk):
+	try:
+		store_obj = Store.objects.get(id=store_pk)
+		wanna_be_manager_user_obg = User.objects.get(username=wanna_be_manager)
+		store_obj.owners.add(User.objects.get(pk=wanna_be_manager_user_obg.id))
+		store_obj.partners.add(User.objects.get(pk=wanna_be_manager_user_obg.id))
+		store_obj.save()
+		my_group = Group.objects.get_or_create(name="store_owners")[0]
+		# my_group = Group.objects.get(name="store_owners")
+		try:
+			if len(ObserverUser.objects.filter(user_id=wanna_be_manager_user_obg.pk)) == 0:
+				ObserverUser.objects.create(user_id=wanna_be_manager_user_obg.pk,
+				                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(
+					                            wanna_be_manager_user_obg.pk)).save()
+		except:
+			pass
+		wanna_be_manager_user_obg.groups.add(my_group)
+		assign_perm('ADD_ITEM', wanna_be_manager_user_obg, store_obj)
+		assign_perm('REMOVE_ITEM', wanna_be_manager_user_obg, store_obj)
+		assign_perm('EDIT_ITEM', wanna_be_manager_user_obg, store_obj)
+		assign_perm('ADD_MANAGER', wanna_be_manager_user_obg, store_obj)
+		assign_perm('REMOVE_STORE', wanna_be_manager_user_obg, store_obj)
+		assign_perm('ADD_DISCOUNT', wanna_be_manager_user_obg, store_obj)
+		assign_perm('ADD_RULE', wanna_be_manager_user_obg, store_obj)
+		store_obj.save()
+		return True
+	except:
+		return False
 
 
 def search(txt):
@@ -145,7 +210,8 @@ def get_store_details(store_id):
 	return c_Store.get_store(store_id).get_details()
 
 
-def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2, prev_rule, user_id):
+def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2, prev_rule,
+                                user_id):
 	if not User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.get(pk=store_id)):
 		return [False, "you don't have the permission to add complex rule to store!"]
 
@@ -259,8 +325,7 @@ def get_item_details(item_id):
 
 
 def add_item_to_cart(user_id, item_id):
-
-	if not (user_id ==None):
+	if not (user_id == None):
 		item_store_pk = c_Store.get_item_store(item_pk=item_id).pk
 		cart = c_Cart.get_cart(store_pk=item_store_pk, user_id=user_id)
 		if cart is None:
@@ -273,7 +338,8 @@ def add_item_to_cart(user_id, item_id):
 
 
 def get_item(id1):
-	return  Item.objects.get(id=id1)
+	return Item.objects.get(id=id1)
+
 
 def is_authenticated(user_id):
 	return c_User.get_user(user_id=user_id).is_authenticated()
@@ -305,9 +371,8 @@ def len_of_super():
 	return c_User.len_of_super()
 
 
-
 def add_complex_discount_to_store(store_id, left, right, operator):
-	d= ComplexDiscount(store_id=store_id, left=left, right=right, operator=operator)
+	d = ComplexDiscount(store_id=store_id, left=left, right=right, operator=operator)
 	d.save()
 	return [True, d.pk]
 
@@ -320,7 +385,6 @@ def add_discount(store_id, percentage, end_date, user_id, amount=None, item=None
 	                    end_date=end_date, item=item)
 	discount.save()
 	return [True, discount.id]
-
 
 
 def update_item(item_id, item_dict, user_id):
@@ -511,7 +575,7 @@ def remove_manager_from_store(store_id, m_id):
 	try:
 		store_ = Store.objects.get(pk=store_id)
 		user = User.objects.get(id=m_id)
-		print('---------------remove manager : ',user.username)
+		print('---------------remove manager : ', user.username)
 		is_manager = len(Store.objects.filter(id=store_id, owners__id__in=[m_id])) == 0
 		if (is_manager):
 			store_.managers.remove(user)
@@ -556,7 +620,6 @@ def have_no_more_stores(user_pk):
 
 
 def buy_logic(item_id, amount, amount_in_db1, user, shipping_details, card_details):
-
 	pay_transaction_id = -1
 	supply_transaction_id = -1
 	messages_ = ''
@@ -650,7 +713,7 @@ def buy_logic(item_id, amount, amount_in_db1, user, shipping_details, card_detai
 			messages_ = "Exception! "  '  :  ' + str(a)
 			return False, 0, 0, messages_
 	else:
-		messages_ = "no such amount for item : " + str(item_id) +'   messages_ : ' +messages_
+		messages_ = "no such amount for item : " + str(item_id) + '   messages_ : ' + messages_
 		return False, 0, 0, messages_
 
 

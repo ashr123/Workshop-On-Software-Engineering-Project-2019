@@ -178,6 +178,7 @@ class AddRuleToItem_two(forms.Form):
 class AddManagerForm(forms.Form):
 	user_name = forms.CharField()
 	is_owner = forms.BooleanField(required=False)
+	is_partner = forms.BooleanField(required=False)
 	CHOICES = (('ADD_ITEM', 'add item'),
 	           ('REMOVE_ITEM', 'delete item'),
 	           ('EDIT_ITEM', 'update item'),

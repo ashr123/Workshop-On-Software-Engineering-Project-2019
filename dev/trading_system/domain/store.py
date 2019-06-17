@@ -15,6 +15,7 @@ class Store:
 			return
 		self._model = m_Store.objects.create(name=name, description=desc)
 		self._model.owners.add(User.objects.get(pk=owner_id))
+		self._model.partners.add(User.objects.get(pk=owner_id))
 		self._model.save()
 		_user = User.objects.get(pk=owner_id)
 		my_group = Group.objects.get_or_create(name="store_owners")[0]
@@ -46,6 +47,10 @@ class Store:
 	def all_managers_ids(self):
 		managers = list(self._model.managers.all())
 		return list(map(lambda m: m.id, managers))
+
+	def all_partners_ids(self):
+		partners = list(self._model.partners.all())
+		return list(map(lambda o: o.id, partners))
 
 	def all_items_ids(self):
 		items = list(self._model.items.all())
