@@ -1,19 +1,20 @@
 import datetime
-# import traceback
 
 from django.contrib.auth.models import User, Group
 
-from store.models import BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount, Store, Item, \
-	ComplexDiscount
-# from store.models import Item, BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount
-from trading_system.models import ObserverUser, NotificationUser, Notification
-from trading_system.domain.store import Store as c_Store
-from trading_system.domain.user import User as c_User
-from trading_system.domain.item import Item as c_Item
-from trading_system.domain.cart import Cart as c_Cart
 from external_systems.money_collector.payment_system import Payment
 from external_systems.supply_system.supply_system import Supply
+from store.models import BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount, Store, Item, \
+	ComplexDiscount
+from trading_system.domain.cart import Cart as c_Cart
+from trading_system.domain.item import Item as c_Item
+from trading_system.domain.store import Store as c_Store
+from trading_system.domain.user import User as c_User
+# from store.models import Item, BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount
+from trading_system.models import ObserverUser, NotificationUser, Notification
 from trading_system.observer import ItemSubject
+
+# import traceback
 
 pay_system = Payment()
 supply_system = Supply()
@@ -145,7 +146,8 @@ def get_store_details(store_id):
 	return c_Store.get_store(store_id).get_details()
 
 
-def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2, prev_rule, user_id):
+def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2, prev_rule,
+                                user_id):
 	if not User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.get(pk=store_id)):
 		return [False, "you don't have the permission to add complex rule to store!"]
 
@@ -242,7 +244,7 @@ def can_remove_store(store_id, user_id):
 
 
 def delete_store(store_id, user_id):
-	if not User.objects.get(id=user_id).has_perm('ADD_ITEM', Store.objects.get(pk=store_id)):
+	if not can_remove_store(store_id, user_id):
 		return [False, "you don't have the permission to delete the store!"]
 
 	s = c_Store.get_store(store_id)
@@ -259,8 +261,7 @@ def get_item_details(item_id):
 
 
 def add_item_to_cart(user_id, item_id):
-
-	if not (user_id ==None):
+	if user_id is not None:
 		item_store_pk = c_Store.get_item_store(item_pk=item_id).pk
 		cart = c_Cart.get_cart(store_pk=item_store_pk, user_id=user_id)
 		if cart is None:
@@ -268,12 +269,12 @@ def add_item_to_cart(user_id, item_id):
 		cart.add_item(item_id=item_id)
 		return True
 	else:
-
 		return False
 
 
 def get_item(id1):
-	return  Item.objects.get(id=id1)
+	return Item.objects.get(id=id1)
+
 
 def is_authenticated(user_id):
 	return c_User.get_user(user_id=user_id).is_authenticated()
@@ -292,7 +293,7 @@ def make_cart_2(item_id):
 
 def remove_item_from_cart(user_id, item_id):
 	c_Cart.get_cart(user_id=user_id).remove_item(item_id=item_id)
-	item = c_Item.get_item(id=item_id)
+	item = c_Item.get_item(item_id=item_id)
 	if item.quantity == 0:
 		item.delete()
 
@@ -305,9 +306,8 @@ def len_of_super():
 	return c_User.len_of_super()
 
 
-
 def add_complex_discount_to_store(store_id, left, right, operator):
-	d= ComplexDiscount(store_id=store_id, left=left, right=right, operator=operator)
+	d = ComplexDiscount(store_id=store_id, left=left, right=right, operator=operator)
 	d.save()
 	return [True, d.pk]
 
@@ -322,10 +322,9 @@ def add_discount(store_id, percentage, end_date, user_id, amount=None, item=None
 	return [True, discount.id]
 
 
-
 def update_item(item_id, item_dict, user_id):
 	if not (Store.objects.filter(items__id=item_id).exists() and
-	        User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0])):
+	        User.objects.get(id=user_id).has_perm('EDIT_ITEM', Store.objects.filter(items__id=item_id)[0])):
 		return [False, "you don't have the permission to update an item or the item doesn't exists!"]
 
 	c_Item.get_item(item_id=item_id).update(item_dict=item_dict)
@@ -511,7 +510,7 @@ def remove_manager_from_store(store_id, m_id):
 	try:
 		store_ = Store.objects.get(pk=store_id)
 		user = User.objects.get(id=m_id)
-		print('---------------remove manager : ',user.username)
+		print('---------------remove manager : ', user.username)
 		is_manager = len(Store.objects.filter(id=store_id, owners__id__in=[m_id])) == 0
 		if is_manager:
 			store_.managers.remove(user)
@@ -650,7 +649,7 @@ def buy_logic(item_id, amount, user_id, shipping_details, card_details):
 			messages_ = "Exception! "  '  :  ' + str(a)
 			return False, 0, 0, messages_
 	else:
-		messages_ = "no such amount for item : " + str(item_id) +'   messages_ : ' +messages_
+		messages_ = "no such amount for item : " + str(item_id) + '   messages_ : ' + messages_
 		return False, 0, 0, messages_
 
 
