@@ -106,12 +106,20 @@ ASGI_APPLICATION = "dev.routing.application"
 # }
 
 DATABASES = {
+	# 'default': {
+	# 	'ENGINE': 'django.db.backends.mysql',
+	# 	'NAME': 'tradingsystem',
+	# 	'USER': 'root',
+	# 	'password': '',
+	# 	'HOST': 'localhost',
+	# 	'PORT': ''
+	# }
 	'default': {
 		'ENGINE': 'django.db.backends.mysql',
 		'NAME': 'tradingsystem',
-		'USER': 'root',
+		'USER': 'tr',
 		'password': '',
-		'HOST': 'localhost',
+		'HOST': '132.73.213.227',
 		'PORT': ''
 	}
 }
