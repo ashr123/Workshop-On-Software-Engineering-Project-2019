@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User as m_User, Group
 
 import trading_system.domain.store as StoreModule
+import trading_system.domain.cart as CartModule
 
 
 class User:
@@ -19,6 +20,10 @@ class User:
 	@property
 	def stores(self):
 		return StoreModule.Store.get_owned_stores(user_id=self.pk)
+
+	@property
+	def cart(self):
+		return CartModule.Cart.get_cart(user_id=self.pk)
 
 	def have_no_more_stores(self):
 		StoreModule.Store.owns_stores(user_id= self.pk) and StoreModule.Store.manages_stores(user_id= self.pk)

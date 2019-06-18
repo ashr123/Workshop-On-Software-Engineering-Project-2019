@@ -1,6 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from trading_system.models import Cart as m_Cart
+import trading_system.domain.item as ItemModule
 
 
 class Cart:
@@ -20,6 +21,10 @@ class Cart:
 	@property
 	def pk(self):
 		return self._model.pk
+
+	@property
+	def items(self):
+		return list(map(lambda m: ItemModule.Item.get_item(m.pk),list(self._model.items.all())))
 
 	@staticmethod
 	def get_cart(cart_id=None, store_pk=None, user_id=None):
