@@ -134,6 +134,7 @@ class Store:
 			if field.attname in store_dict.keys():
 				setattr(self._model, field.attname, store_dict[field.attname])
 		try:
+
 			self._model.save()
 		except Exception:
 			raise DBFailedExceptionDomainToService(msg='DB Failed')

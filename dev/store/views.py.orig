@@ -21,6 +21,7 @@ from guardian.decorators import permission_required_or_403
 from trading_system import service
 from trading_system.forms import SearchForm
 from trading_system.models import Notification, NotificationUser
+from trading_system.templates.OurExceptions import DBFailedExceptionServiceToViews
 from . import forms
 from .forms import BuyForm, AddManagerForm, AddRuleToItem, AddRuleToStore_base, AddRuleToStore_withop, \
     AddRuleToStore_two, AddDiscountForm, AddComplexDiscountForm
@@ -63,7 +64,6 @@ def get_country_of_request(request):
     g = GeoIP2()
     return g.country_name(ip_)
 
-
 @permission_required_or_403('ADD_ITEM', (Store, 'id', 'pk'))
 @login_required
 def add_item(request, pk):
@@ -74,14 +74,14 @@ def add_item(request, pk):
             ans = service.add_item_to_store(item_json=s_json.dumps(form.cleaned_data),
                                             store_id=pk, user_id=request.user.pk)
             messages.success(request, ans[1])  # <-
-            logev.info('add_item post s')
+		logev.info('add_item successfully')
             return redirect('/store/home_page_owner/')
         else:
-            loger.warning('add_item fail not a valid form')
+		loger.warning('add_item failed')
             messages.warning(request, 'Problem with filed : ', form.errors, 'please try again!')  # <-
             return redirect('/store/home_page_owner/')
     else:
-        logev.info('add_item get')
+
         form_class = ItemForm
         curr_store = Store.objects.get(id=pk)
         store_name = curr_store.name
@@ -100,9 +100,9 @@ def add_item(request, pk):
 
 # from ipware.ip import get_ip
 
-
 @login_required
 def add_store(request):
+
     user_groups = request.user.groups.values_list('name', flat=True)
     if "store_owners" in user_groups or "store_managers" in user_groups:
         base_template_name = 'store/homepage_store_owner.html'
@@ -128,13 +128,16 @@ def submit_open_store(request):
                                  desc=open_store_form.cleaned_data.get('description'),
                                  user_id=request.user.pk)
         messages.success(request, "your new store added successfully")
+		logev.info('add ' + open_store_form.cleaned_data.get('name') + ' store successfully')
         return redirect('/store/home_page_owner')
     else:
         messages.warning(request, 'Please correct the error and try again.')  # <-
+		loger.warning('add ' + open_store_form.cleaned_data.get('name') + ' store failed')
         return redirect('/login_redirect')
 
 
 # need to be in the first time:
+
 
 @method_decorator(login_required, name='dispatch')
 class StoreDetailView(DetailView):
@@ -143,6 +146,7 @@ class StoreDetailView(DetailView):
     permission_required = "@login_required"
 
     def get_context_data(self, **kwargs):
+		logev.info('view store successfully')
         text = SearchForm()
         user_name = self.request.user.username
         context = {}

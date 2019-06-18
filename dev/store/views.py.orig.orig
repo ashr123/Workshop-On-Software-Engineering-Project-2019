@@ -506,23 +506,36 @@ from trading_system.views import get_all_wait_agreement_t_need_to_approve
 
 @login_required
 def home_page_owner(request):
-	text = SearchForm()
-	user_name = request.user.username
-	unread_ntfcs = NotificationUser.objects.filter(user=request.user.pk, been_read=False)
+<<<<<<< HEAD
+    text = SearchForm()
+    user_name = request.user.username
+    unread_ntfcs = NotificationUser.objects.filter(user=request.user.pk, been_read=False)
     approve_list = get_all_wait_agreement_t_need_to_approve(request.user)
     approved_user_per_store = {}
     for a in approve_list:
         approved_user_per_store[a.user_to_wait.id] = a.store.id
 
     approve_form = ApproveForm(approved_user_per_store)
+    context = {
+        'user_name': user_name,
+        'text': text,
+        'owner_id': request.user.pk,
+        'unread_notifications': len(unread_ntfcs),
+	'approve_form': approve_form
+    }
+    return render(request, 'store/homepage_store_owner.html', context)
+=======
+	text = SearchForm()
+	user_name = request.user.username
+	unread_ntfcs = NotificationUser.objects.filter(user=request.user.pk, been_read=False)
 	context = {
 		'user_name': user_name,
 		'text': text,
 		'owner_id': request.user.pk,
-		'unread_notifications': len(unread_ntfcs),
-		'approve_form': approve_form
+		'unread_notifications': len(unread_ntfcs)
 	}
 	return render(request, 'store/homepage_store_owner.html', context)
+>>>>>>> origin/noa_delete_rule
 
 
 class AddItemToStore(CreateView):
@@ -538,6 +551,36 @@ def itemAddedSucceffuly(request, store_id, id1):
 @permission_required_or_403('ADD_MANAGER', (Store, 'id', 'pk'))
 @login_required
 def add_manager_to_store(request, pk):
+<<<<<<< HEAD
+    if request.method == 'POST':
+        form = AddManagerForm(request.POST)
+        if form.is_valid():
+            user_name = form.cleaned_data.get('user_name')
+            picked = form.cleaned_data.get('permissions')
+            is_owner = form.cleaned_data.get('is_owner')
+            is_partner = form.cleaned_data.get('is_partner')
+            [fail, message_] = service.add_manager(user_name, picked, is_owner, pk, request.user.username, is_partner)
+            if fail:
+                messages.warning(request, message_)
+                return redirect('/store/home_page_owner/')
+            messages.success(request, user_name + ' is appointed' + message_)
+            return redirect('/store/home_page_owner/')
+        messages.warning(request, 'error in :  ', form.errors)
+        return redirect('/store/home_page_owner/')
+    # do something with your results
+    else:
+        form = AddManagerForm
+        text = SearchForm()
+        user_name = request.user.username
+        context = {
+            'user_name': user_name,
+            'text': text,
+            'pk': pk,
+            'form': form
+        }
+
+        return render(request, 'store/add_manager.html', context)
+=======
 	try:
 		if request.method == 'POST':
 			form = AddManagerForm(request.POST)
@@ -545,8 +588,7 @@ def add_manager_to_store(request, pk):
 				user_name = form.cleaned_data.get('user_name')
 				picked = form.cleaned_data.get('permissions')
 				is_owner = form.cleaned_data.get('is_owner')
-				is_partner = form.cleaned_data.get('is_partner')
-				[fail, message_] = service.add_manager(user_name, picked, is_owner, pk, request.user.username, is_partner)
+				[fail, message_] = service.add_manager(user_name, picked, is_owner, pk, request.user.username)
 				if fail:
 					messages.warning(request, message_)
 					loger.warning('add manager failed')
@@ -574,6 +616,7 @@ def add_manager_to_store(request, pk):
 		messages.warning(request, e.msg)
 		loger.warning(e.msg)
 		return redirect('/login_redirect')
+>>>>>>> origin/noa_delete_rule
 
 
 @permission_required_or_403('ADD_DISCOUNT', (Store, 'id', 'pk'))
