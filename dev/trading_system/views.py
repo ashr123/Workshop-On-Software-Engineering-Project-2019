@@ -70,8 +70,8 @@ def approve_user(pk_manager, pk_user):
 # 	return len(WaitToAgreement.objects.filter(managers_who_wait__user_who_wait__in=[manager])) == 1
 
 
-def get_all_whait_agreement_t_need_to_approve(manager):
-	return service.get_all_whait_agreement_t_need_to_approve(manager.id)
+def get_all_wait_agreement_t_need_to_approve(manager):
+	return service.get_all_wait_agreement_t_need_to_approve(manager.id)
 
 
 # def check_if_user_is_in_waiting_list(user_):

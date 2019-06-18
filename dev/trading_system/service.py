@@ -188,8 +188,8 @@ def approved_user_to_store_manager(wanna_be_manager, store_pk):
 	return domain.approved_user_to_store_manager(wanna_be_manager, store_pk)
 
 
-def get_all_whait_agreement_t_need_to_approve(manager_id):
-	return domain.get_all_whait_agreement_t_need_to_approve(manager_id)
+def get_all_wait_agreement_t_need_to_approve(manager_id):
+	return domain.get_all_wait_agreement_t_need_to_approve(manager_id)
 
 def check_if_user_is_approved(user_id, store_id):
 	return domain.check_if_user_is_approved(user_id, store_id)

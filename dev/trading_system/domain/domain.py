@@ -32,6 +32,9 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager, is_
 	if (is_partner):
 
 		all_partners = store.all_partners_ids()
+		print('------------all p--------', all_partners)
+		print('------------len--------',len(all_partners))
+		print('------------store--------', store.name)
 		if (len(all_partners) > 1):  # there is other partner besids curr
 			store_obj = Store.objects.get(id=store_pk)
 			wanna_be_manager_user_obg = User.objects.get(username=wanna_be_manager)
@@ -154,7 +157,7 @@ def agreement_by_partner(partner_id, store_pk, user_pk):
 		return False
 
 
-def get_all_whait_agreement_t_need_to_approve(manager_id):
+def get_all_wait_agreement_t_need_to_approve(manager_id):
 	manager = User.objects.get(id=manager_id)
 	return WaitToAgreement.objects.filter(managers_who_wait__user_who_wait__in=[manager])
 
@@ -184,6 +187,12 @@ def approved_user_to_store_manager(wanna_be_manager, store_pk):
 		assign_perm('ADD_DISCOUNT', wanna_be_manager_user_obg, store_obj)
 		assign_perm('ADD_RULE', wanna_be_manager_user_obg, store_obj)
 		store_obj.save()
+		try:
+			approved_user = User.objects.get(username=wanna_be_manager)
+			wait_ = WaitToAgreement.objects.filter(user_to_wait=approved_user,store=store_obj)
+			wait_.delete()
+		except:
+			pass
 		return True
 	except:
 		return False

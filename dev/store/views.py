@@ -503,7 +503,7 @@ def check_base_rule(rule_id, amount, country, user):
 
 
 from .forms import ApproveForm
-from trading_system.views import get_all_whait_agreement_t_need_to_approve
+from trading_system.views import get_all_wait_agreement_t_need_to_approve
 
 
 @login_required
@@ -511,7 +511,7 @@ def home_page_owner(request):
 	text = SearchForm()
 	user_name = request.user.username
 	unread_ntfcs = NotificationUser.objects.filter(user=request.user.pk, been_read=False)
-	approve_list = get_all_whait_agreement_t_need_to_approve(request.user)
+	approve_list = get_all_wait_agreement_t_need_to_approve(request.user)
 	approved_user_per_store = {}
 	for a in approve_list:
 		approved_user_per_store[a.user_to_wait.id] = a.store.id
