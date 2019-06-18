@@ -415,7 +415,18 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 
 		if form.is_valid():
 			list_of_items = []
-			for item_id in form.cleaned_data.get('items'):
+			items = form.cleaned_data.get('items')
+			for item_id in items:
+				quantity_to_buy = 1
+				try:
+
+					quantity_to_buy = request.POST.get('quantity' + str(item_id))
+				# print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
+				except:
+					messages.warning(request, 'problem with quantity ')
+				list_of_items.append({'item_id': item_id, 'amount': int(quantity_to_buy)})
+			res, res_before, item_prices = service.apply_discounts_for_cart(list_of_items)
+			for item_id in items:
 				amount_in_db = service.get_quantity(item_id)
 				if amount_in_db > 0:
 					item1 = Item.objects.get(id=item_id)
@@ -425,13 +436,18 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 					# print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
 					except:
 						messages.warning(request, 'problem with quantity ')
-					list_of_items.append({'item_id': item_id, 'amount': int(quantity_to_buy)})
-					valid, total, total_after_discount, messages_ = service.buy_logic(item_id, int(quantity_to_buy),
+					# list_of_items.append({'item_id': item_id, 'amount': int(quantity_to_buy)})
+					item_price = list(filter(lambda x: x["item_id"] == item_id, item_prices))[0]
+					valid, total, total_after_discount, messages_ = service.buy_logic(int(item_id),
+					                                                                  int(quantity_to_buy),
 					                                                                  amount_in_db,
 					                                                                  request.user.is_authenticated,
 					                                                                  request.user.username,
 					                                                                  shipping_details,
-					                                                                  card_details, True)
+					                                                                  card_details,
+					                                                                  True,
+					                                                                  request.user.pk,
+					                                                                  item_prices=item_price["price"])
 					if not valid:
 						messages.warning(request, 'can`t buy item : ' + str(item_id))
 						messages.warning(request, 'reason : ' + str(messages_))
@@ -444,7 +460,6 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 					cart_g = request.session['cart']
 					cart_g['items_id'].remove(Decimal(item_id))
 					request.session['cart'] = cart_g
-			res, res_before = service.apply_discounts_for_cart(list_of_items)
 			messages.success(request, ' total after discount : ' + str(res) + " instead of: " + str(res_before))
 			return redirect('/login_redirect')
 		else:

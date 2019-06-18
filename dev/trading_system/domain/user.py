@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User as m_User, Group
 
-
 import trading_system.domain.store as StoreModule
 
 

@@ -60,7 +60,6 @@ INSTALLED_APPS = [
 	'guardian',
 	'formtools',
 	'django_countries',
-
 ]
 
 MIDDLEWARE = [
