@@ -634,27 +634,22 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 	pay_transaction_id = -1
 	supply_transaction_id = -1
 	messages_ = ''
-	#curr_item = Item.objects.get(id=item_id)
 	c_item = c_Item.get_item(item_id=item_id)
 	amount_in_db1 = Item.objects.get(id=item_id).quantity
-	#user = User.objects.get(pk=user_id)
-	# if amount <= amount_in_db1:
 	if c_item.has_available_amount(amount):
-		# print("good amount")
 		total = c_item.calc_total(amount=amount)
-		# check item rules
 		if not c_item.check_rules(amount = amount):
 			messages_ += "you can't buy due to item policies"
 			return False, 0, 0, messages_
-		store_of_item = Store.objects.get(items__id__contains=item_id)
+
+		store_of_item = c_Store.get_item_store(item_pk=item_id)
 		# check store rules
-		if check_store_rules(store_of_item, amount, shipping_details['country'], is_auth) is False:
+		# if check_store_rules(store_of_item, amount, shipping_details['country'], is_auth) is False:
+		if not store_of_item.check_rules(amount, shipping_details['country'], is_auth):
 			messages_ += "you can't buy due to store policies"
 			return False, 0, 0, messages_
-
 		if (is_cart is False):
 			total_after_discount = apply_discounts(store=store_of_item, c_item=c_item, amount=int(amount))
-
 		try:
 			if pay_system.handshake():
 				print("pay hand shake")
@@ -687,9 +682,6 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 
 			c_item.quantity = amount_in_db1 - amount
 			c_item.save()
-
-			# store = get_item_store(_item.pk)
-
 			try:
 				item_subject = ItemSubject(c_item.pk)
 				if (is_auth):
@@ -733,121 +725,6 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 		return False, 0, 0, messages_
 
 
-def check_item_rules(item, amount):
-	base_arr = []
-	complex_arr = []
-	itemRules = ComplexItemRule.objects.all().filter(item=item)
-	for rule in reversed(itemRules):
-		if rule.id in complex_arr:
-			continue
-		if check_item_rule(rule, amount, base_arr, complex_arr) is False:
-			return False
-	itemBaseRules = BaseItemRule.objects.all().filter(item=item)
-	for rule in itemBaseRules:
-		if rule.id in base_arr:
-			continue
-		if check_base_item_rule(rule.id, amount) is False:
-			return False
-	return True
-
-
-def check_store_rules(store_of_item, amount, country, is_auth):
-	base_arr = []
-	complex_arr = []
-	storeRules = ComplexStoreRule.objects.all().filter(store=store_of_item)
-	for rule in reversed(storeRules):
-		if rule.id in complex_arr:
-			continue
-		if check_store_rule(rule, amount, country, base_arr, complex_arr, is_auth) is False:
-			return False
-	storeBaseRules = BaseRule.objects.all().filter(store=store_of_item)
-	for rule in storeBaseRules:
-		if rule.id in base_arr:
-			continue
-		if check_base_rule(rule.id, amount, country, is_auth) is False:
-			return False
-	return True
-
-
-#
-def check_store_rule(rule, amount, country, base_arr, complex_arr, is_auth):
-	if rule.left[0] == '_':
-		base_arr.append(int(rule.left[1:]))
-		left = check_base_rule(int(rule.left[1:]), amount, country, is_auth)
-		print('left')
-		print(str(left))
-	else:
-		complex_arr.append(int(rule.left))
-		tosend = ComplexStoreRule.objects.get(id=int(rule.left))
-		left = check_store_rule(tosend, amount, country, base_arr, complex_arr, is_auth)
-	if rule.right[0] == '_':
-		base_arr.append(int(rule.right[1:]))
-		right = check_base_rule(int(rule.right[1:]), amount, country, is_auth)
-		print('right')
-		print(str(right))
-	else:
-		complex_arr.append(int(rule.right))
-		tosend = ComplexStoreRule.objects.get(id=int(rule.right))
-		right = check_store_rule(tosend, amount, country, base_arr, complex_arr, is_auth)
-	if rule.operator == "AND" and (left == False or right == False):
-		return False
-	if rule.operator == "OR" and (left == False and right == False):
-		return False
-	if rule.operator == "XOR" and ((left == False and right == False) or (left == True and right == True)):
-		return False
-	return True
-
-
-#
-def check_item_rule(rule, amount, base_arr, complex_arr):
-	if rule.left[0] == '_':
-		base_arr.append(int(rule.left[1:]))
-		left = check_base_item_rule(int(rule.left[1:]), amount)
-	else:
-		complex_arr.append(int(rule.left))
-		tosend = ComplexItemRule.objects.get(id=int(rule.left))
-		left = check_item_rule(tosend, amount, base_arr, complex_arr)
-	if rule.right[0] == '_':
-		base_arr.append(int(rule.right[1:]))
-		right = check_base_item_rule(int(rule.right[1:]), amount)
-	else:
-		complex_arr.append(int(rule.right))
-		tosend = ComplexItemRule.objects.get(id=int(rule.right))
-		right = check_item_rule(tosend, amount, base_arr, complex_arr)
-	if rule.operator == "AND" and (left is False or right is False):
-		return False
-	if rule.operator == "OR" and (left is False and right is False):
-		return False
-	if rule.operator == "XOR" and ((left is False and right is False) or (left is True and right is True)):
-		return False
-	return True
-
-
-def check_base_item_rule(rule_id, amount):
-	rule = BaseItemRule.objects.get(id=rule_id)
-	if rule.type == 'MAX' and amount > int(rule.parameter):
-		return False
-	elif rule.type == 'MIN' and amount < int(rule.parameter):
-		return False
-	return True
-
-
-def check_base_rule(rule_id, amount, country, is_auth):
-	rule = BaseRule.objects.get(id=rule_id)
-	if rule.type == 'MAX' and amount > int(rule.parameter):
-		return False
-	elif rule.type == 'MIN' and amount < int(rule.parameter):
-		return False
-	elif rule.type == 'FOR' and country == rule.parameter:
-		return False
-	elif rule.type == 'REG' and is_auth is False:
-		return False
-	return True
-
-
-
-
-
 def delete_complex(rule_id):
 	rule = ComplexStoreRule.objects.get(id=rule_id)
 	if rule.left[0] == '_':
@@ -859,7 +736,6 @@ def delete_complex(rule_id):
 	else:
 		delete_complex(int(rule.right))
 	rule.delete()
-
 
 
 def delete_base(rule_id):
@@ -999,14 +875,14 @@ def apply_discounts(store, c_item, amount):
 	base_arr = []
 	complex_arr = []
 	price = curr_item.price * amount
-	store_complex_discountes = ComplexDiscount.objects.filter(store=store)
+	store_complex_discountes = ComplexDiscount.objects.filter(store_id=store.pk)
 	for disc in reversed(store_complex_discountes):
 		if disc.id in complex_arr:
 			continue
 		discount = apply_complex(disc, base_arr, complex_arr, curr_item, amount)
 		if (discount != -1):
 			price = (1 - discount) * float(price)
-	store_base_discountes = Discount.objects.filter(store=store)
+	store_base_discountes = Discount.objects.filter(store_id=store.pk)
 	for disc in store_base_discountes:
 		if disc.id in base_arr:
 			continue
@@ -1178,7 +1054,6 @@ def apply_base_cart(disc, store_map):
 			return [{'product': list_of_ids[item_index] ,'discount': per / 100}]
 	else:
 		return -1
-
 
 
 

@@ -1,10 +1,11 @@
 from django.db.models import Q
 
-from store.models import ComplexItemRule as m_ComplexItemRule
+from store.models import ComplexStoreRule as m_ComplexStoreRule
 from trading_system.domain.bi_rules import BaseItemRule
+from trading_system.domain.bs_rules import BaseStoreRule
 
 
-class ComplexItemRule:
+class ComplexStoreRule:
     def __init__(self, model=None):
         if model != None:
             self._model = model
@@ -30,22 +31,25 @@ class ComplexItemRule:
     def operator(self):
         return self._model.operator
 
-    def check(self, amount, base_arr, complex_arr):
+    def check(self, amount, country, base_arr, complex_arr, is_auth):
         if self.left[0] == '_':
             base_arr.append(int(self.left[1:]))
-            left = BaseItemRule.get_b_rule(rule_id=int(self.left[1:])).check(amount=amount)
+            # left = check_base_rule(int(rule.left[1:]), amount, country, is_auth)
+            left = BaseStoreRule.get_b_rule(rule_id=int(self.left[1:])).check(amount=amount, country=country,
+                                                                              is_auth=is_auth)
         else:
             complex_arr.append(int(self.left))
-            tosend = ComplexItemRule.get_ci_rule(rule_id=int(self.left))
-            left = tosend.check(amount=amount, base_arr=base_arr, complex_arr=complex_arr)
+            tosend = ComplexStoreRule.get_si_rule(rule_id=int(self.left))
+            left = tosend.check(amount, country, base_arr, complex_arr, is_auth)
         if self.right[0] == '_':
             base_arr.append(int(self.right[1:]))
-            right = BaseItemRule.get_b_rule(rule_id=int(int(self.right[1:]))).check(amount=amount)
+            right = BaseStoreRule.get_b_rule(rule_id=int(self.right[1:])).check(amount=amount, country=country,
+                                                                              is_auth=is_auth)
         else:
             complex_arr.append(int(self.right))
-            tosend = ComplexItemRule.get_ci_rule(rule_id=int(self.right))
-            right = tosend.check(amount=amount, base_arr=base_arr, complex_arr=complex_arr)
-        return self.apply_op(left=left, right=right)
+            tosend = ComplexStoreRule.get_si_rule(rule_id=int(self.right))
+            right = tosend.check(amount, country, base_arr, complex_arr, is_auth)
+        return self.apply_op(left=left,right=right)
 
     def apply_op(self, left, right):
         if self.operator == "AND" and (left is False or right is False):
@@ -66,10 +70,10 @@ class ComplexItemRule:
         self._model.delete()
 
     @staticmethod
-    def get_item_ci_rules(item_id):
-        cir_models = m_ComplexItemRule.objects.filter(item_id=item_id)
-        return list(map(lambda cir_model: ComplexItemRule(model=cir_model), list(cir_models)))
+    def get_item_si_rules(store_id):
+        cir_models = m_ComplexStoreRule.objects.filter(store_id=store_id)
+        return list(map(lambda cir_model: ComplexStoreRule(model=cir_model), list(cir_models)))
 
     @staticmethod
-    def get_ci_rule(rule_id):
-        return ComplexItemRule(model=m_ComplexItemRule.objects.filter(pk=rule_id))
+    def get_si_rule(rule_id):
+        return ComplexStoreRule(model=m_ComplexStoreRule.objects.filter(pk=rule_id))
