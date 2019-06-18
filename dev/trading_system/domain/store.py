@@ -10,6 +10,7 @@ from trading_system.domain.complex_store_rule import ComplexStoreRule
 from trading_system.domain.discount import Discount
 from trading_system.models import ObserverUser
 from trading_system.domain.user import User as c_User
+from trading_system.domain.item import Item as c_Item
 
 
 class Store:
@@ -59,17 +60,26 @@ class Store:
     def base_rules(self):
         return BaseStoreRule.get_store_bs_rules(store_id=self.pk)
 
+    @property
+    def items(self):
+        return list(map(lambda i: c_Item.get_item(item_id=i.pk), list(self._model.items.all())))
+
+    @property
+    def managers(self):
+        return list(map(lambda u: c_User.get_item(user_id=u.pk), list(self._model.managers.all()) ))
+
+    @property
+    def owners(self):
+        return list(map(lambda u: c_User.get_item(user_id=u.pk), list(self._model.owners.all()) ))
+
     def all_owners_ids(self):
-        owners = list(self._model.owners.all())
-        return list(map(lambda o: o.id, owners))
+        return list(map(lambda o: o.pk, self.owners))
 
     def all_managers_ids(self):
-        managers = list(self._model.managers.all())
-        return list(map(lambda m: m.id, managers))
+        return list(map(lambda o: o.pk, self.managers))
 
     def all_items_ids(self):
-        items = list(self._model.items.all())
-        return list(map(lambda i: i.id, items))
+        return list(map(lambda i: i.id, self.items))
 
     def add_item(self, item_pk):
         item = Item.objects.get(pk=item_pk)

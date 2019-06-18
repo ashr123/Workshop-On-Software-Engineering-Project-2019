@@ -99,3 +99,5 @@ class Item:
 		items = list(map(lambda im: Item(model=im), items_models))
 		return list(map(lambda i: i.get_details(), items))
 
+
+
