@@ -1,7 +1,8 @@
 import datetime
 
-import trading_system.domain.item as ItemModule
 import trading_system.domain.domain as dom
+import trading_system.domain.item as ItemModule
+from store.models import Discount as m_Discount
 
 
 class Discount:
@@ -83,18 +84,18 @@ class Discount:
 		for field in self._model._meta.fields:
 			if field.attname in item_dict.keys():
 				setattr(self._model, field.attname, item_dict[field.attname])
-        try:
-            self._model.save()
-        except Exception:
-            raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
+		try:
+			self._model.save()
+		except Exception:
+			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 	def delete(self):
-        try:
-            self._model.delete()
-        except Exception:
-            raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
+		try:
+			self._model.delete()
+		except Exception:
+			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 	@staticmethod
 	def get_discount(disc_id):
@@ -102,9 +103,9 @@ class Discount:
 
 	@staticmethod
 	def get_store_discounts(store_id):
-        try:
-            models = m_Discount.objects.filter(store_id=store_id)
-            return list(map(lambda m: Discount(model=m), models))
-        except Exception:
-            raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
+		try:
+			models = m_Discount.objects.filter(store_id=store_id)
+			return list(map(lambda m: Discount(model=m), models))
+		except Exception:
+			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')

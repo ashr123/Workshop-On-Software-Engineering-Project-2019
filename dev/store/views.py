@@ -4,7 +4,6 @@ import logging
 import simplejson as s_json
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.contrib.gis.geoip2 import GeoIP2
 from django.shortcuts import render, redirect, render_to_response
@@ -66,40 +65,39 @@ def get_country_of_request(request):
 @login_required
 def add_item(request, pk):
 	try:
-	if request.method == 'POST':
-		logev.info('add_item post')
-		form = ItemForm(request.POST)
-		if form.is_valid():
-			ans = service.add_item_to_store(item_json=s_json.dumps(form.cleaned_data),
-			                                store_id=pk, user_id=request.user.pk)
-			messages.success(request, ans[1])  # <-
-			logev.info('add_item post s')
-			return redirect('/store/home_page_owner/')
+		if request.method == 'POST':
+			logev.info('add_item post')
+			form = ItemForm(request.POST)
+			if form.is_valid():
+				ans = service.add_item_to_store(item_json=s_json.dumps(form.cleaned_data),
+				                                store_id=pk, user_id=request.user.pk)
+				messages.success(request, ans[1])  # <-
+				logev.info('add_item post s')
+				return redirect('/store/home_page_owner/')
+			else:
+				loger.warning('add_item fail not a valid form')
+				messages.warning(request, 'Problem with filed : ', form.errors, 'please try again!')  # <-
+				return redirect('/store/home_page_owner/')
 		else:
-			loger.warning('add_item fail not a valid form')
-			messages.warning(request, 'Problem with filed : ', form.errors, 'please try again!')  # <-
-			return redirect('/store/home_page_owner/')
-	else:
-		logev.info('add_item get')
-		form_class = ItemForm
-		curr_store = Store.objects.get(id=pk)
-		store_name = curr_store.name
-		text = SearchForm()
-		user_name = request.user.username
-		context = {
-			'store': pk,
-			'form': form_class,
-			'store_name': store_name,
-			'user_name': user_name,
-			'text': text,
-		}
-		# print('\ndebug\n\n', pk)
-		return render(request, 'store/add_item.html', context)
+			logev.info('add_item get')
+			form_class = ItemForm
+			curr_store = Store.objects.get(id=pk)
+			store_name = curr_store.name
+			text = SearchForm()
+			user_name = request.user.username
+			context = {
+				'store': pk,
+				'form': form_class,
+				'store_name': store_name,
+				'user_name': user_name,
+				'text': text,
+			}
+			# print('\ndebug\n\n', pk)
+			return render(request, 'store/add_item.html', context)
 	except DBFailedExceptionServiceToViews as e:
 		messages.warning(request, e.msg)
 		loger.warning(e.msg)
 		return redirect('/login_redirect')
-
 
 
 # from ipware.ip import get_ip
@@ -319,6 +317,7 @@ class ItemDelete(DeleteView):
 			loger.warning(e.msg)
 			return redirect('/login_redirect')
 
+
 from .forms import DeleteOwners
 
 
@@ -462,7 +461,8 @@ def buy_item(request, pk):
 				is_auth = request.user.is_authenticated
 				username = request.user.username
 				valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, amount_in_db, is_auth,
-				                                                                  username, shipping_details, card_details,
+				                                                                  username, shipping_details,
+				                                                                  card_details,
 				                                                                  False, request.user.pk)
 
 				if valid == False:
@@ -545,7 +545,8 @@ def add_manager_to_store(request, pk):
 				picked = form.cleaned_data.get('permissions')
 				is_owner = form.cleaned_data.get('is_owner')
 				is_partner = form.cleaned_data.get('is_partner')
-				[fail, message_] = service.add_manager(user_name, picked, is_owner, pk, request.user.username, is_partner)
+				[fail, message_] = service.add_manager(user_name, picked, is_owner, pk, request.user.username,
+				                                       is_partner)
 				if fail:
 					messages.warning(request, message_)
 					loger.warning('add manager failed')
@@ -646,7 +647,8 @@ def add_complex_discount_to_store(request, pk, disc, which_button):
 					ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,
 					                           end_date=end_date,
 					                           item_id=item.pk, user_id=request.user.pk)
-				complex = service.add_complex_discount(store_id=pk, left='_' + str(ans[1]), right=disc, operator=operator)
+				complex = service.add_complex_discount(store_id=pk, left='_' + str(ans[1]), right=disc,
+				                                       operator=operator)
 				if which_button == 'ok':
 					messages.success(request, 'add complex discount successfully')
 					logev.info('add discount successfully')
@@ -691,9 +693,6 @@ def get_item_store(item_pk):
 	return stores[0]
 
 
-from .models import BaseRule
-
-
 def add_base_rule_to_store(request, pk, which_button):
 	try:
 		if request.method == 'POST':
@@ -713,9 +712,11 @@ def add_base_rule_to_store(request, pk, which_button):
 						logev.info('add rule successfully')
 						return redirect('/store/home_page_owner/')
 					if which_button == 'complex1':
-						return redirect('/store/add_complex_rule_to_store_1/' + '_' + str(rule_id) + '/' + str(pk) + '/a')
+						return redirect(
+							'/store/add_complex_rule_to_store_1/' + '_' + str(rule_id) + '/' + str(pk) + '/a')
 					if which_button == 'complex2':
-						return redirect('/store/add_complex_rule_to_store_2/' + '_' + str(rule_id) + '/' + str(pk) + '/a')
+						return redirect(
+							'/store/add_complex_rule_to_store_2/' + '_' + str(rule_id) + '/' + str(pk) + '/a')
 				else:
 					messages.warning(request, ans[1])
 					loger.warning('add rule failed')
@@ -751,7 +752,8 @@ def add_complex_rule_to_store_1(request, rule_id1, store_id, which_button):
 				operator = form.cleaned_data.get('operator')
 				parameter = form.cleaned_data.get('parameter')
 				ans = service.add_complex_rule_to_store_1(rule_type=rule, prev_rule=rule_id1, store_id=store_id,
-				                                          operator=operator, parameter=parameter, user_id=request.user.pk)
+				                                          operator=operator, parameter=parameter,
+				                                          user_id=request.user.pk)
 				if ans[0] == True:
 					rule_to_ret = ans[1]
 					if which_button == 'ok':
@@ -813,9 +815,11 @@ def add_complex_rule_to_store_2(request, rule_id_before, store_id, which_button)
 						logev.info('add rule successfully')
 						return redirect('/store/home_page_owner/')
 					if which_button == 'complex1':
-						return redirect('/store/add_complex_rule_to_store_2/' + str(ans[1]) + '/' + str(store_id) + '/a')
+						return redirect(
+							'/store/add_complex_rule_to_store_2/' + str(ans[1]) + '/' + str(store_id) + '/a')
 					if which_button == 'complex2':
-						return redirect('/store/add_complex_rule_to_store_2/' + str(ans[1]) + '/' + str(store_id) + '/a')
+						return redirect(
+							'/store/add_complex_rule_to_store_2/' + str(ans[1]) + '/' + str(store_id) + '/a')
 				else:
 					messages.warning(request, ans[1])
 					loger.warning('add rule failed')
@@ -896,7 +900,8 @@ def add_complex_rule_to_item_1(request, rule_id1, item_id, which_button):
 				rule = form.cleaned_data.get('rule')
 				operator = form.cleaned_data.get('operator')
 				parameter = form.cleaned_data.get('parameter')
-				ans = service.add_complex_rule_to_item_1(item_id=item_id, prev_rule=rule_id1, rule=rule, operator=operator,
+				ans = service.add_complex_rule_to_item_1(item_id=item_id, prev_rule=rule_id1, rule=rule,
+				                                         operator=operator,
 				                                         parameter=parameter, user_id=request.user.pk)
 				if which_button == 'ok':
 					messages.success(request, 'added rule successfully!')

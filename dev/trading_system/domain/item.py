@@ -1,9 +1,9 @@
 from django.db.models import Q
 
+import trading_system.domain.domain as dom
 from store.models import Item as m_Item
 from trading_system.domain.base_item_rule import BaseItemRule
 from trading_system.domain.complex_item_rule import ComplexItemRule
-import trading_system.domain.domain as dom
 
 
 class Item:
@@ -86,20 +86,17 @@ class Item:
 		except Exception:
 			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
-
 	def delete(self):
 		try:
 			self._model.delete()
 		except Exception:
 			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
-
 	def save(self):
 		try:
 			self._model.save()
 		except Exception:
 			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
-
 
 	@staticmethod
 	def get_item(item_id):
@@ -114,4 +111,3 @@ class Item:
 			return list(map(lambda i: i.get_details(), items))
 		except Exception:
 			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
-

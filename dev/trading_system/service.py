@@ -19,7 +19,7 @@ def add_manager(user_name, picked, is_owner, store_pk, request_user_name, is_par
 		:param request_user_name:
 		:return: True if failing
 		"""
-		return domain.add_manager(user_name, picked, is_owner, store_pk, request_user_name)
+		return domain.add_manager(user_name, picked, is_owner, store_pk, request_user_name, False)
 	except DBFailedExceptionDomainToService as e:
 		raise DBFailedExceptionServiceToViews(msg="DB fail: can't add manager/owner")
 
@@ -49,7 +49,7 @@ def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, 
                                 user_id):
 	try:
 		return domain.add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, operator1, operator2,
-	                                          prev_rule, user_id)
+		                                          prev_rule, user_id)
 	except DBFailedExceptionDomainToService as e:
 		raise DBFailedExceptionServiceToViews(msg="DB fail: can't add complex rule to store")
 
@@ -59,6 +59,7 @@ def add_base_rule_to_item(item_id, rule, parameter, user_id):
 		return domain.add_base_rule_to_item(item_id, rule, parameter, user_id)
 	except DBFailedExceptionDomainToService as e:
 		raise DBFailedExceptionServiceToViews(msg="DB fail: can't add base rule to item")
+
 
 def add_complex_rule_to_item_1(item_id, prev_rule, rule, operator, parameter, user_id):
 	try:
@@ -70,7 +71,7 @@ def add_complex_rule_to_item_1(item_id, prev_rule, rule, operator, parameter, us
 def add_complex_rule_to_item_2(item_id, prev_rule, rule1, parameter1, rule2, parameter2, operator1, operator2, user_id):
 	try:
 		return domain.add_complex_rule_to_item_2(item_id, prev_rule, rule1, parameter1, rule2, parameter2, operator1,
-	                                         operator2, user_id)
+		                                         operator2, user_id)
 	except DBFailedExceptionDomainToService as e:
 		raise DBFailedExceptionServiceToViews(msg="DB fail: can't add complex rule to item")
 
@@ -79,15 +80,14 @@ def add_item_to_store(item_json, store_id, user_id):
 	try:
 		item_dict = json.loads(item_json)
 		return domain.add_item_to_store(price=item_dict['price'],
-	                                name=item_dict['name'],
-	                                description=item_dict['description'],
-	                                category=item_dict['category'],
-	                                quantity=item_dict['quantity'],
-	                                store_id=store_id,
-	                                user_id=user_id)
+		                                name=item_dict['name'],
+		                                description=item_dict['description'],
+		                                category=item_dict['category'],
+		                                quantity=item_dict['quantity'],
+		                                store_id=store_id,
+		                                user_id=user_id)
 	except DBFailedExceptionDomainToService as e:
 		raise DBFailedExceptionServiceToViews(msg="DB fail: can't add item")
-
 
 
 def can_remove_store(store_id, user_id):
@@ -95,6 +95,7 @@ def can_remove_store(store_id, user_id):
 		return domain.can_remove_store(store_id=store_id, user_id=user_id)
 	except DBFailedExceptionDomainToService as e:
 		raise DBFailedExceptionServiceToViews(msg="DB fail: can't remove store")
+
 
 def have_no_more_stores(user_pk):
 	try:
@@ -189,7 +190,8 @@ def update_item(item_id, item_dict, user_id):
 
 def add_discount(store_id, type, amount, percentage, end_date, item_id, user_id):
 	try:
-		return domain.add_discount(store_id=store_id, type=type, amount=amount, percentage=percentage,end_date=end_date,item_id=item_id, user_id=user_id)
+		return domain.add_discount(store_id=store_id, type=type, amount=amount, percentage=percentage,
+		                           end_date=end_date, item_id=item_id, user_id=user_id)
 	except DBFailedExceptionDomainToService as e:
 		raise DBFailedExceptionServiceToViews(msg="DB fail: can't add discount")
 
@@ -264,9 +266,10 @@ def add_complex_discount(store_id, left, right, operator):
 		raise DBFailedExceptionServiceToViews(msg="DB fail: can't add discount")
 
 
-def buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart, user_id = None):
+def buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart, user_id=None):
 	try:
-		return domain.buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart , user_id)
+		return domain.buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart,
+		                        user_id)
 	except DBFailedExceptionDomainToService as e:
 		raise DBFailedExceptionServiceToViews(msg="DB fail: can't buy items")
 
@@ -341,10 +344,11 @@ def apply_discounts_for_cart(list_of_items):
 		raise DBFailedExceptionServiceToViews(msg="DB fail: can't apply discounts")
 
 
-
 class DBFailedExceptionServiceToViews(Exception):
-	def __init__(self, msg = None):
+	def __init__(self, msg=None):
 		self.msg = msg
+
+
 def check_if_user_is_approved(user_id, store_id):
 	return domain.check_if_user_is_approved(user_id, store_id)
 

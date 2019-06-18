@@ -2,12 +2,12 @@ from django.contrib.auth.models import User, Group
 from django.db.models import Q
 from guardian.shortcuts import assign_perm
 
+import trading_system.domain.domain as dom
 from store.models import Store as m_Store, Item
 from trading_system.domain.base_store_rule import BaseStoreRule
 from trading_system.domain.complex_discount import ComplexDiscount
 from trading_system.domain.complex_store_rule import ComplexStoreRule
 from trading_system.domain.discount import Discount
-import trading_system.domain.domain as dom
 from trading_system.domain.item import Item as c_Item
 from trading_system.domain.user import User as c_User
 from trading_system.models import ObserverUser
@@ -67,11 +67,11 @@ class Store:
 
 	@property
 	def managers(self):
-		return list(map(lambda u: c_User.get_user(user_id=u.pk), list(self._model.managers.all()) ))
+		return list(map(lambda u: c_User.get_user(user_id=u.pk), list(self._model.managers.all())))
 
 	@property
 	def owners(self):
-		return list(map(lambda u: c_User.get_user(user_id=u.pk), list(self._model.owners.all()) ))
+		return list(map(lambda u: c_User.get_user(user_id=u.pk), list(self._model.owners.all())))
 
 	def all_owners_ids(self):
 		return list(map(lambda o: o.pk, self.owners))
@@ -139,7 +139,6 @@ class Store:
 		except Exception:
 			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
-
 	def check_rules(self, amount, country, is_auth):
 		base_arr = []
 		complex_arr = []
@@ -195,7 +194,6 @@ class Store:
 		except Exception:
 			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
-
 	@staticmethod
 	def owns_stores(user_id):
 		try:
@@ -203,7 +201,6 @@ class Store:
 			return len(tmp) == 0
 		except Exception:
 			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
-
 
 	@staticmethod
 	def manages_stores(user_id):
@@ -213,15 +210,13 @@ class Store:
 		except Exception:
 			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
-
 	@staticmethod
 	def get_owned_stores(user_id):
 		try:
 			return list(map(lambda s: {'id': s.pk, 'name': s.name},
-							m_Store.objects.filter(Q(managers__id__in=[user_id]) | Q(owners__id__in=[user_id]))))
+			                m_Store.objects.filter(Q(managers__id__in=[user_id]) | Q(owners__id__in=[user_id]))))
 		except Exception:
 			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
-
 
 	@staticmethod
 	def get_item_store(item_pk):
@@ -230,4 +225,3 @@ class Store:
 			return Store(model=model)
 		except Exception:
 			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
-

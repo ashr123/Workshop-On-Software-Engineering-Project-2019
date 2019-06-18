@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User as m_User, Group
 
 import trading_system.domain.cart as CartModule
+import trading_system.domain.store as StoreModule
 import trading_system.domain.domain as dom
 
 
@@ -58,7 +59,6 @@ class User:
 			return User(model=model)
 		except Exception:
 			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
-
 
 	@staticmethod
 	def len_of_super():

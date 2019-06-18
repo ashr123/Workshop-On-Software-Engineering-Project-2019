@@ -37,10 +37,10 @@ class MyUnitTesting(StaticLiveServerTestCase):
 		self.user = User.objects.create(username=self.default_user, password=make_password(self.default_password))
 		self.store = Store.objects.get(pk=open_store(self.default_store, "bla bla bla", self.user.pk))
 
-	# @classmethod
-	# def login(cls, user: str, password: str) -> None:
-	# 	cls.driver.get(cls.live_server_url + "/accounts/login/")
-	# 	cls.driver.find_element_by_name("username").send_keys(user)
-	# 	element = cls.driver.find_element_by_name("password")
-	# 	element.send_keys(password)
-	# 	element.submit()
+# @classmethod
+# def login(cls, user: str, password: str) -> None:
+# 	cls.driver.get(cls.live_server_url + "/accounts/login/")
+# 	cls.driver.find_element_by_name("username").send_keys(user)
+# 	element = cls.driver.find_element_by_name("password")
+# 	element.send_keys(password)
+# 	element.submit()

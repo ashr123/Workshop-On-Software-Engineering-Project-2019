@@ -1,6 +1,6 @@
+import trading_system.domain.domain as dom
 from store.models import ComplexDiscount as m_ComplexDiscount
 from trading_system.domain.discount import Discount
-import trading_system.domain.domain as dom
 
 
 class ComplexDiscount:
@@ -33,17 +33,18 @@ class ComplexDiscount:
 		for field in self._model._meta.fields:
 			if field.attname in item_dict.keys():
 				setattr(self._model, field.attname, item_dict[field.attname])
-        try:
-            self._model.save()
-        except Exception:
-            raise dom.dom.dom.DBFailedExceptionDomainToService(msg='DB Failed')
+
+		try:
+			self._model.save()
+		except Exception:
+			raise dom.dom.dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 	def delete(self):
-        try:
-            self._model.delete()
-        except Exception:
-            raise dom.dom.dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
+		try:
+			self._model.delete()
+		except Exception:
+			raise dom.dom.dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 	def apply_operator(self, left, right):
 		if self.operator == "AND" and (left != -1 and right != -1):
@@ -81,17 +82,17 @@ class ComplexDiscount:
 
 	@staticmethod
 	def get_store_cs_discoint(store_id):
-        try:
-            cir_models = m_ComplexDiscount.objects.filter(store_id=store_id)
-            return list(map(lambda cir_model: ComplexDiscount(model=cir_model), list(cir_models)))
-        except Exception:
-            raise dom.dom.dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
+		try:
+			cir_models = m_ComplexDiscount.objects.filter(store_id=store_id)
+			return list(map(lambda cir_model: ComplexDiscount(model=cir_model), list(cir_models)))
+		except Exception:
+			raise dom.dom.dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 	@staticmethod
 	def get_complex_discount(disc_id):
-        try:
-            return ComplexDiscount(model=m_ComplexDiscount.objects.filter(pk=disc_id))
-        except Exception:
-            raise dom.dom.dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
+		try:
+			return ComplexDiscount(model=m_ComplexDiscount.objects.filter(pk=disc_id))
+		except Exception:
+			raise dom.dom.dom.DBFailedExceptionDomainToService(msg='DB Failed')
