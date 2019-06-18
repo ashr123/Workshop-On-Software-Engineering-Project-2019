@@ -33,6 +33,14 @@ class Item:
 	def name(self):
 		return self._model.name
 
+	@property
+	def base_rules(self):
+		return BaseItemRule.get_item_bi_rules(item_id=self.pk)
+
+	@property
+	def complex_rules(self):
+		return ComplexItemRule.get_item_ci_rules(item_id=self.pk)
+
 	@quantity.setter
 	def quantity(self, value):
 		self._model.quantity = value
@@ -46,13 +54,13 @@ class Item:
 	def check_rules(self, amount):
 		base_arr = []
 		complex_arr = []
-		itemRules = ComplexItemRule.get_item_ci_rules(item_id=self.pk)
+		itemRules = self.complex_rules
 		for rule in reversed(itemRules):
 			if rule.id in complex_arr:
 				continue
 			if not rule.check(amount, base_arr, complex_arr):
 				return False
-		itemBaseRules = BaseItemRule.get_item_bi_rules(item_id=self.pk)
+		itemBaseRules = self.base_rules
 		for rule in itemBaseRules:
 			if rule.id in base_arr:
 				continue

@@ -43,6 +43,22 @@ class Store:
     def name(self):
         return self._model.name
 
+    @property
+    def complex_discounts(self):
+        return ComplexDiscount.get_store_cs_discoint(store_id=self.pk)
+
+    @property
+    def discounts(self):
+        return Discount.get_store_discounts(store_id = self.pk)
+
+    @property
+    def complex_rules(self):
+        return ComplexStoreRule.get_item_si_rules(store_id=self.pk)
+
+    @property
+    def base_rules(self):
+        return BaseStoreRule.get_store_bs_rules(store_id=self.pk)
+
     def all_owners_ids(self):
         owners = list(self._model.owners.all())
         return list(map(lambda o: o.id, owners))
@@ -102,14 +118,14 @@ class Store:
     def check_rules(self, amount, country, is_auth):
         base_arr = []
         complex_arr = []
-        storeRules = ComplexStoreRule.get_item_si_rules(store_id=self.pk)
+        storeRules = self.complex_rules
         for rule in reversed(storeRules):
             if rule.id in complex_arr:
                 continue
             # if check_store_rule(rule, amount, country, base_arr, complex_arr, is_auth) is False:
             if not rule.check(amount, country, base_arr, complex_arr, is_auth):
                 return False
-        storeBaseRules = BaseStoreRule.get_store_bs_rules(store_id=self.pk)
+        storeBaseRules = self.base_rules
         for rule in storeBaseRules:
             if rule.id in base_arr:
                 continue
@@ -130,7 +146,7 @@ class Store:
         base_arr = []
         complex_arr = []
         price = c_item.calc_total(amount=amount)
-        store_complex_discountes = ComplexDiscount.get_store_cs_discoint(store_id=self.pk)
+        store_complex_discountes = self.complex_discounts
         for disc in reversed(store_complex_discountes):
             if disc.id in complex_arr:
                 continue
@@ -138,7 +154,7 @@ class Store:
             discount = disc.apply(base_arr, complex_arr, c_item, amount)
             if (discount != -1):
                 price = (1 - discount) * float(price)
-        store_base_discountes = Discount.get_store_discounts(store_id = self.pk)
+        store_base_discountes = self.discounts
         for disc in store_base_discountes:
             if disc.id in base_arr:
                 continue

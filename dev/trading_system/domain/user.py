@@ -16,6 +16,10 @@ class User:
 	def username(self):
 		return self._model.username
 
+	@property
+	def stores(self):
+		return StoreModule.Store.get_owned_stores(user_id=self.pk)
+
 	def have_no_more_stores(self):
 		StoreModule.Store.owns_stores(user_id= self.pk) and StoreModule.Store.manages_stores(user_id= self.pk)
 
@@ -34,7 +38,7 @@ class User:
 		owners_group.user_set.remove(self._model)
 
 	def get_stores(self):
-		return StoreModule.Store.get_owned_stores(user_id=self.pk)
+		return self.stores
 
 	def is_authenticated(self):
 		return self._model.is_authenticated

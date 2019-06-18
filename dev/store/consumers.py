@@ -42,14 +42,6 @@ class StoreOwnerConsumer(WebsocketConsumer):
 				'message': '{}'
 			}
 		)
-		# # Send message to room group
-		# async_to_sync(self.channel_layer.group_send)(
-		# 	self.owner_group_name,
-		# 	{
-		# 		'type': 'chat_message',
-		# 		'message': message
-		# 	}
-		# )
 
 	# Receive message from room group
 	def chat_message(self, event):
