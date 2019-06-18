@@ -54,6 +54,7 @@
       <node key="9543916a-b981-4f31-addf-9bbf27bfa5fe" />
     </checked>
   </component>
+  <component name="ExportTestResults" outputFolder="$PROJECT_DIR$" userTempatePath="" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
@@ -650,7 +651,7 @@
       <workItem from="1560674604199" duration="741000" />
       <workItem from="1560684674925" duration="1048000" />
       <workItem from="1560850066512" duration="513000" />
-      <workItem from="1560850626185" duration="510000" />
+      <workItem from="1560850626185" duration="1085000" />
     </task>
     <servers />
   </component>
@@ -687,7 +688,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="366959000" />
+    <option name="totallyTimeSpent" value="367534000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">

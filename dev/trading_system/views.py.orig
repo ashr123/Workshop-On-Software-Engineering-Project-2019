@@ -59,8 +59,13 @@ def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 
 			return render(request, 'homepage_member.html', {'text': SearchForm(), 'user_name': request.user.username})
 
+<<<<<<< HEAD
+	# return render(request, 'homepage_member.html',
+	#               {'text': text, 'user_name': user_name})
+=======
 		# return render(request, 'homepage_member.html',
 		#               {'text': text, 'user_name': user_name})
+>>>>>>> origin/noa_delete_rule
 
 	return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
@@ -276,6 +281,10 @@ def make_guest_cart(request):
 		# 	items_ += list([service.get_item(id1)])
 		# return items_
 		if 'cart' in request.session:
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/noa_delete_rule
 			cartG = request.session['cart']
 			id_list = cartG['items_id']
 			for id in id_list:
@@ -365,11 +374,16 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 						messages.warning(request, 'problem with quantity ')
 					list_of_items.append({'item_id': item_id, 'amount': int(quantity_to_buy)})
 					valid, total, total_after_discount, messages_ = service.buy_logic(item_id, int(quantity_to_buy),
+<<<<<<< HEAD
+					                                                                  request.user.pk, shipping_details,
+					                                                                  card_details)
+=======
 					                                                                  amount_in_db,
 					                                                                  request.user.is_authenticated,
 					                                                                  request.user.username,
 					                                                                  shipping_details,
 					                                                                  card_details, True)
+>>>>>>> origin/noa_delete_rule
 					if not valid:
 						messages.warning(request, 'can`t buy item : ' + str(item_id))
 						messages.warning(request, 'reason : ' + str(messages_))

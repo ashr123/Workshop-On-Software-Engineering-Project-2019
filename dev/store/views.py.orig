@@ -459,10 +459,16 @@ def buy_item(request, pk):
 			#########################buy proccss
 			#_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
+<<<<<<< HEAD
+
+			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, request.user.pk,
+			                                                                  shipping_details, card_details)
+=======
 			amount_in_db = service.get_quantity(item_id=pk)
 			is_auth = request.user.is_authenticated
 			username = request.user.username
 			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, False)
+>>>>>>> origin/noa_delete_rule
 
 			if valid == False:
 				messages.warning(request, messages_)
@@ -917,9 +923,16 @@ def add_complex_rule_to_item_2(request, rule_id_before, item_id, which_button):
 		return render(request, 'store/add_complex_rule_to_item_2.html', context)
 
 
+<<<<<<< HEAD
 def remove_rule_from_store(request, pk, type1, store):
 	if type1 == 2:
+		complexRule = ComplexStoreRule.objects.get(id=pk)
+		delete_complex(complexRule.id)
+=======
+def remove_rule_from_store(request, pk, type, store):
+	if type == 2:
 		service.delete_complex_rule(pk)
+>>>>>>> origin/noa_delete_rule
 	else:
 		service.delete_base_rule(pk)
 	messages.success(request, 'remove rule successfully!')
@@ -935,9 +948,16 @@ def remove_rule_from_store(request, pk, type1, store):
 
 
 
+<<<<<<< HEAD
 def remove_rule_from_item(request, pk, type1, item):
 	if type1 == 2:
+		complexRule = ComplexItemRule.objects.get(id=pk)
+		delete_complex_item(complexRule.id)
+=======
+def remove_rule_from_item(request, pk, type, item):
+	if type == 2:
 		service.delete_complex_item_rule(pk)
+>>>>>>> origin/noa_delete_rule
 	else:
 		service.delete_base_item_rule(pk)
 	messages.success(request, 'remove rule successfully!')

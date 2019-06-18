@@ -135,7 +135,7 @@ class AddDiscountForm(forms.Form):
 		self.fields['end_date'] = forms.DateField(help_text='format: mm/dd/yyyy')
 		self.fields['type'] = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
 		self.fields['amount'] = forms.IntegerField(min_value=0, required=False)
-		self.fields['item'] = forms.ModelChoiceField(queryset=Item.objects.filter(id=self.store_id), required=False)
+		self.fields['item'] = forms.ModelChoiceField(queryset=Item.objects.filter(store=self.store_id), required=False)
 
 class AddComplexDiscountForm(forms.Form):
 	def __init__(self, store_id, *args, **kwargs):
@@ -151,7 +151,7 @@ class AddComplexDiscountForm(forms.Form):
 		self.fields['end_date'] = forms.DateField(help_text='format: mm/dd/yyyy')
 		self.fields['type'] = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
 		self.fields['amount'] = forms.IntegerField(min_value=0, required=False)
-		self.fields['item'] = forms.ModelChoiceField(queryset=Item.objects.filter(id=self.store_id), required=False)
+		self.fields['item'] = forms.ModelChoiceField(queryset=Item.objects.filter(store=self.store_id), required=False)
 
 
 class AddRuleToItem_two(forms.Form):

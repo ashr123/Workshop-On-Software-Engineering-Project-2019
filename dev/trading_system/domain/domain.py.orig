@@ -274,7 +274,10 @@ def add_item_to_cart(user_id, item_id):
 
 def get_item(id1):
 	return Item.objects.get(id=id1)
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/noa_delete_rule
 
 def is_authenticated(user_id):
 	return c_User.get_user(user_id=user_id).is_authenticated
@@ -306,6 +309,8 @@ def len_of_super():
 	return c_User.len_of_super()
 
 
+<<<<<<< HEAD
+=======
 def add_discount(store_id, percentage, end_date, type=None, amount=None, item_id=None):
 	d = Discount(store_id=store_id, type=type, percentage=percentage, end_date=end_date, amount=amount, item_id=item_id)
 	return [True, d.id]
@@ -317,12 +322,14 @@ def add_discount(store_id, percentage, end_date, type=None, amount=None, item_id
 	return [True, d.id]
 
 
+>>>>>>> origin/noa_delete_rule
 def add_complex_discount_to_store(store_id, left, right, operator):
 	d = ComplexDiscount(store_id=store_id, left=left, right=right, operator=operator)
 	d.save()
 	return [True, d.pk]
 
 
+<<<<<<< HEAD
 def add_discount(store_id, percentage, end_date, user_id, amount=None, item=None):
 	if not User.objects.get(id=user_id).has_perm('ADD_DISCOUNT', Store.objects.get(pk=store_id)):
 		return [False, "you don't have the permission to add discount to store!"]
@@ -337,6 +344,10 @@ def update_item(item_id, item_dict, user_id):
 	if not (Store.objects.filter(items__id=item_id).exists() and
 	        User.objects.get(id=user_id).has_perm('EDIT_ITEM', Store.objects.filter(items__id=item_id)[0])):
 		return [False, "you don't have the permission to update an item or the item doesn't exists!"]
+
+=======
+def update_item(item_id, item_dict):
+>>>>>>> origin/noa_delete_rule
 	c_Item.get_item(item_id=item_id).update(item_dict=item_dict)
 	return True
 
@@ -630,7 +641,11 @@ def have_no_more_stores(user_pk):
 	return c_User.get_user(user_id=user_pk).have_no_more_stores()
 
 
+<<<<<<< HEAD
+def buy_logic(item_id, amount, user_id, shipping_details, card_details):
+=======
 def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart):
+>>>>>>> origin/noa_delete_rule
 	pay_transaction_id = -1
 	supply_transaction_id = -1
 	messages_ = ''
@@ -690,7 +705,11 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 
 			try:
 				item_subject = ItemSubject(curr_item.pk)
+<<<<<<< HEAD
+				if user.is_authenticated:
+=======
 				if (is_auth):
+>>>>>>> origin/noa_delete_rule
 					notification = Notification.objects.create(
 						msg=username + ' bought ' + str(amount) + ' pieces of ' + curr_item.name)
 					notification.save()

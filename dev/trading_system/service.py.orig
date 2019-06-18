@@ -172,6 +172,10 @@ def add_complex_discount(store_id, left, right, operator):
 	return domain.add_complex_discount_to_store(store_id, left, right, operator)
 
 
+<<<<<<< HEAD
+def buy_logic(item_id, amount, user_id, shipping_details, card_details):
+	return domain.buy_logic(item_id, amount, user_id, shipping_details, card_details)
+=======
 def buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart):
 	return domain.buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart)
 
@@ -214,3 +218,4 @@ def get_quantity(item_id):
 
 def apply_discounts_for_cart(list_of_items):
 	return domain.apply_discounts_for_cart(list_of_items)
+>>>>>>> origin/noa_delete_rule
