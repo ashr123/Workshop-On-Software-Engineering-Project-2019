@@ -1,6 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
-from trading_system.domain.domain import DBFailedExceptionDomainToService
+import trading_system.domain.domain as dom
 from trading_system.models import Cart as m_Cart
 import trading_system.domain.item as ItemModule
 
@@ -14,7 +14,7 @@ class Cart:
         try:
             self._model.save()
         except Exception:
-            raise DBFailedExceptionDomainToService(msg='DB Failed')
+            raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
     def add_item(self, item_id):
         self._model.items.add(item_id)
@@ -54,5 +54,5 @@ class Cart:
 
             return Cart(model=model)
         except Exception:
-            raise DBFailedExceptionDomainToService(msg='DB Failed')
+            raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 

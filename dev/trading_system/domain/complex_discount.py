@@ -3,7 +3,7 @@ from django.db.models import Q
 from store.models import ComplexDiscount as m_ComplexDiscount
 from trading_system.domain.base_store_rule import BaseStoreRule
 from trading_system.domain.discount import Discount
-from trading_system.domain.domain import DBFailedExceptionDomainToService
+import trading_system.domain.domain as dom
 
 
 class ComplexDiscount:
@@ -39,13 +39,13 @@ class ComplexDiscount:
         try:
             self._model.save()
         except Exception:
-            raise DBFailedExceptionDomainToService(msg='DB Failed')
+            raise dom.dom.dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
     def delete(self):
         try:
             self._model.delete()
         except Exception:
-            raise DBFailedExceptionDomainToService(msg='DB Failed')
+            raise dom.dom.dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 
     def apply_operator(self, left, right):
@@ -88,7 +88,7 @@ class ComplexDiscount:
             cir_models = m_ComplexDiscount.objects.filter(store_id=store_id)
             return list(map(lambda cir_model: ComplexDiscount(model=cir_model), list(cir_models)))
         except Exception:
-            raise DBFailedExceptionDomainToService(msg='DB Failed')
+            raise dom.dom.dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 
     @staticmethod
@@ -96,5 +96,5 @@ class ComplexDiscount:
         try:
             return ComplexDiscount(model=m_ComplexDiscount.objects.filter(pk=disc_id))
         except Exception:
-            raise DBFailedExceptionDomainToService(msg='DB Failed')
+            raise dom.dom.dom.DBFailedExceptionDomainToService(msg='DB Failed')
 

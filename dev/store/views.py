@@ -501,7 +501,7 @@ def buy_item(request, pk):
 
 
 from .forms import ApproveForm
-from trading_system.views import get_all_wait_agreement_t_need_to_approve
+import trading_system.views as t_s_v
 
 
 @login_required
@@ -509,12 +509,12 @@ def home_page_owner(request):
 	text = SearchForm()
 	user_name = request.user.username
 	unread_ntfcs = NotificationUser.objects.filter(user=request.user.pk, been_read=False)
-    approve_list = get_all_wait_agreement_t_need_to_approve(request.user)
-    approved_user_per_store = {}
-    for a in approve_list:
-        approved_user_per_store[a.user_to_wait.id] = a.store.id
+	approve_list = t_s_v.get_all_wait_agreement_t_need_to_approve(request.user)
+	approved_user_per_store = {}
+	for a in approve_list:
+		approved_user_per_store[a.user_to_wait.id] = a.store.id
 
-    approve_form = ApproveForm(approved_user_per_store)
+	approve_form = ApproveForm(approved_user_per_store)
 	context = {
 		'user_name': user_name,
 		'text': text,

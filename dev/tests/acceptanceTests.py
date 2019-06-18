@@ -302,7 +302,7 @@ class TestTradingSystem(MyUnitTesting):
         self.assertFalse(service.get_user_store_list(new_user.pk))
 
     def test_add_guest_to_store_by_store_owner(self):  # 4.3-3
-        self.assertTrue(service.add_manager("Moshe", [], True, self.store.pk, self.default_user)[0])
+        self.assertTrue(service.add_manager("Moshe", [], True, self.store.pk, self.default_user, is_partner=False)[0])
 
     def test_make_reflexive_ownership(self):  # 4.3-2
         new_user = next(self.generate_user_with_default_password)

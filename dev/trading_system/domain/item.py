@@ -3,7 +3,7 @@ from django.db.models import Q
 from store.models import Item as m_Item
 from trading_system.domain.base_item_rule import BaseItemRule
 from trading_system.domain.complex_item_rule import ComplexItemRule
-from trading_system.domain.domain import DBFailedExceptionDomainToService
+import trading_system.domain.domain as dom
 
 
 class Item:
@@ -84,21 +84,21 @@ class Item:
 		try:
 			self._model.save()
 		except Exception:
-			raise DBFailedExceptionDomainToService(msg='DB Failed')
+			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 
 	def delete(self):
 		try:
 			self._model.delete()
 		except Exception:
-			raise DBFailedExceptionDomainToService(msg='DB Failed')
+			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 
 	def save(self):
 		try:
 			self._model.save()
 		except Exception:
-			raise DBFailedExceptionDomainToService(msg='DB Failed')
+			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 
 	@staticmethod
@@ -113,7 +113,7 @@ class Item:
 			items = list(map(lambda im: Item(model=im), items_models))
 			return list(map(lambda i: i.get_details(), items))
 		except Exception:
-			raise DBFailedExceptionDomainToService(msg='DB Failed')
+			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 
 

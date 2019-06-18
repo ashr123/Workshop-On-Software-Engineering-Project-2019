@@ -2,7 +2,7 @@ from django.contrib.auth.models import User as m_User, Group
 
 import trading_system.domain.store as StoreModule
 import trading_system.domain.cart as CartModule
-from trading_system.domain.domain import DBFailedExceptionDomainToService
+import trading_system.domain.domain as dom
 
 
 class User:
@@ -58,7 +58,7 @@ class User:
 				model = m_User.objects.get(pk=user_id)
 			return User(model=model)
 		except Exception:
-			raise DBFailedExceptionDomainToService(msg='DB Failed')
+			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 
 	@staticmethod
@@ -66,4 +66,4 @@ class User:
 		try:
 			return len(m_User.objects.filter(is_superuser=True))
 		except Exception:
-			raise DBFailedExceptionDomainToService(msg='DB Failed')
+			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')

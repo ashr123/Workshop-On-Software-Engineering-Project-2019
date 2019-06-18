@@ -2,7 +2,7 @@ from django.db.models import Q
 
 from store.models import ComplexItemRule as m_ComplexItemRule
 from trading_system.domain.base_item_rule import BaseItemRule
-from trading_system.domain.domain import DBFailedExceptionDomainToService
+import trading_system.domain.domain as dom
 
 
 class ComplexItemRule:
@@ -64,14 +64,14 @@ class ComplexItemRule:
         try:
             self._model.save()
         except Exception:
-            raise DBFailedExceptionDomainToService(msg='DB Failed')
+            raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 
     def delete(self):
         try:
             self._model.delete()
         except Exception:
-            raise DBFailedExceptionDomainToService(msg='DB Failed')
+            raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 
     @staticmethod
@@ -80,7 +80,7 @@ class ComplexItemRule:
             cir_models = m_ComplexItemRule.objects.filter(item_id=item_id)
             return list(map(lambda cir_model: ComplexItemRule(model=cir_model), list(cir_models)))
         except Exception:
-            raise DBFailedExceptionDomainToService(msg='DB Failed')
+            raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 
     @staticmethod
@@ -89,5 +89,5 @@ class ComplexItemRule:
             return ComplexItemRule(model=m_ComplexItemRule.objects.filter(pk=rule_id))
             return list(map(lambda cir_model: ComplexItemRule(model=cir_model), list(cir_models)))
         except Exception:
-            raise DBFailedExceptionDomainToService(msg='DB Failed')
+            raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 

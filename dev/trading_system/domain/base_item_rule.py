@@ -1,7 +1,7 @@
 from django.db.models import Q
 
 from store.models import BaseItemRule as m_BaseItemRule
-from trading_system.domain.domain import DBFailedExceptionDomainToService
+import trading_system.domain.domain as dom
 
 
 class BaseItemRule:
@@ -40,13 +40,13 @@ class BaseItemRule:
         try:
             self._model.save()
         except Exception:
-            raise DBFailedExceptionDomainToService(msg = 'DB Failed')
+            raise dom.DBFailedExceptionDomainToService(msg = 'DB Failed')
 
     def delete(self):
         try:
             self._model.delete()
         except Exception:
-            raise DBFailedExceptionDomainToService(msg = 'DB Failed')
+            raise dom.DBFailedExceptionDomainToService(msg = 'DB Failed')
 
 
 
@@ -55,7 +55,7 @@ class BaseItemRule:
         try:
             return BaseItemRule(model=m_BaseItemRule.objects.get(id=rule_id))
         except Exception:
-            raise DBFailedExceptionDomainToService(msg='DB Failed')
+            raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 
     @staticmethod
@@ -64,4 +64,4 @@ class BaseItemRule:
             cir_models = m_BaseItemRule.objects.filter(item_id=item_id)
             return list(map(lambda cir_model: BaseItemRule(model=cir_model), list(cir_models)))
         except Exception:
-            raise DBFailedExceptionDomainToService(msg='DB Failed')
+            raise dom.DBFailedExceptionDomainToService(msg='DB Failed')

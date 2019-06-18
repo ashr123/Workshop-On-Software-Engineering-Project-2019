@@ -14,7 +14,6 @@ from trading_system.domain.user import User as c_User
 # from store.models import Item, BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount
 from trading_system.models import ObserverUser, NotificationUser, Notification
 from trading_system.observer import ItemSubject
-from trading_system.templates.OurExceptions import DBFailedExceptionServiceToViews, DBFailedExceptionDomainToService
 
 # import traceback
 

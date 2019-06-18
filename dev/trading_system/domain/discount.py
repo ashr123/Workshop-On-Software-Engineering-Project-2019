@@ -4,7 +4,7 @@ from django.db.models import Q
 
 from store.models import Discount as m_Discount
 import trading_system.domain.item as ItemModule
-from trading_system.domain.domain import DBFailedExceptionDomainToService
+import trading_system.domain.domain as dom
 
 
 class Discount:
@@ -93,14 +93,14 @@ class Discount:
         try:
             self._model.save()
         except Exception:
-            raise DBFailedExceptionDomainToService(msg='DB Failed')
+            raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 
     def delete(self):
         try:
             self._model.delete()
         except Exception:
-            raise DBFailedExceptionDomainToService(msg='DB Failed')
+            raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 
 
@@ -114,6 +114,6 @@ class Discount:
             models = m_Discount.objects.filter(store_id=store_id)
             return list(map(lambda m: Discount(model=m), models))
         except Exception:
-            raise DBFailedExceptionDomainToService(msg='DB Failed')
+            raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
 
 
