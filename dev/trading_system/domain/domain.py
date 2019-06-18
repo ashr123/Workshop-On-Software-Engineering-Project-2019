@@ -643,8 +643,6 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 			return False, 0, 0, messages_
 
 		store_of_item = c_Store.get_item_store(item_pk=item_id)
-		# check store rules
-		# if check_store_rules(store_of_item, amount, shipping_details['country'], is_auth) is False:
 		if not store_of_item.check_rules(amount, shipping_details['country'], is_auth):
 			messages_ += "you can't buy due to store policies"
 			return False, 0, 0, messages_
@@ -698,7 +696,6 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 				messages_ += 'cant connect websocket ' + str(e)
 
 			_item_name = c_item.name
-			# print("reached herre")
 			if c_item.quantity == 0:
 				c_item.delete()
 
@@ -706,9 +703,6 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 			             + str(total_after_discount) + ' $' + '\n' + 'Total before: ' + str(total) + ' $'
 			return True, total, total_after_discount, messages_
 		except Exception as a:
-			# print(a)
-			# print(str(a))
-			# traceback.print_exc()
 			c_item.quantity = amount_in_db1
 			c_item.save()
 

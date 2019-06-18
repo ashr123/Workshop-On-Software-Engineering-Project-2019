@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7f206d29-0b35-4da3-95c1-1baab1223eb3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/ci_rules.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/ci_rules.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/trading_system/domain/domain.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/domain.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/store.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/store.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -63,8 +61,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/trading_system/domain/domain.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="166">
-              <caret line="996" column="79" selection-start-line="996" selection-start-column="79" selection-end-line="996" selection-end-column="79" />
+            <state relative-caret-position="415">
+              <caret line="1124" lean-forward="true" selection-start-line="1124" selection-end-line="1124" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -688,20 +686,11 @@
       <workItem from="1560850066512" duration="513000" />
       <workItem from="1560850626185" duration="1286000" />
       <workItem from="1560852298210" duration="16000" />
-      <workItem from="1560852321549" duration="9164000" />
+      <workItem from="1560852321549" duration="10043000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="buy_tests - 2019.06.18 at 14h 47m 21s.xml">
-      <configuration name="buy tests" configurationId="DjangoTestsConfigurationType" />
-    </history-entry>
-    <history-entry file="buy_tests - 2019.06.18 at 14h 48m 11s.xml">
-      <configuration name="buy tests" configurationId="DjangoTestsConfigurationType" />
-    </history-entry>
-    <history-entry file="buy_tests - 2019.06.18 at 14h 53m 43s.xml">
-      <configuration name="buy tests" configurationId="DjangoTestsConfigurationType" />
-    </history-entry>
     <history-entry file="buy_tests - 2019.06.18 at 14h 54m 25s.xml">
       <configuration name="buy tests" configurationId="DjangoTestsConfigurationType" />
     </history-entry>
@@ -723,9 +712,18 @@
     <history-entry file="buy_tests - 2019.06.18 at 15h 46m 14s.xml">
       <configuration name="buy tests" configurationId="DjangoTestsConfigurationType" />
     </history-entry>
+    <history-entry file="buy_tests - 2019.06.18 at 15h 47m 03s.xml">
+      <configuration name="buy tests" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
+    <history-entry file="buy_tests - 2019.06.18 at 15h 47m 39s.xml">
+      <configuration name="buy tests" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
+    <history-entry file="buy_tests - 2019.06.18 at 15h 48m 52s.xml">
+      <configuration name="buy tests" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="376915000" />
+    <option name="totallyTimeSpent" value="377794000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -738,14 +736,13 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.48010612" visible="true" weight="0.13765182" />
       <window_info id="Structure" order="1" sideWeight="0.5198939" side_tool="true" weight="0.1891892" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32777777" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.7855918" visible="true" weight="0.4462963" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.7855918" weight="0.055555556" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49571183" weight="0.1037037" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -1258,8 +1255,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/domain/domain.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="996" column="79" selection-start-line="996" selection-start-column="79" selection-end-line="996" selection-end-column="79" />
+        <state relative-caret-position="415">
+          <caret line="1124" lean-forward="true" selection-start-line="1124" selection-end-line="1124" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
