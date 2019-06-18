@@ -355,3 +355,6 @@ def check_if_user_is_approved(user_id, store_id):
 
 def agreement_by_partner(partner_id, store_pk, user_pk):
 	return domain.agreement_by_partner(partner_id, store_pk, user_pk)
+
+def get_all_wait_agreement_t_need_to_approve(manager_id):
+	return domain.get_all_wait_agreement_t_need_to_approve(manager_id)

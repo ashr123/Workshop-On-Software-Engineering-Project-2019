@@ -3,139 +3,18 @@
   <component name="ChangeListManager">
     <list default="true" id="7f206d29-0b35-4da3-95c1-1baab1223eb3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/tests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/accounts/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/accounts/tests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/accounts/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/accounts/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/dev/routing.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/dev/routing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/dev/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/dev/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/dev/wsgi.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/dev/wsgi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/store/consumers.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/store/consumers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/store/fileds.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/store/fileds.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/store/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/store/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/store/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/store/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/store/routing.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/store/routing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/store/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/store/tests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/store/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/store/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/test_app/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/test_app/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/test_app/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/test_app/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/test_app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/test_app/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/tests/acceptanceTests.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/tests/acceptanceTests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/trading_system/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/trading_system/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/trading_system/consumers.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/trading_system/consumers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/trading_system/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/trading_system/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/trading_system/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/trading_system/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/trading_system/observer.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/trading_system/observer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/trading_system/routing.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/trading_system/routing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/trading_system/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/trading_system/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/trading_system/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/trading_system/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/routing.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/routing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/wsgi.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/wsgi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/css_message.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/css_message.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/consumers.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/consumers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/fileds.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/fileds.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/routing.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/routing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/add_base_rule_to_item.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/add_base_rule_to_item.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/add_base_rule_to_store.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/add_base_rule_to_store.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/add_complex_discount_to_store.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/add_complex_discount_to_store.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/add_complex_rule_to_item_1.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/add_complex_rule_to_item_1.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/add_complex_rule_to_item_2.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/add_complex_rule_to_item_2.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/add_complex_rule_to_store_1.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/add_complex_rule_to_store_1.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/add_complex_rule_to_store_2.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/add_complex_rule_to_store_2.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/add_discount_to_item.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/add_discount_to_item.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/add_discount_to_store.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/add_discount_to_store.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/add_item.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/add_item.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/add_itemֹ_1.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/add_itemֹ_1.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/add_manager.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/add_manager.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/add_manager_1.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/add_manager_1.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/add_rule_to_item.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/add_rule_to_item.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/buy_item.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/buy_item.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/edit_item.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/edit_item.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/guest_cart.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/guest_cart.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/homepage_store_owner.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/homepage_store_owner.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/homepage_store_owner_1.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/homepage_store_owner_1.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/item_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/item_detail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/item_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/item_form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/item_update_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/item_update_form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/owner_feed.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/owner_feed.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/owner_feed_old.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/owner_feed_old.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/store_delete_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/store_delete_form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/store_delete_form_1.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/store_delete_form_1.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/store_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/store_detail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/store_detail_1.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/store_detail_1.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/store_list.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/store_list.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/templates/store/store_update_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/store/templates/store/store_update_form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/tests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/store/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/base_member.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base_member.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/cart.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/cart.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/check_box_items.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/check_box_items.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/homepage_guest.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/homepage_guest.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/homepage_member.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/homepage_member.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/messages.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/messages.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/registration/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/registration/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/signup.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/signup.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/store/add_store.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/store/add_store.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_app/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_app/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_app/templates/test_app/article_delete_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/test_app/templates/test_app/article_delete_form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_app/templates/test_app/article_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/test_app/templates/test_app/article_detail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_app/templates/test_app/article_list.html" beforeDir="false" afterPath="$PROJECT_DIR$/test_app/templates/test_app/article_list.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_app/templates/test_app/article_update_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/test_app/templates/test_app/article_update_form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_app/templates/test_app/author_confirm_delete.html" beforeDir="false" afterPath="$PROJECT_DIR$/test_app/templates/test_app/author_confirm_delete.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_app/templates/test_app/author_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/test_app/templates/test_app/author_form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_app/templates/test_app/author_update_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/test_app/templates/test_app/author_update_form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_app/templates/test_app/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/test_app/templates/test_app/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_app/templates/test_app/contact.html" beforeDir="false" afterPath="$PROJECT_DIR$/test_app/templates/test_app/contact.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_app/templates/test_app/response.html" beforeDir="false" afterPath="$PROJECT_DIR$/test_app/templates/test_app/response.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_app/templates/test_app/test_page1.html" beforeDir="false" afterPath="$PROJECT_DIR$/test_app/templates/test_app/test_page1.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_app/templates/test_app/test_page2.html" beforeDir="false" afterPath="$PROJECT_DIR$/test_app/templates/test_app/test_page2.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_app/templates/test_app/test_page3.html" beforeDir="false" afterPath="$PROJECT_DIR$/test_app/templates/test_app/test_page3.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_app/templates/test_app/test_page4.html" beforeDir="false" afterPath="$PROJECT_DIR$/test_app/templates/test_app/test_page4.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_app/templates/test_app/test_page5.html" beforeDir="false" afterPath="$PROJECT_DIR$/test_app/templates/test_app/test_page5.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/mainTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/mainTest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/consumers.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/consumers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/base_item_rule.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/base_item_rule.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/cart.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/cart.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/complex_discount.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/complex_discount.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/complex_item_rule.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/complex_item_rule.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/complex_store_rule.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/complex_store_rule.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/discount.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/discount.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/domain.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/domain.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/item.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/item.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/store.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/store.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/observer.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/observer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/routing.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/routing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/trading_system/domain/base_item_rule.py.orig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/trading_system/domain/cart.py.orig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/trading_system/domain/complex_discount.py.orig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/trading_system/domain/complex_item_rule.py.orig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/trading_system/domain/complex_store_rule.py.orig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/trading_system/domain/discount.py.orig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/trading_system/domain/item.py.orig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/trading_system/domain/store.py.orig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/trading_system/domain/user.py.orig" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/trading_system/service.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/templates/trading_system/action_happend_succefully.html" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/templates/trading_system/action_happend_succefully.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/templates/trading_system/add_super_user.html" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/templates/trading_system/add_super_user.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/templates/trading_system/auction_feed.html" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/templates/trading_system/auction_feed.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/templates/trading_system/cart_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/templates/trading_system/cart_detail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/templates/trading_system/cart_test.html" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/templates/trading_system/cart_test.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/templates/trading_system/cart_test_1.html" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/templates/trading_system/cart_test_1.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/templates/trading_system/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/templates/trading_system/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/templates/trading_system/item_added_successfuly.html" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/templates/trading_system/item_added_successfuly.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/templates/trading_system/item_page.html" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/templates/trading_system/item_page.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/templates/trading_system/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/templates/trading_system/register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/templates/trading_system/search_results.html" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/templates/trading_system/search_results.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/templates/trading_system/search_results_1.html" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/templates/trading_system/search_results_1.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/templates/trading_system/user_auctions.html" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/templates/trading_system/user_auctions.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/templates/trading_system/user_carts.html" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/templates/trading_system/user_carts.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/templates/trading_system/view_discounts.html" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/templates/trading_system/view_discounts.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/easy-install.pth" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/easy-install.pth" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/trading_system/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -145,7 +24,7 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/dev$Test__tests_acceptanceTests_TestTradingSystem_test_buy_logic_all_ok.coverage" NAME="Test: tests.acceptanceTests.TestTradingSystem.test_buy_logic_all_ok Coverage Results" MODIFIED="1560854205301" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/dev$buy_tests.coverage" NAME="buy tests Coverage Results" MODIFIED="1560900450387" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/dev$buy_tests.coverage" NAME="buy tests Coverage Results" MODIFIED="1560900527031" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$Test__tests_acceptanceTests_TestTradingSystem.coverage" NAME="Test: tests.acceptanceTests.TestTradingSystem Coverage Results" MODIFIED="1560900314832" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/dev$Test__store_tests_StoreUnitTesting.coverage" NAME="Test: store.tests.StoreUnitTesting Coverage Results" MODIFIED="1560895530380" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
@@ -185,8 +64,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/store/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="97" column="8" selection-start-line="97" selection-start-column="8" selection-end-line="99" selection-end-column="42" />
+            <state relative-caret-position="858">
+              <caret line="407" column="32" lean-forward="true" selection-start-line="407" selection-start-column="32" selection-end-line="407" selection-end-column="32" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -194,16 +73,16 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/trading_system/domain/base_item_rule.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/trading_system/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="38" column="8" selection-start-line="38" selection-start-column="8" selection-end-line="41" selection-end-column="71" />
+            <state relative-caret-position="295">
+              <caret line="460" column="49" selection-start-line="460" selection-start-column="49" selection-end-line="460" selection-end-column="49" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/domain/discount.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="88">
@@ -211,6 +90,15 @@
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/trading_system/domain/store.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="225">
+              <caret line="221" column="32" lean-forward="true" selection-start-line="221" selection-start-column="32" selection-end-line="221" selection-end-column="32" />
             </state>
           </provider>
         </entry>
@@ -227,8 +115,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/domain/domain.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="278">
-              <caret line="1085" column="8" selection-start-line="1085" selection-start-column="8" selection-end-line="1085" selection-end-column="8" />
+            <state relative-caret-position="176">
+              <caret line="627" column="64" selection-start-line="627" selection-start-column="62" selection-end-line="627" selection-end-column="64" />
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -243,19 +134,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tests/acceptanceTests.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-6940">
-              <caret line="30" column="50" selection-start-line="30" selection-start-column="50" selection-end-line="30" selection-end-column="50" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="151">
-              <caret line="21" column="97" selection-start-line="21" selection-start-column="97" selection-end-line="21" selection-end-column="97" />
+            <state relative-caret-position="198">
+              <caret line="228" column="31" selection-start-line="228" selection-start-column="31" selection-end-line="228" selection-end-column="31" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -296,10 +178,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>contains</find>
-      <find>buy_logic</find>
-      <find>return</find>
-      <find>ItemUpdate</find>
       <find>get_discount_for_store</find>
       <find>self.object_list</find>
       <find>ListView</find>
@@ -326,6 +204,10 @@
       <find>Cart</find>
       <find>buy_log</find>
       <find>DBFailedExceptionDomainToService</find>
+      <find>buy_item</find>
+      <find>get_all_wait_agreement_t_need_to_approve</find>
+      <find>add_man</find>
+      <find>add_ma</find>
     </findStrings>
     <replaceStrings>
       <replace>UnitTesting.driver</replace>
@@ -358,7 +240,6 @@
         <option value="$PROJECT_DIR$/trading_system/templates/trading_system/cart_test.html" />
         <option value="$PROJECT_DIR$/trading_system/urls.py" />
         <option value="$PROJECT_DIR$/trading_system/forms.py" />
-        <option value="$PROJECT_DIR$/trading_system/views.py" />
         <option value="$PROJECT_DIR$/store/templates/store/add_discount_to_store.html" />
         <option value="$PROJECT_DIR$/store/templates/store/add_complex_discount_to_store.html" />
         <option value="$PROJECT_DIR$/store/models.py" />
@@ -380,16 +261,17 @@
         <option value="$PROJECT_DIR$/trading_system/domain/cart.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/item.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/store.py" />
-        <option value="$PROJECT_DIR$/trading_system/domain/domain.py" />
         <option value="$PROJECT_DIR$/tests/acceptanceTests.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/base_item_rule.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/complex_item_rule.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/complex_discount.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/complex_store_rule.py" />
-        <option value="$PROJECT_DIR$/store/views.py" />
-        <option value="$PROJECT_DIR$/trading_system/service.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/user.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/discount.py" />
+        <option value="$PROJECT_DIR$/trading_system/service.py" />
+        <option value="$PROJECT_DIR$/trading_system/domain/domain.py" />
+        <option value="$PROJECT_DIR$/trading_system/views.py" />
+        <option value="$PROJECT_DIR$/store/views.py" />
       </list>
     </option>
   </component>
@@ -413,6 +295,17 @@
             <path>
               <item name="dev" type="b2602c69:ProjectViewProjectNode" />
               <item name="dev" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dev" type="462c0819:PsiDirectoryNode" />
+              <item name="trading_system" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dev" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dev" type="462c0819:PsiDirectoryNode" />
+              <item name="trading_system" type="462c0819:PsiDirectoryNode" />
+              <item name="domain" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -466,7 +359,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Django tests.buy tests">
+  <component name="RunManager" selected="Django server.run">
     <configuration name="Test: store.tests.StoreUnitTesting" type="DjangoTestsConfigurationType">
       <module name="dev" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -785,14 +678,11 @@
       <workItem from="1560852321549" duration="10043000" />
       <workItem from="1560875658092" duration="11058000" />
       <workItem from="1560894200732" duration="643000" />
-      <workItem from="1560894850348" duration="5179000" />
+      <workItem from="1560894850348" duration="6602000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Test__tests_acceptanceTests_TestTradingSystem - 2019.06.19 at 02h 20m 33s.xml">
-      <configuration name="Test: tests.acceptanceTests.TestTradingSystem" configurationId="DjangoTestsConfigurationType" />
-    </history-entry>
     <history-entry file="Test__tests_acceptanceTests_TestTradingSystem - 2019.06.19 at 02h 21m 17s.xml">
       <configuration name="Test: tests.acceptanceTests.TestTradingSystem" configurationId="DjangoTestsConfigurationType" />
     </history-entry>
@@ -820,9 +710,12 @@
     <history-entry file="buy_tests - 2019.06.19 at 02h 27m 49s.xml">
       <configuration name="buy tests" configurationId="DjangoTestsConfigurationType" />
     </history-entry>
+    <history-entry file="buy_tests - 2019.06.19 at 02h 28m 57s.xml">
+      <configuration name="buy tests" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="395499000" />
+    <option name="totallyTimeSpent" value="396922000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -842,8 +735,8 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.46333334" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.46333334" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.28" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -866,6 +759,13 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/store/views.py</url>
+          <line>539</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
@@ -1205,31 +1105,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/trading_system/domain/store.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4972">
-          <caret line="226" column="54" selection-start-line="226" selection-start-column="54" selection-end-line="226" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/trading_system/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9218">
-          <caret line="427" selection-start-line="427" selection-end-line="427" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tests/acceptanceTests.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-6940">
           <caret line="30" column="50" selection-start-line="30" selection-start-column="50" selection-end-line="30" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/trading_system/domain/domain.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="278">
-          <caret line="1085" column="8" selection-start-line="1085" selection-start-column="8" selection-end-line="1085" selection-end-column="8" />
         </state>
       </provider>
     </entry>
@@ -1264,26 +1143,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/store/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="97" column="8" selection-start-line="97" selection-start-column="8" selection-end-line="99" selection-end-column="42" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/trading_system/service.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="21" column="97" selection-start-line="21" selection-start-column="97" selection-end-line="21" selection-end-column="97" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/domain/user.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="66">
@@ -1298,6 +1157,50 @@
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/trading_system/domain/store.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="221" column="32" lean-forward="true" selection-start-line="221" selection-start-column="32" selection-end-line="221" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/trading_system/service.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="228" column="31" selection-start-line="228" selection-start-column="31" selection-end-line="228" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/trading_system/domain/domain.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="627" column="64" selection-start-line="627" selection-start-column="62" selection-end-line="627" selection-end-column="64" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/store/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="858">
+          <caret line="407" column="32" lean-forward="true" selection-start-line="407" selection-start-column="32" selection-end-line="407" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/trading_system/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="295">
+          <caret line="460" column="49" selection-start-line="460" selection-start-column="49" selection-end-line="460" selection-end-column="49" />
         </state>
       </provider>
     </entry>

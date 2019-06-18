@@ -447,6 +447,7 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 
 			if form.is_valid():
 				list_of_items = []
+				res, res_before = service.apply_discounts_for_cart(list_of_items)
 				for item_id in form.cleaned_data.get('items'):
 					amount_in_db = service.get_quantity(item_id)
 					if amount_in_db > 0:
@@ -459,7 +460,7 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 							messages.warning(request, 'problem with quantity ')
 							loger.warning('buy from cart failed')
 						list_of_items.append({'item_id': item_id, 'amount': int(quantity_to_buy)})
-						valid, total, total_after_discount, messages_ = service.buy_logic(item_id, int(quantity_to_buy),
+						valid, total, total_after_discount, messages_ = service.buy_logic(int(item_id), int(quantity_to_buy),
 						                                                                  amount_in_db,
 						                                                                  request.user.is_authenticated,
 						                                                                  request.user.username,
@@ -478,7 +479,7 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 						cart_g = request.session['cart']
 						cart_g['items_id'].remove(Decimal(item_id))
 						request.session['cart'] = cart_g
-				res, res_before = service.apply_discounts_for_cart(list_of_items)
+
 				messages.success(request, ' total after discount : ' + str(res) + " instead of: " + str(res_before))
 				logev.info('buy form cart successfully')
 				return redirect('/login_redirect')

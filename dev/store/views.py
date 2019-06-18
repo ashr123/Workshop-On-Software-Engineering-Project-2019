@@ -392,12 +392,12 @@ class StoreDelete(DeleteView):
 				text = SearchForm()
 				return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
 
-			owner_name = service.get_store_creator(store_id=kwargs['pk'])
+			owner_id = service.get_store_creator(store_id=kwargs['pk'])
 			ans = service.delete_store(store_id=kwargs['pk'], user_id=request.user.pk)
 			# response = super(StoreDelete, self).delete(request, *args, **kwargs)
 			messages.success(request, ans[1])
 			logev.info('delete store successfully')
-			if service.have_no_more_stores((User.objects.get(username=owner_name)).id):
+			if service.have_no_more_stores((User.objects.get(id=owner_id)).id):
 				user_name = request.user.username
 				text = SearchForm()
 				return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
