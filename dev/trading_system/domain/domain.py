@@ -510,50 +510,6 @@ def update_store(store_id, store_dict):
 	return True
 
 
-# TODO - EXTRACT STORE
-def get_discount_for_store(pk, amount, total):
-	store_of_item = Store.objects.get(items__id__contains=pk)
-	if not (len(store_of_item.discounts.all()) == 0):
-		discount_ = store_of_item.discounts.all()[0]
-		if discount_.end_date >= datetime.datetime.now().date():
-			conditions = discount_.conditions.all()
-			if len(conditions) > 0:
-				for cond in conditions:
-					if cond.max_amount >= amount >= cond.min_amount:
-						percentage = discount_.percentage
-						total = (100 - percentage) / 100 * float(total)
-						return [percentage, total]
-			else:
-				percentage = discount_.percentage
-				total = (100 - percentage) / 100 * float(total)
-				return [percentage, total]
-	else:
-		return [0, total]
-
-
-# TODO - STOP USING ITEM
-def get_discount_for_item(pk, amount, total):
-	item = Item.objects.get(id=pk)
-	if not (len(item.discounts.all()) == 0):
-		item_discount = item.discounts.all()[0]
-		if item_discount.end_date >= datetime.datetime.now().date():
-			conditions_item = item_discount.conditions.all()
-			if len(conditions_item) > 0:
-				for cond_i in conditions_item:
-					if cond_i.max_amount >= amount >= cond_i.min_amount:
-						percentage = item_discount.percentage
-						total = (100 - percentage) / 100 * float(total)
-						str_ret = percentage
-						return [str_ret, total]
-			else:
-				percentage = item_discount.percentage
-				total = (100 - percentage) / 100 * float(total)
-				str_ret = percentage
-				return [str_ret, total]
-	else:
-		return [0, total]
-
-
 def delete_item(item_id, user_id):
 	if not (Store.objects.filter(items__id=item_id).exists() and
 	        User.objects.get(id=user_id).has_perm('REMOVE_ITEM', Store.objects.filter(items__id=item_id)[0])):
@@ -760,7 +716,6 @@ def delete_complex_discount(disc_id):
 	discount.delete()
 
 
-
 def delete_base_discount(disc_id):
 	discount = Discount.objects.get(id=disc_id)
 	discount.delete()
@@ -786,6 +741,7 @@ def get_discounts_serach(item_id):
 		if result['is_item'] is True:
 			base.append(result['discount'])
 	return complex + base
+
 
 def search_store_discount(disc, base_arr, complex_arr, item_id, check):
 	curr = '('
@@ -1019,6 +975,6 @@ def apply_base_cart(disc, store_map):
 
 
 
-
-
-
+class DBFailedExceptionDomainToService(Exception):
+	def __init__(self, msg = None):
+		self.msg = msg

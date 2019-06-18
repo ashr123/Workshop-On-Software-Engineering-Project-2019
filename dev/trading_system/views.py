@@ -17,11 +17,13 @@ from django.views.generic.list import ListView
 from dev.settings import PROJ_IP, PROJ_PORT
 from store.forms import ShippingForm, PayForm
 from store.models import Item, Store
+from store.views import loger, logev
 from trading_system import service
 from trading_system.forms import SearchForm, SomeForm, CartForm
 # Create your views here.
 from trading_system.models import Cart, Auction, CartGuest
 from trading_system.observer import AuctionSubject
+from trading_system.service import DBFailedExceptionServiceToViews
 from .models import AuctionParticipant
 from .routing import AUCTION_PARTICIPANT_URL
 
@@ -39,6 +41,7 @@ def def_super_user(request):
 			u.is_staff = True
 			u.save()
 			messages.success(request, 'add super-user ' + str(u.username))
+			logev.info('add superuser successfully')
 			return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
 		else:
@@ -123,9 +126,14 @@ class CartDetail(DetailView):
 ########################################################################################################################
 
 def index(request: Any) -> HttpResponse:
-	if service.len_of_super() == 0:
-		return redirect('/super_user')
-	return render(request, 'homepage_guest.html', {'text': SearchForm()})
+	try:
+		if service.len_of_super() == 0:
+			return redirect('/super_user')
+		return render(request, 'homepage_guest.html', {'text': SearchForm()})
+	except DBFailedExceptionServiceToViews as e:
+		messages.warning(request, e.msg)
+		loger.warning(e.msg)
+		return redirect('/login_redirect')
 
 
 def show_cart(request: Any) -> HttpResponse:
@@ -155,16 +163,21 @@ class SearchListView(ListView):
 	template_name = 'trading_system/search_results.html'
 
 	def get_context_data(self, **kwargs):
-		text = SearchForm()
-		# context = super(SearchListView, self).get_context_data(**kwargs)  # get the default context data
-		text = SearchForm(self.request.GET)
-		if text.is_valid():
-			items = service.search(text.cleaned_data.get('search'))
-		context = {}
-		context['text'] = text
-		context['object_list'] = items
+		try:
+			text = SearchForm()
+			# context = super(SearchListView, self).get_context_data(**kwargs)  # get the default context data
+			text = SearchForm(self.request.GET)
+			if text.is_valid():
+				items = service.search(text.cleaned_data.get('search'))
+			context = {}
+			context['text'] = text
+			context['object_list'] = items
 
-		return context
+			return context
+		except DBFailedExceptionServiceToViews as e:
+			messages.warning(self.request, e.msg)
+			loger.warning(e.msg)
+			return redirect('/login_redirect')
 
 
 def register(request: Any) -> HttpResponse:
@@ -244,50 +257,64 @@ def view_auction(request, auction_pk):
 
 
 def add_item_to_cart(request, item_pk):
-	if not (request.user.is_authenticated):
-		if 'cart' in request.session:
-			items_in = request.session['cart']['items_id']
+	try:
+		if not (request.user.is_authenticated):
+			if 'cart' in request.session:
+				items_in = request.session['cart']['items_id']
 
-			cart_g = request.session['cart']
-			if (item_pk not in items_in):
-				cart_g['items_id'].append(item_pk)
-		else:
-			cart_g = CartGuest([item_pk]).serialize()
+				cart_g = request.session['cart']
+				if (item_pk not in items_in):
+					cart_g['items_id'].append(item_pk)
+			else:
+				cart_g = CartGuest([item_pk]).serialize()
 
-		request.session['cart'] = cart_g
-		messages.success(request, 'add to cart successfully')
-		return redirect('/login_redirect')
-	else:
-		ans = service.add_item_to_cart(request.user.pk, item_pk)
-		if ans is True:
+			request.session['cart'] = cart_g
 			messages.success(request, 'add to cart successfully')
+			logev.info('add item to cart successfully')
 			return redirect('/login_redirect')
 		else:
-			messages.warning(request, 'can`t add to cart ')
-			return redirect('/login_redirect')
+			ans = service.add_item_to_cart(request.user.pk, item_pk)
+			if ans is True:
+				messages.success(request, 'add to cart successfully')
+				logev.info('add item to cart successfully')
+				return redirect('/login_redirect')
+			else:
+				messages.warning(request, 'can`t add to cart ')
+				loger.warning('add item to cart failed')
+				return redirect('/login_redirect')
+	except DBFailedExceptionServiceToViews as e:
+		messages.warning(request, e.msg)
+		loger.warning(e.msg)
+		return redirect('/login_redirect')
 
 
 def make_guest_cart(request):
-	if request.user.is_authenticated:
-		return []
-	else:
-		items_ = []
-		# for id1 in request.session['cart']['items_id']:
-		# 	items_ += list([service.get_item(id1)])
-		# return items_
-		if 'cart' in request.session:
-			cartG = request.session['cart']
-			id_list = cartG['items_id']
-			for id in id_list:
-				items_ += list([service.get_item(id)])
+	try:
+		if request.user.is_authenticated:
+			return []
+		else:
+			items_ = []
+			# for id1 in request.session['cart']['items_id']:
+			# 	items_ += list([service.get_item(id1)])
+			# return items_
+			if 'cart' in request.session:
+				cartG = request.session['cart']
+				id_list = cartG['items_id']
+				for id in id_list:
+					items_ += list([service.get_item(id)])
 
-		return items_
+			return items_
+	except DBFailedExceptionServiceToViews as e:
+		messages.warning(request, e.msg)
+		loger.warning(e.msg)
+		return redirect('/login_redirect')
 
 
 def delete_item_from_cart(request, item_pk):
 	if request.user.is_authenticated:
 		get_cart(get_item_store(item_pk), request.user.pk).items.remove(item_pk)
 		messages.success(request, 'remove to cart successfully')
+		logev.info('remove item from cart successfully')
 		return redirect('/login_redirect')
 	else:
 
@@ -297,6 +324,7 @@ def delete_item_from_cart(request, item_pk):
 		request.session['cart'] = cart_g
 
 		messages.success(request, 'remove to cart successfully')
+		logev.info('remove item from cart successfully')
 		return redirect('/login_redirect')
 
 
@@ -320,118 +348,133 @@ def get_cart(store_pk, user_pk):
 
 
 def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
-	# if not (request.user.is_authenticated):
-	# 	return makeGuestCart(request)
-	items_bought = []
-	if request.method == 'POST':
-		form = CartForm(request.user, make_guest_cart(request), request.POST)
-		shipping_form = ShippingForm(request.POST)
-		supply_form = PayForm(request.POST)
+	try:
+		# if not (request.user.is_authenticated):
+		# 	return makeGuestCart(request)
+		items_bought = []
+		if request.method == 'POST':
+			form = CartForm(request.user, make_guest_cart(request), request.POST)
+			shipping_form = ShippingForm(request.POST)
+			supply_form = PayForm(request.POST)
 
-		if shipping_form.is_valid() and supply_form.is_valid():
-			# shipping
-			country = shipping_form.cleaned_data.get('country')
-			city = shipping_form.cleaned_data.get('city')
-			zip1 = shipping_form.cleaned_data.get('zip')
-			address = shipping_form.cleaned_data.get('address')
-			name = shipping_form.cleaned_data.get('name')
+			if shipping_form.is_valid() and supply_form.is_valid():
+				# shipping
+				country = shipping_form.cleaned_data.get('country')
+				city = shipping_form.cleaned_data.get('city')
+				zip1 = shipping_form.cleaned_data.get('zip')
+				address = shipping_form.cleaned_data.get('address')
+				name = shipping_form.cleaned_data.get('name')
 
-			shipping_details = {'country': country, 'city': city, 'zip': zip1, 'address': address, 'name': name}
+				shipping_details = {'country': country, 'city': city, 'zip': zip1, 'address': address, 'name': name}
 
-			# card
+				# card
 
-			card_number = supply_form.cleaned_data.get('card_number')
-			month = supply_form.cleaned_data.get('month')
-			year = supply_form.cleaned_data.get('year')
-			holder = supply_form.cleaned_data.get('holder')
-			cvc = supply_form.cleaned_data.get('cvc')
-			id1 = supply_form.cleaned_data.get('id')
+				card_number = supply_form.cleaned_data.get('card_number')
+				month = supply_form.cleaned_data.get('month')
+				year = supply_form.cleaned_data.get('year')
+				holder = supply_form.cleaned_data.get('holder')
+				cvc = supply_form.cleaned_data.get('cvc')
+				id1 = supply_form.cleaned_data.get('id')
 
-			card_details = {'card_number': card_number, 'month': month, 'year': year, 'holder': holder, 'cvc': cvc,
-			                'id': id1}
-		else:
-			err = '' + str(shipping_form.errors) + str(supply_form.errors)
-			messages.warning(request, 'error in :  ' + err)
-			return redirect('/login_redirect')
-
-		if form.is_valid():
-			list_of_items = []
-			for item_id in form.cleaned_data.get('items'):
-				amount_in_db = service.get_quantity(item_id)
-				if amount_in_db > 0:
-					item1 = Item.objects.get(id=item_id)
-					quantity_to_buy = 1
-					try:
-						quantity_to_buy = request.POST.get('quantity' + str(item1.id))
-					# print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
-					except:
-						messages.warning(request, 'problem with quantity ')
-					list_of_items.append({'item_id': item_id, 'amount': int(quantity_to_buy)})
-					valid, total, total_after_discount, messages_ = service.buy_logic(item_id, int(quantity_to_buy),
-					                                                                  amount_in_db,
-					                                                                  request.user.is_authenticated,
-					                                                                  request.user.username,
-					                                                                  shipping_details,
-					                                                                  card_details, True)
-					if not valid:
-						messages.warning(request, 'can`t buy item : ' + str(item_id))
-						messages.warning(request, 'reason : ' + str(messages_))
-						return redirect('/login_redirect')
-
-				if request.user.is_authenticated:
-					cart = Cart.objects.get(customer=request.user)
-					cart.items.remove(item1)
-				else:
-					cart_g = request.session['cart']
-					cart_g['items_id'].remove(Decimal(item_id))
-					request.session['cart'] = cart_g
-			res, res_before = service.apply_discounts_for_cart(list_of_items)
-			messages.success(request, ' total after discount : ' + str(res) + " instead of: " + str(res_before))
-			return redirect('/login_redirect')
-		else:
-			err = '' + str(form.errors)
-			messages.warning(request, 'error in :  ' + err)
-			return redirect('/login_redirect')
-
-	else:
-		list_ = []
-		if not request.user.is_authenticated:
-			base_template_name = 'homepage_guest.html'
-			list_ = make_guest_cart(request)
-		else:
-			if "store_owners" in request.user.groups.values_list('name', flat=True):
-				base_template_name = 'store/homepage_store_owner.html'
+				card_details = {'card_number': card_number, 'month': month, 'year': year, 'holder': holder, 'cvc': cvc,
+				                'id': id1}
 			else:
-				base_template_name = 'homepage_member.html'
-			list_ = []
+				err = '' + str(shipping_form.errors) + str(supply_form.errors)
+				messages.warning(request, 'error in :  ' + err)
+				loger.warning('buy from cart failed')
+				return redirect('/login_redirect')
 
-		form = CartForm(request.user, list_)
-		q_list = QForm(request.user, list_)
-		text = SearchForm()
-		user_name = request.user.username
-		items_of_user = []
-		if request.user.is_authenticated:
-			carts = Cart.objects.filter(customer=request.user)
-			for cart in carts:
-				items_of_user += list(cart.items.all())
-		context = {
-			'user_name': user_name,
-			'text': text,
-			'form': form,
-			'base_template_name': base_template_name,
-			'qua': q_list,
-			'card': PayForm(),
-			'shipping': ShippingForm(),
-			'items_list': items_of_user + list_
-		}
-		return render(request, 'trading_system/cart_test.html', context)
+			if form.is_valid():
+				list_of_items = []
+				for item_id in form.cleaned_data.get('items'):
+					amount_in_db = service.get_quantity(item_id)
+					if amount_in_db > 0:
+						item1 = Item.objects.get(id=item_id)
+						quantity_to_buy = 1
+						try:
+							quantity_to_buy = request.POST.get('quantity' + str(item1.id))
+						# print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
+						except:
+							messages.warning(request, 'problem with quantity ')
+							loger.warning('buy from cart failed')
+						list_of_items.append({'item_id': item_id, 'amount': int(quantity_to_buy)})
+						valid, total, total_after_discount, messages_ = service.buy_logic(item_id, int(quantity_to_buy),
+						                                                                  amount_in_db,
+						                                                                  request.user.is_authenticated,
+						                                                                  request.user.username,
+						                                                                  shipping_details,
+						                                                                  card_details, True)
+						if not valid:
+							messages.warning(request, 'can`t buy item : ' + str(item_id))
+							messages.warning(request, 'reason : ' + str(messages_))
+							loger.warning('buy from cart failed')
+							return redirect('/login_redirect')
+
+					if request.user.is_authenticated:
+						cart = Cart.objects.get(customer=request.user)
+						cart.items.remove(item1)
+					else:
+						cart_g = request.session['cart']
+						cart_g['items_id'].remove(Decimal(item_id))
+						request.session['cart'] = cart_g
+				res, res_before = service.apply_discounts_for_cart(list_of_items)
+				messages.success(request, ' total after discount : ' + str(res) + " instead of: " + str(res_before))
+				logev.info('buy form cart successfully')
+				return redirect('/login_redirect')
+			else:
+				err = '' + str(form.errors)
+				messages.warning(request, 'error in :  ' + err)
+				loger.warning('buy from cart failed')
+				return redirect('/login_redirect')
+
+		else:
+			list_ = []
+			if not request.user.is_authenticated:
+				base_template_name = 'homepage_guest.html'
+				list_ = make_guest_cart(request)
+			else:
+				if "store_owners" in request.user.groups.values_list('name', flat=True):
+					base_template_name = 'store/homepage_store_owner.html'
+				else:
+					base_template_name = 'homepage_member.html'
+				list_ = []
+
+			form = CartForm(request.user, list_)
+			q_list = QForm(request.user, list_)
+			text = SearchForm()
+			user_name = request.user.username
+			items_of_user = []
+			if request.user.is_authenticated:
+				carts = Cart.objects.filter(customer=request.user)
+				for cart in carts:
+					items_of_user += list(cart.items.all())
+			context = {
+				'user_name': user_name,
+				'text': text,
+				'form': form,
+				'base_template_name': base_template_name,
+				'qua': q_list,
+				'card': PayForm(),
+				'shipping': ShippingForm(),
+				'items_list': items_of_user + list_
+			}
+			return render(request, 'trading_system/cart_test.html', context)
+	except DBFailedExceptionServiceToViews as e:
+		messages.warning(request, e.msg)
+		loger.warning(e.msg)
+		return redirect('/login_redirect')
 
 
 def view_discounts(request, pk):
-	discounts = service.get_discounts_serach(pk)
-	text = SearchForm()
-	context = {
-		'text': text,
-		'discounts': discounts
-	}
-	return render(request, 'trading_system/view_discounts.html', context)
+	try:
+		discounts = service.get_discounts_serach(pk)
+		text = SearchForm()
+		context = {
+			'text': text,
+			'discounts': discounts
+		}
+		return render(request, 'trading_system/view_discounts.html', context)
+	except DBFailedExceptionServiceToViews as e:
+		messages.warning(request, e.msg)
+		loger.warning(e.msg)
+		return redirect('/login_redirect')
