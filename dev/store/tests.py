@@ -3,8 +3,8 @@ from unittest import skip
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 
-from tests.mainTest import MyUnitTesting
 from store.models import Store, Item
+from tests.mainTest import MyUnitTesting
 
 
 class StoreUnitTesting(MyUnitTesting):

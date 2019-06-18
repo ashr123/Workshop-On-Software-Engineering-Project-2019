@@ -187,7 +187,7 @@ def update_item(item_id, item_dict, user_id):
 		raise DBFailedExceptionServiceToViews(msg="DB fail: can't update item")
 
 
-def add_discount(store_id, type, amount, percentage,end_date,item_id, user_id):
+def add_discount(store_id, type, amount, percentage, end_date, item_id, user_id):
 	try:
 		return domain.add_discount(store_id=store_id, type=type, amount=amount, percentage=percentage,end_date=end_date,item_id=item_id, user_id=user_id)
 	except DBFailedExceptionDomainToService as e:
@@ -264,7 +264,7 @@ def add_complex_discount(store_id, left, right, operator):
 		raise DBFailedExceptionServiceToViews(msg="DB fail: can't add discount")
 
 
-def buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart, user_id):
+def buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart, user_id = None):
 	try:
 		return domain.buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart , user_id)
 	except DBFailedExceptionDomainToService as e:
@@ -342,12 +342,12 @@ def apply_discounts_for_cart(list_of_items):
 
 
 
-
 class DBFailedExceptionServiceToViews(Exception):
 	def __init__(self, msg = None):
 		self.msg = msg
 def check_if_user_is_approved(user_id, store_id):
 	return domain.check_if_user_is_approved(user_id, store_id)
 
+
 def agreement_by_partner(partner_id, store_pk, user_pk):
-	return domain. agreement_by_partner(partner_id, store_pk, user_pk)
+	return domain.agreement_by_partner(partner_id, store_pk, user_pk)

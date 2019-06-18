@@ -16,8 +16,6 @@ class SearchForm(forms.Form):
 	search = forms.CharField()
 
 
-
-
 class QForm(forms.Form):
 	def __init__(self, user, list_for_guest, *args, **kwargs, ):
 		# quantity = kwargs.pop('quantity')
@@ -47,7 +45,7 @@ class CartForm(forms.Form):
 			self.fields['items'] = forms.MultipleChoiceField(
 				choices=[(o.id,
 				          mark_safe(' <a id="buy_href" href=' + '/' + 'store/view_item/' + str(
-					          o.id) + '>' + o.name + '  :  ' + o.description + '</a>'+
+					          o.id) + '>' + o.name + '  :  ' + o.description + '</a>' +
 				                    '<a href= "/delete_item_from_cart/' + str(o.id) + '"> delete </a>    '
 				                    # +
 				                    # ' <form action="/delete_item_from_cart/' + str(o.id) + '" method="post">  '
@@ -67,7 +65,7 @@ class CartForm(forms.Form):
 			self.fields['items'] = forms.MultipleChoiceField(
 				choices=[(o.id,
 				          mark_safe(' <a id="buy_href" href=' + '/' + 'store/view_item/' + str(
-					          o.id) + '>' + o.name + '  :  ' + o.description + '</a>'+
+					          o.id) + '>' + o.name + '  :  ' + o.description + '</a>' +
 				                    '<a href= "/delete_item_from_cart/' + str(o.id) + '"> delete </a>    '
 				                    # +
 				                    # ' <form action="/delete_item_from_cart/' +  str(o.id) + ' " method="post"> '

@@ -7,7 +7,7 @@
 	<div id="feed">
 		<script>
 			var count = {{ unread_notifications }};
-			if(count > 0 ){
+			if (count > 0) {
 				document.getElementById('noa').innerHTML = count
 			}
 			var ownerId = {{ owner_id}};
@@ -30,8 +30,8 @@
 		</script>
 	</div>
 	<div>
-	<p>need to approve: </p>
-	{{ approve_form.as_p }}
+		<p>need to approve: </p>
+		{{ approve_form.as_p }}
 	</div>
 {% endblock %}
 

@@ -1,8 +1,6 @@
 from locust import HttpLocust, TaskSet, task
 
 
-
-
 class UserActions(TaskSet):
 
 	def on_start(self):
@@ -25,6 +23,7 @@ class UserActions(TaskSet):
 	@task(2)
 	def add_store(self):
 		self.client.get('/store/add_store/')
+
 
 # 	@task(3)
 # 	def add_store(self):

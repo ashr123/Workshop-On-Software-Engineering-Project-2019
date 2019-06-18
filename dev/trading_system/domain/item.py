@@ -50,7 +50,7 @@ class Item:
 		return amount <= self._model.quantity
 
 	def calc_total(self, amount):
-		return amount*self._model.price
+		return amount * self._model.price
 
 	def check_rules(self, amount):
 		base_arr = []
@@ -114,7 +114,4 @@ class Item:
 			return list(map(lambda i: i.get_details(), items))
 		except Exception:
 			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')
-
-
-
 

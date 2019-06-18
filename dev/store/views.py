@@ -1,8 +1,5 @@
-import decimal
 import json
 import logging
-import traceback
-from datetime import date
 
 import simplejson as s_json
 from django.contrib import messages
@@ -26,7 +23,7 @@ from . import forms
 from .forms import BuyForm, AddManagerForm, AddRuleToItem, AddRuleToStore_base, AddRuleToStore_withop, \
 	AddRuleToStore_two, AddDiscountForm, AddComplexDiscountForm
 from .forms import ShippingForm, AddRuleToItem_withop, AddRuleToItem_two
-from .models import Item, ComplexStoreRule, ComplexItemRule
+from .models import Item
 from .models import Store
 
 log_setup = logging.getLogger('event log')
@@ -69,33 +66,35 @@ def get_country_of_request(request):
 @login_required
 def add_item(request, pk):
 	try:
-		if request.method == 'POST':
-			form = ItemForm(request.POST)
-			if form.is_valid():
-				ans = service.add_item_to_store(item_json=s_json.dumps(form.cleaned_data), store_id=pk,
-				                                user_id=request.user.pk)
-				messages.success(request, ans[1])
-				logev.info('add_item successfully')
-				return redirect('/store/home_page_owner/')
-			else:
-				loger.warning('add item failed')
-				messages.warning(request, 'Problem with filed : ', form.errors, 'please try again!')
-				return redirect('/store/home_page_owner/')
+	if request.method == 'POST':
+		logev.info('add_item post')
+		form = ItemForm(request.POST)
+		if form.is_valid():
+			ans = service.add_item_to_store(item_json=s_json.dumps(form.cleaned_data),
+			                                store_id=pk, user_id=request.user.pk)
+			messages.success(request, ans[1])  # <-
+			logev.info('add_item post s')
+			return redirect('/store/home_page_owner/')
 		else:
-			form_class = ItemForm
-			curr_store = Store.objects.get(id=pk)
-			store_name = curr_store.name
-			text = SearchForm()
-			user_name = request.user.username
-			context = {
-				'store': pk,
-				'form': form_class,
-				'store_name': store_name,
-				'user_name': user_name,
-				'text': text,
-			}
-			# print('\ndebug\n\n', pk)
-			return render(request, 'store/add_item.html', context)
+			loger.warning('add_item fail not a valid form')
+			messages.warning(request, 'Problem with filed : ', form.errors, 'please try again!')  # <-
+			return redirect('/store/home_page_owner/')
+	else:
+		logev.info('add_item get')
+		form_class = ItemForm
+		curr_store = Store.objects.get(id=pk)
+		store_name = curr_store.name
+		text = SearchForm()
+		user_name = request.user.username
+		context = {
+			'store': pk,
+			'form': form_class,
+			'store_name': store_name,
+			'user_name': user_name,
+			'text': text,
+		}
+		# print('\ndebug\n\n', pk)
+		return render(request, 'store/add_item.html', context)
 	except DBFailedExceptionServiceToViews as e:
 		messages.warning(request, e.msg)
 		loger.warning(e.msg)
@@ -843,9 +842,6 @@ def add_complex_rule_to_store_2(request, rule_id_before, store_id, which_button)
 		messages.warning(request, e.msg)
 		loger.warning(e.msg)
 		return redirect('/login_redirect')
-
-
-from .models import BaseItemRule
 
 
 def add_base_rule_to_item(request, pk, which_button):

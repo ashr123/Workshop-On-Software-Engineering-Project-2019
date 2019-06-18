@@ -39,7 +39,7 @@ SECRET_KEY = 'rk^6e34%5v@%n%*(@#_6@70d%h+jle#z#ea!iq=o-b9ok@s91#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 GEOIP_PATH = os.path.join(BASE_DIR, '_geoip2_')
@@ -179,4 +179,3 @@ PROJ_PORT = '8000'
 #     {"backend": "redis_sessions.session", "modes": ["read", "write"]},
 #     {"backend": "django.contrib.sessions.backends.db", "modes": ["read", "delete"]},
 # )
-

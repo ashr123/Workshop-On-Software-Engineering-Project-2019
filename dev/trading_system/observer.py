@@ -77,7 +77,7 @@ class AuctionPrticipantObserver(Observer):
 		participants = list(AuctionParticipant.objects.filter(auction_id=auction_id))
 		best_offer = reduce(lambda acc, curr: max(acc, curr.offer), participants, 0)
 		if best_offer > self._participant.offer:
-			ws.send(json.dumps({'message': 'Someone offered {} for this item.'.format(best_offer)+
+			ws.send(json.dumps({'message': 'Someone offered {} for this item.'.format(best_offer) +
 			                               'You offer is no longer the best offer'}))
 
 
@@ -86,18 +86,21 @@ class AuctionSubject(Subject):
 		Subject.__init__(self)
 		self._auction_id = auction_id
 		self._subject_state = self._auction_id
-		obs = list(map(lambda ap: AuctionPrticipantObserver(ap),list(AuctionParticipant.objects.filter(auction_id=auction_id))))
+		obs = list(map(lambda ap: AuctionPrticipantObserver(ap),
+		               list(AuctionParticipant.objects.filter(auction_id=auction_id))))
 		for o in obs:
 			self.attach(o)
+
 
 class ItemSubject(Subject):
 	def __init__(self, item_id):
 		Subject.__init__(self)
 		self._item_id = item_id
-		self._subject_state = [] #notifications
+		self._subject_state = []  # notifications
 		stores = list(filter(lambda s: self._item_id in map(lambda i: i.pk, s.items.all()), Store.objects.all()))
 		# Might cause bug. Need to apply the item-in-one-store condition
-		obs = list(map(lambda owner: ItemObserver(ObserverUser.objects.get(user_id=owner.pk)),list(stores[0].owners.all())))
+		obs = list(
+			map(lambda owner: ItemObserver(ObserverUser.objects.get(user_id=owner.pk)), list(stores[0].owners.all())))
 		for o in obs:
 			self.attach(o)
 

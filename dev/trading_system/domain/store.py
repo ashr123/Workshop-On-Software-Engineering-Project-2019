@@ -8,14 +8,14 @@ from trading_system.domain.complex_discount import ComplexDiscount
 from trading_system.domain.complex_store_rule import ComplexStoreRule
 from trading_system.domain.discount import Discount
 import trading_system.domain.domain as dom
-from trading_system.domain.user import User as c_User
 from trading_system.domain.item import Item as c_Item
+from trading_system.domain.user import User as c_User
 from trading_system.models import ObserverUser
 
 
 class Store:
 	def __init__(self, name=None, desc=None, owner_id=None, model=None):
-		if model != None:
+		if model is not None:
 			self._model = model
 			return
 		self._model = m_Store.objects.create(name=name, description=desc)
@@ -51,7 +51,7 @@ class Store:
 
 	@property
 	def discounts(self):
-		return Discount.get_store_discounts(store_id = self.pk)
+		return Discount.get_store_discounts(store_id=self.pk)
 
 	@property
 	def complex_rules(self):

@@ -92,13 +92,12 @@ def check_if_user_is_approved(user_, store):
 
 
 def agreement_by_partner(request, store_pk, user_pk):
-
 	partner = User.objects.get(id=request.user.id)
 
-	if(service.agreement_by_partner(partner.id,store_pk,user_pk)):
-		messages.success(request,' you approve! ')
+	if (service.agreement_by_partner(partner.id, store_pk, user_pk)):
+		messages.success(request, ' you approve! ')
 	else:
-		messages.warning(request,' try again ')
+		messages.warning(request, ' try again ')
 	return redirect('/login_redirect')
 
 
@@ -124,8 +123,8 @@ def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 
 			return render(request, 'homepage_member.html', {'text': SearchForm(), 'user_name': request.user.username})
 
-		# return render(request, 'homepage_member.html',
-		#               {'text': text, 'user_name': user_name})
+	# return render(request, 'homepage_member.html',
+	#               {'text': text, 'user_name': user_name})
 
 	return render(request, 'homepage_guest.html', {'text': SearchForm()})
 

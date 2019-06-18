@@ -5,7 +5,7 @@
 	<ul class="collection">
 		<ul class="my_stores">
 			{% for auction in object_list %}
-				<li>Auction id:{{ auction.pk}} </li>
+				<li>Auction id:{{ auction.pk }} </li>
 				<form action="/view_auction/{{ auction.pk }}" method="GET">
 					<input type="submit" value="View">
 				</form>
@@ -13,10 +13,10 @@
 				<li>No auctions yet</li>
 			{% endfor %}
 		</ul>
-{#		{% for item in results %}#}
-{#			<li class="collection-item"><a href="home/item_page/{{ item.id }} "> {{ item.name }}#}
-{#				: {{ item.description }}  </a></li>#}
-			{#			<p>lllllll</p>#}
-{#		{% endfor %}#}
+		{#		{% for item in results %}#}
+		{#			<li class="collection-item"><a href="home/item_page/{{ item.id }} "> {{ item.name }}#}
+		{#				: {{ item.description }}  </a></li>#}
+		{#			<p>lllllll</p>#}
+		{#		{% endfor %}#}
 	</ul>
 {% endblock %}

@@ -8,11 +8,11 @@
 	<title>WeBuy</title>
 </head>
 <body>
-	{% for message in messages %}
-		<div id="alert" role="alert">
-			<span class="close_btn" onclick="this.parentElement.style.display='none';">&times;</span>
-			<span class="message">{{ message }}</span>
-		</div>
-	{% endfor %}
+{% for message in messages %}
+	<div id="alert" role="alert">
+		<span class="close_btn" onclick="this.parentElement.style.display='none';">&times;</span>
+		<span class="message">{{ message }}</span>
+	</div>
+{% endfor %}
 </body>
 </html>
