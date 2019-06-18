@@ -5,7 +5,7 @@ from trading_system.models import Cart as m_Cart
 
 class Cart:
 	def __init__(self, store_pk=None, user_pk=None, model=None):
-		if model != None:
+		if model is not None:
 			self._model = model
 			return
 		self._model = m_Cart.objects.create(customer_id=user_pk, store_id=store_pk)
@@ -23,9 +23,9 @@ class Cart:
 
 	@staticmethod
 	def get_cart(cart_id=None, store_pk=None, user_id=None):
-		if cart_id != None:
+		if cart_id is not None:
 			model = m_Cart.objects.get(pk=cart_id)
-		elif user_id!= None:
+		elif user_id is not None:
 			try:
 				model = m_Cart.objects.get(customer_id=user_id)
 			except ObjectDoesNotExist:

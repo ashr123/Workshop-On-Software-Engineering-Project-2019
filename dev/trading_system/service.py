@@ -3,10 +3,6 @@ import json
 from trading_system.domain import domain
 
 
-def buy_item():
-	pass
-
-
 def search(txt):
 	return domain.search(txt)
 
@@ -176,14 +172,49 @@ def add_complex_discount(store_id, left, right, operator):
 	return domain.add_complex_discount_to_store(store_id, left, right, operator)
 
 
-def buy_logic(pk, amount, amount_in_db, user, shipping_details, card_details):
-	return domain.buy_logic(pk, amount, amount_in_db, user, shipping_details, card_details)
+def buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart, user_id):
+	return domain.buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart , user_id)
 
 
-# def approved_user_to_store_manager(wanna_be_manager, store_pk, is_owner):
-# 	return domain.approved_user_to_store_manager(wanna_be_manager, store_pk, is_owner)
+def store_discounts_string(store_id):
+	return domain.store_discounts_string(store_id)
 
 
+def delete_complex_rule(rule_id):
+	return domain.delete_complex(rule_id)
+
+
+def delete_base_rule(rule_id):
+	return domain.delete_base(rule_id)
+
+
+def delete_complex_item_rule(rule_id):
+	return domain.delete_complex_item(rule_id)
+
+
+def delete_base_item_rule(rule_id):
+	return domain.delete_base_item(rule_id)
+
+
+def delete_complex_discount(disc):
+	return domain.delete_complex_discount(disc)
+
+
+def delete_base_store_discount(disc):
+	return domain.delete_base_discount(disc)
+
+
+def get_discounts_serach(item_id):
+	return domain.get_discounts_serach(item_id)
+
+
+def get_quantity(item_id):
+	return domain.get_quantity(item_id)
+
+
+def apply_discounts_for_cart(list_of_items):
+	return domain.apply_discounts_for_cart(list_of_items)
+	
 def approved_user_to_store_manager(wanna_be_manager, store_pk):
 	return domain.approved_user_to_store_manager(wanna_be_manager, store_pk)
 

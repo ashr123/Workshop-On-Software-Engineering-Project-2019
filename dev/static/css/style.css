@@ -533,6 +533,7 @@
     color: cornflowerblue;
     cursor: pointer;
     text-decoration:none;
+    padding-right: 20px;
 }
 
 #buy_href:hover {
@@ -553,3 +554,4 @@
     border-radius: 50%;
     text-align: center;
 }
+

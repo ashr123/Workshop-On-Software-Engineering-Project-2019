@@ -121,6 +121,9 @@ def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 
 			return render(request, 'homepage_member.html', {'text': SearchForm(), 'user_name': request.user.username})
 
+		# return render(request, 'homepage_member.html',
+		#               {'text': text, 'user_name': user_name})
+
 	return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
 
@@ -335,7 +338,6 @@ def make_guest_cart(request):
 		# 	items_ += list([service.get_item(id1)])
 		# return items_
 		if 'cart' in request.session:
-
 			cartG = request.session['cart']
 			id_list = cartG['items_id']
 			for id in id_list:
@@ -412,10 +414,9 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			return redirect('/login_redirect')
 
 		if form.is_valid():
-
+			list_of_items = []
 			for item_id in form.cleaned_data.get('items'):
-
-				amount_in_db = Item.objects.get(id=item_id).quantity
+				amount_in_db = service.get_quantity(item_id)
 				if amount_in_db > 0:
 					item1 = Item.objects.get(id=item_id)
 					quantity_to_buy = 1
@@ -424,27 +425,27 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 					# print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
 					except:
 						messages.warning(request, 'problem with quantity ')
-					# item.quantity = amount_in_db - 1
-					# item.save()
-
+					list_of_items.append({'item_id': item_id, 'amount': int(quantity_to_buy)})
 					valid, total, total_after_discount, messages_ = service.buy_logic(item_id, int(quantity_to_buy),
 					                                                                  amount_in_db,
-					                                                                  request.user, shipping_details,
-					                                                                  card_details)
+					                                                                  request.user.is_authenticated,
+					                                                                  request.user.username,
+					                                                                  shipping_details,
+					                                                                  card_details, True)
 					if not valid:
 						messages.warning(request, 'can`t buy item : ' + str(item_id))
 						messages.warning(request, 'reason : ' + str(messages_))
-					else:
-						messages.success(request, ' buy item : ' + str(item_id))
-						items_bought.append(item_id)
-						if request.user.is_authenticated:
-							cart = Cart.objects.get(customer=request.user)
-							cart.items.remove(item1)
-						else:
-							cart_g = request.session['cart']
-							cart_g['items_id'].remove(Decimal(item_id))
-							request.session['cart'] = cart_g
+						return redirect('/login_redirect')
 
+				if request.user.is_authenticated:
+					cart = Cart.objects.get(customer=request.user)
+					cart.items.remove(item1)
+				else:
+					cart_g = request.session['cart']
+					cart_g['items_id'].remove(Decimal(item_id))
+					request.session['cart'] = cart_g
+			res, res_before = service.apply_discounts_for_cart(list_of_items)
+			messages.success(request, ' total after discount : ' + str(res) + " instead of: " + str(res_before))
 			return redirect('/login_redirect')
 		else:
 			err = '' + str(form.errors)
@@ -461,16 +462,15 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 				base_template_name = 'store/homepage_store_owner.html'
 			else:
 				base_template_name = 'homepage_member.html'
-
-			list_ = None
+			list_ = []
 
 		form = CartForm(request.user, list_)
 		q_list = QForm(request.user, list_)
 		text = SearchForm()
 		user_name = request.user.username
+		items_of_user = []
 		if request.user.is_authenticated:
 			carts = Cart.objects.filter(customer=request.user)
-			items_of_user = []
 			for cart in carts:
 				items_of_user += list(cart.items.all())
 		context = {
@@ -481,5 +481,16 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			'qua': q_list,
 			'card': PayForm(),
 			'shipping': ShippingForm(),
+			'items_list': items_of_user + list_
 		}
 		return render(request, 'trading_system/cart_test.html', context)
+
+
+def view_discounts(request, pk):
+	discounts = service.get_discounts_serach(pk)
+	text = SearchForm()
+	context = {
+		'text': text,
+		'discounts': discounts
+	}
+	return render(request, 'trading_system/view_discounts.html', context)

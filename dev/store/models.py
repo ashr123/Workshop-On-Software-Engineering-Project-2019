@@ -1,4 +1,7 @@
+from decimal import Decimal
+
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 
@@ -22,7 +25,7 @@ CategoryChoice = (
 
 
 class Item(models.Model):
-	price = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+	price = models.DecimalField(max_digits=6, decimal_places=2, default=0, validators=[MinValueValidator(Decimal('0.01'))])
 	name = models.CharField(max_length=30, default=None)
 	description = models.CharField(max_length=64, default=None)
 	category = models.CharField(max_length=30, choices=CategoryChoice, default=1)

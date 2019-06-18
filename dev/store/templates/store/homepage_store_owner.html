@@ -15,7 +15,7 @@
 				'ws://' + window.location.host +
 				'/ws/store_owner/' + {{ owner_id }}+'/');
 			chatSocket.onmessage = function (e) {
-				count = count + 1
+				count = count + 1;
 				document.getElementById('noa').innerHTML = count
 			};
 			chatSocket.onclose = function (e) {
@@ -23,7 +23,7 @@
 			};
 
 			function reset_counter() {
-				count = 0
+				count = 0;
 				var x = document.getElementById('noa');
 				x.style.display = 'none'
 			}

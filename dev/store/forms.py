@@ -156,7 +156,7 @@ class AddDiscountForm(forms.Form):
 		self.fields['end_date'] = forms.DateField(help_text='format: mm/dd/yyyy')
 		self.fields['type'] = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
 		self.fields['amount'] = forms.IntegerField(min_value=0, required=False)
-		self.fields['item'] = forms.ModelChoiceField(queryset=Item.objects.filter(id=self.store_id), required=False)
+		self.fields['item'] = forms.ModelChoiceField(queryset=Item.objects.filter(store=self.store_id), required=False)
 
 
 class AddComplexDiscountForm(forms.Form):
@@ -173,7 +173,7 @@ class AddComplexDiscountForm(forms.Form):
 		self.fields['end_date'] = forms.DateField(help_text='format: mm/dd/yyyy')
 		self.fields['type'] = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
 		self.fields['amount'] = forms.IntegerField(min_value=0, required=False)
-		self.fields['item'] = forms.ModelChoiceField(queryset=Item.objects.filter(id=self.store_id), required=False)
+		self.fields['item'] = forms.ModelChoiceField(queryset=Item.objects.filter(store=self.store_id), required=False)
 
 
 class AddRuleToItem_two(forms.Form):
@@ -207,7 +207,7 @@ class AddManagerForm(forms.Form):
 	           ('ADD_MANAGER', 'add manager'),
 	           ('REMOVE_STORE', 'delete store'),
 	           ('ADD_DISCOUNT', 'add discount'),
-	           )
+	           ('ADD_RULE', 'add rule'))
 
 	permissions = forms.MultipleChoiceField(choices=CHOICES, widget=forms.CheckboxSelectMultiple())
 
