@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7f206d29-0b35-4da3-95c1-1baab1223eb3" name="Default Changelist" comment="" />
+    <list default="true" id="7f206d29-0b35-4da3-95c1-1baab1223eb3" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/trading_system/domain/store.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/store.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/easy-install.pth" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/easy-install.pth" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/setuptools.pth" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/setuptools.pth" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Scripts/easy_install-3.7.exe" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/easy_install-3.7.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Scripts/easy_install-script.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/easy_install-script.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Scripts/easy_install.exe" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/easy_install.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Scripts/pip.exe" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/pip.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Scripts/pip3.7.exe" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/pip3.7.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Scripts/pip3.exe" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/pip3.exe" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -10,9 +22,9 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/dev$Test__tests_acceptanceTests_TestTradingSystem_test_buy_logic_all_ok.coverage" NAME="Test: tests.acceptanceTests.TestTradingSystem.test_buy_logic_all_ok Coverage Results" MODIFIED="1560854205301" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/dev$buy_tests.coverage" NAME="buy tests Coverage Results" MODIFIED="1560882692106" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/dev$Test__tests_acceptanceTests_TestTradingSystem.coverage" NAME="Test: tests.acceptanceTests.TestTradingSystem Coverage Results" MODIFIED="1560852426451" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/dev$Test__store_tests_StoreUnitTesting.coverage" NAME="Test: store.tests.StoreUnitTesting Coverage Results" MODIFIED="1560852392467" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/dev$buy_tests.coverage" NAME="buy tests Coverage Results" MODIFIED="1560895504996" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/dev$Test__tests_acceptanceTests_TestTradingSystem.coverage" NAME="Test: tests.acceptanceTests.TestTradingSystem Coverage Results" MODIFIED="1560895559115" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/dev$Test__store_tests_StoreUnitTesting.coverage" NAME="Test: store.tests.StoreUnitTesting Coverage Results" MODIFIED="1560895530380" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
   <component name="CoverageViewManager">
     <option name="myElementSize" value="230" />
@@ -47,14 +59,11 @@
   <component name="ExportTestResults" outputFolder="$PROJECT_DIR$" userTempatePath="" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/trading_system/domain/domain.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/store/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="20416">
-              <caret line="928" column="22" selection-start-line="928" selection-start-column="18" selection-end-line="928" selection-end-column="22" />
-              <folding>
-                <element signature="e#0#15#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="206">
+              <caret line="527" column="4" selection-start-line="527" selection-start-column="4" selection-end-line="527" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -62,8 +71,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7502">
-              <caret line="366" column="81" selection-start-line="366" selection-start-column="81" selection-end-line="366" selection-end-column="81" />
+            <state relative-caret-position="9416">
+              <caret line="428" column="81" selection-start-line="428" selection-start-column="81" selection-end-line="428" selection-end-column="81" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -98,10 +107,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/domain/store.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1914">
-              <caret line="87" column="41" selection-start-line="87" selection-start-column="41" selection-end-line="87" selection-end-column="41" />
+            <state relative-caret-position="332">
+              <caret line="182" column="8" selection-start-line="182" selection-start-column="8" selection-end-line="182" selection-end-column="8" />
               <folding>
-                <element signature="e#0#30#0" expanded="true" />
+                <element signature="e#0#50#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -131,11 +140,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/domain/cart.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="574">
-              <caret line="32" column="22" selection-start-line="32" selection-start-column="22" selection-end-line="32" selection-end-column="22" />
+            <state relative-caret-position="1100">
+              <caret line="50" column="32" selection-start-line="50" selection-start-column="32" selection-end-line="50" selection-end-column="32" />
               <folding>
                 <element signature="e#0#78#0" expanded="true" />
               </folding>
@@ -262,13 +271,13 @@
         <option value="$PROJECT_DIR$/trading_system/domain/base_discount.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/complex_discount.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/discount.py" />
-        <option value="$PROJECT_DIR$/store/views.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/domain.py" />
         <option value="$PROJECT_DIR$/store/consumers.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/item.py" />
-        <option value="$PROJECT_DIR$/trading_system/domain/store.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/user.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/cart.py" />
+        <option value="$PROJECT_DIR$/trading_system/domain/store.py" />
+        <option value="$PROJECT_DIR$/store/views.py" />
       </list>
     </option>
   </component>
@@ -356,7 +365,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Django server.run">
+  <component name="RunManager" selected="Django tests.Test: tests.acceptanceTests.TestTradingSystem">
     <configuration name="Test: store.tests.StoreUnitTesting" type="DjangoTestsConfigurationType">
       <module name="dev" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -606,6 +615,11 @@
       <option name="customRunCommand" value="" />
       <method v="2" />
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Django tests.Test: tests.acceptanceTests.TestTradingSystem" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="StructureViewFactory">
     <option name="AUTOSCROLL_FROM_SOURCE" value="true" />
@@ -669,7 +683,8 @@
       <workItem from="1560852298210" duration="16000" />
       <workItem from="1560852321549" duration="10043000" />
       <workItem from="1560875658092" duration="11058000" />
-      <workItem from="1560894200732" duration="360000" />
+      <workItem from="1560894200732" duration="643000" />
+      <workItem from="1560894850348" duration="664000" />
     </task>
     <servers />
   </component>
@@ -706,7 +721,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="390037000" />
+    <option name="totallyTimeSpent" value="390984000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -721,14 +736,12 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.124200426" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12526652" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Database Changes" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -737,12 +750,14 @@
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Python Console" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="right" id="Database" />
-      <window_info anchor="right" id="SciView" />
+      <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Database Changes" order="12" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Data View" order="3" />
+      <window_info anchor="right" id="SciView" order="4" />
+      <window_info anchor="right" id="Database" order="5" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1063,13 +1078,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/Django-2.2.2-py3.7.egg/django/utils/datetime_safe.py" />
-    <entry file="file://$PROJECT_DIR$/store/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="381">
-          <caret line="448" column="17" selection-start-line="448" selection-start-column="14" selection-end-line="448" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/store/routing.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -1096,8 +1104,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/domain/domain.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="20416">
-          <caret line="928" column="22" selection-start-line="928" selection-start-column="18" selection-end-line="928" selection-end-column="22" />
+        <state relative-caret-position="22792">
+          <caret line="1036" column="22" selection-start-line="1036" selection-start-column="18" selection-end-line="1036" selection-end-column="22" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
@@ -1106,8 +1114,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7502">
-          <caret line="366" column="81" selection-start-line="366" selection-start-column="81" selection-end-line="366" selection-end-column="81" />
+        <state relative-caret-position="9416">
+          <caret line="428" column="81" selection-start-line="428" selection-start-column="81" selection-end-line="428" selection-end-column="81" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
@@ -1130,16 +1138,6 @@
           <caret line="55" column="24" selection-start-line="55" selection-start-column="16" selection-end-line="55" selection-end-column="24" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/trading_system/domain/store.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1914">
-          <caret line="87" column="41" selection-start-line="87" selection-start-column="41" selection-end-line="87" selection-end-column="41" />
-          <folding>
-            <element signature="e#0#30#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1183,11 +1181,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/domain/cart.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="574">
-          <caret line="32" column="22" selection-start-line="32" selection-start-column="22" selection-end-line="32" selection-end-column="22" />
+        <state relative-caret-position="1100">
+          <caret line="50" column="32" selection-start-line="50" selection-start-column="32" selection-end-line="50" selection-end-column="32" />
           <folding>
             <element signature="e#0#78#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/trading_system/domain/store.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="332">
+          <caret line="182" column="8" selection-start-line="182" selection-start-column="8" selection-end-line="182" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#50#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/store/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="206">
+          <caret line="527" column="4" selection-start-line="527" selection-start-column="4" selection-end-line="527" selection-end-column="4" />
         </state>
       </provider>
     </entry>

@@ -8,6 +8,7 @@ from trading_system.domain.complex_discount import ComplexDiscount
 from trading_system.domain.complex_store_rule import ComplexStoreRule
 from trading_system.domain.discount import Discount
 from trading_system.domain.user import User as c_User
+from trading_system.domain.item import Item as c_Item
 from trading_system.models import ObserverUser
 
 
@@ -43,36 +44,36 @@ class Store:
 	def name(self):
 		return self._model.name
 
-    @property
-    def complex_discounts(self):
-        return ComplexDiscount.get_store_cs_discoint(store_id=self.pk)
+	@property
+	def complex_discounts(self):
+		return ComplexDiscount.get_store_cs_discoint(store_id=self.pk)
 
-    @property
-    def discounts(self):
-        return Discount.get_store_discounts(store_id = self.pk)
+	@property
+	def discounts(self):
+		return Discount.get_store_discounts(store_id = self.pk)
 
-    @property
-    def complex_rules(self):
-        return ComplexStoreRule.get_item_si_rules(store_id=self.pk)
+	@property
+	def complex_rules(self):
+		return ComplexStoreRule.get_item_si_rules(store_id=self.pk)
 
-    @property
-    def base_rules(self):
-        return BaseStoreRule.get_store_bs_rules(store_id=self.pk)
+	@property
+	def base_rules(self):
+		return BaseStoreRule.get_store_bs_rules(store_id=self.pk)
 
-    @property
-    def items(self):
-        return list(map(lambda i: c_Item.get_item(item_id=i.pk), list(self._model.items.all())))
+	@property
+	def items(self):
+		return list(map(lambda i: c_Item.get_item(item_id=i.pk), list(self._model.items.all())))
 
-    @property
-    def managers(self):
-        return list(map(lambda u: c_User.get_item(user_id=u.pk), list(self._model.managers.all()) ))
+	@property
+	def managers(self):
+		return list(map(lambda u: c_User.get_item(user_id=u.pk), list(self._model.managers.all()) ))
 
-    @property
-    def owners(self):
-        return list(map(lambda u: c_User.get_item(user_id=u.pk), list(self._model.owners.all()) ))
+	@property
+	def owners(self):
+		return list(map(lambda u: c_User.get_item(user_id=u.pk), list(self._model.owners.all()) ))
 
 	def all_owners_ids(self):
-        	return list(map(lambda o: o.pk, self.owners))
+		return list(map(lambda o: o.pk, self.owners))
 
 	def all_managers_ids(self):
 		return list(map(lambda o: o.pk, self.managers))
@@ -160,26 +161,26 @@ class Store:
 	def get_creator(self):
 		return c_User(self._model.owners.all()[0])
 
-    def apply_discounts(self, c_item, amount):
-        base_arr = []
-        complex_arr = []
-        price = c_item.calc_total(amount=amount)
-        store_complex_discountes = self.complex_discounts
-        for disc in reversed(store_complex_discountes):
-            if disc.id in complex_arr:
-                continue
-            # discount = apply_complex(disc, base_arr, complex_arr, curr_item, amount)
-            discount = disc.apply(base_arr, complex_arr, c_item, amount)
-            if (discount != -1):
-                price = (1 - discount) * float(price)
-        store_base_discountes = self.discounts
-        for disc in store_base_discountes:
-            if disc.id in base_arr:
-                continue
-            discount = float(disc.apply(curr_item=c_item, amount=amount))
-            if (discount != -1):
-                price = (1 - discount) * float(price)
-        return price
+	def apply_discounts(self, c_item, amount):
+		base_arr = []
+		complex_arr = []
+		price = c_item.calc_total(amount=amount)
+		store_complex_discountes = self.complex_discounts
+		for disc in reversed(store_complex_discountes):
+			if disc.id in complex_arr:
+				continue
+
+			discount = disc.apply(base_arr, complex_arr, c_item, amount)
+			if (discount != -1):
+				price = (1 - discount) * float(price)
+		store_base_discountes = self.discounts
+		for disc in store_base_discountes:
+			if disc.id in base_arr:
+				continue
+			discount = float(disc.apply(curr_item=c_item, amount=amount))
+			if (discount != -1):
+				price = (1 - discount) * float(price)
+		return price
 
 	@staticmethod
 	def get_store(store_id):
