@@ -11,7 +11,8 @@
 			<div id="cond_1" style="display: none">Choose condition type: {{ form.type }}</div>
 			<div id="cond_2" style="display: none">Choose items amount: {{ form.amount }}</div>
 			<br>
-			<div>Do you want to add an item to the discount? <input id="item" type="checkbox" onclick="choose_item()"></div>
+			<div>Do you want to add an item to the discount? <input id="item" type="checkbox" onclick="choose_item()">
+			</div>
 			<div id="item_1" style="display: none">Choose item: {{ form.item }}</div>
 
 			<br>
@@ -20,27 +21,26 @@
 		</form>
 	</div>
 	<script>
-	function choose_item() {
+		function choose_item() {
 			var item = document.getElementById("item");
 			var addItem = document.getElementById("item_1");
 			if (item.checked == true) {
 				addItem.style.display = "block"
-			}
-			else{
+			} else {
 				addItem.style.display = "none"
 			}
 
 		}
+
 		function condition() {
 			var condition = document.getElementById("cond");
 			var type = document.getElementById("cond_1");
 			var amount = document.getElementById("cond_2");
 			if (condition.checked == true) {
-				type.style.display = "block"
+				type.style.display = "block";
 				amount.style.display = "block"
-			}
-			else{
-				type.style.display = "none"
+			} else {
+				type.style.display = "none";
 				amount.style.display = "none"
 			}
 		}

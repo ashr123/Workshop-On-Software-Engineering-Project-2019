@@ -414,8 +414,7 @@ def len_of_super():
 	return c_User.len_of_super()
 
 
-
-def add_discount(store_id, percentage, end_date, type=None, amount=None, item_id=None, user_id = None):
+def add_discount(store_id, percentage, end_date, type=None, amount=None, item_id=None, user_id=None):
 	if not User.objects.get(id=user_id).has_perm('ADD_DISCOUNT', Store.objects.get(pk=store_id)):
 		return [False, "you don't have the permission to add discount to store!"]
 	d = Discount(store_id=store_id, type=type, percentage=percentage, end_date=end_date, amount=amount, item_id=item_id)
@@ -427,7 +426,6 @@ def add_complex_discount_to_store(store_id, left, right, operator):
 	d = ComplexDiscount(store_id=store_id, left=left, right=right, operator=operator)
 	d.save()
 	return [True, d.pk]
-
 
 
 def update_item(item_id, item_dict, user_id):
@@ -735,7 +733,7 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 	amount_in_db1 = Item.objects.get(id=item_id).quantity
 	if c_item.has_available_amount(amount):
 		total = c_item.calc_total(amount=amount)
-		if not c_item.check_rules(amount = amount):
+		if not c_item.check_rules(amount=amount):
 			messages_ += "you can't buy due to item policies"
 			return False, 0, 0, messages_
 
@@ -743,14 +741,17 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 		if not store_of_item.check_rules(amount, shipping_details['country'], is_auth):
 			messages_ += "you can't buy due to store policies"
 			return False, 0, 0, messages_
-		if (is_cart is False):
-			total_after_discount = store_of_item.apply_discounts(c_item=c_item, amount=int(amount))
+		total_after_discount = "" if is_cart else store_of_item.apply_discounts(c_item=c_item, amount=int(amount))
+		# if (is_cart is False):
+		# 	total_after_discount = store_of_item.apply_discounts(c_item=c_item, amount=int(amount))
 		try:
 			if pay_system.handshake():
 				print("pay hand shake")
 
-				pay_transaction_id = pay_system.pay(str(card_details['card_number']), str(card_details['month']),
-				                                    str(card_details['year']), str(card_details['holder']),
+				pay_transaction_id = pay_system.pay(str(card_details['card_number']),
+				                                    str(card_details['month']),
+				                                    str(card_details['year']),
+				                                    str(card_details['holder']),
 				                                    str(card_details['cvc']),
 				                                    str(card_details['id']))
 				if pay_transaction_id == '-1':
@@ -786,7 +787,7 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 					item_subject.subject_state = item_subject.subject_state + [notification.pk]
 				else:
 					notification = Notification.objects.create(
-						msg='A guest bought ' + str(amount) + ' pieces of ' + curr_item.name)
+						msg='A guest bought ' + str(amount) + ' pieces of ' + c_item.name)
 					notification.save()
 					item_subject.subject_state = item_subject.subject_state + [notification.pk]
 			except Exception as e:
@@ -803,10 +804,10 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 			c_item.quantity = amount_in_db1
 			c_item.save()
 
-			if not (pay_transaction_id == -1):
+			if not (pay_transaction_id == "-1"):
 				messages_ += '\n' + 'failed and aborted pay! please try again!'
 				pay_system.cancel_pay(pay_transaction_id)
-			if not (supply_transaction_id == -1):
+			if not (supply_transaction_id == "-1"):
 				messages_ += '\n' + 'failed and aborted supply! please try again!'
 				supply_system.cancel_supply(supply_transaction_id)
 			messages_ = "Exception! "  '  :  ' + str(a)
@@ -847,11 +848,9 @@ def delete_complex_item(rule_id):
 	rule.delete()
 
 
-
 def delete_base_item(rule_id):
 	rule = BaseItemRule.objects.get(id=rule_id)
 	rule.delete()
-
 
 
 def delete_complex_discount(disc_id):
@@ -865,7 +864,6 @@ def delete_complex_discount(disc_id):
 	else:
 		delete_complex_discount(int(discount.right))
 	discount.delete()
-
 
 
 def delete_base_discount(disc_id):
@@ -893,6 +891,7 @@ def get_discounts_serach(item_id):
 		if result['is_item'] is True:
 			base.append(result['discount'])
 	return complex + base
+
 
 def search_store_discount(disc, base_arr, complex_arr, item_id, check):
 	curr = '('
@@ -932,7 +931,8 @@ def search_base_discount(disc_id, item_id):
 				flag = True
 			else:
 				item = Item.objects.get(id=discount.item.id)
-				res = str(discount.percentage) + ' % off on ' + item.name + ', up to ' + str(discount.amount) + ' of these.'
+				res = str(discount.percentage) + ' % off on ' + item.name + ', up to ' + str(
+					discount.amount) + ' of these.'
 				if item.id == item_id:
 					flag = True
 		elif discount.type == 'MIN':
@@ -961,7 +961,6 @@ def get_quantity(item_id):
 	return Item.objects.get(id=item_id).quantity
 
 
-
 def build_map(list_of_items):
 	ret = []
 	print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55')
@@ -971,11 +970,13 @@ def build_map(list_of_items):
 		if store_id in list(map(lambda x: x['store_id'], ret)):
 			store_detail = list(filter(lambda x: x['store_id'] == store_id, ret))[0]
 			store_detail['amount'] += i['amount']
-			store_detail['items'].append({'item_id':i['item_id'], 'item_amount': i['amount']})
+			store_detail['items'].append({'item_id': i['item_id'], 'item_amount': i['amount']})
 		else:
-			ret.append({'store_id': store_id, 'amount': i['amount'], 'items':[{'item_id': i['item_id'], 'item_amount':i['amount']}]})
+			ret.append({'store_id': store_id, 'amount': i['amount'],
+			            'items': [{'item_id': i['item_id'], 'item_amount': i['amount']}]})
 
 	return ret
+
 
 def calculate_price(store_map):
 	ret = []
@@ -984,11 +985,13 @@ def calculate_price(store_map):
 		ret.append({'item_id': item['item_id'], 'price': float(item_o.price) * float(item['item_amount'])})
 	return ret
 
+
 def calculate_total_price(list_price):
 	ret = 0
 	for i in list_price:
 		ret += i['price']
 	return ret
+
 
 def apply_discounts_for_cart(list_of_items):
 	struct = build_map(list_of_items)
@@ -1019,7 +1022,7 @@ def apply_discounts_for_cart(list_of_items):
 				continue
 			discount = apply_base_cart(disc.id, store_map)
 			if (discount != -1):
-				iprice = list(filter(lambda x: x['item_id']== discount[0]['product'], store_price))
+				iprice = list(filter(lambda x: x['item_id'] == discount[0]['product'], store_price))
 				if len(iprice) != 0:
 					iprice[0]['price'] = float(iprice[0]['price']) * float((1 - discount[0]['discount']))
 				else:
@@ -1032,8 +1035,6 @@ def apply_discounts_for_cart(list_of_items):
 	return total_price, total_before
 
 
-
-
 def apply_complex_cart(disc, base_arr, complex_arr, store_map):
 	if disc.left[0] == '_':
 		base_arr.append(int(disc.left[1:]))
@@ -1044,18 +1045,19 @@ def apply_complex_cart(disc, base_arr, complex_arr, store_map):
 		left = apply_complex_cart(tosend, base_arr, complex_arr, store_map)
 	if disc.right[0] == '_':
 		base_arr.append(int(disc.right[1:]))
-		right = apply_base_cart(int(disc.right[1:]),store_map)
+		right = apply_base_cart(int(disc.right[1:]), store_map)
 	else:
 		complex_arr.append(int(disc.right))
 		tosend = ComplexDiscount.objects.get(id=int(disc.right))
-		right = apply_complex_cart(tosend, base_arr, complex_arr,store_map)
+		right = apply_complex_cart(tosend, base_arr, complex_arr, store_map)
 	if disc.operator == "AND" and (left != -1 and right != -1):
 		res = []
 		for dis in right:
 			ids_left = list(map(lambda x: x['product'], left))
 			if dis['product'] in ids_left:
 				index = ids_left.index(dis['product'])
-				res.append({'product': dis['product'], 'discount': 1 - ((1 - dis['discount']) * (1 - left[index]['discount']))})
+				res.append({'product': dis['product'],
+				            'discount': 1 - ((1 - dis['discount']) * (1 - left[index]['discount']))})
 				left.remove(left[index])
 			else:
 				res.append(dis)
@@ -1086,7 +1088,6 @@ def apply_complex_cart(disc, base_arr, complex_arr, store_map):
 		return -1
 
 
-
 def apply_base_cart(disc, store_map):
 	base = Discount.objects.get(id=disc)
 	list_of_ids = list(map(lambda x: x['item_id'], store_map['items']))
@@ -1097,35 +1098,29 @@ def apply_base_cart(disc, store_map):
 	if base.item == None:
 		if base.type == 'MIN':
 			if store_map['amount'] >= base.amount:
-				return [{'product': '*' ,'discount': per / 100}]
+				return [{'product': '*', 'discount': per / 100}]
 			else:
 				return -1
 		if base.type == 'MAX':
 			if store_map['amount'] <= base.amount:
-				return [{'product': '*' ,'discount': per / 100}]
+				return [{'product': '*', 'discount': per / 100}]
 			else:
 				return -1
 		else:
-			return [{'product': '*' ,'discount': per / 100}]
+			return [{'product': '*', 'discount': per / 100}]
 	if str(base.item.id) in list_of_ids:
 		item_index = list_of_ids.index(str(base.item.id))
 		if base.type == 'MIN':
 			if store_map['items'][item_index]['item_amount'] >= base.amount:
-				return [{'product': list_of_ids[item_index] ,'discount': per / 100}]
+				return [{'product': list_of_ids[item_index], 'discount': per / 100}]
 			else:
 				return -1
 		if base.type == 'MAX':
 			if store_map['items'][item_index]['item_amount'] <= base.amount:
-				return [{'product': list_of_ids[item_index] ,'discount': per / 100}]
+				return [{'product': list_of_ids[item_index], 'discount': per / 100}]
 			else:
 				return -1
 		else:
-			return [{'product': list_of_ids[item_index] ,'discount': per / 100}]
+			return [{'product': list_of_ids[item_index], 'discount': per / 100}]
 	else:
 		return -1
-
-
-
-
-
-

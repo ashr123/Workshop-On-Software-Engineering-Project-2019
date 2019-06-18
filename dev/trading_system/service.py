@@ -118,8 +118,9 @@ def update_item(item_id, item_dict, user_id):
 	return domain.update_item(item_id=item_id, item_dict=item_dict, user_id=user_id)
 
 
-def add_discount(store_id, type, amount, percentage,end_date,item_id, user_id):
-	return domain.add_discount(store_id=store_id, type=type, amount=amount, percentage=percentage,end_date=end_date,item_id=item_id, user_id=user_id)
+def add_discount(store_id, type, amount, percentage, end_date, item_id, user_id):
+	return domain.add_discount(store_id=store_id, type=type, amount=amount, percentage=percentage, end_date=end_date,
+	                           item_id=item_id, user_id=user_id)
 
 
 def item_rules_string(itemId):
@@ -170,8 +171,9 @@ def add_complex_discount(store_id, left, right, operator):
 	return domain.add_complex_discount_to_store(store_id, left, right, operator)
 
 
-def buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart, user_id):
-	return domain.buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart , user_id)
+def buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart, user_id = None):
+	return domain.buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart,
+	                        user_id)
 
 
 def store_discounts_string(store_id):
@@ -212,17 +214,19 @@ def get_quantity(item_id):
 
 def apply_discounts_for_cart(list_of_items):
 	return domain.apply_discounts_for_cart(list_of_items)
-	
+
+
 def approved_user_to_store_manager(wanna_be_manager, store_pk):
 	return domain.approved_user_to_store_manager(wanna_be_manager, store_pk)
-
 
 
 def get_all_wait_agreement_t_need_to_approve(manager_id):
 	return domain.get_all_wait_agreement_t_need_to_approve(manager_id)
 
+
 def check_if_user_is_approved(user_id, store_id):
 	return domain.check_if_user_is_approved(user_id, store_id)
 
+
 def agreement_by_partner(partner_id, store_pk, user_pk):
-	return domain. agreement_by_partner(partner_id, store_pk, user_pk)
+	return domain.agreement_by_partner(partner_id, store_pk, user_pk)

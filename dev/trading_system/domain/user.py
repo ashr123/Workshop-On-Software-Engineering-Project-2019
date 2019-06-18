@@ -1,12 +1,12 @@
 from django.contrib.auth.models import User as m_User, Group
 
-import trading_system.domain.store as StoreModule
 import trading_system.domain.cart as CartModule
+import trading_system.domain.store as StoreModule
 
 
 class User:
-	def __init__(self, model =None):
-		if model!=None:
+	def __init__(self, model=None):
+		if model != None:
 			self._model = model
 
 	@property
@@ -26,13 +26,13 @@ class User:
 		return CartModule.Cart.get_cart(user_id=self.pk)
 
 	def have_no_more_stores(self):
-		StoreModule.Store.owns_stores(user_id= self.pk) and StoreModule.Store.manages_stores(user_id= self.pk)
+		StoreModule.Store.owns_stores(user_id=self.pk) and StoreModule.Store.manages_stores(user_id=self.pk)
 
 	def owns_no_more_stores(self):
-		return StoreModule.Store.owns_stores(user_id= self.pk)
+		return StoreModule.Store.owns_stores(user_id=self.pk)
 
 	def manages_no_more_stores(self):
-		return StoreModule.Store.manages_stores(user_id= self.pk)
+		return StoreModule.Store.manages_stores(user_id=self.pk)
 
 	def remove_from_owners(self):
 		owners_group = Group.objects.get(name="store_owners")

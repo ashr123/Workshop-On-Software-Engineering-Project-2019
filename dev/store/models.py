@@ -25,7 +25,8 @@ CategoryChoice = (
 
 
 class Item(models.Model):
-	price = models.DecimalField(max_digits=6, decimal_places=2, default=0, validators=[MinValueValidator(Decimal('0.01'))])
+	price = models.DecimalField(max_digits=6, decimal_places=2, default=0,
+	                            validators=[MinValueValidator(Decimal('0.01'))])
 	name = models.CharField(max_length=30, default=None)
 	description = models.CharField(max_length=64, default=None)
 	category = models.CharField(max_length=30, choices=CategoryChoice, default=1)
@@ -153,4 +154,3 @@ class WaitToAgreement(models.Model):
 	user_to_wait = models.ForeignKey(User, on_delete=None)
 	store = models.ForeignKey(Store, on_delete=None)
 	managers_who_wait = models.ManyToManyField(ManagersWhoWait, related_name="store_managers_to_wait")
-

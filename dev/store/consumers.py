@@ -32,8 +32,8 @@ class StoreOwnerConsumer(WebsocketConsumer):
 		text_data_json = json.loads(text_data)
 		ntfcs_ids = extract_ntfcs_ids(text_data_json['message'])
 		for ntfc_id in ntfcs_ids:
-			ntfc = Notification.objects.get(pk = ntfc_id)
-			ntfc.users.add(User.objects.get(pk = self.owner_id))
+			ntfc = Notification.objects.get(pk=ntfc_id)
+			ntfc.users.add(User.objects.get(pk=self.owner_id))
 		# Send message to WebSocket
 		async_to_sync(self.channel_layer.group_send)(
 			self.owner_group_name,
@@ -48,6 +48,7 @@ class StoreOwnerConsumer(WebsocketConsumer):
 		self.send(text_data=json.dumps({
 			'message': '{}'
 		}))
+
 
 def extract_ntfcs_ids(param):
 	return param

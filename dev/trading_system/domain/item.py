@@ -49,7 +49,7 @@ class Item:
 		return amount <= self._model.quantity
 
 	def calc_total(self, amount):
-		return amount*self._model.price
+		return amount * self._model.price
 
 	def check_rules(self, amount):
 		base_arr = []
@@ -98,6 +98,3 @@ class Item:
 			description__contains=txt) | Q(category__contains=txt))
 		items = list(map(lambda im: Item(model=im), items_models))
 		return list(map(lambda i: i.get_details(), items))
-
-
-
