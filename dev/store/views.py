@@ -69,86 +69,73 @@ def get_country_of_request(request):
 @permission_required_or_403('ADD_ITEM', (Store, 'id', 'pk'))
 @login_required
 def add_item(request, pk):
-	# try:
-		if request.method == 'POST':
-			form = ItemForm(request.POST)
-			if form.is_valid():
-				ans = service.add_item_to_store(item_json=s_json.dumps(form.cleaned_data),
-				                                store_id=pk)
-				messages.success(request, ans[1])  # <-
-				logev.info('add_item successfully')
-				return redirect('/store/home_page_owner/')
-			else:
-				loger.warning('add_item failed')
-				messages.warning(request, 'Problem with filed : ', form.errors, 'please try again!')  # <-
-				return redirect('/store/home_page_owner/')
+	if request.method == 'POST':
+		form = ItemForm(request.POST)
+		if form.is_valid():
+			ans = service.add_item_to_store(item_json=s_json.dumps(form.cleaned_data),
+			                                store_id=pk)
+			messages.success(request, ans[1])  # <-
+			logev.info('add_item successfully')
+			return redirect('/store/home_page_owner/')
 		else:
-			# logev.info('add_item get')
-			form_class = ItemForm
-			curr_store = Store.objects.get(id=pk)
-			store_name = curr_store.name
-			text = SearchForm()
-			user_name = request.user.username
-			context = {
-				'store': pk,
-				'form': form_class,
-				'store_name': store_name,
-				'user_name': user_name,
-				'text': text,
-			}
-			# print('\ndebug\n\n', pk)
-			return render(request, 'store/add_item.html', context)
-	# except DBFailedExceptionServiceToViews as e:
-	# 	messages.warning(request, e.msg)
-	# 	loger.warning('DB fail: add item failed')
-	# 	return redirect('/login_redirect')
+			loger.warning('add_item failed')
+			messages.warning(request, 'Problem with filed : ', form.errors, 'please try again!')  # <-
+			return redirect('/store/home_page_owner/')
+	else:
+		# logev.info('add_item get')
+		form_class = ItemForm
+		curr_store = Store.objects.get(id=pk)
+		store_name = curr_store.name
+		text = SearchForm()
+		user_name = request.user.username
+		context = {
+			'store': pk,
+			'form': form_class,
+			'store_name': store_name,
+			'user_name': user_name,
+			'text': text,
+		}
+		# print('\ndebug\n\n', pk)
+		return render(request, 'store/add_item.html', context)
 
 
 # from ipware.ip import get_ip
 
 @login_required
 def add_store(request):
-	# try:
-		user_groups = request.user.groups.values_list('name', flat=True)
-		if "store_owners" in user_groups or "store_managers" in user_groups:
-			base_template_name = 'store/homepage_store_owner.html'
-		else:
-			base_template_name = 'homepage_member.html'
-		text = SearchForm()
-		user_name = request.user.username
-		set_input = forms.OpenStoreForm()
-		context = {
-			'set_input': set_input,
-			'user_name': user_name,
-			'text': text,
-			'base_template_name': base_template_name
-		}
-		return render_to_response('store/add_store.html', context)
-	# except:
-	# 	messages.warning(request, "DB fail: can't add store")
-	# 	loger.warning('DB fail: add store failed')
-	# 	return redirect('/login_redirect')
+
+	user_groups = request.user.groups.values_list('name', flat=True)
+	if "store_owners" in user_groups or "store_managers" in user_groups:
+		base_template_name = 'store/homepage_store_owner.html'
+	else:
+		base_template_name = 'homepage_member.html'
+	text = SearchForm()
+	user_name = request.user.username
+	set_input = forms.OpenStoreForm()
+	context = {
+		'set_input': set_input,
+		'user_name': user_name,
+		'text': text,
+		'base_template_name': base_template_name
+	}
+	return render_to_response('store/add_store.html', context)
 
 
 @login_required
 def submit_open_store(request):
-	# try:
-		open_store_form = forms.OpenStoreForm(request.GET)
-		if open_store_form.is_valid():
-			msg = service.open_store(store_name=open_store_form.cleaned_data.get('name'),
-			                         desc=open_store_form.cleaned_data.get('description'),
-			                         user_id=request.user.pk)
-			messages.success(request, "your new store added successfully")
-			logev.info('add ' + open_store_form.cleaned_data.get('name') + ' store successfully')
-			return redirect('/store/home_page_owner')
-		else:
-			messages.warning(request, 'Please correct the error and try again.')  # <-
-			loger.warning('add ' + open_store_form.cleaned_data.get('name') + ' store failed')
-			return redirect('/login_redirect')
-	# except:
-	# 	messages.warning(request, "DB fail: can't add store")
-	# 	loger.warning('DB fail: add store failed')
-	# 	return redirect('/login_redirect')
+	open_store_form = forms.OpenStoreForm(request.GET)
+	if open_store_form.is_valid():
+		msg = service.open_store(store_name=open_store_form.cleaned_data.get('name'),
+		                         desc=open_store_form.cleaned_data.get('description'),
+		                         user_id=request.user.pk)
+		messages.success(request, "your new store added successfully")
+		logev.info('add ' + open_store_form.cleaned_data.get('name') + ' store successfully')
+		return redirect('/store/home_page_owner')
+	else:
+		messages.warning(request, 'Please correct the error and try again.')  # <-
+		loger.warning('add ' + open_store_form.cleaned_data.get('name') + ' store failed')
+		return redirect('/login_redirect')
+
 
 # need to be in the first time:
 
