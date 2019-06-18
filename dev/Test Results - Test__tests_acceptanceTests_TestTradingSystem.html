@@ -572,8 +572,8 @@ jQuery.cookie = function(name, value, options) {
 <body>
 <div id="container">
 <div id="header">
-<div class="time" xmlns="">5.12 s</div>
-<h1>Test: tests.acceptanceTests.TestTradingSystem: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">30 total, </span><span class="failed">3 failed, </span><span class="ignored">19 ignored, </span><span class="passed">8 passed</span></strong>
+<div class="time" xmlns="">16.37 s</div>
+<h1>Test: tests.acceptanceTests.TestTradingSystem: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">49 total, </span><span class="failed">3 failed, </span><span class="ignored">21 ignored, </span><span class="passed">25 passed</span></strong>
 </h1>
 <div id="treecontrol">
 <ul>
@@ -591,46 +591,51 @@ jQuery.cookie = function(name, value, options) {
 <ul id="tree">
 <li xmlns="" class="level top failed open">
 <span><em class="time">
-<div class="time">5.12 s</div>
+<div class="time">16.37 s</div>
 </em>tests.acceptanceTests.TestTradingSystem</span>
 <ul>
 <li class="level test">
 <span><em class="time">
-<div class="time">307 ms</div>
+<div class="time">272 ms</div>
 </em><em class="status">passed</em>test_add_guest_to_store_by_store_owner</span>
 </li>
 <li class="level test">
 <span><em class="time">
-<div class="time">690 ms</div>
-</em><em class="status">passed</em>test_add_manager</span>
+<div class="time">727 ms</div>
+</em><em class="status">passed</em>test_add_manager_by_none_owner</span>
 </li>
 <li class="level test">
 <span><em class="time">
-<div class="time">547 ms</div>
+<div class="time">582 ms</div>
+</em><em class="status">passed</em>test_add_manager_that_already_manages_the_store</span>
+</li>
+<li class="level test">
+<span><em class="time">
+<div class="time">558 ms</div>
+</em><em class="status">passed</em>test_add_manager_with_edit_permission</span>
+</li>
+<li class="level test">
+<span><em class="time">
+<div class="time">475 ms</div>
 </em><em class="status">passed</em>test_add_owner_to_store</span>
 </li>
-<li class="level test failed open">
+<li class="level test">
 <span><em class="time">
-<div class="time">706 ms</div>
-</em><em class="status">failed</em>test_add_owner_to_store_by_none_owner</span>
-<ul>
-<li class="text">
-<span class="stderr">Failure<br/>Traceback (most recent call last):<br/>  File &quot;C:\Code\School\SADNA\Workshop-On-Software-Engineering-Project-2019\dev\tests\acceptanceTests.py&quot;, line 201, in test_add_owner_to_store_by_none_owner<br/>    self.assertTrue(service.add_manager(new_user.username, [], True, self.store.pk, new_user2.username)[0])<br/>AssertionError: False is not true<br/></span>
-</li>
-</ul>
+<div class="time">670 ms</div>
+</em><em class="status">passed</em>test_add_owner_to_store_by_none_owner</span>
 </li>
 <li class="level test">
 <span><em class="time">
-<div class="time">296 ms</div>
+<div class="time">273 ms</div>
 </em><em class="status">passed</em>test_adding_item_with_float_quantity</span>
 </li>
 <li class="level test failed open">
 <span><em class="time">
-<div class="time">376 ms</div>
+<div class="time">279 ms</div>
 </em><em class="status">failed</em>test_adding_item_with_negative_quantity</span>
 <ul>
 <li class="text">
-<span class="stderr">Failure<br/>Traceback (most recent call last):<br/>  File &quot;C:\Code\School\SADNA\Workshop-On-Software-Engineering-Project-2019\dev\tests\acceptanceTests.py&quot;, line 157, in test_adding_item_with_negative_quantity<br/>    &quot;quantity&quot;: -12}), self.store.pk)<br/>AssertionError: DataError not raised<br/></span>
+<span class="stderr">Failure<br/>Traceback (most recent call last):<br/>  File &quot;C:\Code\School\SADNA\Workshop-On-Software-Engineering-Project-2019\dev\tests\acceptanceTests.py&quot;, line 183, in test_adding_item_with_negative_quantity<br/>    &quot;quantity&quot;: -12}), self.store.pk, self.user.pk)<br/>AssertionError: DataError not raised<br/></span>
 </li>
 </ul>
 </li>
@@ -694,25 +699,120 @@ jQuery.cookie = function(name, value, options) {
 </li>
 </ul>
 </li>
+<li class="level test">
+<span><em class="time">
+<div class="time">4.18 s</div>
+</em><em class="status">passed</em>test_buy_logic_all_ok</span>
+</li>
+<li class="level test">
+<span><em class="time">
+<div class="time">987 ms</div>
+</em><em class="status">passed</em>test_buy_logic_all_wrong_payment_info</span>
+</li>
 <li class="level test ignored open">
 <span><em class="time">
 <div class="time">0 ms</div>
-</em><em class="status">ignored</em>test_delete_an_item_from_store</span>
+</em><em class="status">ignored</em>test_delete_a_none_owner_by_owner</span>
 <ul>
 <li class="text">
-<span class="stdout">there isn&#39;t a function for deletion yet<br/></span>
+<span class="stdout">chain of ownership doesn&#39;t implemented, not ready<br/></span>
 </li>
 </ul>
 </li>
 <li class="level test ignored open">
 <span><em class="time">
 <div class="time">0 ms</div>
-</em><em class="status">ignored</em>test_edit_an_existing_item</span>
+</em><em class="status">ignored</em>test_delete_an_owner_by_none_owner</span>
 <ul>
 <li class="text">
-<span class="stdout">there isn&#39;t a function for deletion yet<br/></span>
+<span class="stdout">chain of ownership doesn&#39;t implemented<br/></span>
 </li>
 </ul>
+</li>
+<li class="level test">
+<span><em class="time">
+<div class="time">528 ms</div>
+</em><em class="status">passed</em>test_delete_existing_item_by_manager</span>
+</li>
+<li class="level test">
+<span><em class="time">
+<div class="time">527 ms</div>
+</em><em class="status">passed</em>test_delete_existing_item_by_manager_without_permission</span>
+</li>
+<li class="level test">
+<span><em class="time">
+<div class="time">470 ms</div>
+</em><em class="status">passed</em>test_delete_existing_item_by_member</span>
+</li>
+<li class="level test">
+<span><em class="time">
+<div class="time">464 ms</div>
+</em><em class="status">passed</em>test_delete_existing_item_by_none_owner</span>
+</li>
+<li class="level test">
+<span><em class="time">
+<div class="time">485 ms</div>
+</em><em class="status">passed</em>test_delete_existing_item_by_owner</span>
+</li>
+<li class="level test ignored open">
+<span><em class="time">
+<div class="time">0 ms</div>
+</em><em class="status">ignored</em>test_delete_first_owner_by_second_owner_that_didnt_ownered_the_first_owner</span>
+<ul>
+<li class="text">
+<span class="stdout">chain of ownership doesn&#39;t implemented<br/></span>
+</li>
+</ul>
+</li>
+<li class="level test">
+<span><em class="time">
+<div class="time">446 ms</div>
+</em><em class="status">passed</em>test_delete_none_existing_item</span>
+</li>
+<li class="level test">
+<span><em class="time">
+<div class="time">500 ms</div>
+</em><em class="status">passed</em>test_delete_none_existing_item_by_manager</span>
+</li>
+<li class="level test">
+<span><em class="time">
+<div class="time">470 ms</div>
+</em><em class="status">passed</em>test_delete_owner_by_another_owner</span>
+</li>
+<li class="level test">
+<span><em class="time">
+<div class="time">507 ms</div>
+</em><em class="status">passed</em>test_edit_an_existing_item_by_none_owner</span>
+</li>
+<li class="level test">
+<span><em class="time">
+<div class="time">296 ms</div>
+</em><em class="status">passed</em>test_edit_an_existing_item_by_owner</span>
+</li>
+<li class="level test failed open">
+<span><em class="time">
+<div class="time">292 ms</div>
+</em><em class="status">failed</em>test_edit_an_existing_item_by_owner_with_float_quantity</span>
+<ul>
+<li class="text">
+<span class="stderr">Failure<br/>Traceback (most recent call last):<br/>  File &quot;C:\Code\School\SADNA\Workshop-On-Software-Engineering-Project-2019\dev\tests\acceptanceTests.py&quot;, line 289, in test_edit_an_existing_item_by_owner_with_float_quantity<br/>    self.assertEqual(added_items[0].quantity, 12)<br/>AssertionError: 20 != 12<br/></span>
+</li>
+</ul>
+</li>
+<li class="level test failed open">
+<span><em class="time">
+<div class="time">308 ms</div>
+</em><em class="status">failed</em>test_edit_an_existing_item_by_owner_with_negative_price</span>
+<ul>
+<li class="text">
+<span class="stderr">Failure<br/>Traceback (most recent call last):<br/>  File &quot;C:\Code\School\SADNA\Workshop-On-Software-Engineering-Project-2019\dev\tests\acceptanceTests.py&quot;, line 276, in test_edit_an_existing_item_by_owner_with_negative_price<br/>    self.assertEqual(added_items[0].price, 12.34)<br/>AssertionError: Decimal(&#39;-5.00&#39;) != 12.34<br/></span>
+</li>
+</ul>
+</li>
+<li class="level test">
+<span><em class="time">
+<div class="time">267 ms</div>
+</em><em class="status">passed</em>test_edit_an_none_existing_item_by_owner</span>
 </li>
 <li class="level test ignored open">
 <span><em class="time">
@@ -776,7 +876,7 @@ jQuery.cookie = function(name, value, options) {
 </li>
 <li class="level test">
 <span><em class="time">
-<div class="time">649 ms</div>
+<div class="time">488 ms</div>
 </em><em class="status">passed</em>test_make_reflexive_ownership</span>
 </li>
 <li class="level test ignored open">
@@ -809,24 +909,29 @@ jQuery.cookie = function(name, value, options) {
 </li>
 </ul>
 </li>
-<li class="level test failed open">
+<li class="level test">
 <span><em class="time">
-<div class="time">563 ms</div>
-</em><em class="status">failed</em>test_not_store_owner_adds_item_to_store</span>
+<div class="time">468 ms</div>
+</em><em class="status">passed</em>test_not_store_owner_adds_item_to_store</span>
+</li>
+<li class="level test ignored open">
+<span><em class="time">
+<div class="time">0 ms</div>
+</em><em class="status">ignored</em>test_remove_manager</span>
 <ul>
 <li class="text">
-<span class="stderr">Failure<br/>Traceback (most recent call last):<br/>  File &quot;C:\Code\School\SADNA\Workshop-On-Software-Engineering-Project-2019\dev\tests\acceptanceTests.py&quot;, line 129, in test_not_store_owner_adds_item_to_store<br/>    self.assertFalse(self.store.items.filter(name=item_name).exists())<br/>AssertionError: True is not false<br/></span>
+<span class="stdout">permission checking doesn&#39;t exist<br/></span>
 </li>
 </ul>
 </li>
 <li class="level test">
 <span><em class="time">
-<div class="time">329 ms</div>
+<div class="time">280 ms</div>
 </em><em class="status">passed</em>test_search_by_name_fur_shampoo_exists</span>
 </li>
 <li class="level test">
 <span><em class="time">
-<div class="time">305 ms</div>
+<div class="time">266 ms</div>
 </em><em class="status">passed</em>test_search_none_existing_item</span>
 </li>
 <li class="level test ignored open">
@@ -851,7 +956,7 @@ jQuery.cookie = function(name, value, options) {
 </li>
 <li class="level test">
 <span><em class="time">
-<div class="time">352 ms</div>
+<div class="time">298 ms</div>
 </em><em class="status">passed</em>test_store_owner_adds_item_to_store</span>
 </li>
 </ul>
@@ -860,7 +965,7 @@ jQuery.cookie = function(name, value, options) {
 </div>
 </div>
 <div id="footer">
-<p>Generated by PyCharm on 6/15/19 12:34 PM</p>
+<p>Generated by PyCharm on 6/18/19 12:44 PM</p>
 </div>
 </body>
 </html>

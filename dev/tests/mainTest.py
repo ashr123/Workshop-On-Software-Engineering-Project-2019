@@ -3,8 +3,8 @@ from enum import Enum
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-# from selenium import webdriver
-# from webdriver_manager.chrome import ChromeDriverManager
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 
 from store.models import Store
 from trading_system.service import open_store
@@ -24,15 +24,15 @@ class MyUnitTesting(StaticLiveServerTestCase):
 		ADD_DISCOUNT = "ADD_DISCOUNT"
 		ADD_RULE = "ADD_RULE"
 
-	# @classmethod
-	# def setUpClass(cls) -> None:
-	# 	super().setUpClass()
-	# 	cls.driver = webdriver.Chrome(ChromeDriverManager().install())
+	@classmethod
+	def setUpClass(cls) -> None:
+		super().setUpClass()
+		cls.driver = webdriver.Chrome(ChromeDriverManager().install())
 
-	# @classmethod
-	# def tearDownClass(cls) -> None:
-	# 	cls.driver.close()
-	# 	super().tearDownClass()
+	@classmethod
+	def tearDownClass(cls) -> None:
+		cls.driver.close()
+		super().tearDownClass()
 
 	def setUp(self) -> None:
 		super().setUp()
