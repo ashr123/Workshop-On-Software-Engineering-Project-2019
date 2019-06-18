@@ -67,11 +67,11 @@ class Store:
 
 	@property
 	def managers(self):
-		return list(map(lambda u: c_User.get_item(user_id=u.pk), list(self._model.managers.all()) ))
+		return list(map(lambda u: c_User.get_user(user_id=u.pk), list(self._model.managers.all()) ))
 
 	@property
 	def owners(self):
-		return list(map(lambda u: c_User.get_item(user_id=u.pk), list(self._model.owners.all()) ))
+		return list(map(lambda u: c_User.get_user(user_id=u.pk), list(self._model.owners.all()) ))
 
 	def all_owners_ids(self):
 		return list(map(lambda o: o.pk, self.owners))

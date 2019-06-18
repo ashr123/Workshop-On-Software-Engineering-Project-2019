@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7f206d29-0b35-4da3-95c1-1baab1223eb3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/domain.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/domain.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/trading_system/domain/store.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/store.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -49,7 +49,7 @@
   <component name="ExportTestResults" outputFolder="$PROJECT_DIR$" userTempatePath="" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/domain/domain.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="25">
@@ -97,11 +97,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/trading_system/domain/store.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="256">
-              <caret line="226" column="8" selection-start-line="226" selection-start-column="8" selection-end-line="230" selection-end-column="67" />
+            <state relative-caret-position="388">
+              <caret line="73" column="49" selection-start-line="73" selection-start-column="49" selection-end-line="73" selection-end-column="49" />
               <folding>
                 <element signature="e#0#50#0" expanded="true" />
               </folding>
@@ -271,9 +271,9 @@
         <option value="$PROJECT_DIR$/trading_system/domain/complex_store_rule.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/discount.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/item.py" />
-        <option value="$PROJECT_DIR$/trading_system/domain/store.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/user.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/domain.py" />
+        <option value="$PROJECT_DIR$/trading_system/domain/store.py" />
       </list>
     </option>
   </component>
@@ -680,7 +680,7 @@
       <workItem from="1560852321549" duration="10043000" />
       <workItem from="1560875658092" duration="11058000" />
       <workItem from="1560894200732" duration="643000" />
-      <workItem from="1560894850348" duration="2568000" />
+      <workItem from="1560894850348" duration="3144000" />
     </task>
     <servers />
   </component>
@@ -717,7 +717,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="392888000" />
+    <option name="totallyTimeSpent" value="393464000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1184,16 +1184,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/trading_system/domain/store.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="256">
-          <caret line="226" column="8" selection-start-line="226" selection-start-column="8" selection-end-line="230" selection-end-column="67" />
-          <folding>
-            <element signature="e#0#50#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/domain/user.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="220">
@@ -1210,6 +1200,16 @@
           <caret line="805" column="46" selection-start-line="805" selection-start-column="46" selection-end-line="805" selection-end-column="46" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/trading_system/domain/store.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="388">
+          <caret line="73" column="49" selection-start-line="73" selection-start-column="49" selection-end-line="73" selection-end-column="49" />
+          <folding>
+            <element signature="e#0#50#0" expanded="true" />
           </folding>
         </state>
       </provider>
