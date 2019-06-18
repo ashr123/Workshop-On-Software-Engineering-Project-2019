@@ -48,11 +48,73 @@ def def_super_user(request):
 		return render(request, 'trading_system/add_super_user.html', {'form': UserCreationForm()})
 
 
+# ---------------------new
+from store.models import WaitToAgreement
+from django.contrib.auth.models import User
+
+
+def approve_user(pk_manager, pk_user):
+	try:
+		manager_obj = User.objects.get(id=pk_manager)
+		user_obj = User.objects.get(id=pk_user)
+		wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user_obj)
+		managersWhoWait_obj = wait_to_agg_obj.managers_who_wait.get(user_who_wait=manager_obj)
+		managersWhoWait_obj.is_approve = True
+		managersWhoWait_obj.save()
+		return True
+	except:
+		return False
+
+
+# def check_if_this_partner_need_to_approve(manager):
+# 	return len(WaitToAgreement.objects.filter(managers_who_wait__user_who_wait__in=[manager])) == 1
+
+
+def get_all_wait_agreement_t_need_to_approve(manager):
+	return service.get_all_wait_agreement_t_need_to_approve(manager.id)
+
+
+# def check_if_user_is_in_waiting_list(user_):
+# 	return len(WaitToAgreement.objects.filter(user_to_wait=user_)) == 1
+#
+
+def check_if_user_is_approved(user_, store):
+	# wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user_, store=store)
+	# managers_list = wait_to_agg_obj.managers_who_wait.all()
+	# for obj in managers_list:
+	# 	if not obj.is_approve:
+	# 		return False
+	# return True
+	return service.check_if_user_is_approved(user_.id, store.id)
+
+
+def agreement_by_partner(request, store_pk, user_pk):
+
+	partner = User.objects.get(id=request.user.id)
+
+	if(service.agreement_by_partner(partner.id,store_pk,user_pk)):
+		messages.success(request,' you approve! ')
+	else:
+		messages.warning(request,' try again ')
+	return redirect('/login_redirect')
+
+
+def approved_user_to_store_manager(user_pk, store_pk):
+	user = User.objects.get(id=user_pk)
+	store = Store.objects.get(id=store_pk)
+	if (service.approved_user_to_store_manager(user.username, store_pk)):
+		wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user, store=store)
+		wait_to_agg_obj.delete()
+		return True
+	return False
+
+
 def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	if request.user.is_authenticated:
 		if "store_owners" in request.user.groups.values_list('name',
 		                                                     flat=True) or "store_managers" in request.user.groups.values_list(
 			'name', flat=True):
+
 			return redirect('/store/home_page_owner/',
 			                {'text': SearchForm(), 'user_name': request.user.username, 'owner_id': request.user.pk, })
 		else:

@@ -1,6 +1,8 @@
-import json
+import decimal
 import json
 import logging
+import traceback
+from datetime import date
 
 import simplejson as s_json
 from django.contrib import messages
@@ -508,16 +510,28 @@ def check_base_rule(rule_id, amount, country, user):
     return True
 
 
+from .forms import ApproveForm
+from trading_system.views import get_all_wait_agreement_t_need_to_approve
+
+
 @login_required
 def home_page_owner(request):
     text = SearchForm()
     user_name = request.user.username
     unread_ntfcs = NotificationUser.objects.filter(user=request.user.pk, been_read=False)
+	approve_list = get_all_wait_agreement_t_need_to_approve(request.user)
+	approved_user_per_store = {}
+	for a in approve_list:
+		approved_user_per_store[a.user_to_wait.id] = a.store.id
+
+	approve_form = ApproveForm(approved_user_per_store)
+	print('--------------------------------------------------', approved_user_per_store)
     context = {
         'user_name': user_name,
         'text': text,
         'owner_id': request.user.pk,
-        'unread_notifications': len(unread_ntfcs)
+        'unread_notifications': len(unread_ntfcs),
+	'approve_form': approve_form
     }
     return render(request, 'store/homepage_store_owner.html', context)
 
@@ -541,7 +555,8 @@ def add_manager_to_store(request, pk):
             user_name = form.cleaned_data.get('user_name')
             picked = form.cleaned_data.get('permissions')
             is_owner = form.cleaned_data.get('is_owner')
-            [fail, message_] = service.add_manager(user_name, picked, is_owner, pk, request.user.username)
+			is_partner = form.cleaned_data.get('is_partner')
+			[fail, message_] = service.add_manager(user_name, picked, is_owner, pk, request.user.username, is_partner)
             if fail:
                 messages.warning(request, message_)
                 return redirect('/store/home_page_owner/')

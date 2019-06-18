@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 
 from .models import Item, Store  # , Discount, MaxMinCondition
@@ -10,6 +11,8 @@ class StoreForm(forms.ModelForm):
 		# fields = ['name', 'owners', 'description', 'discounts']
 
 		fields = ['name', 'description']
+
+
 # widgets = {
 # 	'owners': forms.CheckboxSelectMultiple,
 # 	# 'items': forms.CheckboxSelectMultiple,
@@ -26,17 +29,34 @@ class StoreForm(forms.ModelForm):
 #
 
 class DeleteOwners(forms.Form):
-	def __init__(self, owners,store_id, *args, **kwargs):
+	def __init__(self, owners, store_id, *args, **kwargs):
 		super(DeleteOwners, self).__init__(*args, **kwargs)
 		list_ = owners
 		self.fields['owners_to_delete'] = forms.MultipleChoiceField(
 			choices=[(o['id'],
 			          mark_safe('owner name : ' + str(o[
-				                                         'username']) + '  <a id="delete_owners" href=' +
+				                                          'username']) + '  <a id="delete_owners" href=' +
 			                    '/' + 'store/delete_owner/' + str(
-				          o['id'])+ '/' + str(store_id)  + '>' + 'remove this owner' + '</a>')) for o in
+				          o['id']) + '/' + str(store_id) + '>' + 'remove this owner' + '</a>')) for o in
 			         list_]
 			, widget=forms.CheckboxSelectMultiple(),
+
+		)
+
+
+class ApproveForm(forms.Form):
+	def __init__(self, wait_to_approve_list, *args, **kwargs):
+		super(ApproveForm, self).__init__(*args, **kwargs)
+		list_ = wait_to_approve_list
+		self.fields['approve_list'] = forms.MultipleChoiceField(
+			choices=[(key,
+			          mark_safe(
+				          ' <a id="approve_href" href=' + '/' + 'agreement_by_partner/' + str(value) + '/' + str(key
+				                                                                                                 ) + '>' + ' approve: ' + str(
+					          User.objects.get(id=key)) + ' </a>')) for key, value in list_.items()
+			         ]
+			, widget=forms.CheckboxSelectMultiple(),
+			label='',
 
 		)
 
@@ -51,6 +71,7 @@ class UpdateItems(forms.Form):
 				          o['id']) + '>' + o['name'] + '  :  ' + o['description'] + '</a>')) for o in
 			         list_]
 			, widget=forms.CheckboxSelectMultiple(),
+			label='',
 
 		)
 
@@ -137,6 +158,7 @@ class AddDiscountForm(forms.Form):
 		self.fields['amount'] = forms.IntegerField(min_value=0, required=False)
 		self.fields['item'] = forms.ModelChoiceField(queryset=Item.objects.filter(store=self.store_id), required=False)
 
+
 class AddComplexDiscountForm(forms.Form):
 	def __init__(self, store_id, *args, **kwargs):
 		super(AddComplexDiscountForm, self).__init__(*args, **kwargs)
@@ -178,6 +200,7 @@ class AddRuleToItem_two(forms.Form):
 class AddManagerForm(forms.Form):
 	user_name = forms.CharField()
 	is_owner = forms.BooleanField(required=False)
+	is_partner = forms.BooleanField(required=False)
 	CHOICES = (('ADD_ITEM', 'add item'),
 	           ('REMOVE_ITEM', 'delete item'),
 	           ('EDIT_ITEM', 'update item'),

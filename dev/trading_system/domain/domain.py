@@ -1,6 +1,7 @@
 import datetime
 
 from django.contrib.auth.models import User, Group
+from guardian.shortcuts import assign_perm
 
 from external_systems.money_collector.payment_system import Payment
 from external_systems.supply_system.supply_system import Supply
@@ -19,18 +20,24 @@ from trading_system.observer import ItemSubject
 pay_system = Payment()
 supply_system = Supply()
 
+from store.models import WaitToAgreement, ManagersWhoWait
 
-def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
+
+def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager, is_partner):
+	print('--------------------------------------------------------is_p----', is_partner)
+
 	if not User.objects.get(username=store_manager).has_perm('ADD_MANAGER', Store.objects.get(id=store_pk)):
 		return [True, "Store manager don't have the permission to add another manager"]
 	messages_ = ''
+	store = c_Store.get_store(store_id=store_pk)
+
 	try:
 		user_ = User.objects.get(username=wanna_be_manager)
 	except:
 		fail = True
 		messages_ += 'no such user'
 		return [fail, messages_]
-	store = c_Store.get_store(store_id=store_pk)
+
 	if wanna_be_manager == store_manager:
 		fail = True
 		messages_ += 'can`t add yourself as a manager!'
@@ -39,7 +46,8 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 	# return redirect('/store/home_page_owner/')
 	pre_store_owners_ids = store.all_owners_ids()
 	pre_store_managers_ids = store.all_managers_ids()
-	all_pre_m_o = pre_store_managers_ids + pre_store_owners_ids
+	pre_partners_ids = store.all_partners_ids()
+	all_pre_m_o = pre_store_managers_ids + pre_store_owners_ids + pre_partners_ids
 
 	# print('\n owners: ' ,pre_store_owners)
 	for owner_id in all_pre_m_o:
@@ -54,11 +62,41 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 		fail = True
 		messages_ += 'No such user'
 		return [fail, messages_]
+
+	if (is_partner):
+
+		all_partners = store.all_partners_ids()
+		if (len(all_partners) > 1):  # there is other partner besids curr
+			store_obj = Store.objects.get(id=store_pk)
+			wanna_be_manager_user_obg = User.objects.get(username=wanna_be_manager)
+			store_manager_user_obg = User.objects.get(username=store_manager)
+			wait_obj = WaitToAgreement(user_to_wait=wanna_be_manager_user_obg, store=store_obj)
+			wait_obj.save()
+			for m_id in all_partners:
+				pre_manager_user_obg = User.objects.get(id=m_id)
+				m_obj = ManagersWhoWait(user_who_wait=pre_manager_user_obg)
+				m_obj.save()
+				wait_obj.managers_who_wait.add(m_obj)
+			wait_obj_for_this_manager = wait_obj.managers_who_wait.get(
+				user_who_wait=store_manager_user_obg)  # remove curr manager from wait list
+			wait_obj.managers_who_wait.remove(wait_obj_for_this_manager)
+			wait_obj.save()
+			messages_ += ' . wait to approve partnership . '
+			return [False, messages_]
+		else:
+			if approved_user_to_store_manager(wanna_be_manager, store_pk):
+				return [False, 'approved']
+			else:
+				return [True, 'can`t complete']
+
 	# messages.warning(request, 'No such user')
 	# return redirect('/store/home_page_owner/')
+
 	for perm in picked:
 		store.assign_perm(perm=perm, user_id=user_.pk)
+
 	if is_owner:
+
 		try:
 			store_owners_group = Group.objects.get(name="store_owners")
 			user_.groups.add(store_owners_group)
@@ -89,6 +127,76 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 			return [True, messages_]
 
 	return [False, messages_]
+
+
+def check_if_user_is_approved(user_id, store_id):
+	user_ = User.objects.get(id=user_id)
+	store = Store.objects.get(id=store_id)
+	wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user_, store=store)
+	managers_list = wait_to_agg_obj.managers_who_wait.all()
+	for obj in managers_list:
+		if not obj.is_approve:
+			return False
+	return True
+
+
+def agreement_by_partner(partner_id, store_pk, user_pk):
+	try:
+		user = User.objects.get(id=user_pk)
+		partner = User.objects.get(id=partner_id)
+		store = Store.objects.get(id=store_pk)
+		wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user, store=store)
+		partner_wait_obg = wait_to_agg_obj.managers_who_wait.get(user_who_wait=partner)
+		partner_wait_obg.is_approve = True
+		partner_wait_obg.save()
+		if (check_if_user_is_approved(user_pk, store_pk)):
+			approved_user_to_store_manager(user.username, store_pk)
+		wait_to_agg_obj.managers_who_wait.remove(partner_wait_obg)
+		wait_to_agg_obj.save()
+		return True
+	except:
+		return False
+
+
+def get_all_wait_agreement_t_need_to_approve(manager_id):
+	manager = User.objects.get(id=manager_id)
+	return WaitToAgreement.objects.filter(managers_who_wait__user_who_wait__in=[manager])
+
+
+def approved_user_to_store_manager(wanna_be_manager, store_pk):
+	try:
+		store_obj = Store.objects.get(id=store_pk)
+		wanna_be_manager_user_obg = User.objects.get(username=wanna_be_manager)
+		store_obj.owners.add(User.objects.get(pk=wanna_be_manager_user_obg.id))
+		store_obj.partners.add(User.objects.get(pk=wanna_be_manager_user_obg.id))
+		store_obj.save()
+		my_group = Group.objects.get_or_create(name="store_owners")[0]
+		# my_group = Group.objects.get(name="store_owners")
+		try:
+			if len(ObserverUser.objects.filter(user_id=wanna_be_manager_user_obg.pk)) == 0:
+				ObserverUser.objects.create(user_id=wanna_be_manager_user_obg.pk,
+				                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(
+					                            wanna_be_manager_user_obg.pk)).save()
+		except:
+			pass
+		wanna_be_manager_user_obg.groups.add(my_group)
+		assign_perm('ADD_ITEM', wanna_be_manager_user_obg, store_obj)
+		assign_perm('REMOVE_ITEM', wanna_be_manager_user_obg, store_obj)
+		assign_perm('EDIT_ITEM', wanna_be_manager_user_obg, store_obj)
+		assign_perm('ADD_MANAGER', wanna_be_manager_user_obg, store_obj)
+		assign_perm('REMOVE_STORE', wanna_be_manager_user_obg, store_obj)
+		assign_perm('ADD_DISCOUNT', wanna_be_manager_user_obg, store_obj)
+		assign_perm('ADD_RULE', wanna_be_manager_user_obg, store_obj)
+		store_obj.save()
+		try:
+			approved_user = User.objects.get(username=wanna_be_manager)
+			wait_ = WaitToAgreement.objects.filter(user_to_wait=approved_user, store=store_obj)
+			wait_.delete()
+		except:
+			pass
+		return True
+	except:
+		return False
 
 
 def search(txt):
