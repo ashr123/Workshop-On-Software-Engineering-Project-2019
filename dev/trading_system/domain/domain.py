@@ -786,7 +786,7 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 					item_subject.subject_state = item_subject.subject_state + [notification.pk]
 				else:
 					notification = Notification.objects.create(
-						msg='A guest bought ' + str(amount) + ' pieces of ' + curr_item.name)
+						msg='A guest bought ' + str(amount) + ' pieces of ' + c_item.name)
 					notification.save()
 					item_subject.subject_state = item_subject.subject_state + [notification.pk]
 			except Exception as e:
@@ -803,10 +803,10 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 			c_item.quantity = amount_in_db1
 			c_item.save()
 
-			if not (pay_transaction_id == -1):
+			if not (pay_transaction_id == '-1'):
 				messages_ += '\n' + 'failed and aborted pay! please try again!'
 				pay_system.cancel_pay(pay_transaction_id)
-			if not (supply_transaction_id == -1):
+			if not (supply_transaction_id == '-1'):
 				messages_ += '\n' + 'failed and aborted supply! please try again!'
 				supply_system.cancel_supply(supply_transaction_id)
 			messages_ = "Exception! "  '  :  ' + str(a)

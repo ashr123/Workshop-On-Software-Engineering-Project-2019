@@ -2,16 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7f206d29-0b35-4da3-95c1-1baab1223eb3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/base_item_rule.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/base_item_rule.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/cart.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/cart.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/complex_discount.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/complex_discount.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/complex_item_rule.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/complex_item_rule.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/complex_store_rule.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/complex_store_rule.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/discount.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/discount.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/trading_system/domain/domain.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/domain.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/item.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/item.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/store.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/store.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/user.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -58,11 +49,11 @@
   <component name="ExportTestResults" outputFolder="$PROJECT_DIR$" userTempatePath="" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/trading_system/domain/domain.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="1131" column="38" selection-start-line="1131" selection-start-column="6" selection-end-line="1131" selection-end-column="38" />
+            <state relative-caret-position="25">
+              <caret line="805" column="46" selection-start-line="805" selection-start-column="46" selection-end-line="805" selection-end-column="46" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -166,7 +157,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/domain/user.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="220">
@@ -190,7 +181,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>show_cart</find>
       <find>make_cart_list</find>
       <find>contains</find>
       <find>buy_logic</find>
@@ -220,6 +210,7 @@
       <find>buy</find>
       <find>buy_</find>
       <find>Cart</find>
+      <find>buy_log</find>
     </findStrings>
     <replaceStrings>
       <replace>UnitTesting.driver</replace>
@@ -273,7 +264,6 @@
         <option value="$PROJECT_DIR$/trading_system/domain/base_discount.py" />
         <option value="$PROJECT_DIR$/store/consumers.py" />
         <option value="$PROJECT_DIR$/store/views.py" />
-        <option value="$PROJECT_DIR$/trading_system/domain/domain.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/base_item_rule.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/cart.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/complex_discount.py" />
@@ -283,10 +273,11 @@
         <option value="$PROJECT_DIR$/trading_system/domain/item.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/store.py" />
         <option value="$PROJECT_DIR$/trading_system/domain/user.py" />
+        <option value="$PROJECT_DIR$/trading_system/domain/domain.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
     <option name="width" value="974" />
@@ -689,7 +680,7 @@
       <workItem from="1560852321549" duration="10043000" />
       <workItem from="1560875658092" duration="11058000" />
       <workItem from="1560894200732" duration="643000" />
-      <workItem from="1560894850348" duration="2199000" />
+      <workItem from="1560894850348" duration="2568000" />
     </task>
     <servers />
   </component>
@@ -726,7 +717,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="392519000" />
+    <option name="totallyTimeSpent" value="392888000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1173,16 +1164,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/trading_system/domain/domain.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="1131" column="38" selection-start-line="1131" selection-start-column="6" selection-end-line="1131" selection-end-column="38" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/domain/discount.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="212">
@@ -1219,6 +1200,16 @@
           <caret line="12" column="8" lean-forward="true" selection-start-line="12" selection-start-column="8" selection-end-line="12" selection-end-column="8" />
           <folding>
             <element signature="e#0#60#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/trading_system/domain/domain.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="25">
+          <caret line="805" column="46" selection-start-line="805" selection-start-column="46" selection-end-line="805" selection-end-column="46" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
