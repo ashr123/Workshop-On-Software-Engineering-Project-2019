@@ -29,12 +29,42 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager, is_
 		return [True, "Store manager don't have the permission to add another manager"]
 	messages_ = ''
 	store = c_Store.get_store(store_id=store_pk)
+
+	try:
+		user_ = User.objects.get(username=wanna_be_manager)
+	except:
+		fail = True
+		messages_ += 'no such user'
+		return [fail, messages_]
+
+	if wanna_be_manager == store_manager:
+		fail = True
+		messages_ += 'can`t add yourself as a manager!'
+		return [fail, messages_]
+	# messages.warning(request, 'can`t add yourself as a manager!')
+	# return redirect('/store/home_page_owner/')
+	pre_store_owners_ids = store.all_owners_ids()
+	pre_store_managers_ids = store.all_managers_ids()
+	pre_partners_ids = store.all_partners_ids()
+	all_pre_m_o = pre_store_managers_ids + pre_store_owners_ids + pre_partners_ids
+
+	# print('\n owners: ' ,pre_store_owners)
+	for owner_id in all_pre_m_o:
+		if c_User.get_user(user_id=owner_id).username == wanna_be_manager:
+			fail = True
+			messages_ += 'allready owner'
+			return [fail, messages_]
+	# messages.warning(request, 'allready owner')
+	# return redirect('/store/home_page_owner/')
+
+	if user_ is None:
+		fail = True
+		messages_ += 'No such user'
+		return [fail, messages_]
+
 	if (is_partner):
 
 		all_partners = store.all_partners_ids()
-		print('------------all p--------', all_partners)
-		print('------------len--------',len(all_partners))
-		print('------------store--------', store.name)
 		if (len(all_partners) > 1):  # there is other partner besids curr
 			store_obj = Store.objects.get(id=store_pk)
 			wanna_be_manager_user_obg = User.objects.get(username=wanna_be_manager)
@@ -58,36 +88,6 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager, is_
 			else:
 				return [True, 'can`t complete']
 
-	try:
-		user_ = User.objects.get(username=wanna_be_manager)
-	except:
-		fail = True
-		messages_ += 'no such user'
-		return [fail, messages_]
-
-	if wanna_be_manager == store_manager:
-		fail = True
-		messages_ += 'can`t add yourself as a manager!'
-		return [fail, messages_]
-	# messages.warning(request, 'can`t add yourself as a manager!')
-	# return redirect('/store/home_page_owner/')
-	pre_store_owners_ids = store.all_owners_ids()
-	pre_store_managers_ids = store.all_managers_ids()
-	all_pre_m_o = pre_store_managers_ids + pre_store_owners_ids
-
-	# print('\n owners: ' ,pre_store_owners)
-	for owner_id in all_pre_m_o:
-		if c_User.get_user(user_id=owner_id).username == wanna_be_manager:
-			fail = True
-			messages_ += 'allready owner'
-			return [fail, messages_]
-	# messages.warning(request, 'allready owner')
-	# return redirect('/store/home_page_owner/')
-
-	if user_ is None:
-		fail = True
-		messages_ += 'No such user'
-		return [fail, messages_]
 	# messages.warning(request, 'No such user')
 	# return redirect('/store/home_page_owner/')
 
@@ -189,7 +189,7 @@ def approved_user_to_store_manager(wanna_be_manager, store_pk):
 		store_obj.save()
 		try:
 			approved_user = User.objects.get(username=wanna_be_manager)
-			wait_ = WaitToAgreement.objects.filter(user_to_wait=approved_user,store=store_obj)
+			wait_ = WaitToAgreement.objects.filter(user_to_wait=approved_user, store=store_obj)
 			wait_.delete()
 		except:
 			pass
