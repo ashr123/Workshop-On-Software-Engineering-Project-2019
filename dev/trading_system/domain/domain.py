@@ -630,13 +630,13 @@ def have_no_more_stores(user_pk):
 	return c_User.get_user(user_id=user_pk).have_no_more_stores()
 
 
-def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart):
+def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart, user_id):
 	pay_transaction_id = -1
 	supply_transaction_id = -1
 	messages_ = ''
 	curr_item = Item.objects.get(id=item_id)
 	amount_in_db1 = Item.objects.get(id=item_id).quantity
-	user = User.objects.get(pk=user_id)
+	#user = User.objects.get(pk=user_id)
 	if amount <= amount_in_db1:
 		# print("good amount")
 		total = amount * curr_item.price
