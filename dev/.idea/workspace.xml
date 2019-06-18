@@ -2,300 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7f206d29-0b35-4da3-95c1-1baab1223eb3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/trading_system/domain/complex_discount.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/trading_system/domain/discount.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/dev/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/store/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/bi_rules.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/base_item_rule.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/bs_rules.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/base_store_rule.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/cart.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/cart.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/ci_rules.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/complex_item_rule.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/cs_rules.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/complex_store_rule.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/domain.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/domain.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/item.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/item.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/store.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/store.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/domain/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/domain/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/service.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trading_system/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/trading_system/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev2/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev2/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev2/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/.idea/dev.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/AcceptanceTests/test_acc.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/dev/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/dev/settings.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/dev/urls.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/dev/wsgi.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/home/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/home/admin.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/home/apps.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/home/forms.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/home/migrations/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/home/models.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/home/tests.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/home/urls.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/home/views.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/consistencySystem/Facade.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/consistencySystem/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/domain/Discount.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/domain/DomainFacade.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/domain/GroceryCart.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/domain/Guest.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/domain/Item.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/domain/ManagementState.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/domain/Member.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/domain/Permission.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/domain/Purchase.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/domain/Rule.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/domain/Store.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/domain/TradingSystem.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/domain/TradingSystemException.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/domain/Transaction.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/domain/User.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/domain/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/domain/main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/hello_world.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/moneyCollectionSystem/Facade.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/moneyCollectionSystem/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/productSupplySystem/Facade.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/productSupplySystem/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/security/Security.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/service/ServiceFacade.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/main/service/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/manage.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/rotem.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/setup.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/templates/home_after.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/templates/home_page.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/test/domain/integration_tests/test_add_item_to_store.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/test/domain/integration_tests/test_add_store.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/test/domain/integration_tests/test_register.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/test/domain/integration_tests/test_watch_gc.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/test/domain/test_guest.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/test/domain/test_member.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/test/domain/test_store.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/Activate.ps1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/activate" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/activate.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/deactivate.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/django-admin.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/django-admin.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/easy_install-3.7-script.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/easy_install-3.7.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/easy_install-script.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/easy_install.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/pip-script.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/pip.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/pip3-script.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/pip3.7-script.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/pip3.7.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/pip3.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/python.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/pythonw.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/Scripts/sqlformat.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/pip-selfcheck.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../dev_old/venv/pyvenv.cfg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../doc/Model/Websockets.pptx" beforeDir="false" afterPath="$PROJECT_DIR$/../doc/Model/internationalization.pptx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/.idea/mysite.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/chat/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/chat/consumers.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/chat/routing.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/chat/templates/chat/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/chat/templates/chat/room.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/chat/urls.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/chat/views.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/manage.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/mysite/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/mysite/routing.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/mysite/settings.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/mysite/urls.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/mysite/wsgi.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mysite/setup.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/.idea/codeStyles/Project.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/.idea/dataSources.local.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/.idea/dataSources.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/.idea/dataSources/15165e43-2bc7-4f53-8bf2-e08ef7defbcc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/.idea/dataSources/15165e43-2bc7-4f53-8bf2-e08ef7defbcc/storage_v2/_src_/schema/main.uQUzAA.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/.idea/dictionaries/Roy.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/AcceptanceTests/test_acc.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/acc_test_to_run.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/consistencySystem/Facade.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/consistencySystem/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/domain/Discount.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/domain/DomainFacade.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/domain/GroceryCart.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/domain/Guest.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/domain/Item.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/domain/ManagementState.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/domain/Member.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/domain/Permission.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/domain/Purchase.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/domain/Rule.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/domain/Store.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/domain/TradingSystem.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/domain/TradingSystemException.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/domain/Transaction.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/domain/User.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/domain/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/domain/main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/hello_world.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/moneyCollectionSystem/Facade.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/moneyCollectionSystem/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/productSupplySystem/Facade.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/productSupplySystem/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/security/Security.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/service/ServiceFacade.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/main/service/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/setup.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/test/domain/integration_tests/test_add_item_to_store.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/test/domain/integration_tests/test_add_store.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/test/domain/integration_tests/test_register.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/test/domain/integration_tests/test_watch_gc.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/test/domain/test_guest.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/test/domain/test_member.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/test/domain/test_store.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/venv/Scripts/Activate.ps1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/venv/Scripts/activate" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/venv/Scripts/activate.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/venv/Scripts/deactivate.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/venv/Scripts/easy_install-3.7.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/venv/Scripts/easy_install-script.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/venv/Scripts/easy_install.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/venv/Scripts/pip.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/venv/Scripts/pip3.7.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/venv/Scripts/pip3.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/venv/Scripts/py.test.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/venv/Scripts/pytest.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/venv/Scripts/python.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/venv/Scripts/pythonw.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tmp/venv/pip-selfcheck.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/.idea/try_1_django.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/TradingSystem/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/TradingSystem/admin.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/TradingSystem/apps.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/TradingSystem/migrations/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/TradingSystem/models.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/TradingSystem/tests.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/TradingSystem/views.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/manage.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-1.4.2-cp37-cp37m-win32.whl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/.github/ISSUE_TEMPLATE.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/.travis.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/HISTORY.rst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/INSTALL.rst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/MANIFEST.in" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/Makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/MySQLdb/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/MySQLdb/_exceptions.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/MySQLdb/_mysql.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/MySQLdb/compat.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/MySQLdb/connections.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/MySQLdb/constants/CLIENT.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/MySQLdb/constants/CR.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/MySQLdb/constants/ER.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/MySQLdb/constants/FIELD_TYPE.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/MySQLdb/constants/FLAG.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/MySQLdb/constants/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/MySQLdb/converters.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/MySQLdb/cursors.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/MySQLdb/times.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/ci/test_mysql.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/doc/FAQ.rst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/doc/Makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/doc/MySQLdb.constants.rst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/doc/MySQLdb.rst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/doc/_exceptions.rst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/doc/_mysql.rst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/doc/conf.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/doc/index.rst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/doc/make.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/doc/modules.rst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/doc/user_guide.rst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/metadata.cfg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/setup.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/setup_common.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/setup_posix.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/setup_windows.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/site.cfg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/tests/capabilities.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/tests/configdb.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/tests/dbapi20.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/tests/default.cnf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/tests/test_MySQLdb_capabilities.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/tests/test_MySQLdb_dbapi20.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/tests/test_MySQLdb_nonstandard.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/tests/test_MySQLdb_times.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/tests/test__mysql.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/tests/test_cursor.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/mysqlclient-python-master/mysqlclient-python-master/tests/travis.cnf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/posts/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/posts/admin.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/posts/apps.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/posts/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/posts/migrations/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/posts/models.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/posts/templates/posts/details.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/posts/templates/posts/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/posts/templates/posts/layout.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/posts/tests.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/posts/urls.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/posts/views.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/try_1_django/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/try_1_django/settings.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/try_1_django/urls.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/try_1_django/wsgi.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/Activate.ps1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/activate" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/activate.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/deactivate.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/django-admin.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/django-admin.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/easy_install-3.7-script.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/easy_install-3.7.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/easy_install-script.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/easy_install.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/pip-script.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/pip.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/pip3-script.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/pip3.7-script.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/pip3.7.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/pip3.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/python.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/pythonw.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/Scripts/sqlformat.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/pip-selfcheck.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../try_1_django/venv/pyvenv.cfg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -349,7 +56,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/store/views.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="206">
@@ -362,7 +69,7 @@
         <entry file="file://$PROJECT_DIR$/trading_system/domain/cart.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="450">
-              <caret line="42" column="27" lean-forward="true" selection-start-line="42" selection-start-column="27" selection-end-line="42" selection-end-column="27" />
+              <caret line="42" column="27" selection-start-line="42" selection-start-column="27" selection-end-line="42" selection-end-column="27" />
             </state>
           </provider>
         </entry>
@@ -370,8 +77,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/domain/domain.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="440">
-              <caret line="809" column="46" selection-start-line="809" selection-start-column="46" selection-end-line="809" selection-end-column="46" />
+            <state relative-caret-position="380">
+              <caret line="48" column="45" selection-start-line="48" selection-start-column="29" selection-end-line="48" selection-end-column="45" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/tests/load_tests/locust_test.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="9" selection-start-column="9" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -397,17 +113,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trading_system/domain/store.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="775">
-              <caret line="177" lean-forward="true" selection-start-line="177" selection-end-line="177" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file:///opt/local/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages/django/db/models/query.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="169">
-              <caret line="274" selection-start-line="274" selection-end-line="274" />
+            <state relative-caret-position="222">
+              <caret line="18" column="6" selection-start-line="18" selection-start-column="6" selection-end-line="18" selection-end-column="6" />
             </state>
           </provider>
         </entry>
@@ -416,7 +123,7 @@
         <entry file="file://$PROJECT_DIR$/trading_system/views.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="227">
-              <caret line="444" column="83" lean-forward="true" selection-start-line="444" selection-start-column="83" selection-end-line="444" selection-end-column="83" />
+              <caret line="444" column="83" selection-start-line="444" selection-start-column="83" selection-end-line="444" selection-end-column="83" />
             </state>
           </provider>
         </entry>
@@ -434,7 +141,7 @@
         <entry file="file://$PROJECT_DIR$/trading_system/service.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="198">
-              <caret line="9" column="77" lean-forward="true" selection-start-line="9" selection-start-column="77" selection-end-line="9" selection-end-column="77" />
+              <caret line="9" column="77" selection-start-line="9" selection-start-column="77" selection-end-line="9" selection-end-column="77" />
             </state>
           </provider>
         </entry>
@@ -1144,7 +851,7 @@
       <workItem from="1560674604199" duration="741000" />
       <workItem from="1560684674925" duration="1048000" />
       <workItem from="1560877823270" duration="11000" />
-      <workItem from="1560877877144" duration="9241000" />
+      <workItem from="1560877877144" duration="9511000" />
     </task>
     <servers />
   </component>
@@ -1181,7 +888,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="375188000" />
+    <option name="totallyTimeSpent" value="375458000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1255,11 +962,6 @@
           <url>file://$PROJECT_DIR$/trading_system/views.py</url>
           <line>437</line>
           <option name="timeStamp" value="14" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/store/views.py</url>
-          <line>544</line>
-          <option name="timeStamp" value="16" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -1406,7 +1108,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/Django-2.2.2-py3.7.egg/django/core/handlers/exception.py" />
     <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/Django-2.2.2-py3.7.egg/django/utils/functional.py" />
     <entry file="file://$PROJECT_DIR$/store/views.py.orig" />
     <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/Django-2.2.2-py3.7.egg/django/forms/forms.py" />
@@ -1634,24 +1335,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/trading_system/domain/store.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="775">
-          <caret line="177" lean-forward="true" selection-start-line="177" selection-end-line="177" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/domain/cart.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="450">
-          <caret line="42" column="27" lean-forward="true" selection-start-line="42" selection-start-column="27" selection-end-line="42" selection-end-column="27" />
+          <caret line="42" column="27" selection-start-line="42" selection-start-column="27" selection-end-line="42" selection-end-column="27" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="227">
-          <caret line="444" column="83" lean-forward="true" selection-start-line="444" selection-start-column="83" selection-end-line="444" selection-end-column="83" />
+          <caret line="444" column="83" selection-start-line="444" selection-start-column="83" selection-end-line="444" selection-end-column="83" />
         </state>
       </provider>
     </entry>
@@ -1662,17 +1356,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/trading_system/domain/domain.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="809" column="46" selection-start-line="809" selection-start-column="46" selection-end-line="809" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/trading_system/service.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
-          <caret line="9" column="77" lean-forward="true" selection-start-line="9" selection-start-column="77" selection-end-line="9" selection-end-column="77" />
+          <caret line="9" column="77" selection-start-line="9" selection-start-column="77" selection-end-line="9" selection-end-column="77" />
         </state>
       </provider>
     </entry>
@@ -1687,6 +1374,27 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="206">
           <caret line="544" selection-start-line="544" selection-end-line="544" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/trading_system/domain/store.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="222">
+          <caret line="18" column="6" selection-start-line="18" selection-start-column="6" selection-end-line="18" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/trading_system/domain/domain.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="48" column="45" selection-start-line="48" selection-start-column="29" selection-end-line="48" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/load_tests/locust_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="9" selection-start-column="9" selection-end-column="9" />
         </state>
       </provider>
     </entry>
