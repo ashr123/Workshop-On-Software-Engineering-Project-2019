@@ -2,6 +2,7 @@ from django.contrib.auth.models import User as m_User, Group
 
 import trading_system.domain.store as StoreModule
 import trading_system.domain.cart as CartModule
+from trading_system.domain.domain import DBFailedExceptionDomainToService
 
 
 class User:
@@ -50,12 +51,19 @@ class User:
 
 	@staticmethod
 	def get_user(user_id):
-		if user_id is None:
-			model = m_User.objects.filter(username='AnonymousUser')[0]
-		else:
-			model = m_User.objects.get(pk=user_id)
-		return User(model=model)
+		try:
+			if user_id is None:
+				model = m_User.objects.filter(username='AnonymousUser')[0]
+			else:
+				model = m_User.objects.get(pk=user_id)
+			return User(model=model)
+		except Exception:
+			raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
 	@staticmethod
 	def len_of_super():
-		return len(m_User.objects.filter(is_superuser=True))
+		try:
+			return len(m_User.objects.filter(is_superuser=True))
+		except Exception:
+			raise DBFailedExceptionDomainToService(msg='DB Failed')

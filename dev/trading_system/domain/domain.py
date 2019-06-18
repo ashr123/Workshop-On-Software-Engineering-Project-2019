@@ -1129,3 +1129,6 @@ def apply_base_cart(disc, store_map):
 
 
 
+class DBFailedExceptionDomainToService(Exception):
+	def _init_(self, msg = None):
+		self.msg = msg

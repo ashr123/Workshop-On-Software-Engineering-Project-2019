@@ -2,6 +2,7 @@ from django.db.models import Q
 
 from store.models import ComplexItemRule as m_ComplexItemRule
 from trading_system.domain.base_item_rule import BaseItemRule
+from trading_system.domain.domain import DBFailedExceptionDomainToService
 
 
 class ComplexItemRule:
@@ -60,16 +61,33 @@ class ComplexItemRule:
         for field in self._model._meta.fields:
             if field.attname in item_dict.keys():
                 setattr(self._model, field.attname, item_dict[field.attname])
-        self._model.save()
+        try:
+            self._model.save()
+        except Exception:
+            raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
     def delete(self):
-        self._model.delete()
+        try:
+            self._model.delete()
+        except Exception:
+            raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
     @staticmethod
     def get_item_ci_rules(item_id):
-        cir_models = m_ComplexItemRule.objects.filter(item_id=item_id)
-        return list(map(lambda cir_model: ComplexItemRule(model=cir_model), list(cir_models)))
+        try:
+            cir_models = m_ComplexItemRule.objects.filter(item_id=item_id)
+            return list(map(lambda cir_model: ComplexItemRule(model=cir_model), list(cir_models)))
+        except Exception:
+            raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
     @staticmethod
     def get_ci_rule(rule_id):
-        return ComplexItemRule(model=m_ComplexItemRule.objects.filter(pk=rule_id))
+        try:
+            return ComplexItemRule(model=m_ComplexItemRule.objects.filter(pk=rule_id))
+            return list(map(lambda cir_model: ComplexItemRule(model=cir_model), list(cir_models)))
+        except Exception:
+            raise DBFailedExceptionDomainToService(msg='DB Failed')
+

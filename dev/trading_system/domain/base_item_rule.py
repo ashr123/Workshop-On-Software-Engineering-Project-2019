@@ -1,6 +1,7 @@
 from django.db.models import Q
 
 from store.models import BaseItemRule as m_BaseItemRule
+from trading_system.domain.domain import DBFailedExceptionDomainToService
 
 
 class BaseItemRule:
@@ -36,17 +37,31 @@ class BaseItemRule:
         for field in self._model._meta.fields:
             if field.attname in item_dict.keys():
                 setattr(self._model, field.attname, item_dict[field.attname])
-        self._model.save()
+        try:
+            self._model.save()
+        except Exception:
+            raise DBFailedExceptionDomainToService(msg = 'DB Failed')
 
     def delete(self):
-        self._model.delete()
+        try:
+            self._model.delete()
+        except Exception:
+            raise DBFailedExceptionDomainToService(msg = 'DB Failed')
+
 
 
     @staticmethod
     def get_b_rule(rule_id):
-        return BaseItemRule(model=m_BaseItemRule.objects.get(id=rule_id))
+        try:
+            return BaseItemRule(model=m_BaseItemRule.objects.get(id=rule_id))
+        except Exception:
+            raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
     @staticmethod
     def get_item_bi_rules(item_id):
-        cir_models = m_BaseItemRule.objects.filter(item_id=item_id)
-        return list(map(lambda cir_model: BaseItemRule(model=cir_model), list(cir_models)))
+        try:
+            cir_models = m_BaseItemRule.objects.filter(item_id=item_id)
+            return list(map(lambda cir_model: BaseItemRule(model=cir_model), list(cir_models)))
+        except Exception:
+            raise DBFailedExceptionDomainToService(msg='DB Failed')

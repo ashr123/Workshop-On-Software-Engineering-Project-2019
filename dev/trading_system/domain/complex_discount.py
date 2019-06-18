@@ -3,6 +3,7 @@ from django.db.models import Q
 from store.models import ComplexDiscount as m_ComplexDiscount
 from trading_system.domain.base_store_rule import BaseStoreRule
 from trading_system.domain.discount import Discount
+from trading_system.domain.domain import DBFailedExceptionDomainToService
 
 
 class ComplexDiscount:
@@ -35,10 +36,17 @@ class ComplexDiscount:
         for field in self._model._meta.fields:
             if field.attname in item_dict.keys():
                 setattr(self._model, field.attname, item_dict[field.attname])
-        self._model.save()
+        try:
+            self._model.save()
+        except Exception:
+            raise DBFailedExceptionDomainToService(msg='DB Failed')
 
     def delete(self):
-        self._model.delete()
+        try:
+            self._model.delete()
+        except Exception:
+            raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
     def apply_operator(self, left, right):
         if self.operator == "AND" and (left != -1 and right != -1):
@@ -76,9 +84,17 @@ class ComplexDiscount:
 
     @staticmethod
     def get_store_cs_discoint(store_id):
-        cir_models = m_ComplexDiscount.objects.filter(store_id=store_id)
-        return list(map(lambda cir_model: ComplexDiscount(model=cir_model), list(cir_models)))
+        try:
+            cir_models = m_ComplexDiscount.objects.filter(store_id=store_id)
+            return list(map(lambda cir_model: ComplexDiscount(model=cir_model), list(cir_models)))
+        except Exception:
+            raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
     @staticmethod
     def get_complex_discount(disc_id):
-        return ComplexDiscount(model=m_ComplexDiscount.objects.filter(pk=disc_id))
+        try:
+            return ComplexDiscount(model=m_ComplexDiscount.objects.filter(pk=disc_id))
+        except Exception:
+            raise DBFailedExceptionDomainToService(msg='DB Failed')
+

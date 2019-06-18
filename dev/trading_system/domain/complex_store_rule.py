@@ -3,6 +3,7 @@ from django.db.models import Q
 from store.models import ComplexStoreRule as m_ComplexStoreRule
 from trading_system.domain.base_item_rule import BaseItemRule
 from trading_system.domain.base_store_rule import BaseStoreRule
+from trading_system.domain.domain import DBFailedExceptionDomainToService
 
 
 class ComplexStoreRule:
@@ -64,16 +65,32 @@ class ComplexStoreRule:
         for field in self._model._meta.fields:
             if field.attname in item_dict.keys():
                 setattr(self._model, field.attname, item_dict[field.attname])
-        self._model.save()
+        try:
+            self._model.save()
+        except Exception:
+            raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
     def delete(self):
-        self._model.delete()
+        try:
+            self._model.delete()
+        except Exception:
+            raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
     @staticmethod
     def get_item_si_rules(store_id):
-        cir_models = m_ComplexStoreRule.objects.filter(store_id=store_id)
-        return list(map(lambda cir_model: ComplexStoreRule(model=cir_model), list(cir_models)))
+        try:
+            cir_models = m_ComplexStoreRule.objects.filter(store_id=store_id)
+            return list(map(lambda cir_model: ComplexStoreRule(model=cir_model), list(cir_models)))
+        except Exception:
+            raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
     @staticmethod
     def get_si_rule(rule_id):
-        return ComplexStoreRule(model=m_ComplexStoreRule.objects.filter(pk=rule_id))
+        try:
+            return ComplexStoreRule(model=m_ComplexStoreRule.objects.filter(pk=rule_id))
+        except Exception:
+            raise DBFailedExceptionDomainToService(msg='DB Failed')
+

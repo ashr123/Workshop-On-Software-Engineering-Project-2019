@@ -3,6 +3,7 @@ from django.db.models import Q
 from store.models import Item as m_Item
 from trading_system.domain.base_item_rule import BaseItemRule
 from trading_system.domain.complex_item_rule import ComplexItemRule
+from trading_system.domain.domain import DBFailedExceptionDomainToService
 
 
 class Item:
@@ -80,13 +81,25 @@ class Item:
 		for field in self._model._meta.fields:
 			if field.attname in item_dict.keys():
 				setattr(self._model, field.attname, item_dict[field.attname])
-		self._model.save()
+		try:
+			self._model.save()
+		except Exception:
+			raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
 	def delete(self):
-		self._model.delete()
+		try:
+			self._model.delete()
+		except Exception:
+			raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
 	def save(self):
-		self._model.save()
+		try:
+			self._model.save()
+		except Exception:
+			raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
 	@staticmethod
 	def get_item(item_id):
@@ -94,10 +107,14 @@ class Item:
 
 	@staticmethod
 	def search(txt):
-		items_models = m_Item.objects.filter(Q(name__contains=txt) | Q(
-			description__contains=txt) | Q(category__contains=txt))
-		items = list(map(lambda im: Item(model=im), items_models))
-		return list(map(lambda i: i.get_details(), items))
+		try:
+			items_models = m_Item.objects.filter(Q(name__contains=txt) | Q(
+				description__contains=txt) | Q(category__contains=txt))
+			items = list(map(lambda im: Item(model=im), items_models))
+			return list(map(lambda i: i.get_details(), items))
+		except Exception:
+			raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
 
 

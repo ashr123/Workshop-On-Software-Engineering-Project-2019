@@ -7,6 +7,7 @@ from trading_system.domain.base_store_rule import BaseStoreRule
 from trading_system.domain.complex_discount import ComplexDiscount
 from trading_system.domain.complex_store_rule import ComplexStoreRule
 from trading_system.domain.discount import Discount
+from trading_system.domain.domain import DBFailedExceptionDomainToService
 from trading_system.domain.user import User as c_User
 from trading_system.domain.item import Item as c_Item
 from trading_system.models import ObserverUser
@@ -132,7 +133,11 @@ class Store:
 		for field in self._model._meta.fields:
 			if field.attname in store_dict.keys():
 				setattr(self._model, field.attname, store_dict[field.attname])
-		self._model.save()
+		try:
+			self._model.save()
+		except Exception:
+			raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
 	def check_rules(self, amount, country, is_auth):
 		base_arr = []
@@ -184,24 +189,44 @@ class Store:
 
 	@staticmethod
 	def get_store(store_id):
-		return Store(model=m_Store.objects.get(pk=store_id))
+		try:
+			return Store(model=m_Store.objects.get(pk=store_id))
+		except Exception:
+			raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
 	@staticmethod
 	def owns_stores(user_id):
-		tmp = m_Store.objects.filter(owners__username__contains=user_id)
-		return len(tmp) == 0
+		try:
+			tmp = m_Store.objects.filter(owners__username__contains=user_id)
+			return len(tmp) == 0
+		except Exception:
+			raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
 	@staticmethod
 	def manages_stores(user_id):
-		tmp = m_Store.objects.filter(managers__username__contains=user_id)
-		return len(tmp) == 0
+		try:
+			tmp = m_Store.objects.filter(managers__username__contains=user_id)
+			return len(tmp) == 0
+		except Exception:
+			raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
 	@staticmethod
 	def get_owned_stores(user_id):
-		return list(map(lambda s: {'id': s.pk, 'name': s.name},
-		                m_Store.objects.filter(Q(managers__id__in=[user_id]) | Q(owners__id__in=[user_id]))))
+		try:
+			return list(map(lambda s: {'id': s.pk, 'name': s.name},
+							m_Store.objects.filter(Q(managers__id__in=[user_id]) | Q(owners__id__in=[user_id]))))
+		except Exception:
+			raise DBFailedExceptionDomainToService(msg='DB Failed')
+
 
 	@staticmethod
 	def get_item_store(item_pk):
-		model = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), m_Store.objects.all()))[0]
-		return Store(model=model)
+		try:
+			model = list(filter(lambda s: item_pk in map(lambda i: i.pk, s.items.all()), m_Store.objects.all()))[0]
+			return Store(model=model)
+		except Exception:
+			raise DBFailedExceptionDomainToService(msg='DB Failed')
+
