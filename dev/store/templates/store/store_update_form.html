@@ -7,12 +7,17 @@
 		{% for item in form_.items %}
 			<div class="check_item">{{ item }}</div>
 		{% endfor %}
+		<br>
+		<hr>
+		<br>
 		<div>Managers:</div>
 		{% for m in delete_owners.owners_to_delete %}
 			<div class="delete_manager">{{ m }}</div>
 		{% endfor %}
 		<input type="submit" value="Update">
-
+		<br>
+		<hr>
+		<br>
 
 	</form>
 	<div>Rules:</div>
@@ -21,6 +26,22 @@
 			<span>{{ rule.name }}</span>
 			<span>
 				<form action="/store/remove_rule_from_store/{{ rule.id }}/{{ rule.type }}/{{ rule.store }}"
+				      method="GET">
+						<button type="submit">Delete</button>
+				</form>
+			</span>
+		</div>
+		<hr>
+	{% endfor %}
+	<br>
+	<hr>
+	<br>
+	<div>Discounts:</div>
+	{% for discount in discounts %}
+		<div>
+			<span>{{ discount.name }}</span>
+			<span>
+				<form action="/store/remove_discount_from_store/{{ discount.id }}/{{ discount.type }}/{{ discount.store }}"
 				      method="GET">
 						<button type="submit">Delete</button>
 				</form>

@@ -1,6 +1,8 @@
-import json
+import decimal
 import json
 import logging
+import traceback
+from datetime import date
 
 import simplejson as s_json
 from django.contrib import messages
@@ -219,13 +221,14 @@ class ItemUpdate(UpdateView):
 
 	def get_object(self, queryset=None):
 		item_details = service.get_item_details(item_id=self.kwargs['pk'])
-		return Item.objects.create(
-			name=item_details['name'],
-			description=item_details['description'],
-			category=item_details['category'],
-			price=item_details['price'],
-			quantity=item_details['quantity']
-		)
+		return Item.objects.get(id=self.kwargs['pk'])
+		#Item.objects.create(
+		# 	name=item_details['name'],
+		# 	description=item_details['description'],
+		# 	category=item_details['category'],
+		# 	price=item_details['price'],
+		# 	quantity=item_details['quantity']
+		# )
 
 	def form_valid(self, form):
 		service.update_item(item_id=self.kwargs['pk'], item_dict=form.cleaned_data, user_id=self.request.user.pk)
@@ -302,6 +305,7 @@ class StoreUpdate(UpdateView):
 		context = super(StoreUpdate, self).get_context_data(**kwargs)  # get the default context data
 		text = SearchForm()
 		rules = service.store_rules_string(store_id=self.kwargs['pk'])
+		discounts = service.store_discounts_string(store_id=self.kwargs['pk'])
 		store_items = service.get_store_items(store_id=self.kwargs['pk'])
 
 		store_managers = service.get_store_managers(store_id=self.kwargs['pk'])
@@ -313,15 +317,17 @@ class StoreUpdate(UpdateView):
 		context['user_name'] = self.request.user.username
 		context['form_'] = UpdateItems(store_items)
 		context['rules'] = rules
+		context['discounts'] = discounts
 		context['delete_owners'] = DeleteOwners(all_managers, self.kwargs['pk'])
 		return context
 
 	def get_object(self, queryset=None):
 		store_details = service.get_store_details(store_id=self.kwargs['pk'])
-		return Store.objects.create(
-			name=store_details['name'],
-			description=store_details['description']
-		)
+		return Store.objects.get(id=self.kwargs['pk'])
+		# 	Store.objects.create(
+		# 	name=store_details['name'],
+		# 	description=store_details['description']
+		# )
 
 	def form_valid(self, form):
 		service.update_store(store_id=self.kwargs['pk'], store_dict=form.cleaned_data)
@@ -453,11 +459,12 @@ def buy_item(request, pk):
 			                'id': id1}
 
 			#########################buy proccss
-			_item = Item.objects.get(id=pk)
+			#_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
-
-			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, request.user.pk,
-			                                                                  shipping_details, card_details)
+			amount_in_db = service.get_quantity(item_id=pk)
+			is_auth = request.user.is_authenticated
+			username = request.user.username
+			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, False, request.user.pk)
 
 			if valid == False:
 				messages.warning(request, messages_)
@@ -499,16 +506,28 @@ def check_base_rule(rule_id, amount, country, user):
 	return True
 
 
+from .forms import ApproveForm
+from trading_system.views import get_all_wait_agreement_t_need_to_approve
+
+
 @login_required
 def home_page_owner(request):
 	text = SearchForm()
 	user_name = request.user.username
 	unread_ntfcs = NotificationUser.objects.filter(user=request.user.pk, been_read=False)
+	approve_list = get_all_wait_agreement_t_need_to_approve(request.user)
+	approved_user_per_store = {}
+	for a in approve_list:
+		approved_user_per_store[a.user_to_wait.id] = a.store.id
+
+	approve_form = ApproveForm(approved_user_per_store)
+	print('--------------------------------------------------', approved_user_per_store)
 	context = {
 		'user_name': user_name,
 		'text': text,
 		'owner_id': request.user.pk,
-		'unread_notifications': len(unread_ntfcs)
+		'unread_notifications': len(unread_ntfcs),
+		'approve_form': approve_form,
 	}
 	return render(request, 'store/homepage_store_owner.html', context)
 
@@ -532,7 +551,8 @@ def add_manager_to_store(request, pk):
 			user_name = form.cleaned_data.get('user_name')
 			picked = form.cleaned_data.get('permissions')
 			is_owner = form.cleaned_data.get('is_owner')
-			[fail, message_] = service.add_manager(user_name, picked, is_owner, pk, request.user.username)
+			is_partner = form.cleaned_data.get('is_partner')
+			[fail, message_] = service.add_manager(user_name, picked, is_owner, pk, request.user.username, is_partner)
 			if fail:
 				messages.warning(request, message_)
 				return redirect('/store/home_page_owner/')
@@ -566,11 +586,15 @@ def add_discount_to_store(request, pk, which_button):
 			amount = form.cleaned_data.get('amount')
 			end_date = form.cleaned_data.get('end_date')
 			item = form.cleaned_data.get('item')
-			ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage, end_date=end_date,
-			                           item_id=item.pk)
+			if item is None:
+				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,end_date=end_date,
+				                           item_id=None)
+			else:
+				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,end_date=end_date,
+				                           item_id=item.pk)
 			if which_button == 'ok':
-				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,
-				                           end_date=end_date, item_id=item.pk)
+				# ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,
+				#                            end_date=end_date, item_id=item.pk)
 				messages.success(request, 'add discount :  ' + str(percentage) + '%')
 				return redirect('/store/home_page_owner/')
 			if which_button == 'complex':
@@ -910,11 +934,9 @@ def add_complex_rule_to_item_2(request, rule_id_before, item_id, which_button):
 
 def remove_rule_from_store(request, pk, type1, store):
 	if type1 == 2:
-		complexRule = ComplexStoreRule.objects.get(id=pk)
-		delete_complex(complexRule.id)
+		service.delete_complex_rule(pk)
 	else:
-		baseRule = BaseRule.objects.get(id=pk)
-		delete_base(baseRule.id)
+		service.delete_base_rule(pk)
 	messages.success(request, 'remove rule successfully!')
 	text = SearchForm()
 	user_name = request.user.username
@@ -925,31 +947,14 @@ def remove_rule_from_store(request, pk, type1, store):
 	return redirect('/store/update/' + str(store))
 
 
-def delete_complex(rule_id):
-	rule = ComplexStoreRule.objects.get(id=rule_id)
-	if rule.left[0] == '_':
-		BaseRule.objects.get(id=int(rule.left[1:])).delete()
-	else:
-		delete_complex(int(rule.left))
-	if rule.right[0] == '_':
-		BaseRule.objects.get(id=int(rule.right[1:])).delete()
-	else:
-		delete_complex(int(rule.right))
-	rule.delete()
 
-
-def delete_base(rule_id):
-	rule = BaseRule.objects.get(id=rule_id)
-	rule.delete()
 
 
 def remove_rule_from_item(request, pk, type1, item):
 	if type1 == 2:
-		complexRule = ComplexItemRule.objects.get(id=pk)
-		delete_complex_item(complexRule.id)
+		service.delete_complex_item_rule(pk)
 	else:
-		baseRule = BaseItemRule.objects.get(id=pk)
-		delete_base_item(baseRule.id)
+		service.delete_base_item_rule(pk)
 	messages.success(request, 'remove rule successfully!')
 	text = SearchForm()
 	user_name = request.user.username
@@ -960,22 +965,30 @@ def remove_rule_from_item(request, pk, type1, item):
 	return redirect('/store/update_item/' + str(item))
 
 
-def delete_complex_item(rule_id):
-	rule = ComplexItemRule.objects.get(id=rule_id)
-	if rule.left[0] == '_':
-		BaseItemRule.objects.get(id=int(rule.left[1:])).delete()
-	else:
-		delete_complex_item(int(rule.left))
-	if rule.right[0] == '_':
-		BaseItemRule.objects.get(id=int(rule.right[1:])).delete()
-	else:
-		delete_complex_item(int(rule.right))
-	rule.delete()
 
 
-def delete_base_item(rule_id):
-	rule = BaseItemRule.objects.get(id=rule_id)
-	rule.delete()
+
+# sss---------------------------------------------------------------------------------------------
+def remove_discount_from_store(request, pk, type, store):
+	if type == 2:
+		service.delete_complex_discount(pk)
+	else:
+		service.delete_base_store_discount(pk)
+	messages.success(request, 'remove discount successfully!')
+	text = SearchForm()
+	user_name = request.user.username
+	context = {
+		'user_name': user_name,
+		'text': text,
+	}
+	return redirect('/store/update/' + str(store))
+
+
+
+
+
+# sss--------------------------------------------------------------------------------------------------
+
 
 
 class NotificationsListView(ListView):

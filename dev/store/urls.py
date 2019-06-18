@@ -25,7 +25,8 @@ urlpatterns = [
 	path('add_discount_to_store/<int:pk>/<slug:which_button>', views.add_discount_to_store),
 	path('add_discount_to_store/<int:pk>/<slug:which_button>/', views.add_discount_to_store),
 	path('add_complex_discount_to_store/<int:pk>/<slug:disc>/<slug:which_button>', views.add_complex_discount_to_store),
-	path('add_complex_discount_to_store/<int:pk>/<slug:disc>/<slug:which_button>/', views.add_complex_discount_to_store),
+	path('add_complex_discount_to_store/<int:pk>/<slug:disc>/<slug:which_button>/',
+	     views.add_complex_discount_to_store),
 	# path('update_item/<int:pk>/', views.update_item),
 	path('update_item/<int:pk>/', views.ItemUpdate.as_view(success_url="/login_redirect")),
 	# path('contact/<int:pk>/', ContactWizard.as_view(FORMS_)),
@@ -55,8 +56,7 @@ urlpatterns = [
 	     views.add_complex_rule_to_item_2),
 	path('remove_rule_from_store/<int:pk>/<int:type>/<int:store>', views.remove_rule_from_store),
 	path('remove_rule_from_item/<int:pk>/<int:type>/<int:item>', views.remove_rule_from_item),
+	path('remove_discount_from_store/<int:pk>/<int:type>/<int:store>', views.remove_discount_from_store),
 	path('delete_item/<int:pk>/', views.ItemDelete.as_view(success_url="/login_redirect")),
 	path('delete_owner/<int:pk_owner>/<int:pk_store>', views.delete_owner),
 ]
-
-

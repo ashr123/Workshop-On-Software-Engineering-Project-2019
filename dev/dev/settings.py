@@ -39,12 +39,11 @@ SECRET_KEY = 'rk^6e34%5v@%n%*(@#_6@70d%h+jle#z#ea!iq=o-b9ok@s91#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 GEOIP_PATH = os.path.join(BASE_DIR, '_geoip2_')
 INSTALLED_APPS = [
-
 	'trading_system',
 	'store',
 	'test_app',
@@ -106,22 +105,22 @@ ASGI_APPLICATION = "dev.routing.application"
 # }
 
 DATABASES = {
-	# 'default': {
-	# 	'ENGINE': 'django.db.backends.mysql',
-	# 	'NAME': 'tradingsystem',
-	# 	'USER': 'root',
-	# 	'password': '',
-	# 	'HOST': 'localhost',
-	# 	'PORT': ''
-	# }
 	'default': {
 		'ENGINE': 'django.db.backends.mysql',
 		'NAME': 'tradingsystem',
-		'USER': 'tr',
+		'USER': 'root',
 		'password': '',
-		'HOST': '132.73.213.227',
+		'HOST': 'localhost',
 		'PORT': ''
 	}
+	# 'default': {
+	# 	'ENGINE': 'django.db.backends.mysql',
+	# 	'NAME': 'tradingsystem',
+	# 	'USER': 'tr',
+	# 	'password': '',
+	# 	'HOST': '132.73.213.227',
+	# 	'PORT': ''
+	# }
 }
 
 redis_host = os.environ.get('REDIS_HOST', 'localhost')

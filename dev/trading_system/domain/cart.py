@@ -23,11 +23,16 @@ class Cart:
 
 	@staticmethod
 	def get_cart(cart_id=None, store_pk=None, user_id=None):
+
+		if len(m_Cart.objects.filter(store_id=store_pk, customer_id=user_id)) == 0:
+			return None
 		if cart_id is not None:
 			model = m_Cart.objects.get(pk=cart_id)
+		elif ((user_id is not None) and (store_pk is not None)):
+			model = m_Cart.objects.filter(customer_id=user_id, store_id=store_pk)[0]
 		elif user_id is not None:
 			try:
-				model = m_Cart.objects.get(customer_id=user_id)
+				model = m_Cart.objects.filter(customer_id=user_id)[0]
 			except ObjectDoesNotExist:
 				return None
 			except MultipleObjectsReturned:

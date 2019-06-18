@@ -48,19 +48,81 @@ def def_super_user(request):
 		return render(request, 'trading_system/add_super_user.html', {'form': UserCreationForm()})
 
 
+# ---------------------new
+from store.models import WaitToAgreement
+from django.contrib.auth.models import User
+
+
+def approve_user(pk_manager, pk_user):
+	try:
+		manager_obj = User.objects.get(id=pk_manager)
+		user_obj = User.objects.get(id=pk_user)
+		wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user_obj)
+		managersWhoWait_obj = wait_to_agg_obj.managers_who_wait.get(user_who_wait=manager_obj)
+		managersWhoWait_obj.is_approve = True
+		managersWhoWait_obj.save()
+		return True
+	except:
+		return False
+
+
+# def check_if_this_partner_need_to_approve(manager):
+# 	return len(WaitToAgreement.objects.filter(managers_who_wait__user_who_wait__in=[manager])) == 1
+
+
+def get_all_wait_agreement_t_need_to_approve(manager):
+	return service.get_all_wait_agreement_t_need_to_approve(manager.id)
+
+
+# def check_if_user_is_in_waiting_list(user_):
+# 	return len(WaitToAgreement.objects.filter(user_to_wait=user_)) == 1
+#
+
+def check_if_user_is_approved(user_, store):
+	# wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user_, store=store)
+	# managers_list = wait_to_agg_obj.managers_who_wait.all()
+	# for obj in managers_list:
+	# 	if not obj.is_approve:
+	# 		return False
+	# return True
+	return service.check_if_user_is_approved(user_.id, store.id)
+
+
+def agreement_by_partner(request, store_pk, user_pk):
+
+	partner = User.objects.get(id=request.user.id)
+
+	if(service.agreement_by_partner(partner.id,store_pk,user_pk)):
+		messages.success(request,' you approve! ')
+	else:
+		messages.warning(request,' try again ')
+	return redirect('/login_redirect')
+
+
+def approved_user_to_store_manager(user_pk, store_pk):
+	user = User.objects.get(id=user_pk)
+	store = Store.objects.get(id=store_pk)
+	if (service.approved_user_to_store_manager(user.username, store_pk)):
+		wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user, store=store)
+		wait_to_agg_obj.delete()
+		return True
+	return False
+
+
 def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	if request.user.is_authenticated:
 		if "store_owners" in request.user.groups.values_list('name',
 		                                                     flat=True) or "store_managers" in request.user.groups.values_list(
 			'name', flat=True):
+
 			return redirect('/store/home_page_owner/',
 			                {'text': SearchForm(), 'user_name': request.user.username, 'owner_id': request.user.pk, })
 		else:
 
 			return render(request, 'homepage_member.html', {'text': SearchForm(), 'user_name': request.user.username})
 
-	# return render(request, 'homepage_member.html',
-	#               {'text': text, 'user_name': user_name})
+		# return render(request, 'homepage_member.html',
+		#               {'text': text, 'user_name': user_name})
 
 	return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
@@ -352,10 +414,9 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			return redirect('/login_redirect')
 
 		if form.is_valid():
-
+			list_of_items = []
 			for item_id in form.cleaned_data.get('items'):
-
-				amount_in_db = Item.objects.get(id=item_id).quantity
+				amount_in_db = service.get_quantity(item_id)
 				if amount_in_db > 0:
 					item1 = Item.objects.get(id=item_id)
 					quantity_to_buy = 1
@@ -364,26 +425,27 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 					# print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
 					except:
 						messages.warning(request, 'problem with quantity ')
-					# item.quantity = amount_in_db - 1
-					# item.save()
-
+					list_of_items.append({'item_id': item_id, 'amount': int(quantity_to_buy)})
 					valid, total, total_after_discount, messages_ = service.buy_logic(item_id, int(quantity_to_buy),
-					                                                                  request.user.pk, shipping_details,
-					                                                                  card_details)
+					                                                                  amount_in_db,
+					                                                                  request.user.is_authenticated,
+					                                                                  request.user.username,
+					                                                                  shipping_details,
+					                                                                  card_details, True)
 					if not valid:
 						messages.warning(request, 'can`t buy item : ' + str(item_id))
 						messages.warning(request, 'reason : ' + str(messages_))
-					else:
-						messages.success(request, ' buy item : ' + str(item_id))
-						items_bought.append(item_id)
-						if request.user.is_authenticated:
-							cart = Cart.objects.get(customer=request.user)
-							cart.items.remove(item1)
-						else:
-							cart_g = request.session['cart']
-							cart_g['items_id'].remove(Decimal(item_id))
-							request.session['cart'] = cart_g
+						return redirect('/login_redirect')
 
+				if request.user.is_authenticated:
+					cart = Cart.objects.get(customer=request.user)
+					cart.items.remove(item1)
+				else:
+					cart_g = request.session['cart']
+					cart_g['items_id'].remove(Decimal(item_id))
+					request.session['cart'] = cart_g
+			res, res_before = service.apply_discounts_for_cart(list_of_items)
+			messages.success(request, ' total after discount : ' + str(res) + " instead of: " + str(res_before))
 			return redirect('/login_redirect')
 		else:
 			err = '' + str(form.errors)
@@ -391,7 +453,6 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			return redirect('/login_redirect')
 
 	else:
-		list_ = []
 		if not request.user.is_authenticated:
 			base_template_name = 'homepage_guest.html'
 			list_ = make_guest_cart(request)
@@ -422,3 +483,13 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			'items_list': items_of_user + list_
 		}
 		return render(request, 'trading_system/cart_test.html', context)
+
+
+def view_discounts(request, pk):
+	discounts = service.get_discounts_serach(pk)
+	text = SearchForm()
+	context = {
+		'text': text,
+		'discounts': discounts
+	}
+	return render(request, 'trading_system/view_discounts.html', context)

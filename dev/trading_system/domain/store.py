@@ -1,11 +1,12 @@
-from django.db.models import Q
-
-from store.models import Store as m_Store, Item
 from django.contrib.auth.models import User, Group
+from django.db.models import Q
 from guardian.shortcuts import assign_perm
 
-from trading_system.models import ObserverUser
+from store.models import Store as m_Store, Item
+from trading_system.domain.bs_rules import BaseStoreRule
+from trading_system.domain.cs_rules import ComplexStoreRule
 from trading_system.domain.user import User as c_User
+from trading_system.models import ObserverUser
 
 
 class Store:
@@ -15,6 +16,7 @@ class Store:
 			return
 		self._model = m_Store.objects.create(name=name, description=desc)
 		self._model.owners.add(User.objects.get(pk=owner_id))
+		self._model.partners.add(User.objects.get(pk=owner_id))
 		self._model.save()
 		_user = User.objects.get(pk=owner_id)
 		my_group = Group.objects.get_or_create(name="store_owners")[0]
@@ -47,6 +49,10 @@ class Store:
 		managers = list(self._model.managers.all())
 		return list(map(lambda m: m.id, managers))
 
+	def all_partners_ids(self):
+		partners = list(self._model.partners.all())
+		return list(map(lambda o: o.id, partners))
+
 	def all_items_ids(self):
 		items = list(self._model.items.all())
 		return list(map(lambda i: i.id, items))
@@ -77,8 +83,10 @@ class Store:
 		items_to_delete = self._model.items.all()
 		owners_ids = self.all_owners_ids()
 		managers_ids = self.all_managers_ids()
+		partners_ids = self.all_partners_ids()
 		owners_objs = list(map(lambda id1: c_User.get_user(user_id=id1), owners_ids))
 		managers_objs = list(map(lambda id1: c_User.get_user(user_id=id1), managers_ids))
+		partners_objs = list(map(lambda id1: c_User.get_user(user_id=id1), partners_ids))
 		self._model.delete()
 		for item_ in items_to_delete:
 			item_.delete()
@@ -88,12 +96,33 @@ class Store:
 		for manager in managers_objs:
 			if manager.manages_no_more_stores():
 				manager.remove_from_managers()
+		for partner in partners_objs:
+			if partner.manages_no_more_stores():
+				partner.remove_from_owners()
 
 	def update(self, store_dict):
 		for field in self._model._meta.fields:
 			if field.attname in store_dict.keys():
 				setattr(self._model, field.attname, store_dict[field.attname])
 		self._model.save()
+
+	def check_rules(self, amount, country, is_auth):
+		base_arr = []
+		complex_arr = []
+		storeRules = ComplexStoreRule.get_item_si_rules(store_id=self.pk)
+		for rule in reversed(storeRules):
+			if rule.id in complex_arr:
+				continue
+			# if check_store_rule(rule, amount, country, base_arr, complex_arr, is_auth) is False:
+			if not rule.check(amount, country, base_arr, complex_arr, is_auth):
+				return False
+		storeBaseRules = BaseStoreRule.get_store_bs_rules(store_id=self.pk)
+		for rule in storeBaseRules:
+			if rule.id in base_arr:
+				continue
+			if rule.check(amount=amount, country=country, is_auth=is_auth):
+				return False
+		return True
 
 	def get_details(self):
 		return {"name": self._model.name, "description": self._model.description, "owners":

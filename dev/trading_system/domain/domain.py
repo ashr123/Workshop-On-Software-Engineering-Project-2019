@@ -1,6 +1,7 @@
 import datetime
 
 from django.contrib.auth.models import User, Group
+from guardian.shortcuts import assign_perm
 
 from external_systems.money_collector.payment_system import Payment
 from external_systems.supply_system.supply_system import Supply
@@ -19,18 +20,24 @@ from trading_system.observer import ItemSubject
 pay_system = Payment()
 supply_system = Supply()
 
+from store.models import WaitToAgreement, ManagersWhoWait
 
-def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
+
+def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager, is_partner):
+	print('--------------------------------------------------------is_p----', is_partner)
+
 	if not User.objects.get(username=store_manager).has_perm('ADD_MANAGER', Store.objects.get(id=store_pk)):
 		return [True, "Store manager don't have the permission to add another manager"]
 	messages_ = ''
+	store = c_Store.get_store(store_id=store_pk)
+
 	try:
 		user_ = User.objects.get(username=wanna_be_manager)
 	except:
 		fail = True
 		messages_ += 'no such user'
 		return [fail, messages_]
-	store = c_Store.get_store(store_id=store_pk)
+
 	if wanna_be_manager == store_manager:
 		fail = True
 		messages_ += 'can`t add yourself as a manager!'
@@ -39,7 +46,8 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 	# return redirect('/store/home_page_owner/')
 	pre_store_owners_ids = store.all_owners_ids()
 	pre_store_managers_ids = store.all_managers_ids()
-	all_pre_m_o = pre_store_managers_ids + pre_store_owners_ids
+	pre_partners_ids = store.all_partners_ids()
+	all_pre_m_o = pre_store_managers_ids + pre_store_owners_ids + pre_partners_ids
 
 	# print('\n owners: ' ,pre_store_owners)
 	for owner_id in all_pre_m_o:
@@ -54,11 +62,41 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 		fail = True
 		messages_ += 'No such user'
 		return [fail, messages_]
+
+	if (is_partner):
+
+		all_partners = store.all_partners_ids()
+		if (len(all_partners) > 1):  # there is other partner besids curr
+			store_obj = Store.objects.get(id=store_pk)
+			wanna_be_manager_user_obg = User.objects.get(username=wanna_be_manager)
+			store_manager_user_obg = User.objects.get(username=store_manager)
+			wait_obj = WaitToAgreement(user_to_wait=wanna_be_manager_user_obg, store=store_obj)
+			wait_obj.save()
+			for m_id in all_partners:
+				pre_manager_user_obg = User.objects.get(id=m_id)
+				m_obj = ManagersWhoWait(user_who_wait=pre_manager_user_obg)
+				m_obj.save()
+				wait_obj.managers_who_wait.add(m_obj)
+			wait_obj_for_this_manager = wait_obj.managers_who_wait.get(
+				user_who_wait=store_manager_user_obg)  # remove curr manager from wait list
+			wait_obj.managers_who_wait.remove(wait_obj_for_this_manager)
+			wait_obj.save()
+			messages_ += ' . wait to approve partnership . '
+			return [False, messages_]
+		else:
+			if approved_user_to_store_manager(wanna_be_manager, store_pk):
+				return [False, 'approved']
+			else:
+				return [True, 'can`t complete']
+
 	# messages.warning(request, 'No such user')
 	# return redirect('/store/home_page_owner/')
+
 	for perm in picked:
 		store.assign_perm(perm=perm, user_id=user_.pk)
+
 	if is_owner:
+
 		try:
 			store_owners_group = Group.objects.get(name="store_owners")
 			user_.groups.add(store_owners_group)
@@ -89,6 +127,76 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager):
 			return [True, messages_]
 
 	return [False, messages_]
+
+
+def check_if_user_is_approved(user_id, store_id):
+	user_ = User.objects.get(id=user_id)
+	store = Store.objects.get(id=store_id)
+	wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user_, store=store)
+	managers_list = wait_to_agg_obj.managers_who_wait.all()
+	for obj in managers_list:
+		if not obj.is_approve:
+			return False
+	return True
+
+
+def agreement_by_partner(partner_id, store_pk, user_pk):
+	try:
+		user = User.objects.get(id=user_pk)
+		partner = User.objects.get(id=partner_id)
+		store = Store.objects.get(id=store_pk)
+		wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user, store=store)
+		partner_wait_obg = wait_to_agg_obj.managers_who_wait.get(user_who_wait=partner)
+		partner_wait_obg.is_approve = True
+		partner_wait_obg.save()
+		if (check_if_user_is_approved(user_pk, store_pk)):
+			approved_user_to_store_manager(user.username, store_pk)
+		wait_to_agg_obj.managers_who_wait.remove(partner_wait_obg)
+		wait_to_agg_obj.save()
+		return True
+	except:
+		return False
+
+
+def get_all_wait_agreement_t_need_to_approve(manager_id):
+	manager = User.objects.get(id=manager_id)
+	return WaitToAgreement.objects.filter(managers_who_wait__user_who_wait__in=[manager])
+
+
+def approved_user_to_store_manager(wanna_be_manager, store_pk):
+	try:
+		store_obj = Store.objects.get(id=store_pk)
+		wanna_be_manager_user_obg = User.objects.get(username=wanna_be_manager)
+		store_obj.owners.add(User.objects.get(pk=wanna_be_manager_user_obg.id))
+		store_obj.partners.add(User.objects.get(pk=wanna_be_manager_user_obg.id))
+		store_obj.save()
+		my_group = Group.objects.get_or_create(name="store_owners")[0]
+		# my_group = Group.objects.get(name="store_owners")
+		try:
+			if len(ObserverUser.objects.filter(user_id=wanna_be_manager_user_obg.pk)) == 0:
+				ObserverUser.objects.create(user_id=wanna_be_manager_user_obg.pk,
+				                            address="ws://127.0.0.1:8000/ws/store_owner/{}/".format(
+					                            wanna_be_manager_user_obg.pk)).save()
+		except:
+			pass
+		wanna_be_manager_user_obg.groups.add(my_group)
+		assign_perm('ADD_ITEM', wanna_be_manager_user_obg, store_obj)
+		assign_perm('REMOVE_ITEM', wanna_be_manager_user_obg, store_obj)
+		assign_perm('EDIT_ITEM', wanna_be_manager_user_obg, store_obj)
+		assign_perm('ADD_MANAGER', wanna_be_manager_user_obg, store_obj)
+		assign_perm('REMOVE_STORE', wanna_be_manager_user_obg, store_obj)
+		assign_perm('ADD_DISCOUNT', wanna_be_manager_user_obg, store_obj)
+		assign_perm('ADD_RULE', wanna_be_manager_user_obg, store_obj)
+		store_obj.save()
+		try:
+			approved_user = User.objects.get(username=wanna_be_manager)
+			wait_ = WaitToAgreement.objects.filter(user_to_wait=approved_user, store=store_obj)
+			wait_.delete()
+		except:
+			pass
+		return True
+	except:
+		return False
 
 
 def search(txt):
@@ -306,6 +414,17 @@ def len_of_super():
 	return c_User.len_of_super()
 
 
+def add_discount(store_id, percentage, end_date, type=None, amount=None, item_id=None):
+	d = Discount(store_id=store_id, type=type, percentage=percentage, end_date=end_date, amount=amount, item_id=item_id)
+	return [True, d.id]
+
+
+def add_discount(store_id, percentage, end_date, type=None, amount=None, item_id=None):
+	d = Discount(store_id=store_id, type=type, percentage=percentage, end_date=end_date, amount=amount, item_id=item_id)
+	d.save()
+	return [True, d.id]
+
+
 def add_complex_discount_to_store(store_id, left, right, operator):
 	d = ComplexDiscount(store_id=store_id, left=left, right=right, operator=operator)
 	d.save()
@@ -326,7 +445,6 @@ def update_item(item_id, item_dict, user_id):
 	if not (Store.objects.filter(items__id=item_id).exists() and
 	        User.objects.get(id=user_id).has_perm('EDIT_ITEM', Store.objects.filter(items__id=item_id)[0])):
 		return [False, "you don't have the permission to update an item or the item doesn't exists!"]
-
 	c_Item.get_item(item_id=item_id).update(item_dict=item_dict)
 	return True
 
@@ -420,6 +538,72 @@ def get_base_rule(rule_id):
 	if rule.type == "REG":
 		return rule.type + ': Only'
 	return rule.type + ': ' + rule.parameter
+
+
+# sss-----------------------------------------------------------------------------------------
+def store_discounts_string(store_id):
+	base_arr = []
+	complex_arr = []
+	base = []
+	complex = []
+	for discount in reversed(ComplexDiscount.objects.all().filter(store_id=store_id)):
+		if discount.id in complex_arr:
+			continue
+		res = {"id": discount.id, "type": 2, "store": store_id,
+		       "name": string_store_discount(discount, base_arr, complex_arr)}
+		complex.append(res)
+	for discount in Discount.objects.all().filter(store_id=store_id):
+		if discount.id in base_arr:
+			continue
+		res = {"id": discount.id, "type": 1, "store": store_id, "name": get_base_discount(discount.id)}
+		base.append(res)
+	return complex + base
+
+
+def string_store_discount(disc, base_arr, complex_arr):
+	curr = '('
+	if disc.left[0] == '_':
+		base_arr.append(int(disc.left[1:]))
+		curr += get_base_discount(int(disc.left[1:]))
+	else:
+		complex_arr.append(int(disc.left))
+		tosend = ComplexDiscount.objects.get(id=int(disc.left))
+		curr += string_store_discount(tosend, base_arr, complex_arr)
+	curr += ' ' + disc.operator + ' '
+	if disc.right[0] == '_':
+		base_arr.append(int(disc.right[1:]))
+		curr += get_base_discount(int(disc.right[1:]))
+	else:
+		complex_arr.append(int(disc.right))
+		tosend = ComplexDiscount.objects.get(id=int(disc.right))
+		curr += string_store_discount(tosend, base_arr, complex_arr)
+	curr += ')'
+	return curr
+
+
+def get_base_discount(disc_id):
+	discount = Discount.objects.get(id=disc_id)
+	if discount.type == 'MAX':
+		if discount.item is None:
+			res = str(discount.percentage) + ' % off, up to ' + str(discount.amount) + ' items.'
+		else:
+			item = Item.objects.get(id=discount.item.id)
+			res = str(discount.percentage) + ' % off on ' + item.name + ', up to ' + str(discount.amount) + ' of these.'
+	elif discount.type == 'MIN':
+		if discount.item is None:
+			res = 'Buy at least ' + str(discount.amount) + ' items and get ' + str(discount.percentage) + ' % off.'
+		else:
+			item = Item.objects.get(id=discount.item.id)
+			res = 'Buy at least ' + str(discount.amount) + ' copies of ' + item.name + ' and get ' + str(
+				discount.percentage) + ' % off.'
+	else:
+		if discount.item is None:
+			res = str(discount.percentage) + ' % off on the entire store.'
+		else:
+			item = Item.objects.get(id=discount.item.id)
+			res = str(discount.percentage) + ' % off on ' + item.name
+
+	return res
 
 
 def get_store_items(store_id):
@@ -554,27 +738,24 @@ def have_no_more_stores(user_pk):
 	return c_User.get_user(user_id=user_pk).have_no_more_stores()
 
 
-def buy_logic(item_id, amount, user_id, shipping_details, card_details):
+def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart, user_id):
 	pay_transaction_id = -1
 	supply_transaction_id = -1
 	messages_ = ''
-	curr_item = Item.objects.get(id=item_id)
+	c_item = c_Item.get_item(item_id=item_id)
 	amount_in_db1 = Item.objects.get(id=item_id).quantity
-	user = User.objects.get(pk=user_id)
-	if amount <= amount_in_db1:
-		# print("good amount")
-		total = amount * curr_item.price
-		# check item rules
-		if check_item_rules(curr_item, amount, user) is False:
+	if c_item.has_available_amount(amount):
+		total = c_item.calc_total(amount=amount)
+		if not c_item.check_rules(amount = amount):
 			messages_ += "you can't buy due to item policies"
 			return False, 0, 0, messages_
-		store_of_item = Store.objects.get(items__id__contains=item_id)
-		# check store rules
-		if check_store_rules(store_of_item, amount, shipping_details['country'], user) is False:
+
+		store_of_item = c_Store.get_item_store(item_pk=item_id)
+		if not store_of_item.check_rules(amount, shipping_details['country'], is_auth):
 			messages_ += "you can't buy due to store policies"
 			return False, 0, 0, messages_
-		total_after_discount = apply_discounts(store=store_of_item, curr_item=curr_item, amount=int(amount))
-
+		if is_cart is False:
+			total_after_discount = apply_discounts(store=store_of_item, c_item=c_item, amount=int(amount))
 		try:
 			if pay_system.handshake():
 				print("pay hand shake")
@@ -605,40 +786,33 @@ def buy_logic(item_id, amount, user_id, shipping_details, card_details):
 				messages_ += '\n' + 'can`t connect to supply system abort payment!'
 				return False, 0, 0, messages_
 
-			curr_item.quantity = amount_in_db1 - amount
-			curr_item.save()
-
-			# store = get_item_store(_item.pk)
-
+			c_item.quantity = amount_in_db1 - amount
+			c_item.save()
 			try:
-				item_subject = ItemSubject(curr_item.pk)
-				if user.is_authenticated:
+				item_subject = ItemSubject(c_item.pk)
+				if (is_auth):
 					notification = Notification.objects.create(
-						msg=user.username + ' bought ' + str(amount) + ' pieces of ' + curr_item.name)
+						msg=username + ' bought ' + str(amount) + ' pieces of ' + c_item.name)
 					notification.save()
 					item_subject.subject_state = item_subject.subject_state + [notification.pk]
 				else:
 					notification = Notification.objects.create(
-						msg='A guest bought ' + str(amount) + ' pieces of ' + curr_item.name)
+						msg='A guest bought ' + str(amount) + ' pieces of ' + c_item.name)
 					notification.save()
 					item_subject.subject_state = item_subject.subject_state + [notification.pk]
 			except Exception as e:
 				messages_ += 'cant connect websocket ' + str(e)
 
-			_item_name = curr_item.name
-			# print("reached herre")
-			if curr_item.quantity == 0:
-				curr_item.delete()
+			_item_name = c_item.name
+			if c_item.quantity == 0:
+				c_item.delete()
 
 			messages_ += '\n' + 'Thank you! you bought ' + _item_name + '\n' + 'Total after discount: ' \
 			             + str(total_after_discount) + ' $' + '\n' + 'Total before: ' + str(total) + ' $'
 			return True, total, total_after_discount, messages_
 		except Exception as a:
-			# print(a)
-			# print(str(a))
-			# traceback.print_exc()
-			curr_item.quantity = amount_in_db1
-			curr_item.save()
+			c_item.quantity = amount_in_db1
+			c_item.save()
 
 			if not (pay_transaction_id == -1):
 				messages_ += '\n' + 'failed and aborted pay! please try again!'
@@ -653,170 +827,369 @@ def buy_logic(item_id, amount, user_id, shipping_details, card_details):
 		return False, 0, 0, messages_
 
 
-def check_item_rules(item, amount, user):
-	base_arr = []
-	complex_arr = []
-	itemRules = ComplexItemRule.objects.all().filter(item=item)
-	for rule in reversed(itemRules):
-		if rule.id in complex_arr:
-			continue
-		if check_item_rule(rule, amount, base_arr, complex_arr, user) is False:
-			return False
-	itemBaseRules = BaseItemRule.objects.all().filter(item=item)
-	for rule in itemBaseRules:
-		if rule.id in base_arr:
-			continue
-		if check_base_item_rule(rule.id, amount, user) is False:
-			return False
-	return True
-
-
-def check_store_rules(store_of_item, amount, country, user):
-	base_arr = []
-	complex_arr = []
-	storeRules = ComplexStoreRule.objects.all().filter(store=store_of_item)
-	for rule in reversed(storeRules):
-		if rule.id in complex_arr:
-			continue
-		if check_store_rule(rule, amount, country, base_arr, complex_arr, user) is False:
-			return False
-	storeBaseRules = BaseRule.objects.all().filter(store=store_of_item)
-	for rule in storeBaseRules:
-		if rule.id in base_arr:
-			continue
-		if check_base_rule(rule.id, amount, country, user) is False:
-			return False
-	return True
-
-
-#
-def check_store_rule(rule, amount, country, base_arr, complex_arr, user):
+def delete_complex(rule_id):
+	rule = ComplexStoreRule.objects.get(id=rule_id)
 	if rule.left[0] == '_':
-		base_arr.append(int(rule.left[1:]))
-		left = check_base_rule(int(rule.left[1:]), amount, country, user)
-		print('left')
-		print(str(left))
+		BaseRule.objects.get(id=int(rule.left[1:])).delete()
 	else:
-		complex_arr.append(int(rule.left))
-		tosend = ComplexStoreRule.objects.get(id=int(rule.left))
-		left = check_store_rule(tosend, amount, country, base_arr, complex_arr, user)
+		delete_complex(int(rule.left))
 	if rule.right[0] == '_':
-		base_arr.append(int(rule.right[1:]))
-		right = check_base_rule(int(rule.right[1:]), amount, country, user)
-		print('right')
-		print(str(right))
+		BaseRule.objects.get(id=int(rule.right[1:])).delete()
 	else:
-		complex_arr.append(int(rule.right))
-		tosend = ComplexStoreRule.objects.get(id=int(rule.right))
-		right = check_store_rule(tosend, amount, country, base_arr, complex_arr, user)
-	if rule.operator == "AND" and (left == False or right == False):
-		return False
-	if rule.operator == "OR" and (left == False and right == False):
-		return False
-	if rule.operator == "XOR" and ((left == False and right == False) or (left == True and right == True)):
-		return False
-	return True
+		delete_complex(int(rule.right))
+	rule.delete()
 
 
-#
-def check_item_rule(rule, amount, base_arr, complex_arr, user):
-	if rule.left[0] == '_':
-		base_arr.append(int(rule.left[1:]))
-		left = check_base_item_rule(int(rule.left[1:]), amount, user)
-	else:
-		complex_arr.append(int(rule.left))
-		tosend = ComplexItemRule.objects.get(id=int(rule.left))
-		left = check_item_rule(tosend, amount, base_arr, complex_arr, user)
-	if rule.right[0] == '_':
-		base_arr.append(int(rule.right[1:]))
-		right = check_base_item_rule(int(rule.right[1:]), amount, user)
-	else:
-		complex_arr.append(int(rule.right))
-		tosend = ComplexItemRule.objects.get(id=int(rule.right))
-		right = check_item_rule(tosend, amount, base_arr, complex_arr, user)
-	if rule.operator == "AND" and (left == False or right == False):
-		return False
-	if rule.operator == "OR" and (left == False and right == False):
-		return False
-	if rule.operator == "XOR" and ((left == False and right == False) or (left == True and right == True)):
-		return False
-	return True
-
-
-def check_base_item_rule(rule_id, amount, user):
-	rule = BaseItemRule.objects.get(id=rule_id)
-	if rule.type == 'MAX' and amount > int(rule.parameter):
-		return False
-	elif rule.type == 'MIN' and amount < int(rule.parameter):
-		return False
-	return True
-
-
-def check_base_rule(rule_id, amount, country, user):
+def delete_base(rule_id):
 	rule = BaseRule.objects.get(id=rule_id)
-	if rule.type == 'MAX' and amount > int(rule.parameter):
-		return False
-	elif rule.type == 'MIN' and amount < int(rule.parameter):
-		return False
-	elif rule.type == 'FOR' and country == rule.parameter:
-		return False
-	elif rule.type == 'REG' and not user.is_authenticated:
-		return False
-	return True
+	rule.delete()
 
 
-def apply_discounts(store, curr_item, amount):
+def delete_complex_item(rule_id):
+	rule = ComplexItemRule.objects.get(id=rule_id)
+	if rule.left[0] == '_':
+		BaseItemRule.objects.get(id=int(rule.left[1:])).delete()
+	else:
+		delete_complex_item(int(rule.left))
+	if rule.right[0] == '_':
+		BaseItemRule.objects.get(id=int(rule.right[1:])).delete()
+	else:
+		delete_complex_item(int(rule.right))
+	rule.delete()
+
+
+
+def delete_base_item(rule_id):
+	rule = BaseItemRule.objects.get(id=rule_id)
+	rule.delete()
+
+
+
+def delete_complex_discount(disc_id):
+	discount = ComplexDiscount.objects.get(id=disc_id)
+	if discount.left[0] == '_':
+		Discount.objects.get(id=int(discount.left[1:])).delete()
+	else:
+		delete_complex_discount(int(discount.left))
+	if discount.right[0] == '_':
+		Discount.objects.get(id=int(discount.right[1:])).delete()
+	else:
+		delete_complex_discount(int(discount.right))
+	discount.delete()
+
+
+
+def delete_base_discount(disc_id):
+	discount = Discount.objects.get(id=disc_id)
+	discount.delete()
+
+
+def get_discounts_serach(item_id):
+	store_id = Store.objects.get(items__id__contains=item_id).id
+	base_arr = []
+	complex_arr = []
+	base = []
+	complex = []
+	for discount in reversed(ComplexDiscount.objects.all().filter(store_id=store_id)):
+		if discount.id in complex_arr:
+			continue
+		check = []
+		res = search_store_discount(discount, base_arr, complex_arr, item_id, check)
+		if len(check) > 0:
+			complex.append(res)
+	for discount in Discount.objects.all().filter(store_id=store_id):
+		if discount.id in base_arr:
+			continue
+		result = search_base_discount(discount.id, item_id)
+		if result['is_item'] is True:
+			base.append(result['discount'])
+	return complex + base
+
+def search_store_discount(disc, base_arr, complex_arr, item_id, check):
+	curr = '('
+	if disc.left[0] == '_':
+		base_arr.append(int(disc.left[1:]))
+		result = search_base_discount(int(disc.left[1:]), item_id)
+		curr += result['discount']
+		if result['is_item'] is True:
+			check.append(1)
+	else:
+		complex_arr.append(int(disc.left))
+		tosend = ComplexDiscount.objects.get(id=int(disc.left))
+		curr += search_store_discount(tosend, base_arr, complex_arr, item_id, check)
+	curr += ' ' + disc.operator + ' '
+	if disc.right[0] == '_':
+		base_arr.append(int(disc.right[1:]))
+		result = search_base_discount(int(disc.right[1:]), item_id)
+		curr += result['discount']
+		if result['is_item'] is True:
+			check.append(1)
+	else:
+		complex_arr.append(int(disc.right))
+		tosend = ComplexDiscount.objects.get(id=int(disc.right))
+		curr += search_store_discount(tosend, base_arr, complex_arr, item_id, check)
+	curr += ')'
+	return curr
+
+
+def search_base_discount(disc_id, item_id):
+	discount = Discount.objects.get(id=disc_id)
+	flag = False
+	today = datetime.date.today()
+	if discount.end_date >= today:
+		if discount.type == 'MAX':
+			if discount.item is None:
+				res = str(discount.percentage) + ' % off, up to ' + str(discount.amount) + ' items.'
+				flag = True
+			else:
+				item = Item.objects.get(id=discount.item.id)
+				res = str(discount.percentage) + ' % off on ' + item.name + ', up to ' + str(discount.amount) + ' of these.'
+				if item.id == item_id:
+					flag = True
+		elif discount.type == 'MIN':
+			if discount.item is None:
+				res = 'Buy at least ' + str(discount.amount) + ' items and get ' + str(discount.percentage) + ' % off.'
+				flag = True
+			else:
+				item = Item.objects.get(id=discount.item.id)
+				res = 'Buy at least ' + str(discount.amount) + ' copies of ' + item.name + ' and get ' + str(
+					discount.percentage) + ' % off.'
+				if item.id == item_id:
+					flag = True
+		else:
+			if discount.item is None:
+				res = str(discount.percentage) + ' % off on the entire store.'
+				flag = True
+			else:
+				item = Item.objects.get(id=discount.item.id)
+				res = str(discount.percentage) + ' % off on ' + item.name
+				if item.id == item_id:
+					flag = True
+	return {"is_item": flag, "discount": res}
+
+
+def get_quantity(item_id):
+	return Item.objects.get(id=item_id).quantity
+
+
+def apply_discounts(store, c_item, amount):
+	curr_item = c_item._model
 	base_arr = []
 	complex_arr = []
 	price = curr_item.price * amount
-	store_complex_discountes = ComplexDiscount.objects.filter(store=store)
+	store_complex_discountes = ComplexDiscount.objects.filter(store_id=store.pk)
 	for disc in reversed(store_complex_discountes):
 		if disc.id in complex_arr:
 			continue
-		price = apply_complex(disc, base_arr, complex_arr, curr_item, amount, price)
-	store_base_discountes = Discount.objects.filter(store=store)
+		discount = apply_complex(disc, base_arr, complex_arr, curr_item, amount)
+		if (discount != -1):
+			price = (1 - discount) * float(price)
+	store_base_discountes = Discount.objects.filter(store_id=store.pk)
 	for disc in store_base_discountes:
 		if disc.id in base_arr:
 			continue
 		discount = float(apply_base(disc.id, curr_item, amount))
-		print(price)
-		print(discount)
 		if (discount != -1):
 			price = (1 - discount) * float(price)
 	return price
 
 
-def apply_complex(disc, base_arr, complex_arr, curr_item, amount, price):
+
+def build_map(list_of_items):
+	ret = []
+	print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55')
+	print(list_of_items)
+	for i in list_of_items:
+		store_id = Store.objects.get(items__id__contains=i['item_id']).id
+		if store_id in list(map(lambda x: x['store_id'], ret)):
+			store_detail = list(filter(lambda x: x['store_id'] == store_id, ret))[0]
+			store_detail['amount'] += i['amount']
+			store_detail['items'].append({'item_id':i['item_id'], 'item_amount': i['amount']})
+		else:
+			ret.append({'store_id': store_id, 'amount': i['amount'], 'items':[{'item_id': i['item_id'], 'item_amount':i['amount']}]})
+
+	return ret
+
+def calculate_price(store_map):
+	ret = []
+	for item in store_map['items']:
+		item_o = Item.objects.get(id=item['item_id'])
+		ret.append({'item_id': item['item_id'], 'price': float(item_o.price) * float(item['item_amount'])})
+	return ret
+
+def calculate_total_price(list_price):
+	ret = 0
+	for i in list_price:
+		ret += i['price']
+	return ret
+
+def apply_discounts_for_cart(list_of_items):
+	struct = build_map(list_of_items)
+	total_price = 0
+	total_before = 0
+	for store_map in struct:
+		base_arr = []
+		complex_arr = []
+		store_price = calculate_price(store_map)
+		total_before += calculate_total_price(store_price)
+		_store = Store.objects.get(id=store_map['store_id'])
+		store_complex_discountes = ComplexDiscount.objects.all().filter(store=_store)
+		for disc in reversed(store_complex_discountes):
+			if disc.id in complex_arr:
+				continue
+			discount = apply_complex_cart(disc, base_arr, complex_arr, store_map)
+			if (discount != -1):
+				for dis in discount:
+					iprice = list(filter(lambda x: x['item_id'] == dis['product'], store_price))
+					if len(iprice) != 0:
+						iprice[0]['price'] = float(iprice[0]['price']) * float((1 - dis['discount']))
+					else:
+						for i in store_price:
+							i['price'] = float(i['price']) * float((1 - dis['discount']))
+		store_base_discountes = Discount.objects.filter(store=store_map['store_id'])
+		for disc in store_base_discountes:
+			if disc.id in base_arr:
+				continue
+			discount = apply_base_cart(disc.id, store_map)
+			if (discount != -1):
+				iprice = list(filter(lambda x: x['item_id']== discount[0]['product'], store_price))
+				if len(iprice) != 0:
+					iprice[0]['price'] = float(iprice[0]['price']) * float((1 - discount[0]['discount']))
+				else:
+					for i in store_price:
+						i['price'] = float(i['price']) * float((1 - discount[0]['discount']))
+		total_store = 0
+		for price in store_price:
+			total_store += float(price['price'])
+		total_price += total_store
+	return total_price, total_before
+
+
+
+
+def apply_complex_cart(disc, base_arr, complex_arr, store_map):
+	if disc.left[0] == '_':
+		base_arr.append(int(disc.left[1:]))
+		left = apply_base_cart(int(disc.left[1:]), store_map)
+	else:
+		complex_arr.append(int(disc.left))
+		tosend = ComplexDiscount.objects.get(id=int(disc.left))
+		left = apply_complex_cart(tosend, base_arr, complex_arr, store_map)
+	if disc.right[0] == '_':
+		base_arr.append(int(disc.right[1:]))
+		right = apply_base_cart(int(disc.right[1:]),store_map)
+	else:
+		complex_arr.append(int(disc.right))
+		tosend = ComplexDiscount.objects.get(id=int(disc.right))
+		right = apply_complex_cart(tosend, base_arr, complex_arr,store_map)
+	if disc.operator == "AND" and (left != -1 and right != -1):
+		res = []
+		for dis in right:
+			ids_left = list(map(lambda x: x['product'], left))
+			if dis['product'] in ids_left:
+				index = ids_left.index(dis['product'])
+				res.append({'product': dis['product'], 'discount': 1 - ((1 - dis['discount']) * (1 - left[index]['discount']))})
+				left.remove(left[index])
+			else:
+				res.append(dis)
+		return res + left
+	elif disc.operator == "OR":
+		res = []
+		if left != -1 and right != -1:
+			for dis in right:
+				ids_left = list(map(lambda x: x['product'], left))
+				if dis['product'] in ids_left:
+					index = ids_left.index(dis['product'])
+					res.append({'product': dis['product'],
+					            'discount': 1 - ((1 - dis['discount']) * (1 - left[index]['discount']))})
+					left.remove(left[index])
+				else:
+					res.append(dis)
+			return res + left
+		elif left != -1:
+			return left
+		elif right != -1:
+			return right
+	elif disc.operator == "XOR":
+		if (left != -1 and right != -1) or (left != -1 and right == -1):
+			return left
+		else:
+			return right
+	else:
+		return -1
+
+
+
+def apply_base_cart(disc, store_map):
+	base = Discount.objects.get(id=disc)
+	list_of_ids = list(map(lambda x: x['item_id'], store_map['items']))
+	per = float(base.percentage)
+	today = datetime.date.today()
+	if base.end_date < today:
+		return -1
+	if base.item == None:
+		if base.type == 'MIN':
+			if store_map['amount'] >= base.amount:
+				return [{'product': '*' ,'discount': per / 100}]
+			else:
+				return -1
+		if base.type == 'MAX':
+			if store_map['amount'] <= base.amount:
+				return [{'product': '*' ,'discount': per / 100}]
+			else:
+				return -1
+		else:
+			return [{'product': '*' ,'discount': per / 100}]
+	if str(base.item.id) in list_of_ids:
+		item_index = list_of_ids.index(str(base.item.id))
+		if base.type == 'MIN':
+			if store_map['items'][item_index]['item_amount'] >= base.amount:
+				return [{'product': list_of_ids[item_index] ,'discount': per / 100}]
+			else:
+				return -1
+		if base.type == 'MAX':
+			if store_map['items'][item_index]['item_amount'] <= base.amount:
+				return [{'product': list_of_ids[item_index] ,'discount': per / 100}]
+			else:
+				return -1
+		else:
+			return [{'product': list_of_ids[item_index] ,'discount': per / 100}]
+	else:
+		return -1
+
+
+
+def apply_complex(disc, base_arr, complex_arr, curr_item, amount):
 	if disc.left[0] == '_':
 		base_arr.append(int(disc.left[1:]))
 		left = apply_base(int(disc.left[1:]), curr_item, amount)
 	else:
 		complex_arr.append(int(disc.left))
-		tosend = ComplexStoreRule.objects.get(id=int(disc.left))
-		left = apply_complex(tosend, base_arr, complex_arr, curr_item, amount, price)
+		tosend = ComplexDiscount.objects.get(id=int(disc.left))
+		left = apply_complex(tosend, base_arr, complex_arr, curr_item, amount)
 	if disc.right[0] == '_':
 		base_arr.append(int(disc.right[1:]))
 		right = apply_base(int(disc.right[1:]), curr_item, amount)
 	else:
 		complex_arr.append(int(disc.right))
-		tosend = ComplexStoreRule.objects.get(id=int(disc.right))
-		right = apply_complex(tosend, base_arr, complex_arr, curr_item, amount, price)
+		print(disc.right)
+		tosend = ComplexDiscount.objects.get(id=int(disc.right))
+		right = apply_complex(tosend, base_arr, complex_arr, curr_item, amount)
 	if disc.operator == "AND" and (left != -1 and right != -1):
-		return (float(price) * float(left)) * float(right)
+		return 1 - ((1 - left) * (1 - right))
 	elif disc.operator == "OR":
-		if left != -1:
-			price = left * price
-		if right != -1:
-			price = right * price
-		return price
+		if left != -1 and right != -1:
+			return 1 - ((1 - left) * (1 - right))
+		elif left != -1:
+			return left
+		elif right != -1:
+			return right
 	elif disc.operator == "XOR":
-		price1 = price
-		price2 = price
-		if left != -1:
-			price1 = left * price
-		if right != -1:
-			price2 = right * price
-		return min(price1, price2)
+		return max(left, right)
+	else:
+		return -1
+
+
 
 
 def apply_base(disc, curr_item, amount):
@@ -852,6 +1225,4 @@ def apply_base(disc, curr_item, amount):
 		else:
 			return per / 100
 	else:
-		print(curr_item.id)
-		print(base.item.id)
 		return -1

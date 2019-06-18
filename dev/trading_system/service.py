@@ -7,7 +7,7 @@ def search(txt):
 	return domain.search(txt)
 
 
-def add_manager(user_name, picked, is_owner, store_pk, request_user_name):
+def add_manager(user_name, picked, is_owner, store_pk, request_user_name, is_partner):
 	"""
 
 	:param user_name: 
@@ -17,7 +17,7 @@ def add_manager(user_name, picked, is_owner, store_pk, request_user_name):
 	:param request_user_name: 
 	:return: True if failing
 	"""
-	return domain.add_manager(user_name, picked, is_owner, store_pk, request_user_name)
+	return domain.add_manager(user_name, picked, is_owner, store_pk, request_user_name, is_partner)
 
 
 def open_store(store_name, desc, user_id):
@@ -172,5 +172,59 @@ def add_complex_discount(store_id, left, right, operator):
 	return domain.add_complex_discount_to_store(store_id, left, right, operator)
 
 
-def buy_logic(item_id, amount, user_id, shipping_details, card_details):
-	return domain.buy_logic(item_id, amount, user_id, shipping_details, card_details)
+def buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart, user_id):
+	return domain.buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart , user_id)
+
+
+def store_discounts_string(store_id):
+	return domain.store_discounts_string(store_id)
+
+
+def delete_complex_rule(rule_id):
+	return domain.delete_complex(rule_id)
+
+
+def delete_base_rule(rule_id):
+	return domain.delete_base(rule_id)
+
+
+def delete_complex_item_rule(rule_id):
+	return domain.delete_complex_item(rule_id)
+
+
+def delete_base_item_rule(rule_id):
+	return domain.delete_base_item(rule_id)
+
+
+def delete_complex_discount(disc):
+	return domain.delete_complex_discount(disc)
+
+
+def delete_base_store_discount(disc):
+	return domain.delete_base_discount(disc)
+
+
+def get_discounts_serach(item_id):
+	return domain.get_discounts_serach(item_id)
+
+
+def get_quantity(item_id):
+	return domain.get_quantity(item_id)
+
+
+def apply_discounts_for_cart(list_of_items):
+	return domain.apply_discounts_for_cart(list_of_items)
+	
+def approved_user_to_store_manager(wanna_be_manager, store_pk):
+	return domain.approved_user_to_store_manager(wanna_be_manager, store_pk)
+
+
+
+def get_all_wait_agreement_t_need_to_approve(manager_id):
+	return domain.get_all_wait_agreement_t_need_to_approve(manager_id)
+
+def check_if_user_is_approved(user_id, store_id):
+	return domain.check_if_user_is_approved(user_id, store_id)
+
+def agreement_by_partner(partner_id, store_pk, user_pk):
+	return domain. agreement_by_partner(partner_id, store_pk, user_pk)
