@@ -15,6 +15,7 @@ from trading_system.domain.cart import Cart as c_Cart
 from external_systems.money_collector.payment_system import Payment
 from external_systems.supply_system.supply_system import Supply
 from trading_system.observer import ItemSubject
+from trading_system.templates.OurExceptions import DBFailedExceptionServiceToViews, DBFailedExceptionDomainToService
 
 pay_system = Payment()
 supply_system = Supply()

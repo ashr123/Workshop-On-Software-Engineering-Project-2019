@@ -92,6 +92,8 @@ class Store():
 		for field in self._model._meta.fields:
 			if field.attname in store_dict.keys():
 				setattr(self._model, field.attname, store_dict[field.attname])
+
+
 		self._model.save()
 
 	def get_details(self):

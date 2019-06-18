@@ -310,7 +310,10 @@ def get_item_store(item_pk):
 
 # TODO move to domain
 def get_cart(store_pk, user_pk):
-	carts = Cart.objects.filter(customer_id=user_pk, store_id=store_pk)
+	carts = Cart.objects.all().filter(customer_id=user_pk)
+	print(carts)
+	carts = carts.filter(store_id=store_pk.id)
+	print(carts)
 	if len(carts) == 0:
 		return None
 	else:

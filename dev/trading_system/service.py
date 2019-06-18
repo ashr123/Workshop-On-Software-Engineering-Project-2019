@@ -1,6 +1,7 @@
 import json
 
 from trading_system.domain import domain
+from trading_system.templates.OurExceptions import DBFailedExceptionDomainToService, DBFailedExceptionServiceToViews
 
 
 def buy_item():
@@ -55,13 +56,17 @@ def add_complex_rule_to_item_2(item_id, prev_rule, rule1, parameter1, rule2, par
 
 
 def add_item_to_store(item_json, store_id):
+	try:
+		return domain.add_item_to_store(price=item_dict['price'],
+		                                name=item_dict['name'],
+		                                description=item_dict['description'],
+		                                category=item_dict['category'],
+		                                quantity=item_dict['quantity'],
+		                                store_id=store_id)
+	except DBFailedExceptionDomainToService as e:
+		raise DBFailedExceptionServiceToViews(msg=e.msg)
 	item_dict = json.loads(item_json)
-	return domain.add_item_to_store(price=item_dict['price'],
-	                                name=item_dict['name'],
-	                                description=item_dict['description'],
-	                                category=item_dict['category'],
-	                                quantity=item_dict['quantity'],
-	                                store_id=store_id)
+
 
 
 def can_remove_store(store_id, user_id):
