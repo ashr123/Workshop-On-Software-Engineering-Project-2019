@@ -1,10 +1,9 @@
 from django.contrib.auth.models import User as m_User, Group
 
-
 import trading_system.domain.store as StoreModule
 
 
-class User():
+class User:
 	def __init__(self, model =None):
 		if model!=None:
 			self._model = model

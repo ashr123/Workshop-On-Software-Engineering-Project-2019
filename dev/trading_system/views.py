@@ -65,9 +65,9 @@ def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 	return render(request, 'homepage_guest.html', {'text': SearchForm()})
 
 
-def item(request: Any, id: int) -> HttpResponse:
+def item(request: Any, id1: int) -> HttpResponse:
 	return render(request, 'trading_system/item_page.html', {
-		'item': Item.objects.get(name=id)
+		'item': Item.objects.get(name=id1)
 	})
 
 
@@ -276,7 +276,6 @@ def make_guest_cart(request):
 		# 	items_ += list([service.get_item(id1)])
 		# return items_
 		if 'cart' in request.session:
-
 			cartG = request.session['cart']
 			id_list = cartG['items_id']
 			for id in id_list:
@@ -404,16 +403,15 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 				base_template_name = 'store/homepage_store_owner.html'
 			else:
 				base_template_name = 'homepage_member.html'
-
-			list_ = None
+			list_ = []
 
 		form = CartForm(request.user, list_)
 		q_list = QForm(request.user, list_)
 		text = SearchForm()
 		user_name = request.user.username
+		items_of_user = []
 		if request.user.is_authenticated:
 			carts = Cart.objects.filter(customer=request.user)
-			items_of_user = []
 			for cart in carts:
 				items_of_user += list(cart.items.all())
 		context = {
@@ -424,6 +422,7 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 			'qua': q_list,
 			'card': PayForm(),
 			'shipping': ShippingForm(),
+			'items_list': items_of_user + list_
 		}
 		return render(request, 'trading_system/cart_test.html', context)
 

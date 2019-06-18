@@ -1,4 +1,7 @@
+from decimal import Decimal
+
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 
@@ -22,7 +25,7 @@ CategoryChoice = (
 
 
 class Item(models.Model):
-	price = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+	price = models.DecimalField(max_digits=6, decimal_places=2, default=0, validators=[MinValueValidator(Decimal('0.01'))])
 	name = models.CharField(max_length=30, default=None)
 	description = models.CharField(max_length=64, default=None)
 	category = models.CharField(max_length=30, choices=CategoryChoice, default=1)
@@ -56,12 +59,13 @@ class Store(models.Model):
 
 	class Meta:
 		permissions = (
-			('ADD_ITEM', 'add item'),
-			('REMOVE_ITEM', 'delete item'),
-			('EDIT_ITEM', 'update item'),
-			('ADD_MANAGER', 'add manager'),
-			('REMOVE_STORE', 'delete store'),
-			('ADD_DISCOUNT', 'add discount'),
+			('ADD_ITEM', 'add item'),  # V
+			('REMOVE_ITEM', 'delete item'),  # V
+			('EDIT_ITEM', 'update item'),  # V
+			('ADD_MANAGER', 'add manager'),  # V
+			('REMOVE_STORE', 'delete store'),  # V
+			('ADD_DISCOUNT', 'add discount'),  # V
+			('ADD_RULE', 'add rule')  # V
 		)
 
 

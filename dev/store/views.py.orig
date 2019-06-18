@@ -1,11 +1,6 @@
-<<<<<<< HEAD
 import json
-=======
-import decimal
-from datetime import date
->>>>>>> origin/noa_delete_rule
 import json
-import traceback
+import logging
 
 import simplejson as s_json
 from django.contrib import messages
@@ -24,16 +19,13 @@ from guardian.decorators import permission_required_or_403
 from trading_system import service
 from trading_system.forms import SearchForm
 from trading_system.models import Notification, NotificationUser
-from trading_system.observer import ItemSubject
 from . import forms
 from .forms import BuyForm, AddManagerForm, AddRuleToItem, AddRuleToStore_base, AddRuleToStore_withop, \
 	AddRuleToStore_two, AddDiscountForm, AddComplexDiscountForm
 from .forms import ShippingForm, AddRuleToItem_withop, AddRuleToItem_two
-from .models import Item, ComplexStoreRule, ComplexItemRule, Discount, ComplexDiscount
+from .models import Item, ComplexStoreRule, ComplexItemRule
 from .models import Store
-from django.db import transaction
 
-import logging
 log_setup = logging.getLogger('event log')
 formatter = logging.Formatter('%(levelname)s: %(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 fileHandler = logging.FileHandler('event.log', mode='a')
@@ -78,7 +70,7 @@ def add_item(request, pk):
 		form = ItemForm(request.POST)
 		if form.is_valid():
 			ans = service.add_item_to_store(item_json=s_json.dumps(form.cleaned_data),
-			                                store_id=pk)
+			                                store_id=pk, user_id=request.user.pk)
 			messages.success(request, ans[1])  # <-
 			logev.info('add_item post s')
 			return redirect('/store/home_page_owner/')
@@ -227,16 +219,17 @@ class ItemUpdate(UpdateView):
 
 	def get_object(self, queryset=None):
 		item_details = service.get_item_details(item_id=self.kwargs['pk'])
-		return Item.objects.create(
-			name=item_details['name'],
-			description=item_details['description'],
-			category=item_details['category'],
-			price=item_details['price'],
-			quantity=item_details['quantity']
-		)
+		return Item.objects.get(id=self.kwargs['pk'])
+		#Item.objects.create(
+		# 	name=item_details['name'],
+		# 	description=item_details['description'],
+		# 	category=item_details['category'],
+		# 	price=item_details['price'],
+		# 	quantity=item_details['quantity']
+		# )
 
 	def form_valid(self, form):
-		service.update_item(item_id=self.kwargs['pk'], item_dict=form.cleaned_data)
+		service.update_item(item_id=self.kwargs['pk'], item_dict=form.cleaned_data, user_id=self.request.user.pk)
 		return super().form_valid(form)
 
 
@@ -256,24 +249,14 @@ class ItemDelete(DeleteView):
 
 	def get_object(self, queryset=None):
 		item_details = service.get_item_details(item_id=self.kwargs['pk'])
-<<<<<<< HEAD
 		return Item.objects.create(name=item_details['name'],
 		                           description=item_details['description'],
 		                           category=item_details['category'],
 		                           price=item_details['price'],
 		                           quantity=item_details['quantity'])
-=======
-		return Item.objects.create(
-			name=item_details['name'],
-			description=item_details['description'],
-			category=item_details['category'],
-			price=item_details['price'],
-			quantity=item_details['quantity']
-		)
->>>>>>> origin/noa_delete_rule
 
 	def delete(self, request, *args, **kwargs):
-		service.delete_item(item_id=kwargs['pk'])
+		service.delete_item(item_id=kwargs['pk'], user_id=request.user.pk)
 		return super(ItemDelete, self).delete(request, *args, **kwargs)
 
 
@@ -320,6 +303,7 @@ class StoreUpdate(UpdateView):
 		context = super(StoreUpdate, self).get_context_data(**kwargs)  # get the default context data
 		text = SearchForm()
 		rules = service.store_rules_string(store_id=self.kwargs['pk'])
+		discounts = service.store_discounts_string(store_id=self.kwargs['pk'])
 		store_items = service.get_store_items(store_id=self.kwargs['pk'])
 
 		store_managers = service.get_store_managers(store_id=self.kwargs['pk'])
@@ -327,25 +311,21 @@ class StoreUpdate(UpdateView):
 		del store_owners[0]
 		all_managers = store_owners + store_managers
 		# print(store_owners)
-<<<<<<< HEAD
-=======
-		delet_owners = DeleteOwners(all_managers, self.kwargs['pk'])
-
-		user_name = self.request.user.username
->>>>>>> origin/noa_delete_rule
 		context['text'] = text
 		context['user_name'] = self.request.user.username
 		context['form_'] = UpdateItems(store_items)
 		context['rules'] = rules
+		context['discounts'] = discounts
 		context['delete_owners'] = DeleteOwners(all_managers, self.kwargs['pk'])
 		return context
 
 	def get_object(self, queryset=None):
 		store_details = service.get_store_details(store_id=self.kwargs['pk'])
-		return Store.objects.create(
-			name=store_details['name'],
-			description=store_details['description']
-		)
+		return Store.objects.get(id=self.kwargs['pk'])
+		# 	Store.objects.create(
+		# 	name=store_details['name'],
+		# 	description=store_details['description']
+		# )
 
 	def form_valid(self, form):
 		service.update_store(store_id=self.kwargs['pk'], store_dict=form.cleaned_data)
@@ -373,7 +353,7 @@ class StoreDelete(DeleteView):
 			return render(request, 'homepage_member.html', {'text': text, 'user_name': user_name})
 
 		owner_name = service.get_store_creator(store_id=kwargs['pk'])
-		ans = service.delete_store(store_id=kwargs['pk'])
+		ans = service.delete_store(store_id=kwargs['pk'], user_id=request.user.pk)
 		# response = super(StoreDelete, self).delete(request, *args, **kwargs)
 		messages.success(request, ans[1])
 		if service.have_no_more_stores((User.objects.get(username=owner_name)).id):
@@ -447,224 +427,7 @@ def get_store_of_item(item_id):
 	return Store.objects.filter(items__id__contains=item_id)[0]
 
 
-<<<<<<< HEAD
-
-######################elhanan prev###########################
-
-=======
-def apply_discounts(store, curr_item, amount):
-	base_arr = []
-	complex_arr = []
-	price = curr_item.price * amount
-	store_complex_discountes = ComplexDiscount.objects.filter(store=store)
-	for disc in reversed(store_complex_discountes):
-		if disc.id in complex_arr:
-			continue
-		price = apply_complex(disc, base_arr, complex_arr, curr_item, amount, price)
-	store_base_discountes = Discount.objects.filter(store=store)
-	for disc in store_base_discountes:
-		if disc.id in base_arr:
-			continue
-		discount = float(apply_base(disc.id, curr_item, amount))
-		print(price)
-		print(discount)
-		if (discount != -1):
-			price = (1-discount) * float(price)
-	return price
-
-
-def apply_complex(disc, base_arr, complex_arr, curr_item, amount, price):
-	if disc.left[0] == '_':
-		base_arr.append(int(disc.left[1:]))
-		left = apply_base(int(disc.left[1:]), curr_item, amount)
-	else:
-		complex_arr.append(int(disc.left))
-		tosend = ComplexStoreRule.objects.get(id=int(disc.left))
-		left = apply_complex(tosend, base_arr, complex_arr, curr_item, amount, price)
-	if disc.right[0] == '_':
-		base_arr.append(int(disc.right[1:]))
-		right = apply_base(int(disc.right[1:]), curr_item, amount)
-	else:
-		complex_arr.append(int(disc.right))
-		tosend = ComplexStoreRule.objects.get(id=int(disc.right))
-		right = apply_complex(tosend, base_arr, complex_arr, curr_item, amount, price)
-	if disc.operator == "AND" and (left != -1 and right != -1):
-		return (price *left)*right
-	elif disc.operator == "OR":
-		if left != -1:
-			price = left * price
-		if right != -1:
-			price = right * price
-		return price
-	elif disc.operator == "XOR":
-		price1 = price
-		price2 = price
-		if left != -1:
-			price1 = left * price
-		if right != -1:
-			price2 = right * price
-		return min(price1, price2)
-
-
-def apply_base(disc, curr_item, amount):
-	base = Discount.objects.get(id=disc)
-	per = float(base.percentage)
-	today = date.today()
-	if base.end_date < today:
-		return -1
-	if base.item == None:
-		if base.type == 'MIN':
-			if amount >= base.amount:
-				return per / 100
-			else:
-				return -1
-		if base.type == 'MAX':
-			if amount <= base.amount:
-				return per / 100
-			else:
-				return -1
-		else:
-			return per / 100
-	elif base.item.id == curr_item.id:
-		if base.type == 'MIN':
-			if amount >= base.amount:
-				return per / 100
-			else:
-				return -1
-		if base.type == 'MAX':
-			if amount <= base.amount:
-				return per / 100
-			else:
-				return -1
-		else:
-			return per / 100
-	else:
-		print(curr_item.id)
-		print(base.item.id)
-		return -1
-
-
-######################elhanan prev###########################
-def buy_logic(item_id, amount, amount_in_db, user, shipping_details, card_details):
-	pay_transaction_id = -1
-	supply_transaction_id = -1
-
-	messages_ = ''
-	curr_item = Item.objects.get(id=item_id)
-	if (amount <= amount_in_db):
-		# print("good amount")
-		total = amount * curr_item.price
-		new_q = amount_in_db - amount
-		# check item rules
-		if check_item_rules(curr_item, amount, user) is False:
-			messages_ = "you can't buy due to item policies"
-			return False, 0, 0, messages_
-		store_of_item = Store.objects.get(items__id__contains=item_id)
-		# check store rules
-		if check_store_rules(store_of_item, amount, shipping_details['country'], user) is False:
-			messages_ = "you can't buy due to store policies"
-			return False, 0, 0, messages_
-		# check discounts for this item and store
-		total_after_discount = apply_discounts(store_of_item, curr_item, int(amount))
-
-		try:
-			if pay_system.handshake():
-				print("pay hand shake")
-
-				pay_transaction_id = pay_system.pay(str(card_details['card_number']), str(card_details['month']),
-				                                    str(card_details['year']), str(card_details['holder']),
-				                                    str(card_details['cvc']),
-				                                    str(card_details['id']))
-				if (pay_transaction_id == '-1'):
-					messages_ += '\n' + 'can`t pay !'
-					return False, 0, 0, messages_
-			else:
-				messages_ += '\n' + 'can`t connect to pay system!'
-				return False, 0, 0, messages_
-			if supply_system.handshake():
-				print("supply hand shake")
-				supply_transaction_id = supply_system.supply(str(shipping_details['name']),
-				                                             str(shipping_details['address']),
-				                                             str(shipping_details['city']),
-				                                             str(shipping_details['country']),
-				                                             str(shipping_details['zip']))
-				if (supply_transaction_id == '-1'):
-					chech_cancle = pay_system.cancel_pay(pay_transaction_id)
-					messages_ += '\n' + 'can`t supply abort payment!'
-					return False, 0, 0, messages_
-			else:
-				chech_cancle = pay_system.cancel_pay(pay_transaction_id)
-				messages_ += '\n' + 'can`t connect to supply system abort payment!'
-				return False, 0, 0, messages_
-
-			curr_item.quantity = amount_in_db - amount
-			curr_item.save()
-
-			# store = get_item_store(_item.pk)
-			item_subject = ItemSubject(curr_item.pk)
-			# try:
-			# 	if (user.is_authenticated):
-			# 		notification = Notification.objects.create(
-			# 			msg=user.username + ' bought ' + str(amount) + ' pieces of ' + curr_item.name)
-			# 		notification.save()
-			# 		item_subject.subject_state = item_subject.subject_state + [notification.pk]
-			# 	else:
-			# 		notification = Notification.objects.create(
-			# 			msg='A guest bought ' + str(amount) + ' pieces of ' + curr_item.name)
-			# 		notification.save()
-			# 		item_subject.subject_state = item_subject.subject_state + [notification.pk]
-			# except Exception as e:
-			# 	messages_ += 'cant connect websocket ' + str(e)
-
-			_item_name = curr_item.name
-			# print("reached herre")
-			if (curr_item.quantity == 0):
-				curr_item.delete()
-
-			messages_ += '\n' + 'Thank you! you bought ' + _item_name + '\n' + 'Total after discount: ' \
-			             + str(total_after_discount) + ' $' + '\n' + 'Total before: ' + str(total) + ' $'
-			return True, total, total_after_discount, messages_
-		except Exception as a:
-			# print(a)
-			# print(str(a))
-			traceback.print_exc()
-			curr_item.quantity = amount_in_db
-			curr_item.save()
-
-			if not (pay_transaction_id == -1):
-				messages_ += '\n' + 'failed and aborted pay! please try again!'
-				chech_cancle = pay_system.cancel_pay(pay_transaction_id)
-			if not (supply_transaction_id == -1):
-				messages_ += '\n' + 'failed and aborted supply! please try again!'
-				chech_cancle_supply = supply_system.cancel_supply(supply_transaction_id)
-			messages_ = "can`t buy this item " + str(item_id) + '  :  ' + str(a)
-			return False, 0, 0, messages_
-	else:
-		messages_ = "no such amount for item : " + str(item_id)
-		return False, 0, 0, messages_
->>>>>>> origin/noa_delete_rule
-
-
-#################################################3
-
 def buy_item(request, pk):
-<<<<<<< HEAD
-	# return redirect('/store/contact/' + str(pk) + '/')
-	print('heryyyyyyyyyyyy')
-=======
-	form_class = BuyForm
-	curr_item = Item.objects.get(id=pk)
-	context = {
-		'name': curr_item.name,
-		'pk': curr_item.id,
-		'form': form_class,
-		'price': curr_item.price,
-		'description': curr_item.description,
-		'text': SearchForm(),
-		'card': PayForm(),
-		'shipping': ShippingForm(),
-	}
->>>>>>> origin/noa_delete_rule
 	if request.method == 'POST':
 		print("post")
 		form = BuyForm(request.POST)
@@ -675,11 +438,11 @@ def buy_item(request, pk):
 			# shipping
 			country = shipping_form.cleaned_data.get('country')
 			city = shipping_form.cleaned_data.get('city')
-			zip = shipping_form.cleaned_data.get('zip')
+			zip1 = shipping_form.cleaned_data.get('zip')
 			address = shipping_form.cleaned_data.get('address')
 			name = shipping_form.cleaned_data.get('name')
 
-			shipping_details = {'country': country, 'city': city, 'zip': zip, 'address': address, 'name': name}
+			shipping_details = {'country': country, 'city': city, 'zip': zip1, 'address': address, 'name': name}
 
 			# card
 
@@ -688,22 +451,25 @@ def buy_item(request, pk):
 			year = supply_form.cleaned_data.get('year')
 			holder = supply_form.cleaned_data.get('holder')
 			cvc = supply_form.cleaned_data.get('cvc')
-			id = supply_form.cleaned_data.get('id')
+			id1 = supply_form.cleaned_data.get('id')
 
 			card_details = {'card_number': card_number, 'month': month, 'year': year, 'holder': holder, 'cvc': cvc,
-			                'id': id}
+			                'id': id1}
 
 			#########################buy proccss
-			_item = Item.objects.get(id=pk)
+			#_item = Item.objects.get(id=pk)
 			amount = form.cleaned_data.get('amount')
-			amount_in_db = _item.quantity
-
 <<<<<<< HEAD
-			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, amount_in_db, request.user,shipping_details, card_details)
+
+			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, request.user.pk,
+			                                                                  shipping_details, card_details)
 =======
-			valid, total, total_after_discount, messages_ = buy_logic(pk, amount, amount_in_db, request.user,
-			                                                          shipping_details, card_details)
+			amount_in_db = service.get_quantity(item_id=pk)
+			is_auth = request.user.is_authenticated
+			username = request.user.username
+			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, False)
 >>>>>>> origin/noa_delete_rule
+
 			if valid == False:
 				messages.warning(request, messages_)
 				return redirect('/login_redirect')
@@ -731,35 +497,6 @@ def buy_item(request, pk):
 		return render(request, 'store/buy_item.html', context)
 
 
-<<<<<<< HEAD
-=======
-def check_base_item_rule(rule_id, amount, user):
-	rule = BaseItemRule.objects.get(id=rule_id)
-	if rule.type == 'MAX' and amount > int(rule.parameter):
-		return False
-	elif rule.type == 'MIN' and amount < int(rule.parameter):
-		return False
-	return True
-
-
-def check_item_rules(item, amount, user):
-	base_arr = []
-	complex_arr = []
-	itemRules = ComplexItemRule.objects.all().filter(item=item)
-	for rule in reversed(itemRules):
-		if rule.id in complex_arr:
-			continue
-		if check_item_rule(rule, amount, base_arr, complex_arr, user) is False:
-			return False
-	itemBaseRules = BaseItemRule.objects.all().filter(item=item)
-	for rule in itemBaseRules:
-		if rule.id in base_arr:
-			continue
-		if check_base_item_rule(rule.id, amount, user) is False:
-			return False
-	return True
-
-
 def check_base_rule(rule_id, amount, country, user):
 	rule = BaseRule.objects.get(id=rule_id)
 	if rule.type == 'MAX' and amount > int(rule.parameter):
@@ -772,79 +509,6 @@ def check_base_rule(rule_id, amount, country, user):
 		return False
 	return True
 
-
-def check_store_rules(store_of_item, amount, country, user):
-	base_arr = []
-	complex_arr = []
-	storeRules = ComplexStoreRule.objects.all().filter(store=store_of_item)
-	for rule in reversed(storeRules):
-		if rule.id in complex_arr:
-			continue
-		if check_store_rule(rule, amount, country, base_arr, complex_arr, user) is False:
-			return False
-	storeBaseRules = BaseRule.objects.all().filter(store=store_of_item)
-	for rule in storeBaseRules:
-		if rule.id in base_arr:
-			continue
-		if check_base_rule(rule.id, amount, country, user) is False:
-			return False
-	return True
-
-
-#
-def check_store_rule(rule, amount, country, base_arr, complex_arr, user):
-	if rule.left[0] == '_':
-		base_arr.append(int(rule.left[1:]))
-		left = check_base_rule(int(rule.left[1:]), amount, country, user)
-		print('left')
-		print(str(left))
-	else:
-		complex_arr.append(int(rule.left))
-		tosend = ComplexStoreRule.objects.get(id=int(rule.left))
-		left = check_store_rule(tosend, amount, country, base_arr, complex_arr, user)
-	if rule.right[0] == '_':
-		base_arr.append(int(rule.right[1:]))
-		right = check_base_rule(int(rule.right[1:]), amount, country, user)
-		print('right')
-		print(str(right))
-	else:
-		complex_arr.append(int(rule.right))
-		tosend = ComplexStoreRule.objects.get(id=int(rule.right))
-		right = check_store_rule(tosend, amount, country, base_arr, complex_arr, user)
-	if rule.operator == "AND" and (left == False or right == False):
-		return False
-	if rule.operator == "OR" and (left == False and right == False):
-		return False
-	if rule.operator == "XOR" and ((left == False and right == False) or (left == True and right == True)):
-		return False
-	return True
-
-
-#
-def check_item_rule(rule, amount, base_arr, complex_arr, user):
-	if rule.left[0] == '_':
-		base_arr.append(int(rule.left[1:]))
-		left = check_base_item_rule(int(rule.left[1:]), amount, user)
-	else:
-		complex_arr.append(int(rule.left))
-		tosend = ComplexItemRule.objects.get(id=int(rule.left))
-		left = check_item_rule(tosend, amount, base_arr, complex_arr, user)
-	if rule.right[0] == '_':
-		base_arr.append(int(rule.right[1:]))
-		right = check_base_item_rule(int(rule.right[1:]), amount, user)
-	else:
-		complex_arr.append(int(rule.right))
-		tosend = ComplexItemRule.objects.get(id=int(rule.right))
-		right = check_item_rule(tosend, amount, base_arr, complex_arr, user)
-	if rule.operator == "AND" and (left == False or right == False):
-		return False
-	if rule.operator == "OR" and (left == False and right == False):
-		return False
-	if rule.operator == "XOR" and ((left == False and right == False) or (left == True and right == True)):
-		return False
-	return True
-
->>>>>>> origin/noa_delete_rule
 
 @login_required
 def home_page_owner(request):
@@ -865,8 +529,9 @@ class AddItemToStore(CreateView):
 	fields = ['name', 'description', 'price', 'quantity']
 
 
-def itemAddedSucceffuly(request, store_id, id):
+def itemAddedSucceffuly(request, store_id, id1):
 	return render(request, 'store/item_detail.html')
+
 
 # @transaction.atomic
 @permission_required_or_403('ADD_MANAGER', (Store, 'id', 'pk'))
@@ -879,10 +544,10 @@ def add_manager_to_store(request, pk):
 			picked = form.cleaned_data.get('permissions')
 			is_owner = form.cleaned_data.get('is_owner')
 			[fail, message_] = service.add_manager(user_name, picked, is_owner, pk, request.user.username)
-			if (fail):
+			if fail:
 				messages.warning(request, message_)
 				return redirect('/store/home_page_owner/')
-			messages.success(request, user_name + ' is appointed' +message_)
+			messages.success(request, user_name + ' is appointed' + message_)
 			return redirect('/store/home_page_owner/')
 		messages.warning(request, 'error in :  ', form.errors)
 		return redirect('/store/home_page_owner/')
@@ -907,48 +572,25 @@ def add_discount_to_store(request, pk, which_button):
 	if request.method == 'POST':
 		form = AddDiscountForm(pk, request.POST)
 		if form.is_valid():
-<<<<<<< HEAD
-			# disc = form.save()
-			# if (min_max_cond.cleaned_data.get('cond_min_max')):
-			# cond_1 = min_max_cond.save()
-			# disc.conditions.add(cond_1)
-			# disc.save()
-			# store = Store.objects.get(id=pk)
-			# store.discounts.add(disc)
-			# store.save()
-=======
->>>>>>> origin/noa_delete_rule
 			type = form.cleaned_data.get('type')
 			percentage = form.cleaned_data.get('percentage')
 			amount = form.cleaned_data.get('amount')
 			end_date = form.cleaned_data.get('end_date')
-<<<<<<< HEAD
-			add_item1 = form.cleaned_data.get('add_item')
 			item = form.cleaned_data.get('item')
-			if condition is False and add_item1 is False:
-				ans = service.add_discount(store_id=pk, percentage=percentage, end_date=end_date)
-			if condition is False and add_item1 is True:
-				ans = service.add_discount(store_id=pk, percentage=percentage, end_date=end_date, item=item)
-			if condition is True and add_item1 is False:
-				ans = service.add_discount(store_id=pk, kind=type, amount=amount, percentage=percentage,
-				                           end_date=end_date)
-			if condition is True and add_item1 is True:
-				ans = service.add_discount(store_id=pk, kind=type, amount=amount, percentage=percentage,
-				                           end_date=end_date, item=item)
-			print(ans[1])
-			messages.success(request, 'add discount :  ' + str(percentage) + '%')
-			return redirect('/store/home_page_owner/')
-=======
-			item = form.cleaned_data.get('item')
-			ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage, end_date=end_date,
-			                           item=item)
+			if item is None:
+				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,end_date=end_date,
+				                           item_id=None)
+			else:
+				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,end_date=end_date,
+				                           item_id=item.pk)
 			if which_button == 'ok':
+				# ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,
+				#                            end_date=end_date, item_id=item.pk)
 				messages.success(request, 'add discount :  ' + str(percentage) + '%')
 				return redirect('/store/home_page_owner/')
 			if which_button == 'complex':
 				return redirect('/store/add_complex_discount_to_store/' + str(pk) + '/' + '_' + str(ans[1]) + '/a')
 
->>>>>>> origin/noa_delete_rule
 		messages.warning(request, 'error in :  ' + str(form.errors))
 		return redirect('/store/home_page_owner/')
 
@@ -977,8 +619,14 @@ def add_complex_discount_to_store(request, pk, disc, which_button):
 			amount = form.cleaned_data.get('amount')
 			end_date = form.cleaned_data.get('end_date')
 			item = form.cleaned_data.get('item')
-			ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage, end_date=end_date,
-			                           item=item)
+			if (item is None):
+				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,
+				                           end_date=end_date,
+				                           item_id=None)
+			else:
+				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,
+				                           end_date=end_date,
+				                           item_id=item.pk)
 			complex = service.add_complex_discount(store_id=pk, left='_' + str(ans[1]), right=disc, operator=operator)
 			if which_button == 'ok':
 				messages.success(request, 'add complex discount successfully')
@@ -1030,7 +678,8 @@ def add_base_rule_to_store(request, pk, which_button):
 			rule = form.cleaned_data.get('rule')
 			# operator = form.cleaned_data.get('operator')
 			parameter = form.cleaned_data.get('parameter')
-			ans = service.add_base_rule_to_store(rule_type=rule, store_id=pk, parameter=parameter)
+			ans = service.add_base_rule_to_store(rule_type=rule, store_id=pk, parameter=parameter,
+			                                     user_id=request.user.pk)
 			if ans[0] == True:
 				rule_id = ans[1]
 				if which_button == 'ok':
@@ -1068,7 +717,7 @@ def add_complex_rule_to_store_1(request, rule_id1, store_id, which_button):
 			operator = form.cleaned_data.get('operator')
 			parameter = form.cleaned_data.get('parameter')
 			ans = service.add_complex_rule_to_store_1(rule_type=rule, prev_rule=rule_id1, store_id=store_id,
-			                                          operator=operator, parameter=parameter)
+			                                          operator=operator, parameter=parameter, user_id=request.user.pk)
 			if ans[0] == True:
 				rule_to_ret = ans[1]
 				if which_button == 'ok':
@@ -1114,7 +763,8 @@ def add_complex_rule_to_store_2(request, rule_id_before, store_id, which_button)
 			parameter2 = form.cleaned_data.get('parameter2')
 			ans = service.add_complex_rule_to_store_2(rule1=rule1, parameter1=parameter1, rule2=rule2,
 			                                          parameter2=parameter2, store_id=store_id, operator1=operator1,
-			                                          operator2=operator2, prev_rule=rule_id_before)
+			                                          operator2=operator2, prev_rule=rule_id_before,
+			                                          user_id=request.user.pk)
 			if ans[0] == True:
 				if which_button == 'ok':
 					messages.success(request, 'added rule successfully!')
@@ -1159,7 +809,7 @@ def add_base_rule_to_item(request, pk, which_button):
 			# brule = BaseItemRule(item=item, type=rule, parameter=parameter)
 			# brule.save()
 			# rule_id = brule.id
-			ans = service.add_base_rule_to_item(item_id=pk, rule=rule, parameter=parameter)
+			ans = service.add_base_rule_to_item(item_id=pk, rule=rule, parameter=parameter, user_id=request.user.pk)
 			if which_button == 'ok':
 				messages.success(request, 'added rule : ' + str(rule) + ' successfully!')
 				return redirect('/store/home_page_owner/')
@@ -1192,7 +842,7 @@ def add_complex_rule_to_item_1(request, rule_id1, item_id, which_button):
 			operator = form.cleaned_data.get('operator')
 			parameter = form.cleaned_data.get('parameter')
 			ans = service.add_complex_rule_to_item_1(item_id=item_id, prev_rule=rule_id1, rule=rule, operator=operator,
-			                                         parameter=parameter)
+			                                         parameter=parameter, user_id=request.user.pk)
 			if which_button == 'ok':
 				messages.success(request, 'added rule successfully!')
 				return redirect('/store/home_page_owner/')
@@ -1245,7 +895,8 @@ def add_complex_rule_to_item_2(request, rule_id_before, item_id, which_button):
 			# cr_id2 = cr2.id
 			ans = service.add_complex_rule_to_item_2(item_id=item_id, prev_rule=rule_id_before, rule1=rule1,
 			                                         parameter1=parameter1, rule2=rule2, parameter2=parameter2,
-			                                         operator1=operator1, operator2=operator2)
+			                                         operator1=operator1, operator2=operator2,
+			                                         user_id=request.user.pk)
 			if which_button == 'ok':
 				messages.success(request, 'added rule successfully!')
 				return redirect('/store/home_page_owner/')
@@ -1272,13 +923,18 @@ def add_complex_rule_to_item_2(request, rule_id_before, item_id, which_button):
 		return render(request, 'store/add_complex_rule_to_item_2.html', context)
 
 
-def remove_rule_from_store(request, pk, type, store):
-	if type == 2:
+<<<<<<< HEAD
+def remove_rule_from_store(request, pk, type1, store):
+	if type1 == 2:
 		complexRule = ComplexStoreRule.objects.get(id=pk)
 		delete_complex(complexRule.id)
+=======
+def remove_rule_from_store(request, pk, type, store):
+	if type == 2:
+		service.delete_complex_rule(pk)
+>>>>>>> origin/noa_delete_rule
 	else:
-		baseRule = BaseRule.objects.get(id=pk)
-		delete_base(baseRule.id)
+		service.delete_base_rule(pk)
 	messages.success(request, 'remove rule successfully!')
 	text = SearchForm()
 	user_name = request.user.username
@@ -1289,31 +945,21 @@ def remove_rule_from_store(request, pk, type, store):
 	return redirect('/store/update/' + str(store))
 
 
-def delete_complex(rule_id):
-	rule = ComplexStoreRule.objects.get(id=rule_id)
-	if rule.left[0] == '_':
-		BaseRule.objects.get(id=int(rule.left[1:])).delete()
-	else:
-		delete_complex(int(rule.left))
-	if rule.right[0] == '_':
-		BaseRule.objects.get(id=int(rule.right[1:])).delete()
-	else:
-		delete_complex(int(rule.right))
-	rule.delete()
 
 
-def delete_base(rule_id):
-	rule = BaseRule.objects.get(id=rule_id)
-	rule.delete()
 
-
-def remove_rule_from_item(request, pk, type, item):
-	if type == 2:
+<<<<<<< HEAD
+def remove_rule_from_item(request, pk, type1, item):
+	if type1 == 2:
 		complexRule = ComplexItemRule.objects.get(id=pk)
 		delete_complex_item(complexRule.id)
+=======
+def remove_rule_from_item(request, pk, type, item):
+	if type == 2:
+		service.delete_complex_item_rule(pk)
+>>>>>>> origin/noa_delete_rule
 	else:
-		baseRule = BaseItemRule.objects.get(id=pk)
-		delete_base_item(baseRule.id)
+		service.delete_base_item_rule(pk)
 	messages.success(request, 'remove rule successfully!')
 	text = SearchForm()
 	user_name = request.user.username
@@ -1324,22 +970,30 @@ def remove_rule_from_item(request, pk, type, item):
 	return redirect('/store/update_item/' + str(item))
 
 
-def delete_complex_item(rule_id):
-	rule = ComplexItemRule.objects.get(id=rule_id)
-	if rule.left[0] == '_':
-		BaseItemRule.objects.get(id=int(rule.left[1:])).delete()
-	else:
-		delete_complex_item(int(rule.left))
-	if rule.right[0] == '_':
-		BaseItemRule.objects.get(id=int(rule.right[1:])).delete()
-	else:
-		delete_complex_item(int(rule.right))
-	rule.delete()
 
 
-def delete_base_item(rule_id):
-	rule = BaseItemRule.objects.get(id=rule_id)
-	rule.delete()
+
+# sss---------------------------------------------------------------------------------------------
+def remove_discount_from_store(request, pk, type, store):
+	if type == 2:
+		service.delete_complex_discount(pk)
+	else:
+		service.delete_base_store_discount(pk)
+	messages.success(request, 'remove discount successfully!')
+	text = SearchForm()
+	user_name = request.user.username
+	context = {
+		'user_name': user_name,
+		'text': text,
+	}
+	return redirect('/store/update/' + str(store))
+
+
+
+
+
+# sss--------------------------------------------------------------------------------------------------
+
 
 
 class NotificationsListView(ListView):
@@ -1358,7 +1012,8 @@ class NotificationsListView(ListView):
 
 
 def delete_owner(request, pk_owner, pk_store):
-	if (service.remove_manager_from_store(pk_store, pk_owner)):
+	print('remove omanager: ', pk_owner)
+	if service.remove_manager_from_store(pk_store, pk_owner):
 		messages.success(request, 'delete owner')  # <-
 		return redirect('/store/home_page_owner/')
 	else:

@@ -20,6 +20,9 @@ class MyUnitTesting(StaticLiveServerTestCase):
 		REMOVE_ITEM = 'REMOVE_ITEM'
 		EDIT_ITEM = "EDIT_ITEM"
 		ADD_MANAGER = "ADD_MANAGER"
+		REMOVE_STORE = "REMOVE_STORE"
+		ADD_DISCOUNT = "ADD_DISCOUNT"
+		ADD_RULE = "ADD_RULE"
 
 	@classmethod
 	def setUpClass(cls) -> None:
