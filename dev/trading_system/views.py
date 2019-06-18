@@ -66,40 +66,45 @@ def approve_user(pk_manager, pk_user):
 		return False
 
 
-def check_if_this_partner_need_to_approve(manager):
-	return len(WaitToAgreement.objects.filter(managers_who_wait__user_who_wait__in=[manager])) == 1
+# def check_if_this_partner_need_to_approve(manager):
+# 	return len(WaitToAgreement.objects.filter(managers_who_wait__user_who_wait__in=[manager])) == 1
 
 
 def get_all_whait_agreement_t_need_to_approve(manager):
-	return WaitToAgreement.objects.filter(managers_who_wait__user_who_wait__in=[manager])
+	return service.get_all_whait_agreement_t_need_to_approve(manager.id)
 
 
-def check_if_user_is_in_waiting_list(user_):
-	return len(WaitToAgreement.objects.filter(user_to_wait=user_)) == 1
-
+# def check_if_user_is_in_waiting_list(user_):
+# 	return len(WaitToAgreement.objects.filter(user_to_wait=user_)) == 1
+#
 
 def check_if_user_is_approved(user_, store):
-	wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user_, store=store)
-	managers_list = wait_to_agg_obj.managers_who_wait.all()
-	for obj in managers_list:
-		if not obj.is_approve:
-			return False
-	return True
+	# wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user_, store=store)
+	# managers_list = wait_to_agg_obj.managers_who_wait.all()
+	# for obj in managers_list:
+	# 	if not obj.is_approve:
+	# 		return False
+	# return True
+	return service.check_if_user_is_approved(user_.id, store.id)
 
 
 def agreement_by_partner(request, store_pk, user_pk):
-	user = User.objects.get(id=user_pk)
+	# user = User.objects.get(id=user_pk)
 	partner = User.objects.get(id=request.user.id)
-	store = Store.objects.get(id=store_pk)
-	wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user, store=store)
-	partner_wait_obg = wait_to_agg_obj.managers_who_wait.get(user_who_wait=partner)
-	partner_wait_obg.is_approve = True
-	partner_wait_obg.save()
-	if (check_if_user_is_approved(user, store)):
-		approved_user_to_store_manager(user_pk, store_pk)
-		# messages.success(request,' you approve! ')
-	wait_to_agg_obj.managers_who_wait.remove(partner_wait_obg)
-	wait_to_agg_obj.save()
+	# store = Store.objects.get(id=store_pk)
+	# wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user, store=store)
+	# partner_wait_obg = wait_to_agg_obj.managers_who_wait.get(user_who_wait=partner)
+	# partner_wait_obg.is_approve = True
+	# partner_wait_obg.save()
+	# if (check_if_user_is_approved(user, store)):
+	# 	approved_user_to_store_manager(user_pk, store_pk)
+	# messages.success(request,' you approve! ')
+	# wait_to_agg_obj.managers_who_wait.remove(partner_wait_obg)
+	# wait_to_agg_obj.save()
+	if(service.agreement_by_partner(partner.id,store_pk,user_pk)):
+		messages.success(request,' you approve! ')
+	else:
+		messages.warning(request,' try again ')
 	return redirect('/login_redirect')
 
 
@@ -124,9 +129,6 @@ def login_redirect(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 		else:
 
 			return render(request, 'homepage_member.html', {'text': SearchForm(), 'user_name': request.user.username})
-
-	# return render(request, 'homepage_member.html',
-	#               {'text': text, 'user_name': user_name})
 
 	return render(request, 'homepage_guest.html', {'text': SearchForm()})
 

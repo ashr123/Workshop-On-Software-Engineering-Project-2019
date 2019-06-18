@@ -51,6 +51,7 @@ class ApproveForm(forms.Form):
 				          ) + '>' + ' approve: ' + str(User.objects.get(id=key)) +' </a>')) for key, value in list_.items()
 			         ]
 			, widget=forms.CheckboxSelectMultiple(),
+			label='',
 
 		)
 
@@ -65,6 +66,7 @@ class UpdateItems(forms.Form):
 				          o['id']) + '>' + o['name'] + '  :  ' + o['description'] + '</a>')) for o in
 			         list_]
 			, widget=forms.CheckboxSelectMultiple(),
+			label='',
 
 		)
 

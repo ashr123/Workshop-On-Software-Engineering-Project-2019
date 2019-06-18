@@ -51,9 +51,9 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager, is_
 			return [False, messages_]
 		else:
 			if approved_user_to_store_manager(wanna_be_manager, store_pk):
-				return [False,'approved']
+				return [False, 'approved']
 			else:
-				return  [True,'can`t complete']
+				return [True, 'can`t complete']
 
 	try:
 		user_ = User.objects.get(username=wanna_be_manager)
@@ -123,6 +123,40 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager, is_
 			return [True, messages_]
 
 	return [False, messages_]
+
+
+def check_if_user_is_approved(user_id, store_id):
+	user_ = User.objects.get(id=user_id)
+	store = Store.objects.get(id=store_id)
+	wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user_, store=store)
+	managers_list = wait_to_agg_obj.managers_who_wait.all()
+	for obj in managers_list:
+		if not obj.is_approve:
+			return False
+	return True
+
+
+def agreement_by_partner(partner_id, store_pk, user_pk):
+	try:
+		user = User.objects.get(id=user_pk)
+		partner = User.objects.get(id=partner_id)
+		store = Store.objects.get(id=store_pk)
+		wait_to_agg_obj = WaitToAgreement.objects.get(user_to_wait=user, store=store)
+		partner_wait_obg = wait_to_agg_obj.managers_who_wait.get(user_who_wait=partner)
+		partner_wait_obg.is_approve = True
+		partner_wait_obg.save()
+		if (check_if_user_is_approved(user_pk, store_pk)):
+			approved_user_to_store_manager(user.username, store_pk)
+		wait_to_agg_obj.managers_who_wait.remove(partner_wait_obg)
+		wait_to_agg_obj.save()
+		return True
+	except:
+		return False
+
+
+def get_all_whait_agreement_t_need_to_approve(manager_id):
+	manager = User.objects.get(id=manager_id)
+	return WaitToAgreement.objects.filter(managers_who_wait__user_who_wait__in=[manager])
 
 
 def approved_user_to_store_manager(wanna_be_manager, store_pk):

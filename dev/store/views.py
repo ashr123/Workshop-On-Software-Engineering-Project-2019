@@ -1,8 +1,9 @@
 import decimal
-from datetime import date
 import json
-import traceback
 import logging
+import traceback
+from datetime import date
+
 import simplejson as s_json
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -255,7 +256,6 @@ class ItemDelete(DeleteView):
 		                           price=item_details['price'],
 		                           quantity=item_details['quantity'])
 
-
 	def delete(self, request, *args, **kwargs):
 		service.delete_item(item_id=kwargs['pk'], user_id=request.user.pk)
 		return super(ItemDelete, self).delete(request, *args, **kwargs)
@@ -459,7 +459,8 @@ def buy_item(request, pk):
 			amount = form.cleaned_data.get('amount')
 			amount_in_db = _item.quantity
 
-			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, amount_in_db, request.user,shipping_details, card_details)
+			valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, amount_in_db, request.user,
+			                                                                  shipping_details, card_details)
 
 			if valid == False:
 				messages.warning(request, messages_)
@@ -503,24 +504,26 @@ def check_base_rule(rule_id, amount, country, user):
 
 from .forms import ApproveForm
 from trading_system.views import get_all_whait_agreement_t_need_to_approve
+
+
 @login_required
 def home_page_owner(request):
 	text = SearchForm()
 	user_name = request.user.username
 	unread_ntfcs = NotificationUser.objects.filter(user=request.user.pk, been_read=False)
 	approve_list = get_all_whait_agreement_t_need_to_approve(request.user)
-	approved_user_per_store ={}
+	approved_user_per_store = {}
 	for a in approve_list:
 		approved_user_per_store[a.user_to_wait.id] = a.store.id
 
 	approve_form = ApproveForm(approved_user_per_store)
-	print('--------------------------------------------------',approved_user_per_store)
+	print('--------------------------------------------------', approved_user_per_store)
 	context = {
 		'user_name': user_name,
 		'text': text,
 		'owner_id': request.user.pk,
 		'unread_notifications': len(unread_ntfcs),
-		'approve_form':approve_form,
+		'approve_form': approve_form,
 	}
 	return render(request, 'store/homepage_store_owner.html', context)
 
@@ -545,7 +548,7 @@ def add_manager_to_store(request, pk):
 			picked = form.cleaned_data.get('permissions')
 			is_owner = form.cleaned_data.get('is_owner')
 			is_partner = form.cleaned_data.get('is_partner')
-			[fail, message_] = service.add_manager(user_name, picked, is_owner, pk, request.user.username,is_partner)
+			[fail, message_] = service.add_manager(user_name, picked, is_owner, pk, request.user.username, is_partner)
 			if fail:
 				messages.warning(request, message_)
 				return redirect('/store/home_page_owner/')
@@ -617,9 +620,10 @@ def add_complex_discount_to_store(request, pk, disc, which_button):
 			amount = form.cleaned_data.get('amount')
 			end_date = form.cleaned_data.get('end_date')
 			item = form.cleaned_data.get('item')
-			if(item is None):
-				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage, end_date=end_date,
-			                           item_id=None)
+			if (item is None):
+				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,
+				                           end_date=end_date,
+				                           item_id=None)
 			else:
 				ans = service.add_discount(store_id=pk, type=type, amount=amount, percentage=percentage,
 				                           end_date=end_date,
@@ -760,7 +764,8 @@ def add_complex_rule_to_store_2(request, rule_id_before, store_id, which_button)
 			parameter2 = form.cleaned_data.get('parameter2')
 			ans = service.add_complex_rule_to_store_2(rule1=rule1, parameter1=parameter1, rule2=rule2,
 			                                          parameter2=parameter2, store_id=store_id, operator1=operator1,
-			                                          operator2=operator2, prev_rule=rule_id_before, user_id=request.user.pk)
+			                                          operator2=operator2, prev_rule=rule_id_before,
+			                                          user_id=request.user.pk)
 			if ans[0] == True:
 				if which_button == 'ok':
 					messages.success(request, 'added rule successfully!')
@@ -1005,7 +1010,7 @@ class NotificationsListView(ListView):
 
 
 def delete_owner(request, pk_owner, pk_store):
-	print('remove omanager: ',pk_owner)
+	print('remove omanager: ', pk_owner)
 	if (service.remove_manager_from_store(pk_store, pk_owner)):
 		messages.success(request, 'delete owner')  # <-
 		return redirect('/store/home_page_owner/')
