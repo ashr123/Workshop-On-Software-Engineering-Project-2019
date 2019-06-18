@@ -634,14 +634,16 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 	pay_transaction_id = -1
 	supply_transaction_id = -1
 	messages_ = ''
-	curr_item = Item.objects.get(id=item_id)
+	#curr_item = Item.objects.get(id=item_id)
+	c_item = c_Item.get_item(item_id=item_id)
 	amount_in_db1 = Item.objects.get(id=item_id).quantity
 	#user = User.objects.get(pk=user_id)
-	if amount <= amount_in_db1:
+	# if amount <= amount_in_db1:
+	if c_item.has_available_amount(amount):
 		# print("good amount")
-		total = amount * curr_item.price
+		total = c_item.calc_total(amount=amount)
 		# check item rules
-		if check_item_rules(curr_item, amount) is False:
+		if not c_item.check_rules(amount = amount):
 			messages_ += "you can't buy due to item policies"
 			return False, 0, 0, messages_
 		store_of_item = Store.objects.get(items__id__contains=item_id)
@@ -651,7 +653,7 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 			return False, 0, 0, messages_
 
 		if (is_cart is False):
-			total_after_discount = apply_discounts(store=store_of_item, curr_item=curr_item, amount=int(amount))
+			total_after_discount = apply_discounts(store=store_of_item, c_item=c_item, amount=int(amount))
 
 		try:
 			if pay_system.handshake():
@@ -683,16 +685,16 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 				messages_ += '\n' + 'can`t connect to supply system abort payment!'
 				return False, 0, 0, messages_
 
-			curr_item.quantity = amount_in_db1 - amount
-			curr_item.save()
+			c_item.quantity = amount_in_db1 - amount
+			c_item.save()
 
 			# store = get_item_store(_item.pk)
 
 			try:
-				item_subject = ItemSubject(curr_item.pk)
+				item_subject = ItemSubject(c_item.pk)
 				if (is_auth):
 					notification = Notification.objects.create(
-						msg=username + ' bought ' + str(amount) + ' pieces of ' + curr_item.name)
+						msg=username + ' bought ' + str(amount) + ' pieces of ' + c_item.name)
 					notification.save()
 					item_subject.subject_state = item_subject.subject_state + [notification.pk]
 				else:
@@ -703,10 +705,10 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 			except Exception as e:
 				messages_ += 'cant connect websocket ' + str(e)
 
-			_item_name = curr_item.name
+			_item_name = c_item.name
 			# print("reached herre")
-			if curr_item.quantity == 0:
-				curr_item.delete()
+			if c_item.quantity == 0:
+				c_item.delete()
 
 			messages_ += '\n' + 'Thank you! you bought ' + _item_name + '\n' + 'Total after discount: ' \
 			             + str(total_after_discount) + ' $' + '\n' + 'Total before: ' + str(total) + ' $'
@@ -715,8 +717,8 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 			# print(a)
 			# print(str(a))
 			# traceback.print_exc()
-			curr_item.quantity = amount_in_db1
-			curr_item.save()
+			c_item.quantity = amount_in_db1
+			c_item.save()
 
 			if not (pay_transaction_id == -1):
 				messages_ += '\n' + 'failed and aborted pay! please try again!'
@@ -992,7 +994,8 @@ def get_quantity(item_id):
 	return Item.objects.get(id=item_id).quantity
 
 
-def apply_discounts(store, curr_item, amount):
+def apply_discounts(store, c_item, amount):
+	curr_item = c_item._model
 	base_arr = []
 	complex_arr = []
 	price = curr_item.price * amount
