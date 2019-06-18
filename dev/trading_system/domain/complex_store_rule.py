@@ -1,8 +1,8 @@
 from django.db.models import Q
 
 from store.models import ComplexStoreRule as m_ComplexStoreRule
-from trading_system.domain.bi_rules import BaseItemRule
-from trading_system.domain.bs_rules import BaseStoreRule
+from trading_system.domain.base_item_rule import BaseItemRule
+from trading_system.domain.base_store_rule import BaseStoreRule
 
 
 class ComplexStoreRule:

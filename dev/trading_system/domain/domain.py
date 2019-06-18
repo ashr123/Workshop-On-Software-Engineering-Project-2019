@@ -306,12 +306,10 @@ def len_of_super():
 	return c_User.len_of_super()
 
 
-def add_discount(store_id, percentage, end_date, type=None, amount=None, item_id=None):
-	d = Discount(store_id=store_id, type=type, percentage=percentage, end_date=end_date, amount=amount, item_id=item_id)
-	return [True, d.id]
 
-
-def add_discount(store_id, percentage, end_date, type=None, amount=None, item_id=None):
+def add_discount(store_id, percentage, end_date, type=None, amount=None, item_id=None, user_id = None):
+	if not User.objects.get(id=user_id).has_perm('ADD_DISCOUNT', Store.objects.get(pk=store_id)):
+		return [False, "you don't have the permission to add discount to store!"]
 	d = Discount(store_id=store_id, type=type, percentage=percentage, end_date=end_date, amount=amount, item_id=item_id)
 	d.save()
 	return [True, d.id]
@@ -322,15 +320,6 @@ def add_complex_discount_to_store(store_id, left, right, operator):
 	d.save()
 	return [True, d.pk]
 
-
-def add_discount(store_id, percentage, end_date, user_id, amount=None, item=None):
-	if not User.objects.get(id=user_id).has_perm('ADD_DISCOUNT', Store.objects.get(pk=store_id)):
-		return [False, "you don't have the permission to add discount to store!"]
-
-	discount = Discount(store_id=store_id, type=type, percentage=percentage, amount=amount,
-	                    end_date=end_date, item=item)
-	discount.save()
-	return [True, discount.id]
 
 
 def update_item(item_id, item_dict, user_id):
@@ -647,7 +636,7 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 			messages_ += "you can't buy due to store policies"
 			return False, 0, 0, messages_
 		if (is_cart is False):
-			total_after_discount = apply_discounts(store=store_of_item, c_item=c_item, amount=int(amount))
+			total_after_discount = store_of_item.apply_discounts(c_item=c_item, amount=int(amount))
 		try:
 			if pay_system.handshake():
 				print("pay hand shake")
@@ -864,28 +853,6 @@ def get_quantity(item_id):
 	return Item.objects.get(id=item_id).quantity
 
 
-def apply_discounts(store, c_item, amount):
-	curr_item = c_item._model
-	base_arr = []
-	complex_arr = []
-	price = curr_item.price * amount
-	store_complex_discountes = ComplexDiscount.objects.filter(store_id=store.pk)
-	for disc in reversed(store_complex_discountes):
-		if disc.id in complex_arr:
-			continue
-		discount = apply_complex(disc, base_arr, complex_arr, curr_item, amount)
-		if (discount != -1):
-			price = (1 - discount) * float(price)
-	store_base_discountes = Discount.objects.filter(store_id=store.pk)
-	for disc in store_base_discountes:
-		if disc.id in base_arr:
-			continue
-		discount = float(apply_base(disc.id, curr_item, amount))
-		if (discount != -1):
-			price = (1 - discount) * float(price)
-	return price
-
-
 
 def build_map(list_of_items):
 	ret = []
@@ -1050,74 +1017,6 @@ def apply_base_cart(disc, store_map):
 		return -1
 
 
-
-def apply_complex(disc, base_arr, complex_arr, curr_item, amount):
-	if disc.left[0] == '_':
-		base_arr.append(int(disc.left[1:]))
-		left = apply_base(int(disc.left[1:]), curr_item, amount)
-	else:
-		complex_arr.append(int(disc.left))
-		tosend = ComplexDiscount.objects.get(id=int(disc.left))
-		left = apply_complex(tosend, base_arr, complex_arr, curr_item, amount)
-	if disc.right[0] == '_':
-		base_arr.append(int(disc.right[1:]))
-		right = apply_base(int(disc.right[1:]), curr_item, amount)
-	else:
-		complex_arr.append(int(disc.right))
-		print(disc.right)
-		tosend = ComplexDiscount.objects.get(id=int(disc.right))
-		right = apply_complex(tosend, base_arr, complex_arr, curr_item, amount)
-	if disc.operator == "AND" and (left != -1 and right != -1):
-		return 1 - ((1 - left) * (1 - right))
-	elif disc.operator == "OR":
-		if left != -1 and right != -1:
-			return 1 - ((1 - left) * (1 - right))
-		elif left != -1:
-			return left
-		elif right != -1:
-			return right
-	elif disc.operator == "XOR":
-		return max(left, right)
-	else:
-		return -1
-
-
-
-
-def apply_base(disc, curr_item, amount):
-	base = Discount.objects.get(id=disc)
-	per = float(base.percentage)
-	today = datetime.date.today()
-	if base.end_date < today:
-		return -1
-	if base.item == None:
-		if base.type == 'MIN':
-			if amount >= base.amount:
-				return per / 100
-			else:
-				return -1
-		if base.type == 'MAX':
-			if amount <= base.amount:
-				return per / 100
-			else:
-				return -1
-		else:
-			return per / 100
-	elif base.item.id == curr_item.id:
-		if base.type == 'MIN':
-			if amount >= base.amount:
-				return per / 100
-			else:
-				return -1
-		if base.type == 'MAX':
-			if amount <= base.amount:
-				return per / 100
-			else:
-				return -1
-		else:
-			return per / 100
-	else:
-		return -1
 
 
 

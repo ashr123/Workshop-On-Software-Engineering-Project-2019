@@ -1,8 +1,8 @@
 from django.db.models import Q
 
 from store.models import Item as m_Item
-from trading_system.domain.bi_rules import BaseItemRule
-from trading_system.domain.ci_rules import ComplexItemRule
+from trading_system.domain.base_item_rule import BaseItemRule
+from trading_system.domain.complex_item_rule import ComplexItemRule
 
 
 class Item:
@@ -19,6 +19,10 @@ class Item:
 
 	@property
 	def pk(self):
+		return self._model.pk
+
+	@property
+	def id(self):
 		return self._model.pk
 
 	@property
@@ -86,3 +90,4 @@ class Item:
 			description__contains=txt) | Q(category__contains=txt))
 		items = list(map(lambda im: Item(model=im), items_models))
 		return list(map(lambda i: i.get_details(), items))
+

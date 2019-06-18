@@ -1,7 +1,7 @@
 from django.db.models import Q
 
 from store.models import ComplexItemRule as m_ComplexItemRule
-from trading_system.domain.bi_rules import BaseItemRule
+from trading_system.domain.base_item_rule import BaseItemRule
 
 
 class ComplexItemRule:

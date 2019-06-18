@@ -118,10 +118,8 @@ def update_item(item_id, item_dict, user_id):
 	return domain.update_item(item_id=item_id, item_dict=item_dict, user_id=user_id)
 
 
-def add_discount(store_id, percentage, end_date, user_id, item=None, amount=None):
-	return domain.add_discount(store_id=store_id, user_id=user_id, percentage=percentage, amount=amount,
-	                           end_date=end_date,
-	                           item=item)
+def add_discount(store_id, type, amount, percentage,end_date,item_id, user_id):
+	return domain.add_discount(store_id=store_id, type=type, amount=amount, percentage=percentage,end_date=end_date,item_id=item_id, user_id=user_id)
 
 
 def item_rules_string(itemId):

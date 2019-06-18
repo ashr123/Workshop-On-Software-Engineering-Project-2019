@@ -4,8 +4,10 @@ from store.models import Store as m_Store, Item
 from django.contrib.auth.models import User, Group
 from guardian.shortcuts import assign_perm
 
-from trading_system.domain.bs_rules import BaseStoreRule
-from trading_system.domain.cs_rules import ComplexStoreRule
+from trading_system.domain.base_store_rule import BaseStoreRule
+from trading_system.domain.complex_discount import ComplexDiscount
+from trading_system.domain.complex_store_rule import ComplexStoreRule
+from trading_system.domain.discount import Discount
 from trading_system.models import ObserverUser
 from trading_system.domain.user import User as c_User
 
@@ -123,6 +125,27 @@ class Store:
 
     def get_creator(self):
         return c_User(self._model.owners.all()[0])
+
+    def apply_discounts(self, c_item, amount):
+        base_arr = []
+        complex_arr = []
+        price = c_item.calc_total(amount=amount)
+        store_complex_discountes = ComplexDiscount.get_store_cs_discoint(store_id=self.pk)
+        for disc in reversed(store_complex_discountes):
+            if disc.id in complex_arr:
+                continue
+            # discount = apply_complex(disc, base_arr, complex_arr, curr_item, amount)
+            discount = disc.apply(base_arr, complex_arr, c_item, amount)
+            if (discount != -1):
+                price = (1 - discount) * float(price)
+        store_base_discountes = Discount.get_store_discounts(store_id = self.pk)
+        for disc in store_base_discountes:
+            if disc.id in base_arr:
+                continue
+            discount = float(disc.apply(curr_item=c_item, amount=amount))
+            if (discount != -1):
+                price = (1 - discount) * float(price)
+        return price
 
     @staticmethod
     def get_store(store_id):
