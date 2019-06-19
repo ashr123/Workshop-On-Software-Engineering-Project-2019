@@ -93,7 +93,7 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager, is_
 	# messages.warning(request, 'No such user')
 	# return redirect('/store/home_page_owner/')
 
-	if is_partner:
+	if is_partner or is_owner:
 		for perm in AddManagerForm.CHOICES:
 			store.assign_perm(perm=perm, user_id=user_.pk)
 	else:
@@ -228,7 +228,7 @@ def add_base_rule_to_store(rule_type, store_id, parameter, user_id):
 		except ValueError:
 			# messages.warning(request, 'Enter a number please')
 			return [False, 'Enter a number please']
-	brule = BaseRule(store_id=store_id, type=rule_type, parameter=parameter)
+	brule = BaseRule(store_id=store_id, type=rule_type[:3], parameter=parameter)
 	brule.save()
 	return [True, brule.id]
 
@@ -246,7 +246,7 @@ def add_complex_rule_to_store_1(rule_type, prev_rule, store_id, operator, parame
 				return [False, 'Enter a positive number please']
 		except ValueError:
 			return [False, 'Enter a number please']
-	base_rule = BaseRule(store_id=store_id, type=rule_type, parameter=parameter)
+	base_rule = BaseRule(store_id=store_id, type=rule_type[:3], parameter=parameter)
 	base_rule.save()
 	rule_id2 = base_rule.id
 	rule2_temp = '_' + str(rule_id2)
@@ -282,11 +282,11 @@ def add_complex_rule_to_store_2(rule1, parameter1, rule2, parameter2, store_id, 
 				return [False, 'Enter a positive number please for second parameter']
 		except ValueError:
 			return [False, 'Enter a number please for second parameter']
-	base_rule1 = BaseRule(store_id=store_id, type=rule1, parameter=parameter1)
+	base_rule1 = BaseRule(store_id=store_id, type=rule1[:3], parameter=parameter1)
 	base_rule1.save()
 	rule_id1 = base_rule1.id
 	rule1_temp = '_' + str(rule_id1)
-	base_rule2 = BaseRule(store_id=store_id, type=rule2, parameter=parameter2)
+	base_rule2 = BaseRule(store_id=store_id, type=rule2[:3], parameter=parameter2)
 	base_rule2.save()
 	rule_id2 = base_rule2.id
 	rule2_temp = '_' + str(rule_id2)
@@ -303,7 +303,7 @@ def add_base_rule_to_item(item_id, rule, parameter, user_id):
 	        User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0])):
 		return [False, "you don't have the permission to add base rule to store or the item doesn't exists!"]
 
-	brule = BaseItemRule(item_id=item_id, type=rule, parameter=parameter)
+	brule = BaseItemRule(item_id=item_id, type=rule[:3], parameter=parameter)
 	brule.save()
 	return [True, brule.id]
 
@@ -313,7 +313,7 @@ def add_complex_rule_to_item_1(item_id, prev_rule, rule, operator, parameter, us
 	        User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0])):
 		return [False, "you don't have the permission to add complex rule to store or the item doesn't exists!"]
 
-	base_rule = BaseItemRule(item_id=item_id, type=rule, parameter=parameter)
+	base_rule = BaseItemRule(item_id=item_id, type=rule[:3], parameter=parameter)
 	base_rule.save()
 	rule_id2 = base_rule.id
 	rule2_temp = '_' + str(rule_id2)
@@ -327,11 +327,11 @@ def add_complex_rule_to_item_2(item_id, prev_rule, rule1, parameter1, rule2, par
 	        User.objects.get(id=user_id).has_perm('ADD_RULE', Store.objects.filter(items__id=item_id)[0])):
 		return [False, "you don't have the permission to add complex rule to store or the item doesn't exists!"]
 
-	base_rule1 = BaseItemRule(item_id=item_id, type=rule1, parameter=parameter1)
+	base_rule1 = BaseItemRule(item_id=item_id, type=rule1[:3], parameter=parameter1)
 	base_rule1.save()
 	rule_id1 = base_rule1.id
 	rule1_temp = '_' + str(rule_id1)
-	base_rule2 = BaseItemRule(item_id=item_id, type=rule2, parameter=parameter2)
+	base_rule2 = BaseItemRule(item_id=item_id, type=rule2[:3], parameter=parameter2)
 	base_rule2.save()
 	rule_id2 = base_rule2.id
 	rule2_temp = '_' + str(rule_id2)
@@ -422,7 +422,7 @@ def len_of_super():
 def add_discount(store_id, percentage, end_date, type=None, amount=None, item_id=None, user_id=None):
 	if not User.objects.get(id=user_id).has_perm('ADD_DISCOUNT', Store.objects.get(pk=store_id)):
 		return [False, "you don't have the permission to add discount to store!"]
-	d = Discount(store_id=store_id, type=type, percentage=percentage, end_date=end_date, amount=amount, item_id=item_id)
+	d = Discount(store_id=store_id, type=type[:3], percentage=percentage, end_date=end_date, amount=amount, item_id=item_id)
 	d.save()
 	return [True, d.id]
 
@@ -686,7 +686,7 @@ def have_no_more_stores(user_pk):
 	return c_User.get_user(user_id=user_pk).have_no_more_stores()
 
 
-def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart, user_id):
+def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart, user_id, total_amount):
 	pay_transaction_id = -1
 	supply_transaction_id = -1
 	messages_ = ''
@@ -699,7 +699,7 @@ def buy_logic(item_id, amount, amount_in_db, is_auth, username, shipping_details
 			return False, 0, 0, messages_
 
 		store_of_item = c_Store.get_item_store(item_pk=item_id)
-		if not store_of_item.check_rules(amount, shipping_details['country'], is_auth):
+		if not store_of_item.check_rules(total_amount, shipping_details['country'], is_auth):
 			messages_ += "you can't buy due to store policies"
 			return False, 0, 0, messages_
 		total_after_discount = "" if is_cart else store_of_item.apply_discounts(c_item=c_item, amount=int(amount))

@@ -85,7 +85,7 @@ class ComplexItemRule:
 	def get_ci_rule(rule_id):
 
 		try:
-			return ComplexItemRule(model=m_ComplexItemRule.objects.filter(pk=rule_id))
-			return list(map(lambda cir_model: ComplexItemRule(model=cir_model), list(cir_models)))
+			return ComplexItemRule(model=m_ComplexItemRule.objects.get(pk=rule_id))
+			# return list(map(lambda cir_model: ComplexItemRule(model=cir_model), list(cir_models)))
 		except Exception:
 			raise dom.DBFailedExceptionDomainToService(msg='DB Failed')

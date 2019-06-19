@@ -447,25 +447,39 @@ def make_cart_list(request: Any) -> Union[HttpResponseRedirect, HttpResponse]:
 
 			if form.is_valid():
 				list_of_items = []
+				total_amount=0
+				items = form.cleaned_data.get('items')
+				for item_id in items:
+					quantity_to_buy = 1
+					try:
+						quantity_to_buy = request.POST.get('quantity' + item_id)
+						total_amount += int(quantity_to_buy)
+					# print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
+					except:
+						messages.warning(request, 'problem with quantity ')
+						loger.warning('buy from cart failed')
+
+					list_of_items.append({'item_id': int(item_id), 'amount': int(quantity_to_buy)})
 				res, res_before = service.apply_discounts_for_cart(list_of_items)
 				for item_id in form.cleaned_data.get('items'):
 					amount_in_db = service.get_quantity(item_id)
 					if amount_in_db > 0:
 						item1 = Item.objects.get(id=item_id)
-						quantity_to_buy = 1
-						try:
-							quantity_to_buy = request.POST.get('quantity' + str(item1.id))
-						# print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
-						except:
-							messages.warning(request, 'problem with quantity ')
-							loger.warning('buy from cart failed')
-						list_of_items.append({'item_id': item_id, 'amount': int(quantity_to_buy)})
+						# quantity_to_buy = 1
+						# try:
+						# 	quantity_to_buy = request.POST.get('quantity' + str(item1.id))
+						# # print('q----------------id:----' + str(item.id) + '------------' + quantity_to_buy)
+						# except:
+						# 	messages.warning(request, 'problem with quantity ')
+						# 	loger.warning('buy from cart failed')
+
 						valid, total, total_after_discount, messages_ = service.buy_logic(int(item_id), int(quantity_to_buy),
 						                                                                  amount_in_db,
 						                                                                  request.user.is_authenticated,
 						                                                                  request.user.username,
 						                                                                  shipping_details,
-						                                                                  card_details, True)
+						                                                                  card_details, True,
+						                                                                  total_amount)
 						if not valid:
 							messages.warning(request, 'can`t buy item : ' + str(item_id))
 							messages.warning(request, 'reason : ' + str(messages_))

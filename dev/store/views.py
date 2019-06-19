@@ -463,7 +463,7 @@ def buy_item(request, pk):
 				valid, total, total_after_discount, messages_ = service.buy_logic(pk, amount, amount_in_db, is_auth,
 				                                                                  username, shipping_details,
 				                                                                  card_details,
-				                                                                  False, request.user.pk)
+				                                                                  False, request.user.pk, amount)
 
 				if valid == False:
 					messages.warning(request, messages_)
@@ -1017,9 +1017,9 @@ def remove_rule_from_store(request, pk, type1, store):
 		return redirect('/login_redirect')
 
 
-def remove_rule_from_item(request, pk, type1, item):
+def remove_rule_from_item(request, pk, type, item):
 	try:
-		if type1 == 2:
+		if type == 2:
 			service.delete_complex_item_rule(pk)
 		else:
 			service.delete_base_item_rule(pk)
@@ -1031,7 +1031,7 @@ def remove_rule_from_item(request, pk, type1, item):
 			'user_name': user_name,
 			'text': text,
 		}
-		return redirect('/store/update_item/' + str(item))
+		return redirect('/update_item/' + str(item))
 	except DBFailedExceptionServiceToViews as e:
 		messages.warning(request, e.msg)
 		loger.warning(e.msg)

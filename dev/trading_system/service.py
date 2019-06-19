@@ -266,10 +266,10 @@ def add_complex_discount(store_id, left, right, operator):
 		raise DBFailedExceptionServiceToViews(msg="DB fail: can't add discount")
 
 
-def buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart, user_id=None):
+def buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart, total_amount, user_id=None):
 	try:
 		return domain.buy_logic(pk, amount, amount_in_db, is_auth, username, shipping_details, card_details, is_cart,
-		                        user_id)
+		                        user_id, total_amount)
 	except DBFailedExceptionDomainToService as e:
 		raise DBFailedExceptionServiceToViews(msg="DB fail: can't buy items")
 

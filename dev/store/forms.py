@@ -142,7 +142,7 @@ class AddRuleToItem_withop(forms.Form):
 	          ('AND', 'and'),
 	          ('XOR', 'xor'))
 	operator = forms.ChoiceField(choices=LOGICS, widget=forms.RadioSelect)
-	rule = forms.BooleanField()
+	rule = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect, required=False)
 	parameter = forms.IntegerField(min_value=0)
 
 
