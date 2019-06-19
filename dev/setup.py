@@ -1,6 +1,8 @@
 from setuptools import setup, find_packages
 
-install_requires = ['pytest', 'passlib']
+install_requires = ['django', 'mysqlclient', 'channels', 'channels_redis', 'daphne','django-formtools','django_countries', 'websocket-client','pypiwin32', 'selenium','simplejson',
+                    'django-guardian', 'GeoIP2', 'selenium', 'asgiref', 'requests', 'locust']
+
 
 setup(
 	name='SADNA',
@@ -11,5 +13,6 @@ setup(
 	author='Rotem Barak',
 	author_email='rotba@post.bgu.ac.il',
 	install_requires=install_requires,
-	description='Python Distribution Utilities'
+	description='Python Distribution Utilities',
+
 )
