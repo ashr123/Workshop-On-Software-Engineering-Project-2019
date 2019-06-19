@@ -114,6 +114,14 @@ DATABASES = {
 		'HOST': 'localhost',
 		'PORT': ''
 	}
+	# 'default': {
+	# 	'ENGINE': 'django.db.backends.mysql',
+	# 	'NAME': 'tradingsystem',
+	# 	'USER': 'tr',
+	# 	'password': '',
+	# 	'HOST': '132.73.200.97',
+	# 	'PORT': ''
+	# }
 }
 
 redis_host = os.environ.get('REDIS_HOST', 'localhost')

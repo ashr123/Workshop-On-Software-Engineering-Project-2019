@@ -116,7 +116,6 @@ class Store:
 		owners_objs = list(map(lambda id1: c_User.get_user(user_id=id1), owners_ids))
 		managers_objs = list(map(lambda id1: c_User.get_user(user_id=id1), managers_ids))
 		partners_objs = list(map(lambda id1: c_User.get_user(user_id=id1), partners_ids))
-		self._model.delete()
 		for item_ in items_to_delete:
 			item_.delete()
 		for owner in owners_objs:
@@ -128,6 +127,7 @@ class Store:
 		for partner in partners_objs:
 			if partner.manages_no_more_stores():
 				partner.remove_from_owners()
+		self._model.delete()
 
 	def update(self, store_dict):
 		for field in self._model._meta.fields:

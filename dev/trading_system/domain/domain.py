@@ -5,6 +5,7 @@ from guardian.shortcuts import assign_perm
 
 from external_systems.money_collector.payment_system import Payment
 from external_systems.supply_system.supply_system import Supply
+from store.forms import AddManagerForm
 from store.models import BaseRule, ComplexStoreRule, BaseItemRule, ComplexItemRule, Discount, Store, Item, \
 	ComplexDiscount
 from trading_system.domain.cart import Cart as c_Cart
@@ -92,8 +93,12 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager, is_
 	# messages.warning(request, 'No such user')
 	# return redirect('/store/home_page_owner/')
 
-	for perm in picked:
-		store.assign_perm(perm=perm, user_id=user_.pk)
+	if is_partner:
+		for perm in AddManagerForm.CHOICES:
+			store.assign_perm(perm=perm, user_id=user_.pk)
+	else:
+		for perm in picked:
+			store.assign_perm(perm=perm, user_id=user_.pk)
 
 	if is_owner:
 
