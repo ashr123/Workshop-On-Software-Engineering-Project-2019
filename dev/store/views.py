@@ -1025,12 +1025,6 @@ def remove_rule_from_item(request, pk, type, item):
 			service.delete_base_item_rule(pk)
 		messages.success(request, 'remove rule successfully!')
 		logev.info('remove rule successfully')
-		text = SearchForm()
-		user_name = request.user.username
-		context = {
-			'user_name': user_name,
-			'text': text,
-		}
 		return redirect('/update_item/' + str(item))
 	except DBFailedExceptionServiceToViews as e:
 		messages.warning(request, e.msg)
@@ -1047,12 +1041,6 @@ def remove_discount_from_store(request, pk, type, store):
 			service.delete_base_store_discount(pk)
 		messages.success(request, 'remove discount successfully!')
 		logev.info('remove discount successfully')
-		text = SearchForm()
-		user_name = request.user.username
-		context = {
-			'user_name': user_name,
-			'text': text,
-		}
 		return redirect('/store/update/' + str(store))
 	except DBFailedExceptionServiceToViews as e:
 		messages.warning(request, e.msg)

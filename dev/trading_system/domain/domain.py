@@ -94,8 +94,8 @@ def add_manager(wanna_be_manager, picked, is_owner, store_pk, store_manager, is_
 	# return redirect('/store/home_page_owner/')
 
 	if is_partner or is_owner:
-		for perm in AddManagerForm.CHOICES:
-			store.assign_perm(perm=perm, user_id=user_.pk)
+		for perm in list(AddManagerForm.CHOICES):
+			store.assign_perm(perm=perm[0], user_id=user_.pk)
 	else:
 		for perm in picked:
 			store.assign_perm(perm=perm, user_id=user_.pk)
@@ -924,7 +924,6 @@ def get_quantity(item_id):
 
 def build_map(list_of_items):
 	ret = []
-	print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55')
 	print(list_of_items)
 	for i in list_of_items:
 		store_id = Store.objects.get(items__id__contains=i['item_id']).id
@@ -1069,8 +1068,8 @@ def apply_base_cart(disc, store_map):
 				return -1
 		else:
 			return [{'product': '*', 'discount': per / 100}]
-	if str(base.item.id) in list_of_ids:
-		item_index = list_of_ids.index(str(base.item.id))
+	if base.item.id in list_of_ids:
+		item_index = list_of_ids.index(base.item.id)
 		if base.type == 'MIN':
 			if store_map['items'][item_index]['item_amount'] >= base.amount:
 				return [{'product': list_of_ids[item_index], 'discount': per / 100}]
