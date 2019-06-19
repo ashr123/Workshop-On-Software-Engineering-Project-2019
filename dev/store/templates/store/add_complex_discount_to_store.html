@@ -25,7 +25,7 @@
         function choose_item() {
             var item = document.getElementById("item");
             var addItem = document.getElementById("item_1");
-            if (item.checked == true) {
+            if (item.checked === true) {
                 addItem.style.display = "block"
             } else {
                 addItem.style.display = "none"
@@ -37,7 +37,7 @@
             var condition = document.getElementById("cond");
             var type = document.getElementById("cond_1");
             var amount = document.getElementById("cond_2");
-            if (condition.checked == true) {
+            if (condition.checked === true) {
                 type.style.display = "block";
                 amount.style.display = "block"
             } else {
